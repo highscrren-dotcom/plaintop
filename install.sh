@@ -49,7 +49,7 @@ status() {
     echo "== Разложено"
     for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
         if [ -f "$DEST/$f" ]; then
-            if cmp -s "$REPO/widget/$f" "$DEST/$f"; then grn "  ✓ $f — совпадает с репо"
+            if cmp -s "$REPO/conky/$f" "$DEST/$f"; then grn "  ✓ $f — совпадает с репо"
             else red "  ≠ $f — РАЗОШЁЛСЯ с репо"; fi
         else red "  ✗ $f — не разложен"; fi
     done
@@ -86,13 +86,13 @@ deps || { echo; red "Не хватает зависимостей — поста
 echo; echo "== Раскладываю"
 mkdir -p "$DEST" "$AUTOSTART" "$APPS"
 for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
-    cp "$REPO/widget/$f" "$DEST/$f" && echo "  → $DEST/$f"
+    cp "$REPO/conky/$f" "$DEST/$f" && echo "  → $DEST/$f"
 done
 chmod +x "$DEST"/*.sh "$DEST"/*.py
-cp "$REPO/widget/conky-plainext.desktop" "$AUTOSTART/" && echo "  → $AUTOSTART/conky-plainext.desktop"
+cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && echo "  → $AUTOSTART/conky-plainext.desktop"
 # Заглушка поверх /usr/share/applications/conky.desktop: иначе KWin поднимет пакетный
 # conky с дефолтным конфигом. Каталог пользователя идёт раньше в XDG_DATA_DIRS.
-cp "$REPO/widget/conky-mask.desktop" "$APPS/conky.desktop" && echo "  → $APPS/conky.desktop (заглушка)"
+cp "$REPO/conky/conky-mask.desktop" "$APPS/conky.desktop" && echo "  → $APPS/conky.desktop (заглушка)"
 
 # excludeApps должен совпадать с own_window_class, иначе исключение молча не сработает.
 if command -v kwriteconfig6 >/dev/null; then
