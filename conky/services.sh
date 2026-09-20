@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Один процесс вместо пяти ${execi}: conky зовёт этот скрипт и печатает вывод как есть.
-# Цвета подставляет сам conky — здесь только ${colorN}, их развернёт ${execpi}.
+# One process instead of five ${execi}: conky calls this script and prints its output
+# as is. conky substitutes the colors itself — we only emit ${colorN}, and ${execpi}
+# expands them.
 C2='${color2}'; C0='${color}'
 
-# Docker: членство в группе docker подхватывается только после перелогина,
-# поэтому отличаем «нет контейнеров» от «нет доступа к сокету».
+# Docker: membership in the docker group takes effect only after a re-login,
+# so we tell "no containers" apart from "no access to the socket".
 if docker info >/dev/null 2>&1; then
     run=$(docker ps -q 2>/dev/null | wc -l)
     all=$(docker ps -aq 2>/dev/null | wc -l)
@@ -13,7 +14,7 @@ else
     printf '%sdocker${goto 230}|%s нужен перелогин\n' "$C2" "$C0"
 fi
 
-# ollama: что реально загружено в видеопамять прямо сейчас
+# ollama: what is actually loaded into VRAM right now
 mdl=$(timeout 3 ollama ps 2>/dev/null | awk 'NR==2{print $1" "$3$4}')
 if [ -n "$mdl" ]; then
     printf '%sollama${goto 230}|%s %s\n' "$C2" "$C0" "$mdl"
@@ -22,7 +23,7 @@ else
     printf '%sollama${goto 230}|%s простаивает, моделей %s\n' "$C2" "$C0" "${cnt:-0}"
 fi
 
-# Обновления: по ЛОКАЛЬНОЙ базе (pacman -Qu), без сетевой синхронизации.
-# checkupdates честнее, но лезет в сеть на каждый вызов — для виджета это перебор.
+# Updates: from the LOCAL database (pacman -Qu), with no network sync.
+# checkupdates is more honest but hits the network on every call — too much for a widget.
 upd=$(pacman -Qu 2>/dev/null | grep -vc '\[ignored\]')
 printf '%spacman${goto 230}|%s %s обновлений\n' "$C2" "$C0" "${upd:-0}"

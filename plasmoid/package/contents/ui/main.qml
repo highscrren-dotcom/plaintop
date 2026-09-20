@@ -13,33 +13,35 @@ import "../code/description.js" as Description
 PlasmoidItem {
     id: root
 
-    // Виджет живёт на фоне рабочего стола: рамка и подложка не нужны,
-    // но пользователь может вернуть их через штатный диалог.
+    // The widget lives on the desktop background: no frame and no backdrop needed,
+    // but the user can bring them back through the standard dialog.
     Plasmoid.backgroundHints: PlasmaCore.Types.NoBackground | PlasmaCore.Types.ConfigurableBackground
 
     preferredRepresentation: fullRepresentation
 
-    // ⚠️ Размер апплета контейнер берёт из Layout.* НА КОРНЕ, и подсказка должна быть
-    // постоянной. Пока она зависела от высоты текста, контейнер пересобирал раскладку
-    // при каждом изменении числа строк и сбрасывал виджет в угол 0,0 — проверено.
+    // ⚠️ The containment takes the applet size from Layout.* ON THE ROOT, and the hint
+    // must be constant. While it depended on the text height, the containment rebuilt
+    // the layout on every change of the line count and reset the widget to the 0,0
+    // corner — verified.
     Layout.minimumWidth: Plasmoid.configuration.widgetWidth
     Layout.minimumHeight: Plasmoid.configuration.widgetHeight
     Layout.preferredWidth: Plasmoid.configuration.widgetWidth
     Layout.preferredHeight: Plasmoid.configuration.widgetHeight
 
-    // Палитра перенесена из conky/plainext.conf — тот же PlainExt.
-    readonly property color cFg: "#C8CCD4"      // основной текст
-    readonly property color cAccent: "#E05561"  // заголовок и полоски
-    readonly property color cDim: "#6B7280"     // второстепенное
-    readonly property color cVal: "#8FB6E0"     // значения
+    // Palette carried over from conky/plainext.conf — the same PlainExt.
+    readonly property color cFg: "#C8CCD4"      // main text
+    readonly property color cAccent: "#E05561"  // header and bars
+    readonly property color cDim: "#6B7280"     // secondary
+    readonly property color cVal: "#8FB6E0"     // values
 
     readonly property int rate: Plasmoid.configuration.updateInterval
-    readonly property int barWidth: 18          // ширина полоски в символах, как в lua
+    readonly property int barWidth: 18          // bar width in characters, as in lua
 
-    // ── Описание виджета ──────────────────────────────────────────────────────
-    // Что показывать и в каком порядке — из описания, а не из разметки. Правка
-    // пользователя лежит в настройках строкой JSON; пусто — берём сгенерированное
-    // из schema/widget.json (plasmoid/generate.py кладёт его в пакет).
+    // ── Widget description ────────────────────────────────────────────────────
+    // What to show and in which order comes from the description, not from the layout.
+    // The user's edit sits in the settings as a JSON string; when it is empty, take the
+    // one generated from schema/widget.json (plasmoid/generate.py puts it in the
+    // package).
     readonly property var blocks: {
         const raw = Plasmoid.configuration.blocksJson
         if (raw && raw.length > 0) {
@@ -47,14 +49,14 @@ PlasmoidItem {
                 const parsed = JSON.parse(raw)
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed
             } catch (e) {
-                console.warn("plaintop: описание в настройках не разбирается, беру пакетное:", e)
+                console.warn("plaintop: the description in the settings does not parse, using the packaged one:", e)
             }
         }
         return Description.BLOCKS
     }
 
-    // Параметр включённого блока данного типа — нужен там, где от него зависят
-    // подписки на сенсоры, а не только текст.
+    // A parameter of an enabled block of this type — needed where sensor subscriptions
+    // depend on it, not only the text.
     function blockParam(type, key, fallback) {
         for (const b of blocks) {
             if (b.type === type && b.enabled !== false) {
@@ -65,7 +67,7 @@ PlasmoidItem {
         return fallback
     }
 
-    // Блоки «Свой датчик» добавляют свои id в ту же подписку.
+    // "Custom sensor" blocks add their ids to the same subscription.
     readonly property var customSensorIds: {
         const out = []
         for (const b of blocks)
@@ -74,7 +76,7 @@ PlasmoidItem {
         return out
     }
 
-    // Блоки «Своя команда»: у каждого свой интервал, поэтому и источник свой.
+    // "Custom command" blocks: each has its own interval, so each gets its own source.
     readonly property var commandBlocks: {
         const out = []
         for (const b of blocks)
@@ -96,7 +98,7 @@ PlasmoidItem {
             connectedSources: [modelData.command]
 
             onNewData: function(source, data) {
-                // Объект пересобираем целиком: правка поля связывания не будит.
+                // Rebuild the whole object: editing a field does not wake bindings.
                 const m = ({})
                 for (const k in root.cmdOut) m[k] = root.cmdOut[k]
                 m[modelData.id] = String(data.stdout).replace(/\n+$/, "")
@@ -108,10 +110,10 @@ PlasmoidItem {
     readonly property string netIface: blockParam("network", "interface", "enp4s0")
     readonly property var mounts: blockParam("disks", "mounts", ["/"])
 
-    // ── Данные ────────────────────────────────────────────────────────────────
-    // Один SensorDataModel на все величины: одна подписка вместо сотни объектов.
-    // Роли берутся по имени (Sensors.SensorDataModel.Value), а не числом — числа
-    // между версиями Plasma не обещаны.
+    // ── Data ──────────────────────────────────────────────────────────────────
+    // One SensorDataModel for all values: a single subscription instead of a hundred
+    // objects. Roles are taken by name (Sensors.SensorDataModel.Value), not by number —
+    // the numbers are not promised across Plasma versions.
     readonly property var coreIds: {
         const a = []
         for (let i = 0; i < 72; i++) a.push("cpu/cpu" + i + "/usage")
@@ -119,8 +121,8 @@ PlasmoidItem {
         return a
     }
 
-    // ⚠️ Повторы обязательно убрать: SensorDataModel схлопывает одинаковые id,
-    // столбцов становится меньше, чем в списке, и чтение по индексу уезжает.
+    // ⚠️ Duplicates must be removed: SensorDataModel collapses identical ids, the
+    // columns become fewer than the list entries, and reads by index slide off.
     readonly property var sensorIds: {
         const out = [], seen = ({})
         for (const id of rawSensorIds) if (!seen[id]) { seen[id] = true; out.push(id) }
@@ -132,8 +134,8 @@ PlasmoidItem {
         "memory/physical/usedPercent", "memory/physical/used", "memory/physical/total",
         "os/system/hostname", "os/system/name", "os/kernel/version",
         "lmsensors/nct6779-isa-0a20/fan1", "lmsensors/nct6779-isa-0a20/fan2",
-        // ⚠️ Датчики lm_sensors адресуются по ИМЕНИ чипа, не по индексу hwmon:
-        // индексы плавают между перезагрузками.
+        // ⚠️ lm_sensors sensors are addressed by chip NAME, not by hwmon index:
+        // the indexes drift between reboots.
         "lmsensors/nvme-pci-0500/temp1",
         "gpu/gpu0/usage", "gpu/gpu0/temperature", "gpu/gpu0/usedVram",
         "gpu/gpu0/totalVram", "gpu/gpu0/power", "gpu/gpu0/name",
@@ -161,7 +163,7 @@ PlasmoidItem {
     KItem.KSortFilterProxyModel {
         id: byCpu
         sourceModel: procs
-        sortRoleName: "Value"     // ⚠️ именно sortRoleName: с sortRole компонент не строится
+        sortRoleName: "Value"     // ⚠️ sortRoleName, not sortRole: the component won't build
         sortColumn: 1
         sortOrder: Qt.DescendingOrder
     }
@@ -174,8 +176,9 @@ PlasmoidItem {
         sortOrder: Qt.DescendingOrder
     }
 
-    // Раскладка ядер по узлам NUMA, модель процессора и плата читаются разово:
-    // в сенсорах их нет (cpu/all/name отдаёт «Все»), а за сеанс они не меняются.
+    // The core-to-NUMA-node layout, the CPU model and the board are read once: the
+    // sensors do not have them (cpu/all/name returns the localized "All"), and they do
+    // not change within a session.
     property var nodeCpus: []
     property string cpuModel: ""
     property string boardLine: ""
@@ -240,14 +243,14 @@ PlasmoidItem {
         }
     }
 
-    // Файловые системы: в сенсорах они лежат под UUID диска, а нужны точки
-    // монтирования — берём df, как это делал conky.
+    // Filesystems: the sensors key them by disk UUID, while the mount points are what
+    // we need — so take df, the way conky did.
     property var diskRows: []
 
     P5Support.DataSource {
         id: slow
         engine: "executable"
-        // ⚠️ Раз в 10 с, а не каждый тик: каждый запуск — это fork в процессе оболочки.
+        // ⚠️ Once every 10 s, not on every tick: each run is a fork in the shell process.
         interval: 10000
         connectedSources: [
             "df -B1 --output=target,size,used,pcent " + root.mounts.join(" ") + " 2>/dev/null"
@@ -255,7 +258,7 @@ PlasmoidItem {
 
         onNewData: function(source, data) {
             const rows = []
-            // Первая строка — заголовок df, он локализован; разбираем по позициям.
+            // The first line is the df header, and it is localized; parse by position.
             for (const line of String(data.stdout).trim().split("\n").slice(1)) {
                 const f = line.trim().split(/\s+/)
                 if (f.length < 4) continue
@@ -271,10 +274,10 @@ PlasmoidItem {
     P5Support.DataSource {
         id: services
         engine: "executable"
-        // Службы меняются редко, а каждый запуск — fork: раз в 15 с достаточно.
+        // Services change rarely and each run is a fork: once every 15 s is enough.
         interval: 15000
-        // Скрипт лежит в самом пакете; движок исполняет команду через shell,
-        // поэтому достаточно отдать ему путь без схемы file://.
+        // The script lives in the package itself; the engine runs the command through a
+        // shell, so passing it the path without the file:// scheme is enough.
         connectedSources: ["bash " + Qt.resolvedUrl("../code/services.sh").toString().replace("file://", "")]
 
         onNewData: function(source, data) {
@@ -288,8 +291,8 @@ PlasmoidItem {
         }
     }
 
-    // Тик, от которого зависят все вычисляемые строки: чтение из модели само
-    // по себе связывания не создаёт, поэтому зависимость делается явной.
+    // The tick every computed line depends on: reading from the model does not create a
+    // binding by itself, so the dependency is made explicit.
     property int tick: 0
 
     Timer {
@@ -311,9 +314,9 @@ PlasmoidItem {
         return (v === undefined || v === null || isNaN(v)) ? fallback : Number(v)
     }
 
-    // ── Форматирование ────────────────────────────────────────────────────────
-    // ⚠️ Своё, а не formattedValue: тот вставляет U+200B перед «%» и U+2009 перед
-    // «°C», и в моноширинном тексте колонки разъезжаются.
+    // ── Formatting ────────────────────────────────────────────────────────────
+    // ⚠️ Our own, not formattedValue: that one inserts U+200B before "%" and U+2009
+    // before "°C", and in monospace text the columns drift apart.
     function bar(pct) {
         const k = Math.max(0, Math.min(barWidth, Math.round(pct * barWidth / 100)))
         return "/".repeat(k) + " ".repeat(barWidth - k)
@@ -323,7 +326,8 @@ PlasmoidItem {
         return String(Math.round(v)).padStart(3) + "%"
     }
 
-    // Метка ровно в три знака — иначе колонка процентов гуляет от длины метки.
+    // The label is exactly three characters — otherwise the percent column wanders
+    // with the label length.
     function barRow(label, value) {
         return String(label).padEnd(3).slice(0, 3) + " " + bar(value) + " " + pct(value)
     }
@@ -349,7 +353,7 @@ PlasmoidItem {
         return (d > 0 ? d + "д " : "") + h + "ч " + m + "м"
     }
 
-    // ── Величины ──────────────────────────────────────────────────────────────
+    // ── Values ────────────────────────────────────────────────────────────────
     function nodeUsage(n) {
         const set = nodeCpus[n]
         if (!set) return 0
@@ -377,9 +381,9 @@ PlasmoidItem {
         return out
     }
 
-    // ── Сборка строк по описанию ──────────────────────────────────────────────
-    // Строка — это набор кусков с общим кеглем; часы стоят особняком, потому что
-    // в них два разных кегля на одной базовой линии.
+    // ── Building lines from the description ───────────────────────────────────
+    // A line is a set of parts with one common font size; the clock stands apart
+    // because it has two different font sizes on one baseline.
     function line(text, color) {
         return { kind: "parts", parts: [{ text: text, color: color || cFg }] }
     }
@@ -412,8 +416,8 @@ PlasmoidItem {
                 break
             }
             case "date": {
-                // ⚠️ Qt.formatDate берёт локаль C и выдаёт «Sunday, 20 September» даже
-                // при ru_RU. Русские названия даёт только toLocaleDateString.
+                // ⚠️ Qt.formatDate takes the C locale and produces "Sunday, 20 September"
+                // even under ru_RU. Only toLocaleDateString gives the Russian names.
                 const d = new Date().toLocaleDateString(Qt.locale(), "dddd, d MMMM")
                 out.push(line(d.charAt(0).toUpperCase() + d.slice(1), cVal))
                 break
@@ -480,7 +484,7 @@ PlasmoidItem {
                     }
                     out.push(line(note, cDim))
                 }
-                // Настроенные, но не смонтированные — показываем прочерком, а не молчанием.
+                // Configured but not mounted: say so instead of staying silent.
                 for (const m of (p.mounts || [])) {
                     if (!diskRows.some(d => d.target === m))
                         out.push(line(m.split("/").pop() + " | не смонтирован", cDim))
@@ -530,20 +534,20 @@ PlasmoidItem {
         return out
     }
 
-    // ── Разметка ──────────────────────────────────────────────────────────────
+    // ── Layout ────────────────────────────────────────────────────────────────
     fullRepresentation: Item {
-        // ⚠️ Никаких Layout.minimum*: они заставляют контейнер подгонять апплет под
-        // высоту текста, а она меняется, пока доезжают данные (диски, службы). Каждая
-        // такая подгонка сбрасывает виджет в угол 0,0 — проверено. Размер берётся из
-        // сохранённой геометрии, implicit* нужен только при первом появлении.
-        // ⚠️ Размер берётся из настроек, а НЕ из высоты текста. Пока подсказка
-        // разметки зависела от содержимого, контейнер пересобирал раскладку при
-        // каждом изменении числа строк (доехали диски, службы) и сбрасывал виджет
-        // в угол 0,0. Проверено. Постоянный размер — постоянное место.
+        // ⚠️ No Layout.minimum*: they make the containment fit the applet to the text
+        // height, and that height changes while the data arrives (disks, services). Each
+        // such fit resets the widget to the 0,0 corner — verified. The size comes from
+        // the saved geometry, implicit* is only needed on the first appearance.
+        // ⚠️ The size comes from the settings, NOT from the text height. While the
+        // layout hint depended on the content, the containment rebuilt the layout on
+        // every change of the line count (disks and services arriving) and reset the
+        // widget to the 0,0 corner. Verified. A constant size means a constant place.
         implicitWidth: Plasmoid.configuration.widgetWidth
         implicitHeight: Plasmoid.configuration.widgetHeight
 
-        // Строка виджета: моноширинный текст, цвет и кегль задаются на месте.
+        // A widget line: monospace text, the color and font size are set in place.
         component Line: Text {
             color: root.cFg
             font.family: Plasmoid.configuration.fontFamily
@@ -551,10 +555,10 @@ PlasmoidItem {
             renderType: Text.NativeRendering
         }
 
-        // ⚠️ Отступ рисуется ВНУТРИ виджета, а не задаётся его координатами:
-        // место, выставленное скриптом, plasmashell на следующем запуске всё равно
-        // сбрасывает в угол 0,0 — проверено. Так conky-подобный зазор от края
-        // держится независимо от того, куда контейнер поставил апплет.
+        // ⚠️ The padding is drawn INSIDE the widget instead of being set through its
+        // coordinates: a place set by a script is reset to the 0,0 corner by plasmashell
+        // on the next start anyway — verified. This way the conky-like gap from the edge
+        // holds regardless of where the containment put the applet.
         Column {
             id: column
             x: Plasmoid.configuration.padLeft
@@ -570,8 +574,8 @@ PlasmoidItem {
                     implicitWidth: modelData.kind === "clock" ? clockRow.implicitWidth : partsRow.implicitWidth
                     implicitHeight: modelData.kind === "clock" ? clockRow.implicitHeight : partsRow.implicitHeight
 
-                    // Row задаёт только x, поэтому мелкие секунды можно посадить
-                    // на базовую линию больших часов — иначе они «плывут» по высоте.
+                    // Row sets only x, so the small seconds can be placed on the
+                    // baseline of the big clock — otherwise they drift in height.
                     Row {
                         id: clockRow
                         visible: modelData.kind === "clock"

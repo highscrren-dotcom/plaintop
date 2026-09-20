@@ -7,14 +7,14 @@ import org.kde.kcmutils as KCM
 
 import "../code/description.js" as Description
 
-// Страница строится по словарю типов блоков (schema/blocks.json → description.js),
-// а не по зашитому списку: новый тип блока не должен требовать правки интерфейса.
+// The page is built from the vocabulary of block types (schema/blocks.json → description.js),
+// not from a hardcoded list: a new block type must not require UI changes.
 KCM.SimpleKCM {
     id: page
 
     property string cfg_blocksJson: ""
 
-    // Рабочая копия описания; в настройки уходит строкой JSON.
+    // Working copy of the description; it goes into the settings as a JSON string.
     property var blocks: []
     property int selected: -1
 
@@ -25,7 +25,7 @@ KCM.SimpleKCM {
         if (cfg_blocksJson && cfg_blocksJson.length > 0) {
             try { parsed = JSON.parse(cfg_blocksJson) } catch (e) { parsed = null }
         }
-        // Пусто или мусор — берём раскладку, сгенерированную из schema/widget.json.
+        // Empty or garbage — take the layout generated from schema/widget.json.
         blocks = JSON.parse(JSON.stringify(
             (parsed && parsed.length > 0) ? parsed : Description.BLOCKS))
         refresh()
@@ -61,7 +61,7 @@ KCM.SimpleKCM {
         save()
     }
 
-    // Список типов для добавления берётся из словаря — руками он нигде не перечислен.
+    // The list of types to add comes from the vocabulary — nowhere is it listed by hand.
     readonly property var types: {
         const out = []
         for (const key in Description.VOCAB)
@@ -74,7 +74,7 @@ KCM.SimpleKCM {
         if (!spec) return
         const params = ({})
         for (const key in (spec.params || {})) params[key] = spec.params[key].default
-        // id должен быть своим: по нему блок отличается от соседей того же типа.
+        // The id must be unique: it tells the block apart from siblings of the same type.
         let n = 1
         while (blocks.some(b => b.id === type + n)) n++
         const copy = blocks.slice()
@@ -103,7 +103,7 @@ KCM.SimpleKCM {
         save()
     }
 
-    // Параметры выбранного блока, разобранные по словарю: тип, подпись, значение.
+    // Parameters of the selected block, resolved through the vocabulary: type, label, value.
     readonly property var params: {
         if (selected < 0 || selected >= blocks.length) return []
         const b = blocks[selected]
@@ -237,7 +237,7 @@ KCM.SimpleKCM {
             Repeater {
                 model: page.params
 
-                // Редактор параметра выбирается по типу из словаря.
+                // The parameter editor is picked by the type from the vocabulary.
                 Item {
                     required property var modelData
                     Kirigami.FormData.label: modelData.name + ":"

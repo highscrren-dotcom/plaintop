@@ -1,5 +1,6 @@
--- Полоски из слешей в стиле Rainmeter PlainExt.
--- Значение функция берёт сама через conky_parse — так проще, чем прокидывать аргументом.
+-- Slash bars in the style of the PlainExt Rainmeter skin.
+-- Each function fetches the value itself through conky_parse — simpler than passing it
+-- as an argument.
 local WIDTH = 18
 
 local function bar(pct)
@@ -18,7 +19,7 @@ local SRC = {
 
 function conky_bar(what)
     if what == "gpu" then
-        -- у conky есть ${nvidia gpuutil}, но он не везде отдаёт число: берём напрямую
+        -- conky has ${nvidia gpuutil}, but it does not always return a number: query it directly
         local f = io.popen("nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null")
         if not f then return bar(0) end
         local v = f:read("*l"); f:close()
@@ -27,9 +28,9 @@ function conky_bar(what)
     return bar(conky_parse(SRC[what] or "0"))
 end
 
--- ── Загрузка по сокетам ───────────────────────────────────────────────────────
--- Считаем сами из /proc/stat, а не через 72 вызова ${cpu cpuN}: дешевле и точнее.
--- Раскладка ядер по узлам NUMA снята с lscpu на этой машине:
+-- ── Per-socket load ──────────────────────────────────────────────────────────
+-- Computed from /proc/stat instead of 72 ${cpu cpuN} calls: cheaper and more accurate.
+-- The core-to-NUMA-node layout was read from lscpu on this machine:
 --   node0 = 0-17,36-53   node1 = 18-35,54-71
 local SOCK = { [0] = {}, [1] = {} }
 for i = 0, 17  do SOCK[0][i] = true end

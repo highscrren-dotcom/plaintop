@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Разложить plaintop в систему и запустить.
+# Deploy plaintop into the system and start it.
 #
-# Источник истины — каталоги conky/ и plasmoid/ этого репозитория. В ~/.config/conky
-# и ~/.local/share/plasma/plasmoids файлы попадают отсюда, а не наоборот:
-# правки делаются в репо, затем ./install.sh.
+# Source of truth: the conky/ and plasmoid/ directories of this repo. Files flow from
+# here into ~/.config/conky and ~/.local/share/plasma/plasmoids, never the other way
+# around: edit in the repo, then run ./install.sh.
 set -uo pipefail
 cd "$(dirname "$0")"
 REPO=$PWD
@@ -46,15 +46,15 @@ for w, cls in ws:
 PY
 }
 
-# Плазмоид ставится идемпотентно: kpackagetool6 сам решает, установка это или
-# обновление, а состояние применяется в любом случае.
+# The plasmoid installs idempotently: kpackagetool6 decides by itself whether this is
+# an install or an upgrade, and the state is applied either way.
 plasmoid_install() {
     echo "== Плазмоид"
     if ! command -v kpackagetool6 >/dev/null; then
         red "  ✗ kpackagetool6 не найден — плазмоид не поставить"; return 1
     fi
-    # Описание → пакет. Негодное описание останавливает установку: лучше
-    # отказаться здесь, чем увидеть пустой виджет и искать причину в QML.
+    # Schema -> package. A bad schema aborts the install: better to refuse here than
+    # to get an empty widget and hunt for the cause in QML.
     if ! python3 "$REPO/plasmoid/generate.py"; then
         red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
     fi
@@ -65,9 +65,10 @@ plasmoid_install() {
     else
         red "  ✗ $PLASMOID_ID — $mode не прошёл"; return 1
     fi
-    # ⚠️ Проверено 20.09.2026: plasmashell держит QML пакета в кэше. Переустановки мало,
-    # пересоздания апплета тоже — новая разметка появляется только после перезапуска
-    # оболочки. Поэтому состояние доводится до конца здесь, а не оставляется пользователю.
+    # ⚠️ Verified 2026-09-20: plasmashell caches the package QML. Reinstalling is not
+    # enough, and neither is re-creating the applet — the new layout shows up only
+    # after the shell restarts. So we drive the state to completion here instead of
+    # leaving it to the user.
     if systemctl --user --quiet is-active plasma-plasmashell.service; then
         systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell перезапущен — виджет с новым QML"
     else
@@ -76,21 +77,21 @@ plasmoid_install() {
     plasmoid_place
 }
 
-# Погасить conky, пока идёт перенос на плазмоид, — и вернуть обратно.
-# ⚠️ Только `pkill -x conky`: шаблон `pkill -f 'conky -c'` совпадает с командной
-# строкой собственной оболочки и убивает её.
+# Stop conky while the move to the plasmoid is under way — and bring it back.
+# ⚠️ Use `pkill -x conky` only: the pattern `pkill -f 'conky -c'` matches the command
+# line of our own shell and kills it.
 conky_off() {
     echo "== Гашу conky"
     pkill -x conky && grn "  ✓ процесс остановлен" || dim "  conky и так не запущен"
     if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
-        # Hidden=true — штатный способ XDG выключить автозапуск, файл остаётся на месте.
+        # Hidden=true is the standard XDG way to disable autostart; the file stays in place.
         grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop" \
             || printf 'Hidden=true\n' >> "$AUTOSTART/conky-plainext.desktop"
         grn "  ✓ автозапуск выключен (Hidden=true)"
     else
         dim "  автозапуска и так нет"
     fi
-    # excludeApps в ksmserverrc уже не даёт сессии восстановить conky при входе.
+    # excludeApps in ksmserverrc already stops the session from restoring conky at login.
     echo; status
 }
 
@@ -107,7 +108,7 @@ conky_on() {
     echo; status
 }
 
-# Скриптинг plasmashell отвечает не сразу после перезапуска — ждём, а не гадаем.
+# plasmashell scripting does not answer right after a restart — wait, do not guess.
 plasmashell_ready() {
     local i
     for i in $(seq 1 30); do
@@ -118,15 +119,16 @@ plasmashell_ready() {
     return 1
 }
 
-# Идемпотентно: если виджет уже на рабочем столе — ничего не делаем, иначе сажаем на место.
+# Idempotent: if the widget is already on the desktop, do nothing; otherwise place it.
 plasmoid_place() {
     local n
     n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
     if [ "${n:-0}" -gt 0 ]; then dim "  уже на рабочем столе — место не трогаю"; return 0; fi
     plasmashell_ready || { red "  ✗ plasmashell не отвечает — добавь виджет вручную"; return 1; }
-    # ⚠️ Координаты в addWidget бесполезны: место и размер задаются подсказками
-    # Layout.* внутри виджета, а положение контейнер всё равно сбрасывает в угол.
-    # Зазор от края рисуется самим виджетом (настройки «Отступ слева/сверху»).
+    # ⚠️ Coordinates in addWidget are useless: position and size come from the Layout.*
+    # hints inside the widget, and the container resets the position to the corner
+    # anyway. The widget draws the gap from the screen edge itself (its left/top
+    # offset settings).
     local id
     id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
         "print(desktops()[0].addWidget(\"$PLASMOID_ID\").id)" 2>/dev/null | tr -dc '0-9')
@@ -143,7 +145,7 @@ plasmoid_status() {
         cmp -s "$f" "$PLASMOID_DEST/$rel" || { red "  ≠ $rel — РАЗОШЁЛСЯ с репо"; diff=1; }
     done < <(find "$PLASMOID_SRC" -type f)
     [ $diff -eq 0 ] && grn "  ✓ установлен, файлы совпадают с репо"
-    # Присутствие на рабочем столе читается из конфига сессии, а не угадывается.
+    # Presence on the desktop is read from the session config, not guessed.
     local n; n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
     if [ "${n:-0}" -gt 0 ]; then grn "  ✓ добавлен на рабочий стол ($n шт.)"
     else dim "  на рабочий стол не добавлен"; fi
@@ -156,7 +158,7 @@ status() {
     echo "== Разложено"
     for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
         if [ -f "$DEST/$f" ]; then
-            # Сравниваем с подставленным @HOME@, иначе проверка врёт на каждом файле.
+            # Compare against the @HOME@-substituted text, or the check lies on every file.
             if sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" | cmp -s - "$DEST/$f"; then grn "  ✓ $f — совпадает с репо"
             else red "  ≠ $f — РАЗОШЁЛСЯ с репо"; fi
         else red "  ✗ $f — не разложен"; fi
@@ -176,9 +178,10 @@ deps() {
     command -v conky >/dev/null && grn "  ✓ conky $(conky --version 2>/dev/null | head -1 | awk '{print $2}')" || { red "  ✗ conky"; miss=1; }
     python3 -c "import Xlib" 2>/dev/null && grn "  ✓ python-xlib" || { red "  ✗ python-xlib (нужен для click-through)"; miss=1; }
     command -v sensors >/dev/null && grn "  ✓ lm_sensors" || { red "  ✗ lm_sensors (температуры и обороты)"; miss=1; }
-    # ⚠️ Без конвейера намеренно: при set -o pipefail связка `fc-list | grep -q` врёт.
-    # grep -q выходит на первом совпадении, fc-list ловит SIGPIPE, конвейер возвращает
-    # ошибку — и проверка уходит в «не найдено», хотя шрифт есть.
+    # ⚠️ No pipeline here, on purpose: under set -o pipefail the `fc-list | grep -q`
+    # combination lies. grep -q exits on the first match, fc-list takes SIGPIPE, the
+    # pipeline returns an error — and the check reports "not found" although the font
+    # is installed.
     local fam; fam=$(fc-match -f '%{family}' 'JetBrainsMono Nerd Font Mono' 2>/dev/null)
     case "$fam" in
         *"JetBrainsMono Nerd Font Mono"*) grn "  ✓ шрифт JetBrainsMono Nerd Font Mono" ;;
@@ -187,36 +190,52 @@ deps() {
     return $miss
 }
 
+# Deploy the conky files without starting it: conky may be switched off on purpose
+# while the files in the repository have already moved on.
+conky_deploy() {
+    echo; echo "== Раскладываю"
+    mkdir -p "$DEST" "$AUTOSTART" "$APPS"
+    # ⚠️ Deploying files must not flip conky on. Copying the autostart entry overwrites
+    # the Hidden=true put there by --conky-off, so remember it and put it back.
+    local was_hidden=0
+    grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop" 2>/dev/null && was_hidden=1
+    for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
+        # ⚠️ @HOME@ is substituted here: conky itself does not expand environment variables
+        # in the config, and hardcoding /home/<someone> into the repo is not an option.
+        sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" > "$DEST/$f" && echo "  → $DEST/$f"
+    done
+    chmod +x "$DEST"/*.sh "$DEST"/*.py
+    cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && echo "  → $AUTOSTART/conky-plainext.desktop"
+    # A mask over /usr/share/applications/conky.desktop: otherwise KWin starts the packaged
+    # conky with its default config. The user directory comes first in XDG_DATA_DIRS.
+    cp "$REPO/conky/conky-mask.desktop" "$APPS/conky.desktop" && echo "  → $APPS/conky.desktop (заглушка)"
+
+    # excludeApps must match own_window_class, or the exclusion silently does nothing.
+    if command -v kwriteconfig6 >/dev/null; then
+        kwriteconfig6 --file ksmserverrc --group General --key excludeApps 'conky,conky-plainext'
+        echo "  → ksmserverrc: excludeApps=conky,conky-plainext"
+    fi
+    [ "$was_hidden" = 1 ] && printf 'Hidden=true\n' >> "$AUTOSTART/conky-plainext.desktop"
+}
+
 case "${1:-}" in
   --status)      status; exit 0 ;;
   --check-input) input_shape; exit 0 ;;
   --deps)        deps; exit $? ;;
   --plasmoid)    plasmoid_install; exit $? ;;
+  --conky-files) conky_deploy; echo; status; exit 0 ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--conky-off|--conky-on]"; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }
 
-echo; echo "== Раскладываю"
-mkdir -p "$DEST" "$AUTOSTART" "$APPS"
-for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
-    # ⚠️ @HOME@ подставляется здесь: сам conky переменные окружения в конфиге
-    # не раскрывает, а зашивать /home/<кто-то> в репозиторий нельзя.
-    sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" > "$DEST/$f" && echo "  → $DEST/$f"
-done
-chmod +x "$DEST"/*.sh "$DEST"/*.py
-cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && echo "  → $AUTOSTART/conky-plainext.desktop"
-# Заглушка поверх /usr/share/applications/conky.desktop: иначе KWin поднимет пакетный
-# conky с дефолтным конфигом. Каталог пользователя идёт раньше в XDG_DATA_DIRS.
-cp "$REPO/conky/conky-mask.desktop" "$APPS/conky.desktop" && echo "  → $APPS/conky.desktop (заглушка)"
+conky_deploy
 
-# excludeApps должен совпадать с own_window_class, иначе исключение молча не сработает.
-if command -v kwriteconfig6 >/dev/null; then
-    kwriteconfig6 --file ksmserverrc --group General --key excludeApps 'conky,conky-plainext'
-    echo "  → ksmserverrc: excludeApps=conky,conky-plainext"
-fi
+# A full install means "deploy and run", so the autostart entry is enabled here —
+# unlike a plain deploy, which keeps whatever state it found.
+sed -i '/^Hidden=true$/d' "$AUTOSTART/conky-plainext.desktop"
 
 echo; echo "== Запускаю"
 "$DEST/start.sh" >/dev/null 2>&1 &

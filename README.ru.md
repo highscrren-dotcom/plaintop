@@ -54,6 +54,10 @@ cd plaintop
 и без перезапуска правка молча не доезжает. Это и ещё десяток ловушек —
 в [docs/GOTCHAS.ru.md](docs/GOTCHAS.ru.md).
 
+У реализации на conky свои ключи: `./install.sh` раскладывает и запускает её,
+`--conky-files` раскладывает не запуская (нужно, пока она погашена),
+`--conky-off` и `--conky-on` гасят и возвращают.
+
 **Нужно:** Plasma 6 с `ksystemstats` (идёт в составе Plasma), `python3` для генератора и
 моноширинный шрифт — по умолчанию `JetBrainsMono Nerd Font Mono`. Реализации на conky
 дополнительно нужны `conky`, `python-xlib` и `lm_sensors`.

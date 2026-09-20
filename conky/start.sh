@@ -1,17 +1,18 @@
 #!/usr/bin/env sh
-# Единая точка запуска монитора рабочего стола.
+# Single entry point for starting the desktop monitor.
 #
-# Почему не просто «запустить conky»:
-#   * пакет conky ставит /usr/share/applications/conky.desktop с Exec=conky --daemonize,
-#     и KWin при восстановлении сессии поднимает ИМЕННО его — с дефолтным конфигом.
-#     Поэтому чужие экземпляры гасим, а не отступаем перед ними (ранняя версия скрипта
-#     делала ровно наоборот и после перезагрузки на экране оставался чужой виджет);
-#   * у conky нет настройки click-through — гасим область ввода отдельным скриптом,
-#     иначе монитор перехватывает клики по рабочему столу.
+# Why not just "run conky":
+#   * the conky package installs /usr/share/applications/conky.desktop with
+#     Exec=conky --daemonize, and on session restore KWin starts EXACTLY that one —
+#     with the default config. So we kill foreign instances instead of yielding to
+#     them (an early version of this script did the opposite, and after a reboot a
+#     foreign widget stayed on screen);
+#   * conky has no click-through setting — we clear the input region with a separate
+#     script, or the monitor intercepts clicks on the desktop.
 set -u
 CONF="$HOME/.config/conky/plainext.conf"
 
-mine() {   # выводит pid'ы conky, запущенных с НАШИМ конфигом
+mine() {   # prints the pids of conky instances started with OUR config
     for pid in $(pgrep -x conky 2>/dev/null); do
         if tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null | grep -qF -- "$CONF"; then
             echo "$pid"
@@ -19,7 +20,7 @@ mine() {   # выводит pid'ы conky, запущенных с НАШИМ к�
     done
 }
 
-others() { # выводит pid'ы всех прочих conky
+others() { # prints the pids of all other conky instances
     for pid in $(pgrep -x conky 2>/dev/null); do
         if ! tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null | grep -qF -- "$CONF"; then
             echo "$pid"
@@ -34,10 +35,10 @@ done
 [ -n "$(others)" ] && sleep 1
 for pid in $(others); do kill -9 "$pid" 2>/dev/null; done
 
-# Запустить conky может не только этот скрипт: восстановление сессии KDE поднимает его
-# напрямую по сохранённой команде, минуя нас. Поэтому запуск — условный, а вот
-# click-through применяется ВСЕГДА, кем бы conky ни был запущен. Ранняя версия скрипта
-# при виде работающего conky просто выходила — и окно оставалось ловящим клики.
+# This script is not the only thing that starts conky: KDE session restore launches it
+# directly from the saved command, bypassing us. So the start is conditional, but
+# click-through is applied ALWAYS, whoever started conky. An early version of this
+# script simply exited when it saw conky running — and the window kept catching clicks.
 CONKY_PID=""
 if [ -z "$(mine)" ]; then
     conky -c "$CONF" &

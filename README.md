@@ -52,6 +52,10 @@ the desktop yet, the installer adds it; you can also add it by hand through *Add
 without a restart your edit silently does not arrive. That and a dozen other traps are in
 [docs/GOTCHAS.md](docs/GOTCHAS.md).
 
+The conky implementation has its own switches: `./install.sh` deploys and starts it,
+`--conky-files` deploys without starting (useful while it is switched off),
+`--conky-off` and `--conky-on` turn it off and back on.
+
 **Requirements:** Plasma 6 with `ksystemstats` (ships with Plasma), `python3` for the
 generator, and a monospace font — `JetBrainsMono Nerd Font Mono` by default. The conky
 implementation additionally needs `conky`, `python-xlib` and `lm_sensors`.

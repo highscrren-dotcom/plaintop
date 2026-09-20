@@ -61,5 +61,5 @@
 s1dPC: CachyOS, Plasma 6.7.5, KWin Wayland, Qt 6.11.2. conky 1.24.2 (погашен),
 `lm_sensors`, `python-xlib`, `ttf-jetbrains-mono-nerd`.
 
-⚠️ Правила проекта — `CLAUDE.md`, метод работы — `docs/WORKFLOW.md`,
-грабли — `docs/GOTCHAS.md` (читать до правки конфигов и QML).
+⚠️ Метод работы — `docs/WORKFLOW.md`, грабли — `docs/GOTCHAS.md`
+(читать до правки конфигов и QML).

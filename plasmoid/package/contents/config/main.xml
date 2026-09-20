@@ -30,8 +30,8 @@
     <entry name="updateInterval" type="Int">
       <default>1000</default>
     </entry>
-    <!-- Раскладка блоков одной строкой JSON. Пусто — берётся та, что сгенерирована
-         из schema/widget.json и лежит в пакете (contents/code/description.js). -->
+    <!-- Block layout as a single JSON string. When empty, the layout generated from
+         schema/widget.json and shipped in the package is used (contents/code/description.js). -->
     <entry name="blocksJson" type="String">
       <default></default>
     </entry>

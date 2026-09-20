@@ -28,7 +28,7 @@ reproduction beats a paragraph of reasoning.
 | **A generator for another engine** | the description layer is engine-agnostic on purpose — waybar, eww, AGS, or back to conky |
 | **Hardware and distro portability** | the defaults describe one machine; every hardcoded sensor id you replace with discovery is a win |
 | **A trap you hit** | a PR to `docs/GOTCHAS.md` with a reproduction is worth as much as code |
-| **Translation** | docs are English + Russian mirrors (`FILE.md` / `FILE.ru.md`); code comments are still Russian |
+| **Translation** | docs are English + Russian mirrors (`FILE.md` / `FILE.ru.md`); the strings the user sees are still Russian |
 
 Before adding a block type, check whether the open-ended ones already cover you: `command`
 runs any shell command on its own interval, `sensor` shows any `ksystemstats` sensor by id.
@@ -119,8 +119,10 @@ The generator needs no changes: validation is driven by the vocabulary.
   reboots.
 - **New rules become checks first.** If a rule can live in `install.sh` as a check, put it
   there rather than in a document.
-- Code comments are currently Russian throughout. English in new code is welcome; a PR
-  that translates the existing ones is welcome too.
+- **Comments are English. User-visible strings are not, yet.** The widget's settings
+  labels, the rows it draws (`ОЗУ`, `аптайм`, `не смонтирован`) and `install.sh` output
+  are still Russian. Doing that properly means real i18n — `i18n()` calls with
+  translation catalogs — which is an open invitation, not a decided design.
 
 ## Commits and pull requests
 

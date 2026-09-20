@@ -75,10 +75,10 @@ there so that they can confirm the session picked up correctly.
 
 ## Writing rules
 
-- **Language.** `STATE.md`, `JOURNAL.md` and `CLAUDE.md` are the working log and stay in
-  Russian. Everything written for readers of the repository — `README`, `CONTRIBUTING`,
-  `GOTCHAS`, `DECISIONS`, this file — is English first, with a `FILE.ru.md` mirror kept
-  in step in the same commit.
+- **Language.** `STATE.md` and `JOURNAL.md` are the working log and stay in Russian.
+  Everything written for readers of the repository — `README`, `CONTRIBUTING`, `GOTCHAS`,
+  `DECISIONS`, this file — is English first, with a `FILE.ru.md` mirror kept in step in
+  the same commit. Code comments are English.
 - **Verified by running it**, not from memory. If a claim can be executed — execute it.
 - **Short.** `STATE.md` — one screen at most. A journal entry — two screens at most.
 - **No retelling the code.** Code is read in the code; the journal gets what is not

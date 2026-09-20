@@ -12,3 +12,6 @@ dist/
 
 # Генерируется plasmoid/generate.py из schema/*.json
 plasmoid/package/contents/code/description.js
+
+# Рабочие инструкции сессии — только локально, в публичный репозиторий не идут
+CLAUDE.md

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Сделать окно conky прозрачным для мыши.
+"""Make the conky window transparent to the mouse.
 
-У conky нет настройки click-through: в конфиге только шесть ключей own_window_*.
-Поэтому ставим пустой input-region через расширение X Shape — окно продолжает
-рисоваться, но events мыши сквозь него уходят на рабочий стол.
+conky has no click-through setting: the config offers only six own_window_* keys.
+So we set an empty input region through the X Shape extension — the window keeps
+drawing, but mouse events pass through it to the desktop.
 
-Тип окна при этом обязан остаться 'normal': с 'desktop' и 'override' KWin
-перестаёт композитить окно и фон становится чёрным непрозрачным.
+The window type must stay 'normal': with 'desktop' or 'override' KWin stops
+compositing the window and the background turns opaque black.
 """
 import sys
 import time
@@ -41,7 +41,7 @@ def main():
         wins = find_conky(root, [])
         if wins:
             for w in wins:
-                # пустой список прямоугольников = пустая область ввода
+                # an empty rectangle list means an empty input region
                 w.shape_rectangles(shape.SO.Set, shape.SK.Input, X.YXBanded, 0, 0, [])
             d.sync()
             print(f"input-shape очищен у окон: {[hex(w.id) for w in wins]}")
