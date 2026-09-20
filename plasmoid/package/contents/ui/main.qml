@@ -42,6 +42,13 @@ PlasmoidItem {
         "memory/physical/usedPercent", "memory/physical/used", "memory/physical/total",
         "os/system/hostname", "os/system/name", "os/kernel/version",
         "lmsensors/nct6779-isa-0a20/fan1", "lmsensors/nct6779-isa-0a20/fan2",
+        // ⚠️ Датчики lm_sensors адресуются по ИМЕНИ чипа, не по индексу hwmon:
+        // индексы плавают между перезагрузками.
+        "lmsensors/nvme-pci-0500/temp1",
+        "gpu/gpu0/usage", "gpu/gpu0/temperature", "gpu/gpu0/usedVram",
+        "gpu/gpu0/totalVram", "gpu/gpu0/power", "gpu/gpu0/name",
+        "network/" + Plasmoid.configuration.netInterface + "/download",
+        "network/" + Plasmoid.configuration.netInterface + "/upload",
         "os/system/uptime"
     ].concat(coreIds)
 
@@ -82,6 +89,7 @@ PlasmoidItem {
     // зашивать её числами нельзя — на другой машине она другая.
     property var nodeCpus: []
     property string cpuModel: ""
+    property string boardLine: ""
     property int cpuSockets: 0
     property int cpuCores: 0
     property int cpuThreads: 0
@@ -89,12 +97,17 @@ PlasmoidItem {
     P5Support.DataSource {
         id: topology
         engine: "executable"
-        connectedSources: ["cat /sys/devices/system/node/node*/cpulist", "LC_ALL=C lscpu"]
+        connectedSources: [
+            "cat /sys/devices/system/node/node*/cpulist",
+            "LC_ALL=C lscpu",
+            "cat /sys/devices/virtual/dmi/id/board_vendor /sys/devices/virtual/dmi/id/board_name /sys/devices/virtual/dmi/id/bios_version"
+        ]
 
         onNewData: function(source, data) {
             if (data["exit code"] === 0) {
                 if (source.indexOf("cpulist") >= 0) parseNodes(String(data.stdout))
-                else parseLscpu(String(data.stdout))
+                else if (source.indexOf("lscpu") >= 0) parseLscpu(String(data.stdout))
+                else parseBoard(String(data.stdout))
             }
             // Разовое чтение: топология и модель процессора за сеанс не меняются.
             disconnectSource(source)
@@ -111,6 +124,11 @@ PlasmoidItem {
                 nodes.push(set)
             }
             root.nodeCpus = nodes
+        }
+
+        function parseBoard(out) {
+            const l = out.trim().split("\n")
+            if (l.length >= 3) root.boardLine = l[0] + " " + l[1] + "  (BIOS " + l[2] + ")"
         }
 
         function parseLscpu(out) {
@@ -131,6 +149,52 @@ PlasmoidItem {
             root.cpuSockets = sockets
             root.cpuCores = sockets * perSocket
             root.cpuThreads = sockets * perSocket * perCore
+        }
+    }
+
+    property var diskRows: []
+
+    P5Support.DataSource {
+        id: slow
+        engine: "executable"
+        // ⚠️ Раз в 10 с, а не каждый тик: каждый запуск — это fork в процессе оболочки.
+        interval: 10000
+        connectedSources: [
+            "df -B1 --output=target,size,used,pcent " + Plasmoid.configuration.mounts.join(" ") + " 2>/dev/null"
+        ]
+
+        onNewData: function(source, data) {
+            const rows = []
+            // Первая строка — заголовок df, он локализован; разбираем по позициям.
+            for (const line of String(data.stdout).trim().split("\n").slice(1)) {
+                const f = line.trim().split(/\s+/)
+                if (f.length < 4) continue
+                rows.push({ target: f[0], size: Number(f[1]), used: Number(f[2]),
+                            pct: Number(String(f[3]).replace("%", "")) })
+            }
+            root.diskRows = rows
+        }
+    }
+
+    property var serviceRows: []
+
+    P5Support.DataSource {
+        id: services
+        engine: "executable"
+        // Службы меняются редко, а каждый запуск — fork: раз в 15 с достаточно.
+        interval: 15000
+        // Скрипт лежит в самом пакете; движок исполняет команду через shell,
+        // поэтому достаточно отдать ему путь без схемы file://.
+        connectedSources: ["bash " + Qt.resolvedUrl("../code/services.sh").toString().replace("file://", "")]
+
+        onNewData: function(source, data) {
+            const rows = []
+            for (const line of String(data.stdout).trim().split("\n")) {
+                const i = line.indexOf("|")
+                if (i < 0) continue
+                rows.push({ label: line.slice(0, i), value: line.slice(i + 1) })
+            }
+            root.serviceRows = rows
         }
     }
 
@@ -261,7 +325,7 @@ PlasmoidItem {
     function topRows(model, column, format) {
         tick
         const out = []
-        const n = Math.min(5, model.rowCount())
+        const n = Math.min(Plasmoid.configuration.topCount, model.rowCount())
         for (let i = 0; i < n; i++) {
             const name = String(model.data(model.index(i, 0), Proc.ProcessDataModel.Value) || "")
             const v = model.data(model.index(i, column), Proc.ProcessDataModel.Value)
@@ -272,6 +336,62 @@ PlasmoidItem {
 
     readonly property var topCpu: topRows(byCpu, 1, v => comma(v, 1) + "%")
     readonly property var topMem: topRows(byMem, 2, v => comma(v / 1024 / 1024, 1) + " GiB")
+
+    readonly property real gpuUsage: (tick, num("gpu/gpu0/usage", 0))
+
+    readonly property string vramLine: {
+        tick
+        const used = num("gpu/gpu0/usedVram", 0), total = num("gpu/gpu0/totalVram", 0)
+        const t = Math.round(num("gpu/gpu0/temperature", 0))
+        const w = Math.round(num("gpu/gpu0/power", 0))
+        return "VRAM " + comma(used / 1024 / 1024 / 1024, 1) + "/" + comma(total / 1024 / 1024 / 1024, 1)
+             + " GB  temp " + t + "°C  pwr " + w + "W"
+    }
+
+    // Каждая файловая система — две строки: полоска с процентом и подпись под ней.
+    readonly property var diskLines: {
+        tick
+        const out = []
+        for (const d of diskRows) {
+            const name = d.target === "/" ? "/" : d.target.split("/").pop()
+            out.push({ bar: true, text: name.padEnd(3).slice(0, 3) + " " + bar(d.pct) + " " + pct(d.pct) })
+            let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
+            if (d.target === "/") {
+                const t = Math.round(num("lmsensors/nvme-pci-0500/temp1", 0))
+                if (t > 0) note += "  nvme " + t + "°C"
+            }
+            out.push({ bar: false, text: note })
+        }
+        // Настроенные, но не смонтированные — показываем прочерком, а не молчанием.
+        for (const m of Plasmoid.configuration.mounts) {
+            if (!diskRows.some(d => d.target === m))
+                out.push({ bar: false, text: m.split("/").pop() + " | не смонтирован" })
+        }
+        return out
+    }
+
+    function speed(bytes) {
+        if (bytes >= 1024 * 1024) return comma(bytes / 1024 / 1024, 1) + " MiB/s"
+        if (bytes >= 1024) return comma(bytes / 1024, 0) + " KiB/s"
+        return Math.round(bytes) + " B/s"
+    }
+
+    readonly property string netLine: {
+        tick
+        const iface = Plasmoid.configuration.netInterface
+        return iface + "  Dl " + speed(num("network/" + iface + "/download", 0))
+             + "  Ul " + speed(num("network/" + iface + "/upload", 0))
+    }
+
+    readonly property var passport: {
+        tick
+        const rows = []
+        if (cpuModel) rows.push("CPU | " + (cpuSockets > 1 ? cpuSockets + "x " : "") + cpuModel)
+        const gpu = sval("gpu/gpu0/name")
+        if (gpu) rows.push("GPU | " + gpu)
+        if (boardLine) rows.push("MBD | " + boardLine)
+        return rows
+    }
 
     readonly property string sep: "-".repeat(35)
 
@@ -348,7 +468,44 @@ PlasmoidItem {
             }
 
             Line { text: root.sep; color: root.cDim }
+
+            Line { text: "GPU " + root.bar(root.gpuUsage) + " " + root.pct(root.gpuUsage) }
+            Line { text: root.vramLine; color: root.cDim }
+
+            Line { text: root.sep; color: root.cDim }
+
+            Repeater {
+                model: root.diskLines
+                Line {
+                    required property var modelData
+                    text: modelData.text
+                    color: modelData.bar ? root.cFg : root.cDim
+                }
+            }
+
+            Line { text: root.sep; color: root.cDim }
+
             Line { text: root.uptimeLine }
+            Line { text: root.netLine; color: root.cDim }
+
+            Line { text: root.sep; color: root.cDim }
+
+            Repeater {
+                model: root.serviceRows
+                Row {
+                    required property var modelData
+                    spacing: 0
+                    Line { text: modelData.label.padEnd(21); color: root.cDim }
+                    Line { text: "| " + modelData.value }
+                }
+            }
+
+            Line { text: root.sep; color: root.cDim }
+
+            Repeater {
+                model: root.passport
+                Line { required property string modelData; text: modelData; color: root.cDim }
+            }
         }
     }
 }

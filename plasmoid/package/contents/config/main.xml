@@ -18,6 +18,15 @@
     <entry name="updateInterval" type="Int">
       <default>1000</default>
     </entry>
+    <entry name="topCount" type="Int">
+      <default>5</default>
+    </entry>
+    <entry name="netInterface" type="String">
+      <default>enp4s0</default>
+    </entry>
+    <entry name="mounts" type="StringList">
+      <default>/,/run/media/s1dd1/s1d</default>
+    </entry>
   </group>
 
 </kcfg>

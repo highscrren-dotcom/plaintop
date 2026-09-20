@@ -12,6 +12,10 @@ KCM.SimpleKCM {
     property alias cfg_fontFamily: fontField.text
     property alias cfg_fontSize: sizeField.value
     property alias cfg_updateInterval: intervalField.value
+    property alias cfg_topCount: topField.value
+    property alias cfg_netInterface: netField.text
+    // ⚠️ StringList в QML — массив; текстовое поле хранит его через запятую.
+    property var cfg_mounts: []
 
     Kirigami.FormLayout {
         anchors.left: parent.left
@@ -42,6 +46,27 @@ KCM.SimpleKCM {
             from: 200
             to: 10000
             stepSize: 100
+        }
+
+        SpinBox {
+            id: topField
+            Kirigami.FormData.label: i18n("Процессов в топе:")
+            from: 0
+            to: 15
+        }
+
+        TextField {
+            id: netField
+            Kirigami.FormData.label: i18n("Сетевой интерфейс:")
+            Layout.fillWidth: true
+        }
+
+        TextField {
+            id: mountsField
+            Kirigami.FormData.label: i18n("Точки монтирования:")
+            Layout.fillWidth: true
+            text: page.cfg_mounts.join(", ")
+            onTextChanged: page.cfg_mounts = text.split(",").map(s => s.trim()).filter(s => s.length > 0)
         }
     }
 }
