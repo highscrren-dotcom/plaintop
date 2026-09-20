@@ -40,7 +40,7 @@ GPU с VRAM, температурой и потреблением, файлов�
 ## Установка
 
 ```bash
-git clone https://github.com/s1dd1/plaintop.git
+git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
 ./install.sh --plasmoid     # сгенерировать, поставить пакет, перезапустить оболочку, посадить виджет
 ./install.sh --status       # что установлено и что работает

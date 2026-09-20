@@ -39,7 +39,7 @@ Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 ## Install
 
 ```bash
-git clone https://github.com/s1dd1/plaintop.git
+git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
 ./install.sh --plasmoid     # generate, install the package, restart the shell, place the widget
 ./install.sh --status       # what is installed and what is running
