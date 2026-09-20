@@ -1,78 +1,194 @@
 {
   "_": "Словарь типов блоков. Диалог настроек строится по нему, а не по списку в коде: новый тип блока не должен требовать правки интерфейса.",
-
   "header": {
     "name": "Заголовок",
     "hint": "Строка вверху; к ней приписывается имя хоста",
     "params": {
-      "text": { "type": "string", "name": "Текст", "default": "s1dd1\\Dashboard" },
-      "hostname": { "type": "bool", "name": "Дописывать имя хоста", "default": true }
+      "text": {
+        "type": "string",
+        "name": "Текст",
+        "default": "s1dd1\\Dashboard"
+      },
+      "hostname": {
+        "type": "bool",
+        "name": "Дописывать имя хоста",
+        "default": true
+      }
     }
   },
-
   "clock": {
     "name": "Часы",
     "params": {
-      "seconds": { "type": "bool", "name": "Секунды мелким кеглем", "default": true }
+      "seconds": {
+        "type": "bool",
+        "name": "Секунды мелким кеглем",
+        "default": true
+      }
     }
   },
-
-  "date": { "name": "Дата", "params": {} },
-
-  "os": { "name": "Система и ядро", "params": {} },
-
-  "separator": { "name": "Разделитель", "params": {} },
-
+  "date": {
+    "name": "Дата",
+    "params": {}
+  },
+  "os": {
+    "name": "Система и ядро",
+    "params": {}
+  },
+  "separator": {
+    "name": "Разделитель",
+    "params": {}
+  },
   "cpu": {
     "name": "Процессор",
     "params": {
-      "per_socket": { "type": "bool", "name": "Строки по узлам NUMA", "default": true },
-      "model_line": { "type": "bool", "name": "Модель, температуры, вентиляторы", "default": true },
-      "top_processes": { "type": "int", "name": "Процессов в топе", "default": 5, "min": 0, "max": 15 }
+      "per_socket": {
+        "type": "bool",
+        "name": "Строки по узлам NUMA",
+        "default": true
+      },
+      "model_line": {
+        "type": "bool",
+        "name": "Модель, температуры, вентиляторы",
+        "default": true
+      },
+      "top_processes": {
+        "type": "int",
+        "name": "Процессов в топе",
+        "default": 5,
+        "min": 0,
+        "max": 15
+      }
     }
   },
-
   "memory": {
     "name": "Память",
     "params": {
-      "totals": { "type": "bool", "name": "Строка «занято / всего»", "default": true },
-      "top_processes": { "type": "int", "name": "Процессов в топе", "default": 5, "min": 0, "max": 15 }
+      "totals": {
+        "type": "bool",
+        "name": "Строка «занято / всего»",
+        "default": true
+      },
+      "top_processes": {
+        "type": "int",
+        "name": "Процессов в топе",
+        "default": 5,
+        "min": 0,
+        "max": 15
+      }
     }
   },
-
   "gpu": {
     "name": "Видеокарта",
     "params": {
-      "details": { "type": "bool", "name": "Строка VRAM, температуры и потребления", "default": true }
+      "details": {
+        "type": "bool",
+        "name": "Строка VRAM, температуры и потребления",
+        "default": true
+      }
     }
   },
-
   "disks": {
     "name": "Диски",
     "params": {
-      "mounts": { "type": "stringlist", "name": "Точки монтирования", "default": ["/"] },
-      "nvme_temp": { "type": "bool", "name": "Температура NVMe у корня", "default": true }
+      "mounts": {
+        "type": "stringlist",
+        "name": "Точки монтирования",
+        "default": [
+          "/"
+        ]
+      },
+      "nvme_temp": {
+        "type": "bool",
+        "name": "Температура NVMe у корня",
+        "default": true
+      }
     }
   },
-
-  "uptime": { "name": "Аптайм", "params": {} },
-
+  "uptime": {
+    "name": "Аптайм",
+    "params": {}
+  },
   "network": {
     "name": "Сеть",
     "params": {
-      "interface": { "type": "string", "name": "Интерфейс", "default": "enp4s0" }
+      "interface": {
+        "type": "string",
+        "name": "Интерфейс",
+        "default": "enp4s0"
+      }
     }
   },
-
   "services": {
     "name": "Службы",
     "hint": "docker, ollama, ожидающие обновления — свой скрипт в пакете",
     "params": {}
   },
-
   "passport": {
     "name": "Паспорт железа",
     "hint": "Статичные строки: процессор, видеокарта, плата",
     "params": {}
+  },
+  "command": {
+    "name": "Своя команда",
+    "hint": "Строка из вывода произвольной команды",
+    "params": {
+      "label": {
+        "type": "string",
+        "name": "Метка",
+        "default": "cmd"
+      },
+      "command": {
+        "type": "string",
+        "name": "Команда",
+        "default": "echo ok"
+      },
+      "interval": {
+        "type": "int",
+        "name": "Интервал, с",
+        "default": 30,
+        "min": 1,
+        "max": 3600
+      },
+      "lines": {
+        "type": "int",
+        "name": "Сколько строк показывать",
+        "default": 1,
+        "min": 1,
+        "max": 20
+      }
+    }
+  },
+  "sensor": {
+    "name": "Свой датчик",
+    "hint": "Любой сенсор ksystemstats по его id",
+    "params": {
+      "label": {
+        "type": "string",
+        "name": "Метка",
+        "default": "SEN"
+      },
+      "id": {
+        "type": "string",
+        "name": "Идентификатор датчика",
+        "default": "cpu/all/usage"
+      },
+      "bar": {
+        "type": "bool",
+        "name": "Рисовать полоску",
+        "default": true
+      },
+      "suffix": {
+        "type": "string",
+        "name": "Приписка после значения",
+        "default": ""
+      },
+      "digits": {
+        "type": "int",
+        "name": "Знаков после запятой",
+        "default": 0,
+        "min": 0,
+        "max": 3
+      }
+    }
   }
 }

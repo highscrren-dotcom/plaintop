@@ -65,6 +65,46 @@ PlasmoidItem {
         return fallback
     }
 
+    // Блоки «Свой датчик» добавляют свои id в ту же подписку.
+    readonly property var customSensorIds: {
+        const out = []
+        for (const b of blocks)
+            if (b.type === "sensor" && b.enabled !== false && (b.params || {}).id)
+                out.push(b.params.id)
+        return out
+    }
+
+    // Блоки «Своя команда»: у каждого свой интервал, поэтому и источник свой.
+    readonly property var commandBlocks: {
+        const out = []
+        for (const b of blocks)
+            if (b.type === "command" && b.enabled !== false && (b.params || {}).command)
+                out.push({ id: b.id, command: b.params.command,
+                           interval: Math.max(1, b.params.interval || 30) })
+        return out
+    }
+
+    property var cmdOut: ({})
+
+    Instantiator {
+        model: root.commandBlocks
+
+        delegate: P5Support.DataSource {
+            required property var modelData
+            engine: "executable"
+            interval: modelData.interval * 1000
+            connectedSources: [modelData.command]
+
+            onNewData: function(source, data) {
+                // Объект пересобираем целиком: правка поля связывания не будит.
+                const m = ({})
+                for (const k in root.cmdOut) m[k] = root.cmdOut[k]
+                m[modelData.id] = String(data.stdout).replace(/\n+$/, "")
+                root.cmdOut = m
+            }
+        }
+    }
+
     readonly property string netIface: blockParam("network", "interface", "enp4s0")
     readonly property var mounts: blockParam("disks", "mounts", ["/"])
 
@@ -79,7 +119,15 @@ PlasmoidItem {
         return a
     }
 
-    readonly property var sensorIds: [
+    // ⚠️ Повторы обязательно убрать: SensorDataModel схлопывает одинаковые id,
+    // столбцов становится меньше, чем в списке, и чтение по индексу уезжает.
+    readonly property var sensorIds: {
+        const out = [], seen = ({})
+        for (const id of rawSensorIds) if (!seen[id]) { seen[id] = true; out.push(id) }
+        return out
+    }
+
+    readonly property var rawSensorIds: [
         "cpu/all/usage",
         "memory/physical/usedPercent", "memory/physical/used", "memory/physical/total",
         "os/system/hostname", "os/system/name", "os/kernel/version",
@@ -91,7 +139,7 @@ PlasmoidItem {
         "gpu/gpu0/totalVram", "gpu/gpu0/power", "gpu/gpu0/name",
         "network/" + netIface + "/download", "network/" + netIface + "/upload",
         "os/system/uptime"
-    ].concat(coreIds)
+    ].concat(coreIds).concat(customSensorIds)
 
     readonly property var colOf: {
         const m = ({})
@@ -454,6 +502,21 @@ PlasmoidItem {
             case "services":
                 for (const s of serviceRows) out.push(kvLine(s.label, s.value))
                 break
+
+            case "command": {
+                const text = cmdOut[b.id]
+                const rows = (text === undefined ? ["…"] : text.split("\n")).slice(0, p.lines || 1)
+                for (const r of rows) out.push(kvLine(p.label || b.id, r))
+                break
+            }
+
+            case "sensor": {
+                const v = num(p.id, 0)
+                const label = p.label || "SEN"
+                if (p.bar !== false) out.push(line(barRow(label, v) + (p.suffix || "")))
+                else out.push(kvLine(label, comma(v, p.digits || 0) + (p.suffix || "")))
+                break
+            }
 
             case "passport": {
                 if (cpuModel) out.push(line("CPU | " + (cpuSockets > 1 ? cpuSockets + "x " : "") + cpuModel, cDim))
