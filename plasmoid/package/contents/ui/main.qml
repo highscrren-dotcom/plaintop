@@ -233,6 +233,10 @@ PlasmoidItem {
         return String(Math.round(v)).padStart(3) + "%"
     }
 
+    function barRow(label, value) {
+        return String(label).padEnd(3).slice(0, 3) + " " + bar(value) + " " + pct(value)
+    }
+
     function comma(x, digits) {
         return x.toFixed(digits).replace(".", ",")
     }
@@ -354,7 +358,7 @@ PlasmoidItem {
         const out = []
         for (const d of diskRows) {
             const name = d.target === "/" ? "/" : d.target.split("/").pop()
-            out.push({ bar: true, text: name.padEnd(3).slice(0, 3) + " " + bar(d.pct) + " " + pct(d.pct) })
+            out.push({ bar: true, text: barRow(name, d.pct) })
             let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
             if (d.target === "/") {
                 const t = Math.round(num("lmsensors/nvme-pci-0500/temp1", 0))
@@ -419,18 +423,23 @@ PlasmoidItem {
                 color: root.cAccent
             }
 
+            // Row задаёт только x, поэтому мелкие секунды можно посадить
+            // на базовую линию больших часов — иначе они «плывут» по высоте.
             Row {
                 spacing: 0
+
                 Line {
+                    id: clockBig
                     text: root.clockBig
                     font.pointSize: Plasmoid.configuration.fontSize * 3.4
                     font.bold: true
                 }
+
                 Line {
                     text: root.clockSec
                     font.pointSize: Plasmoid.configuration.fontSize * 1.5
                     color: root.cVal
-                    anchors.bottom: parent.bottom
+                    anchors.baseline: clockBig.baseline
                 }
             }
 
@@ -438,15 +447,14 @@ PlasmoidItem {
             Line { text: root.osLine; color: root.cDim }
             Line { text: root.sep; color: root.cDim }
 
-            Line { text: "CPU " + root.bar(root.cpuUsage) + " " + root.pct(root.cpuUsage) }
+            Line { text: root.barRow("CPU", root.cpuUsage) }
 
             Repeater {
                 model: root.nodes
                 Line {
                     required property int index
                     required property var modelData
-                    text: "S" + index + " " + root.bar(modelData.usage)
-                          + " " + root.pct(modelData.usage) + "   node" + index
+                    text: root.barRow("S" + index, modelData.usage) + "   node" + index
                 }
             }
 
@@ -459,7 +467,7 @@ PlasmoidItem {
 
             Line { text: root.sep; color: root.cDim }
 
-            Line { text: "RAM " + root.bar(root.memPct) + " " + root.pct(root.memPct) }
+            Line { text: root.barRow("RAM", root.memPct) }
             Line { text: root.memLine; color: root.cDim }
 
             Repeater {
@@ -469,7 +477,7 @@ PlasmoidItem {
 
             Line { text: root.sep; color: root.cDim }
 
-            Line { text: "GPU " + root.bar(root.gpuUsage) + " " + root.pct(root.gpuUsage) }
+            Line { text: root.barRow("GPU", root.gpuUsage) }
             Line { text: root.vramLine; color: root.cDim }
 
             Line { text: root.sep; color: root.cDim }
