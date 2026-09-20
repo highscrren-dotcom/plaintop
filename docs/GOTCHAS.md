@@ -236,3 +236,28 @@ than the shape.
 The same ring, same data: 3.9% of one core standing still at 30 fps, 12.3% spinning at
 60 fps, 26.4% when drawn on a `Canvas` instead of scene items. If motion is not in the
 data, it is not worth its price.
+
+## A desktop plasmoid cannot pass clicks to the desktop
+
+Three attempts, all executed, all failed:
+
+| Attempt | Outcome |
+|---|---|
+| `enabled: false` on the full representation | the click still does not reach the desktop |
+| `locked = true` through plasmashell scripting | the property is read-only in Plasma 6; it stays `false` |
+| `immutability=2` on the containment, written while the shell was stopped | applied and survived, clicks still caught |
+
+The reason is in the shell's own code: `BasicAppletContainer` wraps every applet and its
+C++ base listens for the press itself — it needs press-and-hold to enter edit mode
+(`editModeCondition: AfterPressAndHold`). Nothing in the applet's QML can decline that.
+
+## A plain window can: `Qt.WindowTransparentForInput` works under KWin Wayland
+
+Verified with a counter on screen: a `Window` with
+`flags: Qt.FramelessWindowHint | Qt.WindowTransparentForInput` caught **zero** clicks
+while being clicked repeatedly. Wayland gets an empty input region for it — the native
+equivalent of the X Shape trick conky needed.
+
+⚠️ The price is placement: under Wayland a window cannot position itself. `x` and `y` are
+ignored and KWin places the window where it likes, so a widget-like window needs a KWin
+rule to force position, size, keep-below and skip-taskbar.
