@@ -112,3 +112,42 @@ we do not copy its code into this GPL-2.0-or-later repository.
 
 **Revisit if:** the widget stops being maintained, or its circle mode cannot be pushed
 close enough to the PlainExt look.
+
+## 4. The visualizer is ours after all — the ready-made one was expensive (2026-09-20)
+
+**Decision:** decision 3 is reversed by measurement. We ship our own visualizer,
+`spectrum/`, and keep `cava` as the source. The revisit condition written into decision 3
+triggered the same day it was recorded.
+
+**What decision 3 missed.** It weighed the data path and the feature list, and never
+measured the *rendering*. Plasma Audio Visualizer draws on a QML `Canvas`: the picture is
+rasterized by the CPU and uploaded as a texture every frame, so its cost scales with the
+drawn area — and the target here is a ring the size of half the desktop.
+
+Measured on s1dPC, same audio, same machine:
+
+| | CPU | GPU |
+|---|---|---|
+| Ready-made widget, small, 60 bars, 30 fps | ~15% of a core | +31 points |
+| Ready-made widget, leanest: 40 bars, 10 fps | ~13% | +8 points |
+| `Canvas` renderer, 1100 px, 160 ticks, 60 fps | 56.4% | +31 points |
+| **Ours**: scene items, 1100 px, 160 ticks | 6.8–16.4% | ~0 |
+| Ours, installed: plasmashell (both widgets) + cava + relay | 21.7% total | 0.5% |
+
+The difference is not cleverness, it is where the drawing happens: scene items are moved
+by the graphics pipeline as ready-made rectangles, and a `Canvas` is repainted pixel by
+pixel on the CPU first.
+
+**Two details that cost the most and are worth keeping in mind.** `monstercat` smoothing
+inside cava took 27% of a core at 110 bars — off, it is 2–3%. And interpolating between
+data frames in JavaScript cost 20% of a core; the same smoothing as a Qt `Behavior`
+animation costs 7%, because it runs in C++.
+
+**Explicit choice:** the user asked for the GPU to be left alone, so the renderer stays on
+scene items and no shader path is taken, even though a shader would be cheaper still.
+
+**What we pay.** Our own code to maintain, and `cava` plus a small relay service as
+runtime dependencies.
+
+**Revisit if:** the CPU cost becomes a problem on a weaker machine — then a shader
+renderer is the next step, and it is a renderer swap, not a redesign.

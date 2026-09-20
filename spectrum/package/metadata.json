@@ -1,0 +1,22 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "s1dd1"
+            }
+        ],
+        "Category": "Multimedia",
+        "Description": "Кольцевой визуализатор звука в духе PlainExt",
+        "EnabledByDefault": true,
+        "FormFactors": [
+            "desktop"
+        ],
+        "Icon": "audio-volume-high",
+        "Id": "org.s1dd1.plainspectrum",
+        "License": "GPL-2.0+",
+        "Name": "plainspectrum",
+        "Version": "0.1"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

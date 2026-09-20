@@ -13,6 +13,11 @@ APPS="$HOME/.local/share/applications"
 PLASMOID_ID="org.s1dd1.plaintop"
 PLASMOID_SRC="$REPO/plasmoid/package"
 PLASMOID_DEST="$HOME/.local/share/plasma/plasmoids/$PLASMOID_ID"
+SPECTRUM_ID="org.s1dd1.plainspectrum"
+SPECTRUM_SRC="$REPO/spectrum"
+SPECTRUM_DEST="$HOME/.local/share/plasma/plasmoids/$SPECTRUM_ID"
+RELAY_DEST="$HOME/.local/share/plainspectrum"
+UNIT_DEST="$HOME/.config/systemd/user"
 
 red()  { printf '\033[31m%s\033[0m\n' "$*"; }
 grn()  { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -119,6 +124,91 @@ plasmashell_ready() {
     return 1
 }
 
+# Audio visualizer: the widget package plus the relay service that serves cava's
+# bands over local HTTP. A service rather than a process started by the widget: it
+# has to survive a shell restart and die with the session, not linger as an orphan.
+spectrum_install() {
+    echo "== Спектр"
+    if ! command -v cava >/dev/null; then
+        red "  ✗ нет cava — поставь: sudo pacman -S cava"; return 1
+    fi
+    local mode=--install
+    [ -d "$SPECTRUM_DEST" ] && mode=--upgrade
+    if kpackagetool6 --type Plasma/Applet $mode "$SPECTRUM_SRC/package" >/dev/null 2>&1; then
+        grn "  ✓ $SPECTRUM_ID ($mode)"
+    else
+        red "  ✗ пакет виджета не установился"; return 1
+    fi
+
+    mkdir -p "$RELAY_DEST" "$UNIT_DEST"
+    install -m 755 "$SPECTRUM_SRC/relay.py" "$RELAY_DEST/relay.py" && echo "  → $RELAY_DEST/relay.py"
+    install -m 644 "$SPECTRUM_SRC/plainspectrum-relay.service" "$UNIT_DEST/" \
+        && echo "  → $UNIT_DEST/plainspectrum-relay.service"
+
+    systemctl --user daemon-reload
+    # Idempotent: enable --now both starts it and adds it to the session; restart
+    # afterwards picks up a relay.py that changed while the service was running.
+    systemctl --user enable --now plainspectrum-relay.service >/dev/null 2>&1
+    systemctl --user restart plainspectrum-relay.service
+    sleep 2
+    if systemctl --user --quiet is-active plainspectrum-relay.service; then
+        grn "  ✓ служба реле работает"
+    else
+        red "  ✗ служба реле не поднялась — journalctl --user -u plainspectrum-relay"; return 1
+    fi
+
+    # ⚠️ Same reason as for the text widget: plasmashell caches a package's QML, so
+    # without a restart the edit silently does not arrive.
+    if systemctl --user --quiet is-active plasma-plasmashell.service; then
+        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell перезапущен"
+    else
+        dim "  plasmashell не под systemd — перезапусти оболочку сам"
+    fi
+
+    local n
+    n=$(grep -c "^plugin=$SPECTRUM_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then
+        dim "  уже на рабочем столе — место не трогаю"
+        return 0
+    fi
+    plasmashell_ready || { red "  ✗ plasmashell не отвечает — добавь виджет вручную"; return 1; }
+    local id
+    id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+        "print(desktops()[0].addWidget(\"$SPECTRUM_ID\").id)" 2>/dev/null | tr -dc '0-9')
+    [ -n "$id" ] && grn "  ✓ добавлен на рабочий стол (id=$id)" || red "  ✗ не удалось добавить на рабочий стол"
+}
+
+spectrum_status() {
+    echo "== Спектр"
+    if [ ! -d "$SPECTRUM_DEST" ]; then dim "  виджет не установлен"; return 0; fi
+    local diff=0 f rel
+    while IFS= read -r f; do
+        rel=${f#"$SPECTRUM_SRC/package"/}
+        cmp -s "$f" "$SPECTRUM_DEST/$rel" || { red "  ≠ $rel — РАЗОШЁЛСЯ с репо"; diff=1; }
+    done < <(find "$SPECTRUM_SRC/package" -type f)
+    [ $diff -eq 0 ] && grn "  ✓ виджет установлен, файлы совпадают с репо"
+
+    if systemctl --user --quiet is-active plainspectrum-relay.service; then
+        local port
+        port=$(grep -oE "PLAINSPECTRUM_PORT=[0-9]+" "$UNIT_DEST/plainspectrum-relay.service" 2>/dev/null | tail -1 | cut -d= -f2)
+        port=${port:-8788}
+        # ⚠️ Checking that the service is "active" is not enough: what matters is that
+        # the port actually returns numbers, so read it instead of trusting systemd.
+        if curl -s --max-time 2 "http://127.0.0.1:$port/bands?bars=8" | grep -qE "^[0-9]+(,[0-9]+)*$"; then
+            grn "  ✓ реле отвечает на порту $port"
+        else
+            red "  ≠ служба работает, но порт $port не отдаёт данные"
+        fi
+    else
+        dim "  служба реле не запущена — ./install.sh --spectrum"
+    fi
+
+    local n
+    n=$(grep -c "^plugin=$SPECTRUM_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ добавлен на рабочий стол ($n шт.)"
+    else dim "  на рабочий стол не добавлен"; fi
+}
+
 # Idempotent: if the widget is already on the desktop, do nothing; otherwise place it.
 plasmoid_place() {
     local n
@@ -170,6 +260,7 @@ status() {
     else red "  ✗ автозапуск не настроен"; fi
     [ -f "$APPS/conky.desktop" ] && grn "  ✓ заглушка пакетного conky.desktop" || red "  ✗ заглушки нет"
     echo; plasmoid_status
+    echo; spectrum_status
 }
 
 deps() {
@@ -224,9 +315,10 @@ case "${1:-}" in
   --deps)        deps; exit $? ;;
   --plasmoid)    plasmoid_install; exit $? ;;
   --conky-files) conky_deploy; echo; status; exit 0 ;;
+  --spectrum)    spectrum_install; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--spectrum|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }

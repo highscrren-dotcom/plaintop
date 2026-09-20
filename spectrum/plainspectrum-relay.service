@@ -1,0 +1,22 @@
+[Unit]
+Description=plainspectrum relay: cava spectrum over local HTTP
+Documentation=https://github.com/highscrren-dotcom/plaintop
+# The relay talks to PipeWire through cava, so it waits for the sound server.
+After=pipewire.service
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+# Environment is the relay's configuration; install.sh writes overrides next to it.
+Environment=PLAINSPECTRUM_SOURCE=auto
+Environment=PLAINSPECTRUM_PORT=8788
+Environment=PLAINSPECTRUM_BARS=256
+Environment=PLAINSPECTRUM_FPS=30
+Environment=PLAINSPECTRUM_NOISE=60
+EnvironmentFile=-%h/.config/plainspectrum/relay.env
+ExecStart=%h/.local/share/plainspectrum/relay.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=graphical-session.target

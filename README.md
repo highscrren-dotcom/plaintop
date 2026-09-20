@@ -33,6 +33,7 @@ The repository carries two implementations:
 |---|---|
 | **`plasmoid/`** | the target implementation: a Plasma 6 widget in QML. Current work |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky). Works, kept until the plasmoid fully replaces it |
+| **`spectrum/`** | a second widget: an audio visualizer in the same plain style, with its own relay service |
 
 Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -42,6 +43,7 @@ Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
 ./install.sh --plasmoid     # generate, install the package, restart the shell, place the widget
+./install.sh --spectrum    # the audio visualizer: widget + relay service
 ./install.sh --status       # what is installed and what is running
 ```
 
@@ -81,6 +83,14 @@ busctl --user call org.kde.ksystemstats1 /org/kde/ksystemstats1 \
 
 ⚠️ Address `lm_sensors` chips **by name** (`nct6779-isa-0a20`), never by `hwmon` index —
 indexes move between reboots.
+
+## The audio visualizer
+
+`spectrum/` is a separate widget that draws the spectrum of whatever is playing — a ring,
+an arc or a line of ticks, in the same flat style. `cava` does the spectrum, a small
+systemd user service serves its bands over local HTTP, and the widget moves ready-made
+rectangles: the GPU stays at about half a percent because nothing is rasterized per frame.
+Details, settings and the measured cost: **[spectrum/README.md](spectrum/README.md)**.
 
 ## Three layers
 

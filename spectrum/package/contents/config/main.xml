@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <!-- Shape. 0 = ring (a full circle at span 360, an arc below it), 1 = line.
+         Both layouts feed the same element: only where the pivot sits and how far
+         it is turned differs, so a new shape costs a formula, not a renderer. -->
+    <entry name="layout" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="bars" type="Int">
+      <default>160</default>
+    </entry>
+    <entry name="radius" type="Int">
+      <default>360</default>
+    </entry>
+    <entry name="span" type="Int">
+      <default>360</default>
+    </entry>
+    <entry name="startAngle" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="spacing" type="Int">
+      <default>2</default>
+    </entry>
+    <entry name="thickness" type="Int">
+      <default>5</default>
+    </entry>
+    <entry name="minLength" type="Int">
+      <default>10</default>
+    </entry>
+    <entry name="maxLength" type="Int">
+      <default>170</default>
+    </entry>
+    <!-- 0 outward (up on a line), 1 inward (down), 2 both ways from the baseline -->
+    <entry name="growth" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="mirror" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="reverse" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <!-- Element. 0 = solid bar, 1 = a stack of blocks.
+         ⚠️ Blocks draw bars × blocks items, so the cost scales with both. -->
+    <entry name="element" type="Int">
+      <default>0</default>
+    </entry>
+    <entry name="blockSize" type="Int">
+      <default>6</default>
+    </entry>
+    <entry name="blockGap" type="Int">
+      <default>3</default>
+    </entry>
+    <entry name="rounded" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <!-- Appearance -->
+    <entry name="color" type="String">
+      <default>#C8CCD4</default>
+    </entry>
+    <entry name="colorHigh" type="String">
+      <default></default>
+    </entry>
+    <entry name="opacityPercent" type="Int">
+      <default>100</default>
+    </entry>
+    <entry name="guide" type="Bool">
+      <default>false</default>
+    </entry>
+
+    <!-- Dynamics. dataRate drives the poll timer; smoothMs is the Qt animation that
+         fills the gaps between data frames. Interpolating in JavaScript instead cost
+         three times as much CPU — measured. -->
+    <entry name="dataRate" type="Int">
+      <default>30</default>
+    </entry>
+    <entry name="smoothMs" type="Int">
+      <default>70</default>
+    </entry>
+
+    <!-- Source: the local relay that serves cava's bands over HTTP. -->
+    <entry name="relayPort" type="Int">
+      <default>8788</default>
+    </entry>
+  </group>
+
+</kcfg>
