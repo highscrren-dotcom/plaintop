@@ -9,6 +9,13 @@
     <!-- Shape. 0 = ring (a full circle at span 360, an arc below it), 1 = line.
          Both layouts feed the same element: only where the pivot sits and how far
          it is turned differs, so a new shape costs a formula, not a renderer. -->
+    <!-- Click-through: with input disabled the clicks reach the containment, so the
+         desktop behaves as if the widget were not there. The way back is Plasma's edit
+         mode, or the installer's "clicks off" switch. XML comments forbid a double
+         hyphen, so the flag is spelled out rather than quoted. -->
+    <entry name="clickThrough" type="Bool">
+      <default>true</default>
+    </entry>
     <entry name="layout" type="Int">
       <default>0</default>
     </entry>

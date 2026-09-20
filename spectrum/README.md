@@ -56,6 +56,7 @@ only where the pivot stands and how far it is turned changes.
 | Guide circle | a thin static ring under the ticks |
 | Data frames per second | how often the widget polls the relay |
 | Smoothing, ms | the Qt animation that fills the gaps between data frames |
+| Mouse | clicks pass through to the desktop; `install.sh --clicks-off` is the way back |
 
 ⚠️ Two settings are worth understanding before turning them up. **Blocks** draw
 bars × blocks items, so the cost scales with both. **Smoothing** is deliberately a Qt

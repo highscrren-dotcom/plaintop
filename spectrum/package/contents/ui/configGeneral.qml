@@ -30,6 +30,7 @@ KCM.SimpleKCM {
     property alias cfg_dataRate: rateField.value
     property alias cfg_smoothMs: smoothField.value
     property alias cfg_relayPort: portField.value
+    property alias cfg_clickThrough: clickBox.checked
 
     // Цвета хранятся строкой, а ColorButton работает с color — переводим на месте.
     property string cfg_color: "#C8CCD4"
@@ -220,6 +221,12 @@ KCM.SimpleKCM {
             from: 0
             to: 400
             stepSize: 10
+        }
+
+        CheckBox {
+            id: clickBox
+            Kirigami.FormData.label: i18n("Мышь:")
+            text: i18n("пропускать клики на рабочий стол")
         }
 
         SpinBox {

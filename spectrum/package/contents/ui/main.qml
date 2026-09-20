@@ -98,6 +98,9 @@ PlasmoidItem {
 
     // ── Drawing ───────────────────────────────────────────────────────────────
     fullRepresentation: Item {
+        // Input off means the click lands on the containment instead of the widget:
+        // the desktop keeps its own context menu and rubber band selection.
+        enabled: !root.cfg.clickThrough
         implicitWidth: root.boardWidth
         implicitHeight: root.boardHeight
 

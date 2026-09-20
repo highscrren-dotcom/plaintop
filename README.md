@@ -119,6 +119,16 @@ Right-click the widget → *Настроить plaintop*. Two pages:
 - *"Блоки"* (Blocks) — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 
+**Clicks pass through by default.** A desktop plasmoid does catch the mouse, which takes
+the context menu and the rubber band away from the desktop under it, so both widgets have
+a *"Мышь"* (Mouse) setting that turns input off. The way back does not go through the
+widget's own dialog — with clicks passing through there is nothing to right-click:
+
+```bash
+./install.sh --clicks-off   # widgets catch the mouse again, so they can be configured
+./install.sh --clicks-on    # clicks pass through to the desktop
+```
+
 Two block types are deliberately open-ended:
 
 - **`command`** — one line (or several) from the output of any command, with its own interval;

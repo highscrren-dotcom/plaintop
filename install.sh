@@ -209,6 +209,34 @@ spectrum_status() {
     else dim "  на рабочий стол не добавлен"; fi
 }
 
+# Click-through for both widgets at once. This is the way back: with clicks passing
+# through, the widget cannot be grabbed with the mouse, so its own settings dialog is
+# out of reach — the switch has to work without it.
+clicks_set() {
+    local value=$1 human=$2
+    echo "== Клики"
+    plasmashell_ready || { red "  ✗ plasmashell не отвечает"; return 1; }
+    local out
+    out=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+var d = desktops()[0];
+var n = 0;
+for (var i = 0; i < d.widgetIds.length; i++) {
+    var w = d.widgetById(d.widgetIds[i]);
+    if (w.type == \"$PLASMOID_ID\" || w.type == \"$SPECTRUM_ID\") {
+        w.currentConfigGroup = [\"General\"];
+        w.writeConfig(\"clickThrough\", $value);
+        w.reloadConfig();
+        n++;
+    }
+}
+print(n);" 2>/dev/null | tr -dc '0-9')
+    if [ -n "$out" ] && [ "$out" -gt 0 ]; then
+        grn "  ✓ $human — виджетов затронуто: $out"
+    else
+        red "  ✗ виджеты на рабочем столе не найдены"; return 1
+    fi
+}
+
 # Idempotent: if the widget is already on the desktop, do nothing; otherwise place it.
 plasmoid_place() {
     local n
@@ -316,9 +344,11 @@ case "${1:-}" in
   --plasmoid)    plasmoid_install; exit $? ;;
   --conky-files) conky_deploy; echo; status; exit 0 ;;
   --spectrum)    spectrum_install; exit $? ;;
+  --clicks-off)  clicks_set false "клики ловятся виджетами (можно настраивать мышью)"; exit $? ;;
+  --clicks-on)   clicks_set true "клики проходят на рабочий стол"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--spectrum|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--spectrum|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }

@@ -536,6 +536,9 @@ PlasmoidItem {
 
     // ── Layout ────────────────────────────────────────────────────────────────
     fullRepresentation: Item {
+        // Input off means the click lands on the containment instead of the widget:
+        // the desktop keeps its own context menu and rubber band selection.
+        enabled: !Plasmoid.configuration.clickThrough
         // ⚠️ No Layout.minimum*: they make the containment fit the applet to the text
         // height, and that height changes while the data arrives (disks, services). Each
         // such fit resets the widget to the 0,0 corner — verified. The size comes from

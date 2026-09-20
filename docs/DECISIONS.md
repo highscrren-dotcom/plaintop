@@ -15,13 +15,21 @@ and none of them would be a problem for a plasmoid:
 
 | What hurt with conky | With a plasmoid |
 |---|---|
-| No click-through — we killed the input region through X Shape | A desktop plasmoid does not intercept clicks by design |
+| No click-through — we killed the input region through X Shape | Configurable: input off on the representation, see the correction below |
 | X11 only, goes through XWayland | QML natively, Wayland with no layer in between |
 | Three autostart sources, three reboots to find them | KDE places the widget itself and keeps it in the session |
 | `own_window_type` breaks transparency | Not an issue |
 | Its own config language instead of a structure | QML plus the plasmoid's built-in config |
 
 Details on each point — `GOTCHAS.md`.
+
+⚠️ **Correction, 2026-09-20.** That row used to claim a desktop plasmoid "does not
+intercept clicks by design". It was written from memory, never executed, and the user's own
+desktop contradicted it: both widgets caught the mouse, so the desktop lost its context
+menu and rubber band over their area. The fix is a setting — `clickThrough`, which turns
+input off on the representation — plus `install.sh --clicks-on` / `--clicks-off`, because
+with clicks passing through the widget cannot be grabbed to reach its own dialog. The
+advantage over conky stands, but it costs a line of QML rather than nothing.
 
 **And the main argument.** Plasmoids have a **built-in settings window**: Plasma builds
 the dialog itself from `config/main.xml` and stores the values. So the editor the project

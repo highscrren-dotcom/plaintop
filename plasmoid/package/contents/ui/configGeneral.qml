@@ -12,6 +12,7 @@ KCM.SimpleKCM {
     property alias cfg_fontFamily: fontField.text
     property alias cfg_fontSize: sizeField.value
     property alias cfg_updateInterval: intervalField.value
+    property alias cfg_clickThrough: clickBox.checked
     property alias cfg_widgetWidth: widthField.value
     property alias cfg_padLeft: padLeftField.value
     property alias cfg_padTop: padTopField.value
@@ -71,6 +72,18 @@ KCM.SimpleKCM {
             from: 100
             to: 2000
             stepSize: 8
+        }
+
+        CheckBox {
+            id: clickBox
+            Kirigami.FormData.label: i18n("Мышь:")
+            text: i18n("пропускать клики на рабочий стол")
+        }
+
+        Label {
+            text: i18n("Когда клики пропускаются, виджет мышью не берётся.\nПопасть в настройки: режим правки рабочего стола\nили ./install.sh с ключом clicks off")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
         }
 
         SpinBox {

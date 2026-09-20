@@ -6,6 +6,13 @@
   <kcfgfile name=""/>
 
   <group name="General">
+    <!-- Click-through: with input disabled the clicks reach the containment, so the
+         desktop behaves as if the widget were not there. The way back is Plasma's edit
+         mode, or the installer's "clicks off" switch. XML comments forbid a double
+         hyphen, so the flag is spelled out rather than quoted. -->
+    <entry name="clickThrough" type="Bool">
+      <default>true</default>
+    </entry>
     <entry name="header" type="String">
       <default>s1dd1\Dashboard</default>
     </entry>
