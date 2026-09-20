@@ -77,3 +77,38 @@ that pulls the columns out of line — we format it ourselves.
 **Revisit if:** we need values the sensors do not have (GPU fan speed, encoder/decoder,
 detailed VRAM per process) — then an `executable` with an interval of a few seconds joins
 them, but not instead of the sensors.
+
+## 3. The audio visualizer is a ready-made widget, not ours (2026-09-20)
+
+**Decision:** we do not write a spectrum visualizer. We install
+[Plasma Audio Visualizer](https://github.com/luisbocanegra/plasma-audio-visualizer)
+and configure it to match the PlainExt look. plaintop stays a text monitor.
+
+**What the reconnaissance found.** Building one is possible and the path is clear — the
+numbers below were all measured on s1dPC — but everything we would build already exists
+there, and better:
+
+| Measured here | Value |
+|---|---|
+| Bridge: `parec` capture + numpy FFT, 120 bands, ~45 fps | 4.1% of one core |
+| QML client: `Canvas`, 120 ticks, 60 fps | 26.4% |
+| QML client: scene items, 60 fps, with rotation | 12.3% |
+| QML client: scene items, 30 fps, no rotation | 3.9% |
+| HTTP poll at 45/s + JSON parse, no drawing | 6.3% |
+
+So a working ring would cost about 8% of a core — and would still lack what the existing
+widget has: it sleeps when there is no sound, pauses over a fullscreen window, offers
+three styles times circle mode, and ships a C++ plugin for the data path instead of an
+HTTP poll.
+
+**What we keep from the reconnaissance.** Two facts that outlive this decision and are
+recorded in `GOTCHAS.md`: `XMLHttpRequest` to `http://127.0.0.1` **is** allowed inside
+`plasmashell` (only `file://` is refused), and animating a transform costs more than the
+data it animates — the same ring is 3.9% standing still and 12.3% spinning.
+
+**What we pay.** Three runtime dependencies (`cava`, `python-websockets`,
+`qt6-websockets`), somebody else's release pace, and GPL-3.0: we configure that widget,
+we do not copy its code into this GPL-2.0-or-later repository.
+
+**Revisit if:** the widget stops being maintained, or its circle mode cannot be pushed
+close enough to the PlainExt look.

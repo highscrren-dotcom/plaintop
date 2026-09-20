@@ -218,3 +218,21 @@ either: the enum is available in QML as `Sensors.SensorDataModel.Value` and
 
 ⚠️ For `KSortFilterProxyModel`, sorting is set with `sortRoleName: "Value"`;
 with `sortRole` the component does not build at all.
+
+## `http://127.0.0.1` is allowed, `file://` is not
+
+The XHR ban applies to local files only. A request to a local HTTP server from inside
+`plasmashell` works: verified with a probe in the installed widget, which logged
+`status=200` and a full response body. So a block that needs data no sensor provides can
+get it from a small local service instead of a compiled plugin.
+
+⚠️ The price is in the polling, not the drawing. Measured on s1dPC: a 120-tick ring drawn
+from scene items costs 3.9% of one core at 30 updates/s, while polling the same data over
+HTTP at 45/s and parsing the JSON costs 6.3% on its own. Rate and payload size matter more
+than the shape.
+
+## An animated transform costs more than the data it animates
+
+The same ring, same data: 3.9% of one core standing still at 30 fps, 12.3% spinning at
+60 fps, 26.4% when drawn on a `Canvas` instead of scene items. If motion is not in the
+data, it is not worth its price.
