@@ -61,6 +61,39 @@ KCM.SimpleKCM {
         save()
     }
 
+    // Список типов для добавления берётся из словаря — руками он нигде не перечислен.
+    readonly property var types: {
+        const out = []
+        for (const key in Description.VOCAB)
+            out.push({ type: key, name: Description.VOCAB[key].name || key })
+        return out
+    }
+
+    function addBlock(type) {
+        const spec = Description.VOCAB[type]
+        if (!spec) return
+        const params = ({})
+        for (const key in (spec.params || {})) params[key] = spec.params[key].default
+        // id должен быть своим: по нему блок отличается от соседей того же типа.
+        let n = 1
+        while (blocks.some(b => b.id === type + n)) n++
+        const copy = blocks.slice()
+        const at = selected >= 0 ? selected + 1 : copy.length
+        copy.splice(at, 0, { id: type + n, type: type, enabled: true, params: params })
+        blocks = copy
+        selected = at
+        save()
+    }
+
+    function removeBlock(i) {
+        if (i < 0 || i >= blocks.length) return
+        const copy = blocks.slice()
+        copy.splice(i, 1)
+        blocks = copy
+        selected = Math.min(i, copy.length - 1)
+        save()
+    }
+
     function setParam(key, value) {
         if (selected < 0) return
         const copy = JSON.parse(JSON.stringify(blocks))
@@ -165,10 +198,35 @@ KCM.SimpleKCM {
                 }
 
                 Button {
+                    icon.name: "list-remove"
+                    text: i18n("Убрать")
+                    enabled: page.selected >= 0
+                    onClicked: page.removeBlock(page.selected)
+                }
+
+                Button {
                     icon.name: "edit-reset"
                     text: i18n("Сбросить")
                     onClicked: { page.cfg_blocksJson = ""; page.load() }
                 }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            ComboBox {
+                id: typeBox
+                Layout.fillWidth: true
+                model: page.types
+                textRole: "name"
+            }
+
+            Button {
+                icon.name: "list-add"
+                text: i18n("Добавить блок")
+                enabled: typeBox.currentIndex >= 0
+                onClicked: page.addBlock(page.types[typeBox.currentIndex].type)
             }
         }
 
