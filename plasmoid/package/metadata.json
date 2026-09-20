@@ -1,0 +1,22 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "s1dd1"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Текстовый монитор системы в духе PlainExt",
+        "EnabledByDefault": true,
+        "FormFactors": [
+            "desktop"
+        ],
+        "Icon": "utilities-system-monitor",
+        "Id": "org.s1dd1.plaintop",
+        "License": "GPL-2.0+",
+        "Name": "plaintop",
+        "Version": "0.1"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

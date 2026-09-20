@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 # Разложить plaintop в систему и запустить.
 #
-# Источник истины — каталог widget/ этого репозитория. В ~/.config/conky файлы
-# попадают отсюда, а не наоборот: правки делаются в репо, затем ./install.sh.
+# Источник истины — каталоги conky/ и plasmoid/ этого репозитория. В ~/.config/conky
+# и ~/.local/share/plasma/plasmoids файлы попадают отсюда, а не наоборот:
+# правки делаются в репо, затем ./install.sh.
 set -uo pipefail
 cd "$(dirname "$0")"
 REPO=$PWD
 DEST="$HOME/.config/conky"
 AUTOSTART="$HOME/.config/autostart"
 APPS="$HOME/.local/share/applications"
+PLASMOID_ID="org.s1dd1.plaintop"
+PLASMOID_SRC="$REPO/plasmoid/package"
+PLASMOID_DEST="$HOME/.local/share/plasma/plasmoids/$PLASMOID_ID"
+# Место на экране — то же, что занимал conky: gap_x/gap_y из plainext.conf.
+PLASMOID_GEOM="48, 44, 440, 815"
 
 red()  { printf '\033[31m%s\033[0m\n' "$*"; }
 grn()  { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -42,6 +48,102 @@ for w, cls in ws:
 PY
 }
 
+# Плазмоид ставится идемпотентно: kpackagetool6 сам решает, установка это или
+# обновление, а состояние применяется в любом случае.
+plasmoid_install() {
+    echo "== Плазмоид"
+    if ! command -v kpackagetool6 >/dev/null; then
+        red "  ✗ kpackagetool6 не найден — плазмоид не поставить"; return 1
+    fi
+    local mode=--install
+    [ -d "$PLASMOID_DEST" ] && mode=--upgrade
+    if kpackagetool6 --type Plasma/Applet $mode "$PLASMOID_SRC" >/dev/null 2>&1; then
+        grn "  ✓ $PLASMOID_ID ($mode)"
+    else
+        red "  ✗ $PLASMOID_ID — $mode не прошёл"; return 1
+    fi
+    # ⚠️ Проверено 20.09.2026: plasmashell держит QML пакета в кэше. Переустановки мало,
+    # пересоздания апплета тоже — новая разметка появляется только после перезапуска
+    # оболочки. Поэтому состояние доводится до конца здесь, а не оставляется пользователю.
+    if systemctl --user --quiet is-active plasma-plasmashell.service; then
+        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell перезапущен — виджет с новым QML"
+    else
+        dim "  plasmashell не под systemd — перезапусти оболочку сам, иначе QML останется старым"
+    fi
+    plasmoid_place
+}
+
+# Погасить conky, пока идёт перенос на плазмоид, — и вернуть обратно.
+# ⚠️ Только `pkill -x conky`: шаблон `pkill -f 'conky -c'` совпадает с командной
+# строкой собственной оболочки и убивает её.
+conky_off() {
+    echo "== Гашу conky"
+    pkill -x conky && grn "  ✓ процесс остановлен" || dim "  conky и так не запущен"
+    if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
+        # Hidden=true — штатный способ XDG выключить автозапуск, файл остаётся на месте.
+        grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop" \
+            || printf 'Hidden=true\n' >> "$AUTOSTART/conky-plainext.desktop"
+        grn "  ✓ автозапуск выключен (Hidden=true)"
+    else
+        dim "  автозапуска и так нет"
+    fi
+    # excludeApps в ksmserverrc уже не даёт сессии восстановить conky при входе.
+    echo; status
+}
+
+conky_on() {
+    echo "== Возвращаю conky"
+    if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
+        sed -i '/^Hidden=true$/d' "$AUTOSTART/conky-plainext.desktop"
+        grn "  ✓ автозапуск включён"
+    else
+        cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && grn "  ✓ автозапуск восстановлен"
+    fi
+    pgrep -x conky >/dev/null || "$DEST/start.sh" >/dev/null 2>&1 &
+    sleep 8
+    echo; status
+}
+
+# Скриптинг plasmashell отвечает не сразу после перезапуска — ждём, а не гадаем.
+plasmashell_ready() {
+    local i
+    for i in $(seq 1 30); do
+        qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'print(1)' \
+            >/dev/null 2>&1 && return 0
+        sleep 1
+    done
+    return 1
+}
+
+# Идемпотентно: если виджет уже на рабочем столе — ничего не делаем, иначе сажаем на место.
+plasmoid_place() {
+    local n
+    n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then dim "  уже на рабочем столе — место не трогаю"; return 0; fi
+    plasmashell_ready || { red "  ✗ plasmashell не отвечает — добавь виджет вручную"; return 1; }
+    if qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+        "desktops()[0].addWidget(\"$PLASMOID_ID\", $PLASMOID_GEOM)" >/dev/null 2>&1; then
+        grn "  ✓ добавлен на рабочий стол ($PLASMOID_GEOM)"
+    else
+        red "  ✗ не удалось добавить на рабочий стол"; return 1
+    fi
+}
+
+plasmoid_status() {
+    echo "== Плазмоид"
+    if [ ! -d "$PLASMOID_DEST" ]; then red "  ✗ не установлен"; return 0; fi
+    local diff=0 f rel
+    while IFS= read -r f; do
+        rel=${f#"$PLASMOID_SRC"/}
+        cmp -s "$f" "$PLASMOID_DEST/$rel" || { red "  ≠ $rel — РАЗОШЁЛСЯ с репо"; diff=1; }
+    done < <(find "$PLASMOID_SRC" -type f)
+    [ $diff -eq 0 ] && grn "  ✓ установлен, файлы совпадают с репо"
+    # Присутствие на рабочем столе читается из конфига сессии, а не угадывается.
+    local n; n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ добавлен на рабочий стол ($n шт.)"
+    else dim "  на рабочий стол не добавлен"; fi
+}
+
 status() {
     echo "== Процессы"
     if pgrep -x conky >/dev/null; then pgrep -ax conky | sed 's/^/  /'; else dim "  conky не запущен"; fi
@@ -53,8 +155,13 @@ status() {
             else red "  ≠ $f — РАЗОШЁЛСЯ с репо"; fi
         else red "  ✗ $f — не разложен"; fi
     done
-    [ -f "$AUTOSTART/conky-plainext.desktop" ] && grn "  ✓ автозапуск" || red "  ✗ автозапуск не настроен"
+    if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
+        if grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop"; then
+            dim "  • автозапуск выключен (Hidden=true) — вернуть: ./install.sh --conky-on"
+        else grn "  ✓ автозапуск"; fi
+    else red "  ✗ автозапуск не настроен"; fi
     [ -f "$APPS/conky.desktop" ] && grn "  ✓ заглушка пакетного conky.desktop" || red "  ✗ заглушки нет"
+    echo; plasmoid_status
 }
 
 deps() {
@@ -78,7 +185,10 @@ case "${1:-}" in
   --status)      status; exit 0 ;;
   --check-input) input_shape; exit 0 ;;
   --deps)        deps; exit $? ;;
-  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps]"; exit 0 ;;
+  --plasmoid)    plasmoid_install; exit $? ;;
+  --conky-off)   conky_off; exit 0 ;;
+  --conky-on)    conky_on; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--conky-off|--conky-on]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }
