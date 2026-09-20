@@ -1,0 +1,78 @@
+{
+  "_": "Словарь типов блоков. Диалог настроек строится по нему, а не по списку в коде: новый тип блока не должен требовать правки интерфейса.",
+
+  "header": {
+    "name": "Заголовок",
+    "hint": "Строка вверху; к ней приписывается имя хоста",
+    "params": {
+      "text": { "type": "string", "name": "Текст", "default": "s1dd1\\Dashboard" },
+      "hostname": { "type": "bool", "name": "Дописывать имя хоста", "default": true }
+    }
+  },
+
+  "clock": {
+    "name": "Часы",
+    "params": {
+      "seconds": { "type": "bool", "name": "Секунды мелким кеглем", "default": true }
+    }
+  },
+
+  "date": { "name": "Дата", "params": {} },
+
+  "os": { "name": "Система и ядро", "params": {} },
+
+  "separator": { "name": "Разделитель", "params": {} },
+
+  "cpu": {
+    "name": "Процессор",
+    "params": {
+      "per_socket": { "type": "bool", "name": "Строки по узлам NUMA", "default": true },
+      "model_line": { "type": "bool", "name": "Модель, температуры, вентиляторы", "default": true },
+      "top_processes": { "type": "int", "name": "Процессов в топе", "default": 5, "min": 0, "max": 15 }
+    }
+  },
+
+  "memory": {
+    "name": "Память",
+    "params": {
+      "totals": { "type": "bool", "name": "Строка «занято / всего»", "default": true },
+      "top_processes": { "type": "int", "name": "Процессов в топе", "default": 5, "min": 0, "max": 15 }
+    }
+  },
+
+  "gpu": {
+    "name": "Видеокарта",
+    "params": {
+      "details": { "type": "bool", "name": "Строка VRAM, температуры и потребления", "default": true }
+    }
+  },
+
+  "disks": {
+    "name": "Диски",
+    "params": {
+      "mounts": { "type": "stringlist", "name": "Точки монтирования", "default": ["/"] },
+      "nvme_temp": { "type": "bool", "name": "Температура NVMe у корня", "default": true }
+    }
+  },
+
+  "uptime": { "name": "Аптайм", "params": {} },
+
+  "network": {
+    "name": "Сеть",
+    "params": {
+      "interface": { "type": "string", "name": "Интерфейс", "default": "enp4s0" }
+    }
+  },
+
+  "services": {
+    "name": "Службы",
+    "hint": "docker, ollama, ожидающие обновления — свой скрипт в пакете",
+    "params": {}
+  },
+
+  "passport": {
+    "name": "Паспорт железа",
+    "hint": "Статичные строки: процессор, видеокарта, плата",
+    "params": {}
+  }
+}

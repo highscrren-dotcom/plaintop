@@ -15,17 +15,25 @@
     <entry name="fontSize" type="Int">
       <default>10</default>
     </entry>
+    <entry name="padLeft" type="Int">
+      <default>48</default>
+    </entry>
+    <entry name="padTop" type="Int">
+      <default>44</default>
+    </entry>
+    <entry name="widgetWidth" type="Int">
+      <default>500</default>
+    </entry>
+    <entry name="widgetHeight" type="Int">
+      <default>950</default>
+    </entry>
     <entry name="updateInterval" type="Int">
       <default>1000</default>
     </entry>
-    <entry name="topCount" type="Int">
-      <default>5</default>
-    </entry>
-    <entry name="netInterface" type="String">
-      <default>enp4s0</default>
-    </entry>
-    <entry name="mounts" type="StringList">
-      <default>/,/run/media/s1dd1/s1d</default>
+    <!-- Раскладка блоков одной строкой JSON. Пусто — берётся та, что сгенерирована
+         из schema/widget.json и лежит в пакете (contents/code/description.js). -->
+    <entry name="blocksJson" type="String">
+      <default></default>
     </entry>
   </group>
 

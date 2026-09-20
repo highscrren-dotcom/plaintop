@@ -12,10 +12,11 @@ KCM.SimpleKCM {
     property alias cfg_fontFamily: fontField.text
     property alias cfg_fontSize: sizeField.value
     property alias cfg_updateInterval: intervalField.value
-    property alias cfg_topCount: topField.value
-    property alias cfg_netInterface: netField.text
-    // ⚠️ StringList в QML — массив; текстовое поле хранит его через запятую.
-    property var cfg_mounts: []
+    property alias cfg_widgetWidth: widthField.value
+    property alias cfg_padLeft: padLeftField.value
+    property alias cfg_padTop: padTopField.value
+    property alias cfg_widgetHeight: heightField.value
+
 
     Kirigami.FormLayout {
         anchors.left: parent.left
@@ -41,6 +42,38 @@ KCM.SimpleKCM {
         }
 
         SpinBox {
+            id: padLeftField
+            Kirigami.FormData.label: i18n("Отступ слева, px:")
+            from: 0
+            to: 500
+            stepSize: 4
+        }
+
+        SpinBox {
+            id: padTopField
+            Kirigami.FormData.label: i18n("Отступ сверху, px:")
+            from: 0
+            to: 500
+            stepSize: 4
+        }
+
+        SpinBox {
+            id: widthField
+            Kirigami.FormData.label: i18n("Ширина, px:")
+            from: 100
+            to: 2000
+            stepSize: 8
+        }
+
+        SpinBox {
+            id: heightField
+            Kirigami.FormData.label: i18n("Высота, px:")
+            from: 100
+            to: 2000
+            stepSize: 8
+        }
+
+        SpinBox {
             id: intervalField
             Kirigami.FormData.label: i18n("Интервал, мс:")
             from: 200
@@ -48,25 +81,5 @@ KCM.SimpleKCM {
             stepSize: 100
         }
 
-        SpinBox {
-            id: topField
-            Kirigami.FormData.label: i18n("Процессов в топе:")
-            from: 0
-            to: 15
-        }
-
-        TextField {
-            id: netField
-            Kirigami.FormData.label: i18n("Сетевой интерфейс:")
-            Layout.fillWidth: true
-        }
-
-        TextField {
-            id: mountsField
-            Kirigami.FormData.label: i18n("Точки монтирования:")
-            Layout.fillWidth: true
-            text: page.cfg_mounts.join(", ")
-            onTextChanged: page.cfg_mounts = text.split(",").map(s => s.trim()).filter(s => s.length > 0)
-        }
     }
 }

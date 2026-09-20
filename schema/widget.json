@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "_": "Раскладка виджета: какие блоки, в каком порядке, с какими параметрами. От движка не зависит — генератор превращает это в то, что понимает движок. Словарь типов — blocks.json.",
+
+  "blocks": [
+    { "id": "head",     "type": "header",    "enabled": true },
+    { "id": "clock",    "type": "clock",     "enabled": true },
+    { "id": "date",     "type": "date",      "enabled": true },
+    { "id": "os",       "type": "os",        "enabled": true },
+    { "id": "sep1",     "type": "separator", "enabled": true },
+
+    { "id": "cpu",      "type": "cpu",       "enabled": true,
+      "params": { "per_socket": true, "model_line": true, "top_processes": 5 } },
+    { "id": "sep2",     "type": "separator", "enabled": true },
+
+    { "id": "mem",      "type": "memory",    "enabled": true,
+      "params": { "totals": true, "top_processes": 5 } },
+    { "id": "sep3",     "type": "separator", "enabled": true },
+
+    { "id": "gpu",      "type": "gpu",       "enabled": true, "params": { "details": true } },
+    { "id": "sep4",     "type": "separator", "enabled": true },
+
+    { "id": "disks",    "type": "disks",     "enabled": true,
+      "params": { "mounts": ["/", "/run/media/s1dd1/s1d"], "nvme_temp": true } },
+    { "id": "sep5",     "type": "separator", "enabled": true },
+
+    { "id": "uptime",   "type": "uptime",    "enabled": true },
+    { "id": "net",      "type": "network",   "enabled": true, "params": { "interface": "enp4s0" } },
+    { "id": "sep6",     "type": "separator", "enabled": true },
+
+    { "id": "services", "type": "services",  "enabled": true },
+    { "id": "sep7",     "type": "separator", "enabled": true },
+
+    { "id": "passport", "type": "passport",  "enabled": true }
+  ]
+}

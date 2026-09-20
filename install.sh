@@ -13,8 +13,6 @@ APPS="$HOME/.local/share/applications"
 PLASMOID_ID="org.s1dd1.plaintop"
 PLASMOID_SRC="$REPO/plasmoid/package"
 PLASMOID_DEST="$HOME/.local/share/plasma/plasmoids/$PLASMOID_ID"
-# Место на экране — то же, что занимал conky: gap_x/gap_y из plainext.conf.
-PLASMOID_GEOM="48, 44, 440, 815"
 
 red()  { printf '\033[31m%s\033[0m\n' "$*"; }
 grn()  { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -54,6 +52,11 @@ plasmoid_install() {
     echo "== Плазмоид"
     if ! command -v kpackagetool6 >/dev/null; then
         red "  ✗ kpackagetool6 не найден — плазмоид не поставить"; return 1
+    fi
+    # Описание → пакет. Негодное описание останавливает установку: лучше
+    # отказаться здесь, чем увидеть пустой виджет и искать причину в QML.
+    if ! python3 "$REPO/plasmoid/generate.py"; then
+        red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
     fi
     local mode=--install
     [ -d "$PLASMOID_DEST" ] && mode=--upgrade
@@ -121,12 +124,14 @@ plasmoid_place() {
     n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
     if [ "${n:-0}" -gt 0 ]; then dim "  уже на рабочем столе — место не трогаю"; return 0; fi
     plasmashell_ready || { red "  ✗ plasmashell не отвечает — добавь виджет вручную"; return 1; }
-    if qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
-        "desktops()[0].addWidget(\"$PLASMOID_ID\", $PLASMOID_GEOM)" >/dev/null 2>&1; then
-        grn "  ✓ добавлен на рабочий стол ($PLASMOID_GEOM)"
-    else
-        red "  ✗ не удалось добавить на рабочий стол"; return 1
-    fi
+    # ⚠️ Координаты в addWidget бесполезны: место и размер задаются подсказками
+    # Layout.* внутри виджета, а положение контейнер всё равно сбрасывает в угол.
+    # Зазор от края рисуется самим виджетом (настройки «Отступ слева/сверху»).
+    local id
+    id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+        "print(desktops()[0].addWidget(\"$PLASMOID_ID\").id)" 2>/dev/null | tr -dc '0-9')
+    if [ -z "$id" ]; then red "  ✗ не удалось добавить на рабочий стол"; return 1; fi
+    grn "  ✓ добавлен на рабочий стол (id=$id)"
 }
 
 plasmoid_status() {

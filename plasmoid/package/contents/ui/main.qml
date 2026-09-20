@@ -8,6 +8,8 @@ import org.kde.ksysguard.sensors as Sensors
 import org.kde.ksysguard.process as Proc
 import org.kde.kitemmodels as KItem
 
+import "../code/description.js" as Description
+
 PlasmoidItem {
     id: root
 
@@ -17,6 +19,14 @@ PlasmoidItem {
 
     preferredRepresentation: fullRepresentation
 
+    // ⚠️ Размер апплета контейнер берёт из Layout.* НА КОРНЕ, и подсказка должна быть
+    // постоянной. Пока она зависела от высоты текста, контейнер пересобирал раскладку
+    // при каждом изменении числа строк и сбрасывал виджет в угол 0,0 — проверено.
+    Layout.minimumWidth: Plasmoid.configuration.widgetWidth
+    Layout.minimumHeight: Plasmoid.configuration.widgetHeight
+    Layout.preferredWidth: Plasmoid.configuration.widgetWidth
+    Layout.preferredHeight: Plasmoid.configuration.widgetHeight
+
     // Палитра перенесена из conky/plainext.conf — тот же PlainExt.
     readonly property color cFg: "#C8CCD4"      // основной текст
     readonly property color cAccent: "#E05561"  // заголовок и полоски
@@ -25,6 +35,38 @@ PlasmoidItem {
 
     readonly property int rate: Plasmoid.configuration.updateInterval
     readonly property int barWidth: 18          // ширина полоски в символах, как в lua
+
+    // ── Описание виджета ──────────────────────────────────────────────────────
+    // Что показывать и в каком порядке — из описания, а не из разметки. Правка
+    // пользователя лежит в настройках строкой JSON; пусто — берём сгенерированное
+    // из schema/widget.json (plasmoid/generate.py кладёт его в пакет).
+    readonly property var blocks: {
+        const raw = Plasmoid.configuration.blocksJson
+        if (raw && raw.length > 0) {
+            try {
+                const parsed = JSON.parse(raw)
+                if (Array.isArray(parsed) && parsed.length > 0) return parsed
+            } catch (e) {
+                console.warn("plaintop: описание в настройках не разбирается, беру пакетное:", e)
+            }
+        }
+        return Description.BLOCKS
+    }
+
+    // Параметр включённого блока данного типа — нужен там, где от него зависят
+    // подписки на сенсоры, а не только текст.
+    function blockParam(type, key, fallback) {
+        for (const b of blocks) {
+            if (b.type === type && b.enabled !== false) {
+                const v = (b.params || {})[key]
+                if (v !== undefined) return v
+            }
+        }
+        return fallback
+    }
+
+    readonly property string netIface: blockParam("network", "interface", "enp4s0")
+    readonly property var mounts: blockParam("disks", "mounts", ["/"])
 
     // ── Данные ────────────────────────────────────────────────────────────────
     // Один SensorDataModel на все величины: одна подписка вместо сотни объектов.
@@ -38,7 +80,7 @@ PlasmoidItem {
     }
 
     readonly property var sensorIds: [
-        "cpu/all/usage", "cpu/all/name", "cpu/all/coreCount", "cpu/all/cpuCount",
+        "cpu/all/usage",
         "memory/physical/usedPercent", "memory/physical/used", "memory/physical/total",
         "os/system/hostname", "os/system/name", "os/kernel/version",
         "lmsensors/nct6779-isa-0a20/fan1", "lmsensors/nct6779-isa-0a20/fan2",
@@ -47,8 +89,7 @@ PlasmoidItem {
         "lmsensors/nvme-pci-0500/temp1",
         "gpu/gpu0/usage", "gpu/gpu0/temperature", "gpu/gpu0/usedVram",
         "gpu/gpu0/totalVram", "gpu/gpu0/power", "gpu/gpu0/name",
-        "network/" + Plasmoid.configuration.netInterface + "/download",
-        "network/" + Plasmoid.configuration.netInterface + "/upload",
+        "network/" + netIface + "/download", "network/" + netIface + "/upload",
         "os/system/uptime"
     ].concat(coreIds)
 
@@ -85,8 +126,8 @@ PlasmoidItem {
         sortOrder: Qt.DescendingOrder
     }
 
-    // Раскладка ядер по узлам NUMA читается из /sys один раз на старте:
-    // зашивать её числами нельзя — на другой машине она другая.
+    // Раскладка ядер по узлам NUMA, модель процессора и плата читаются разово:
+    // в сенсорах их нет (cpu/all/name отдаёт «Все»), а за сеанс они не меняются.
     property var nodeCpus: []
     property string cpuModel: ""
     property string boardLine: ""
@@ -95,7 +136,7 @@ PlasmoidItem {
     property int cpuThreads: 0
 
     P5Support.DataSource {
-        id: topology
+        id: once
         engine: "executable"
         connectedSources: [
             "cat /sys/devices/system/node/node*/cpulist",
@@ -109,7 +150,6 @@ PlasmoidItem {
                 else if (source.indexOf("lscpu") >= 0) parseLscpu(String(data.stdout))
                 else parseBoard(String(data.stdout))
             }
-            // Разовое чтение: топология и модель процессора за сеанс не меняются.
             disconnectSource(source)
         }
 
@@ -152,6 +192,8 @@ PlasmoidItem {
         }
     }
 
+    // Файловые системы: в сенсорах они лежат под UUID диска, а нужны точки
+    // монтирования — берём df, как это делал conky.
     property var diskRows: []
 
     P5Support.DataSource {
@@ -160,7 +202,7 @@ PlasmoidItem {
         // ⚠️ Раз в 10 с, а не каждый тик: каждый запуск — это fork в процессе оболочки.
         interval: 10000
         connectedSources: [
-            "df -B1 --output=target,size,used,pcent " + Plasmoid.configuration.mounts.join(" ") + " 2>/dev/null"
+            "df -B1 --output=target,size,used,pcent " + root.mounts.join(" ") + " 2>/dev/null"
         ]
 
         onNewData: function(source, data) {
@@ -233,6 +275,7 @@ PlasmoidItem {
         return String(Math.round(v)).padStart(3) + "%"
     }
 
+    // Метка ровно в три знака — иначе колонка процентов гуляет от длины метки.
     function barRow(label, value) {
         return String(label).padEnd(3).slice(0, 3) + " " + bar(value) + " " + pct(value)
     }
@@ -245,6 +288,12 @@ PlasmoidItem {
         return comma(bytes / 1024 / 1024 / 1024, 1) + " GiB"
     }
 
+    function speed(bytes) {
+        if (bytes >= 1024 * 1024) return comma(bytes / 1024 / 1024, 1) + " MiB/s"
+        if (bytes >= 1024) return comma(bytes / 1024, 0) + " KiB/s"
+        return Math.round(bytes) + " B/s"
+    }
+
     function human(secs) {
         const d = Math.floor(secs / 86400)
         const h = Math.floor(secs % 86400 / 3600)
@@ -252,10 +301,7 @@ PlasmoidItem {
         return (d > 0 ? d + "д " : "") + h + "ч " + m + "м"
     }
 
-    // ── Вычисляемые строки ────────────────────────────────────────────────────
-    readonly property real cpuUsage: (tick, num("cpu/all/usage", 0))
-
-    // Узел NUMA: средняя загрузка его ядер и самая горячая из их температур.
+    // ── Величины ──────────────────────────────────────────────────────────────
     function nodeUsage(n) {
         const set = nodeCpus[n]
         if (!set) return 0
@@ -272,64 +318,9 @@ PlasmoidItem {
         return max
     }
 
-    readonly property string headerLine: {
-        tick
-        const host = sval("os/system/hostname")
-        return Plasmoid.configuration.header + (host ? "\\" + host : "")
-    }
-
-    readonly property var nodes: {
-        tick
+    function topRows(model, column, count, format) {
         const out = []
-        for (let n = 0; n < nodeCpus.length; n++) out.push({ usage: nodeUsage(n), temp: nodeTemp(n) })
-        return out
-    }
-
-    readonly property real memPct: (tick, num("memory/physical/usedPercent", 0))
-
-    readonly property string clockBig: (tick, Qt.formatTime(new Date(), "HH:mm"))
-    readonly property string clockSec: (tick, Qt.formatTime(new Date(), ":ss"))
-    // ⚠️ Qt.formatDate берёт локаль C и выдаёт «Sunday, 20 September» даже при ru_RU.
-    // Русские названия даёт только toLocaleDateString с явной локалью.
-    readonly property string dateLine: {
-        tick
-        const s = new Date().toLocaleDateString(Qt.locale(), "dddd, d MMMM")
-        return s.charAt(0).toUpperCase() + s.slice(1)
-    }
-
-    readonly property string osLine: {
-        tick
-        const os = sval("os/system/name") || ""
-        const kern = sval("os/kernel/version") || ""
-        return os + "  " + kern
-    }
-
-    readonly property string cpuModelLine: {
-        tick
-        const name = (cpuSockets > 1 ? cpuSockets + "x " : "") + (cpuModel || "CPU")
-        const cores = cpuCores
-        const threads = cpuThreads
-        const t0 = Math.round(nodeTemp(0)), t1 = Math.round(nodeTemp(1))
-        const f1 = Math.round(num("lmsensors/nct6779-isa-0a20/fan1", 0))
-        const f2 = Math.round(num("lmsensors/nct6779-isa-0a20/fan2", 0))
-        return name + "  " + cores + "c/" + threads + "t  "
-             + (t0 > 0 ? t0 + "/" + t1 + "°C  " : "")
-             + (f1 > 0 ? f1 + "/" + f2 + " rpm" : "")
-    }
-
-    readonly property string memLine: {
-        tick
-        return gib(num("memory/physical/used", 0)) + " / " + gib(num("memory/physical/total", 0))
-    }
-
-    readonly property string uptimeLine: (tick, "аптайм " + human(num("os/system/uptime", 0)))
-
-    // Топ процессов: имя слева, значение в фиксированной колонке — иначе
-    // в моноширинном тексте правый край поедет.
-    function topRows(model, column, format) {
-        tick
-        const out = []
-        const n = Math.min(Plasmoid.configuration.topCount, model.rowCount())
+        const n = Math.min(count, model.rowCount())
         for (let i = 0; i < n; i++) {
             const name = String(model.data(model.index(i, 0), Proc.ProcessDataModel.Value) || "")
             const v = model.data(model.index(i, column), Proc.ProcessDataModel.Value)
@@ -338,73 +329,156 @@ PlasmoidItem {
         return out
     }
 
-    readonly property var topCpu: topRows(byCpu, 1, v => comma(v, 1) + "%")
-    readonly property var topMem: topRows(byMem, 2, v => comma(v / 1024 / 1024, 1) + " GiB")
-
-    readonly property real gpuUsage: (tick, num("gpu/gpu0/usage", 0))
-
-    readonly property string vramLine: {
-        tick
-        const used = num("gpu/gpu0/usedVram", 0), total = num("gpu/gpu0/totalVram", 0)
-        const t = Math.round(num("gpu/gpu0/temperature", 0))
-        const w = Math.round(num("gpu/gpu0/power", 0))
-        return "VRAM " + comma(used / 1024 / 1024 / 1024, 1) + "/" + comma(total / 1024 / 1024 / 1024, 1)
-             + " GB  temp " + t + "°C  pwr " + w + "W"
+    // ── Сборка строк по описанию ──────────────────────────────────────────────
+    // Строка — это набор кусков с общим кеглем; часы стоят особняком, потому что
+    // в них два разных кегля на одной базовой линии.
+    function line(text, color) {
+        return { kind: "parts", parts: [{ text: text, color: color || cFg }] }
     }
 
-    // Каждая файловая система — две строки: полоска с процентом и подпись под ней.
-    readonly property var diskLines: {
+    function kvLine(label, value) {
+        return { kind: "parts", parts: [
+            { text: String(label).padEnd(21), color: cDim },
+            { text: "| " + value, color: cFg }
+        ] }
+    }
+
+    readonly property var lines: {
         tick
         const out = []
-        for (const d of diskRows) {
-            const name = d.target === "/" ? "/" : d.target.split("/").pop()
-            out.push({ bar: true, text: barRow(name, d.pct) })
-            let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
-            if (d.target === "/") {
-                const t = Math.round(num("lmsensors/nvme-pci-0500/temp1", 0))
-                if (t > 0) note += "  nvme " + t + "°C"
+
+        for (const b of blocks) {
+            if (b.enabled === false) continue
+            const p = b.params || {}
+
+            switch (b.type) {
+            case "header": {
+                const host = p.hostname === false ? "" : sval("os/system/hostname")
+                out.push(line((p.text || "") + (host ? "\\" + host : ""), cAccent))
+                break
             }
-            out.push({ bar: false, text: note })
-        }
-        // Настроенные, но не смонтированные — показываем прочерком, а не молчанием.
-        for (const m of Plasmoid.configuration.mounts) {
-            if (!diskRows.some(d => d.target === m))
-                out.push({ bar: false, text: m.split("/").pop() + " | не смонтирован" })
+            case "clock": {
+                const big = Qt.formatTime(new Date(), "HH:mm")
+                if (p.seconds === false) out.push({ kind: "clock", big: big, small: "" })
+                else out.push({ kind: "clock", big: big, small: Qt.formatTime(new Date(), ":ss") })
+                break
+            }
+            case "date": {
+                // ⚠️ Qt.formatDate берёт локаль C и выдаёт «Sunday, 20 September» даже
+                // при ru_RU. Русские названия даёт только toLocaleDateString.
+                const d = new Date().toLocaleDateString(Qt.locale(), "dddd, d MMMM")
+                out.push(line(d.charAt(0).toUpperCase() + d.slice(1), cVal))
+                break
+            }
+            case "os":
+                out.push(line((sval("os/system/name") || "") + "  " + (sval("os/kernel/version") || ""), cDim))
+                break
+
+            case "separator":
+                out.push(line("-".repeat(35), cDim))
+                break
+
+            case "cpu": {
+                const usage = num("cpu/all/usage", 0)
+                out.push(line(barRow("CPU", usage)))
+                if (p.per_socket !== false) {
+                    for (let n = 0; n < nodeCpus.length; n++)
+                        out.push(line(barRow("S" + n, nodeUsage(n)) + "   node" + n))
+                }
+                if (p.model_line !== false) {
+                    const name = (cpuSockets > 1 ? cpuSockets + "x " : "") + (cpuModel || "CPU")
+                    const t0 = Math.round(nodeTemp(0)), t1 = Math.round(nodeTemp(1))
+                    const f1 = Math.round(num("lmsensors/nct6779-isa-0a20/fan1", 0))
+                    const f2 = Math.round(num("lmsensors/nct6779-isa-0a20/fan2", 0))
+                    out.push(line(name + "  " + cpuCores + "c/" + cpuThreads + "t  "
+                                  + (t0 > 0 ? t0 + "/" + t1 + "°C  " : "")
+                                  + (f1 > 0 ? f1 + "/" + f2 + " rpm" : ""), cDim))
+                }
+                for (const r of topRows(byCpu, 1, p.top_processes || 0, v => comma(v, 1) + "%"))
+                    out.push(line(r))
+                break
+            }
+
+            case "memory": {
+                const used = num("memory/physical/usedPercent", 0)
+                out.push(line(barRow("RAM", used)))
+                if (p.totals !== false)
+                    out.push(line(gib(num("memory/physical/used", 0)) + " / "
+                                  + gib(num("memory/physical/total", 0)), cDim))
+                for (const r of topRows(byMem, 2, p.top_processes || 0, v => gib(v * 1024)))
+                    out.push(line(r))
+                break
+            }
+
+            case "gpu": {
+                out.push(line(barRow("GPU", num("gpu/gpu0/usage", 0))))
+                if (p.details !== false) {
+                    out.push(line("VRAM " + comma(num("gpu/gpu0/usedVram", 0) / 1073741824, 1)
+                                  + "/" + comma(num("gpu/gpu0/totalVram", 0) / 1073741824, 1)
+                                  + " GB  temp " + Math.round(num("gpu/gpu0/temperature", 0))
+                                  + "°C  pwr " + Math.round(num("gpu/gpu0/power", 0)) + "W", cDim))
+                }
+                break
+            }
+
+            case "disks": {
+                for (const d of diskRows) {
+                    const name = d.target === "/" ? "/" : d.target.split("/").pop()
+                    out.push(line(barRow(name, d.pct)))
+                    let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
+                    if (d.target === "/" && p.nvme_temp !== false) {
+                        const t = Math.round(num("lmsensors/nvme-pci-0500/temp1", 0))
+                        if (t > 0) note += "  nvme " + t + "°C"
+                    }
+                    out.push(line(note, cDim))
+                }
+                // Настроенные, но не смонтированные — показываем прочерком, а не молчанием.
+                for (const m of (p.mounts || [])) {
+                    if (!diskRows.some(d => d.target === m))
+                        out.push(line(m.split("/").pop() + " | не смонтирован", cDim))
+                }
+                break
+            }
+
+            case "uptime":
+                out.push(line("аптайм " + human(num("os/system/uptime", 0))))
+                break
+
+            case "network": {
+                const iface = p.interface || netIface
+                out.push(line(iface + "  Dl " + speed(num("network/" + iface + "/download", 0))
+                              + "  Ul " + speed(num("network/" + iface + "/upload", 0)), cDim))
+                break
+            }
+
+            case "services":
+                for (const s of serviceRows) out.push(kvLine(s.label, s.value))
+                break
+
+            case "passport": {
+                if (cpuModel) out.push(line("CPU | " + (cpuSockets > 1 ? cpuSockets + "x " : "") + cpuModel, cDim))
+                const gpu = sval("gpu/gpu0/name")
+                if (gpu) out.push(line("GPU | " + gpu, cDim))
+                if (boardLine) out.push(line("MBD | " + boardLine, cDim))
+                break
+            }
+            }
         }
         return out
     }
 
-    function speed(bytes) {
-        if (bytes >= 1024 * 1024) return comma(bytes / 1024 / 1024, 1) + " MiB/s"
-        if (bytes >= 1024) return comma(bytes / 1024, 0) + " KiB/s"
-        return Math.round(bytes) + " B/s"
-    }
-
-    readonly property string netLine: {
-        tick
-        const iface = Plasmoid.configuration.netInterface
-        return iface + "  Dl " + speed(num("network/" + iface + "/download", 0))
-             + "  Ul " + speed(num("network/" + iface + "/upload", 0))
-    }
-
-    readonly property var passport: {
-        tick
-        const rows = []
-        if (cpuModel) rows.push("CPU | " + (cpuSockets > 1 ? cpuSockets + "x " : "") + cpuModel)
-        const gpu = sval("gpu/gpu0/name")
-        if (gpu) rows.push("GPU | " + gpu)
-        if (boardLine) rows.push("MBD | " + boardLine)
-        return rows
-    }
-
-    readonly property string sep: "-".repeat(35)
-
     // ── Разметка ──────────────────────────────────────────────────────────────
     fullRepresentation: Item {
-        implicitWidth: column.implicitWidth
-        implicitHeight: column.implicitHeight
-        Layout.minimumWidth: column.implicitWidth
-        Layout.minimumHeight: column.implicitHeight
+        // ⚠️ Никаких Layout.minimum*: они заставляют контейнер подгонять апплет под
+        // высоту текста, а она меняется, пока доезжают данные (диски, службы). Каждая
+        // такая подгонка сбрасывает виджет в угол 0,0 — проверено. Размер берётся из
+        // сохранённой геометрии, implicit* нужен только при первом появлении.
+        // ⚠️ Размер берётся из настроек, а НЕ из высоты текста. Пока подсказка
+        // разметки зависела от содержимого, контейнер пересобирал раскладку при
+        // каждом изменении числа строк (доехали диски, службы) и сбрасывал виджет
+        // в угол 0,0. Проверено. Постоянный размер — постоянное место.
+        implicitWidth: Plasmoid.configuration.widgetWidth
+        implicitHeight: Plasmoid.configuration.widgetHeight
 
         // Строка виджета: моноширинный текст, цвет и кегль задаются на месте.
         component Line: Text {
@@ -414,105 +488,63 @@ PlasmoidItem {
             renderType: Text.NativeRendering
         }
 
+        // ⚠️ Отступ рисуется ВНУТРИ виджета, а не задаётся его координатами:
+        // место, выставленное скриптом, plasmashell на следующем запуске всё равно
+        // сбрасывает в угол 0,0 — проверено. Так conky-подобный зазор от края
+        // держится независимо от того, куда контейнер поставил апплет.
         Column {
             id: column
+            x: Plasmoid.configuration.padLeft
+            y: Plasmoid.configuration.padTop
             spacing: 0
 
-            Line {
-                text: root.headerLine
-                color: root.cAccent
-            }
-
-            // Row задаёт только x, поэтому мелкие секунды можно посадить
-            // на базовую линию больших часов — иначе они «плывут» по высоте.
-            Row {
-                spacing: 0
-
-                Line {
-                    id: clockBig
-                    text: root.clockBig
-                    font.pointSize: Plasmoid.configuration.fontSize * 3.4
-                    font.bold: true
-                }
-
-                Line {
-                    text: root.clockSec
-                    font.pointSize: Plasmoid.configuration.fontSize * 1.5
-                    color: root.cVal
-                    anchors.baseline: clockBig.baseline
-                }
-            }
-
-            Line { text: root.dateLine; color: root.cVal }
-            Line { text: root.osLine; color: root.cDim }
-            Line { text: root.sep; color: root.cDim }
-
-            Line { text: root.barRow("CPU", root.cpuUsage) }
-
             Repeater {
-                model: root.nodes
-                Line {
-                    required property int index
+                model: root.lines
+
+                Item {
                     required property var modelData
-                    text: root.barRow("S" + index, modelData.usage) + "   node" + index
+
+                    implicitWidth: modelData.kind === "clock" ? clockRow.implicitWidth : partsRow.implicitWidth
+                    implicitHeight: modelData.kind === "clock" ? clockRow.implicitHeight : partsRow.implicitHeight
+
+                    // Row задаёт только x, поэтому мелкие секунды можно посадить
+                    // на базовую линию больших часов — иначе они «плывут» по высоте.
+                    Row {
+                        id: clockRow
+                        visible: modelData.kind === "clock"
+                        spacing: 0
+
+                        Line {
+                            id: bigClock
+                            text: visible ? modelData.big : ""
+                            font.pointSize: Plasmoid.configuration.fontSize * 3.4
+                            font.bold: true
+                        }
+
+                        Line {
+                            text: clockRow.visible ? modelData.small : ""
+                            font.pointSize: Plasmoid.configuration.fontSize * 1.5
+                            color: root.cVal
+                            anchors.baseline: bigClock.baseline
+                        }
+                    }
+
+                    Row {
+                        id: partsRow
+                        visible: modelData.kind !== "clock"
+                        spacing: 0
+
+                        Repeater {
+                            model: partsRow.visible ? modelData.parts : []
+
+                            Line {
+                                required property var modelData
+                                text: modelData.text
+                                color: modelData.color
+                            }
+                        }
+                    }
                 }
-            }
-
-            Line { text: root.cpuModelLine; color: root.cDim }
-
-            Repeater {
-                model: root.topCpu
-                Line { required property string modelData; text: modelData }
-            }
-
-            Line { text: root.sep; color: root.cDim }
-
-            Line { text: root.barRow("RAM", root.memPct) }
-            Line { text: root.memLine; color: root.cDim }
-
-            Repeater {
-                model: root.topMem
-                Line { required property string modelData; text: modelData }
-            }
-
-            Line { text: root.sep; color: root.cDim }
-
-            Line { text: root.barRow("GPU", root.gpuUsage) }
-            Line { text: root.vramLine; color: root.cDim }
-
-            Line { text: root.sep; color: root.cDim }
-
-            Repeater {
-                model: root.diskLines
-                Line {
-                    required property var modelData
-                    text: modelData.text
-                    color: modelData.bar ? root.cFg : root.cDim
-                }
-            }
-
-            Line { text: root.sep; color: root.cDim }
-
-            Line { text: root.uptimeLine }
-            Line { text: root.netLine; color: root.cDim }
-
-            Line { text: root.sep; color: root.cDim }
-
-            Repeater {
-                model: root.serviceRows
-                Row {
-                    required property var modelData
-                    spacing: 0
-                    Line { text: modelData.label.padEnd(21); color: root.cDim }
-                    Line { text: "| " + modelData.value }
-                }
-            }
-
-            Line { text: root.sep; color: root.cDim }
-
-            Repeater {
-                model: root.passport
-                Line { required property string modelData; text: modelData; color: root.cDim }
             }
         }
     }
