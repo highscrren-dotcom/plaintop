@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=conky
+NoDisplay=true
+Hidden=true
+Comment=Заглушка. Перекрывает /usr/share/applications/conky.desktop из пакета:
+Comment[ru]=KWin при восстановлении сессии сопоставлял класс окна Conky с этим файлом

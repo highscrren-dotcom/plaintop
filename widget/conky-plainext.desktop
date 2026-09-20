@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Conky — PlainExt
+Comment=Текстовый монитор системы на рабочем столе (см. ~/dev/SETUP.md)
+Exec=sh -c "sleep 8; exec /home/s1dd1/.config/conky/start.sh"
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel
