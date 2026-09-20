@@ -1,214 +1,220 @@
-# Грабли: виджет на рабочем столе под KDE Plasma 6 / KWin Wayland
+# Gotchas: a desktop widget under KDE Plasma 6 / KWin Wayland
 
-Собрано при настройке на s1dPC 20.09.2026. Всё подтверждено исполнением на живой
-системе — здесь нет ничего «по документации» или «по памяти».
+English · [Русский](GOTCHAS.ru.md)
 
-Две части: сначала conky (первая реализация), затем плазмоид (целевая).
+Collected while setting the widget up on s1dPC on 2026-09-20. Everything is confirmed by
+running it on a live system — nothing here comes "from the docs" or "from memory".
 
-# Часть I. conky
+Two parts: conky first (the initial implementation), then the plasmoid (the target one).
 
-## Conky под Wayland работает
+# Part I. conky
 
-Расхожее «Conky под Wayland не работает» — неверно для KDE. Он идёт через XWayland
-(`Xwayland :0 -rootless` поднимается KWin автоматически) и ведёт себя штатно.
+## Conky works under Wayland
 
-⚠️ Настоящие ограничения лежат не там, где их обычно ищут — см. ниже.
+The common claim "Conky does not work under Wayland" is wrong for KDE. It runs through
+XWayland (`Xwayland :0 -rootless`, which KWin starts automatically) and behaves normally.
 
-## Тип окна: только `normal`
+⚠️ The real limits are not where people usually look for them — see below.
 
-| Тип | Окно создаётся | Прозрачность |
+## Window type: `normal` only
+
+| Type | Window is created | Transparency |
 |---|---|---|
-| `normal` | да | **да** |
-| `desktop` | да, свойство ставится верно | **нет — чёрный прямоугольник** |
-| `override` | да | нет (сказано в man: «semi-transparent backgrounds do not work») |
+| `normal` | yes | **yes** |
+| `desktop` | yes, the property is set correctly | **no — a black rectangle** |
+| `override` | yes | no (the man page says so: "semi-transparent backgrounds do not work") |
 
-С `desktop` KWin перестаёт композитить окно. Проверено: вокруг текста появляется
-непрозрачная чёрная подложка.
+With `desktop`, KWin stops compositing the window. Verified: an opaque black backing
+appears around the text.
 
-Рабочая связка:
+The combination that works:
 ```lua
 own_window_type = 'normal',
 own_window_hints = 'undecorated,below,sticky,skip_taskbar,skip_pager',
 own_window_colour = '#00000000',
 ```
 
-⚠️ `own_window_transparent` и `own_window_argb_value` объявлены устаревшими в conky 1.24,
-`own_window_argb_visual` удалён. Прозрачность задаётся только через `own_window_colour`.
-Старые гайды в интернете почти все написаны под удалённые ключи.
+⚠️ `own_window_transparent` and `own_window_argb_value` are deprecated in conky 1.24,
+`own_window_argb_visual` is removed. Transparency comes only from `own_window_colour`.
+Almost every older guide on the web is written against the removed keys.
 
-## Click-through: своей настройки у conky НЕТ
+## Click-through: conky has NO setting of its own
 
-В конфиге всего шесть ключей `own_window_*`, и ни один не делает окно прозрачным для
-мыши. Xshape в сборку вкомпилирован («Xshape extension (click through)» в `conky --version`),
-но наружу не выведен.
+The config has six `own_window_*` keys in total, and none of them makes the window
+transparent to the mouse. Xshape is compiled into the build ("Xshape extension (click
+through)" in `conky --version`), but it is not exposed.
 
-Решение — поставить окну **пустую область ввода** извне, через расширение X Shape
-(`widget/clickthrough.py`, нужен `python-xlib`).
+The fix is to give the window an **empty input region** from the outside, through the
+X Shape extension (`conky/clickthrough.py`, needs `python-xlib`).
 
-Проверка результата — чтением обратно, а не на глаз:
+Check the result by reading it back, not by eye:
 ```
-Bounding (что рисуется): 440x748
-Input    (что ловит мышь): 0 прямоугольников   ← клики проходят
+Bounding (what gets drawn): 440x748
+Input    (what catches the mouse): 0 rectangles   ← клики проходят (clicks pass through)
 ```
 
-⚠️ **Проверять через `xdotool mousemove` бесполезно.** Под Wayland синтетические движения
-мыши блокируются: курсор не двигается, `getmouselocation` возвращает окно под его реальным
-положением, и тест молча показывает не то. На этом легко сделать ложный вывод «работает».
+⚠️ **Checking with `xdotool mousemove` is pointless.** Wayland blocks synthetic mouse
+motion: the cursor does not move, `getmouselocation` returns the window under its real
+position, and the test silently reports the wrong thing. A false "it works" is easy here.
 
-## Кто запускает conky — путей много, все не перекрыть
+## Who starts conky — many paths, and you cannot block them all
 
-Симптом: после перезагрузки на экране чужой conky либо свой, но ловящий клики.
+Symptom: after a reboot the screen shows a foreign conky, or ours but catching clicks.
 
-Найденные источники, все реальные:
-1. **`ksmserver`** — менеджер сеансов KDE сохраняет conky (он регистрируется по XSMP)
-   и поднимает при входе. Лечится `excludeApps` в `ksmserverrc`.
-2. **KWin + пакетный desktop-файл** — KWin ведёт СВОЮ сессию
-   (`~/.config/session/kwin_saved at previous logout_`), сопоставляет `resourceClass=Conky`
-   с `/usr/share/applications/conky.desktop` из пакета и запускает **его**
-   (`Exec=conky --daemonize --pause=1`) с дефолтным конфигом.
-3. **KWin по сохранённой команде** — поднимает нашу команду напрямую, мимо скрипта запуска.
+The sources found, all real:
+1. **`ksmserver`** — the KDE session manager saves conky (it registers over XSMP) and
+   starts it at login. Fixed by `excludeApps` in `ksmserverrc`.
+2. **KWin plus the packaged desktop file** — KWin keeps its OWN session
+   (`~/.config/session/kwin_saved at previous logout_`), matches `resourceClass=Conky`
+   against the packaged `/usr/share/applications/conky.desktop`, and starts **that one**
+   (`Exec=conky --daemonize --pause=1`) with the default config.
+3. **KWin from the saved command** — starts our command directly, bypassing the launch script.
 
-**Вывод, ради которого написан этот раздел: не перебирать запускающих.** Их больше, чем
-кажется, и каждый всплывает только после очередной перезагрузки. Правильно — сделать
-операцию идемпотентной: запуск условный, нужное состояние применяется **всегда**.
+**The point this section exists for: do not enumerate the launchers.** There are more of
+them than it seems, and each one surfaces only after another reboot. Instead, make the
+operation idempotent: start conditionally, apply the wanted state **always**.
 
-Чем закрыто (слои независимы намеренно):
-- `own_window_class = 'conky-plainext'` — разрывает сопоставление с пакетным desktop-файлом;
-- `~/.local/share/applications/conky.desktop` с `Hidden=true` — перекрывает системный файл,
-  каталог пользователя идёт раньше в `XDG_DATA_DIRS`;
-- `start.sh` гасит чужие экземпляры и применяет click-through независимо от того, кто
-  поднял conky.
+What covers it (the layers are independent on purpose):
+- `own_window_class = 'conky-plainext'` — breaks the match against the packaged desktop file;
+- `~/.local/share/applications/conky.desktop` with `Hidden=true` — shadows the system file,
+  since the user directory comes first in `XDG_DATA_DIRS`;
+- `start.sh` kills foreign instances and applies click-through no matter who started conky.
 
-⚠️ `excludeApps` держать в согласии с `own_window_class`: после смены класса старое
-значение перестаёт совпадать и исключение молча выключается.
+⚠️ Keep `excludeApps` in step with `own_window_class`: after the class changes, the old
+value stops matching and the exclusion silently turns off.
 
-## Мелочи, стоившие времени
+## Small things that cost time
 
-- **`pkill -f 'conky -c'` убивает собственную оболочку** — шаблон совпадает с её командной
-  строкой. Только `pkill -x conky`.
-- **`bat cache --build` не подхватывает тему с первого раза** — нужен второй прогон.
-  Проверка: `bat --list-themes | grep tokyo`.
-- **Датчики брать по ИМЕНИ чипа** (`coretemp-isa-0000`, `nct6779-isa-0a20`), а не по
-  индексу `hwmon` — индексы плавают между перезагрузками.
-- **`${if_mounted}` не спасает от `statfs`-ошибки**: conky регистрирует файловые объекты
-  до проверки условия, и на несмонтированном пути один раз пишет ошибку в лог. Безвредно.
-- **Lua 5.4 запрещает присваивать переменной цикла** — `for v in ... do v = tonumber(v)`
-  падает на `attempt to assign to const variable`.
-- **Чистить конфиги фильтром по слову опасно.** Удаление всех строк со словом `conky` из
-  `ksmserverrc` снесло заодно `excludeApps=conky` — то есть отключило защиту, поставленную
-  строкой выше. Порядок: сначала чистка, потом запись.
+- **`pkill -f 'conky -c'` kills your own shell** — the pattern matches the shell's own
+  command line. Use `pkill -x conky` only.
+- **`bat cache --build` does not pick up the theme on the first run** — a second run is
+  needed. Check with `bat --list-themes | grep tokyo`.
+- **Address sensors by chip NAME** (`coretemp-isa-0000`, `nct6779-isa-0a20`), not by
+  `hwmon` index — the indexes drift between reboots.
+- **`${if_mounted}` does not save you from the `statfs` error**: conky registers file
+  objects before it evaluates the condition, so an unmounted path logs the error once.
+  Harmless.
+- **Lua 5.4 forbids assigning to a loop variable** — `for v in ... do v = tonumber(v)`
+  fails with `attempt to assign to const variable`.
+- **Cleaning configs with a keyword filter is dangerous.** Deleting every line containing
+  `conky` from `ksmserverrc` also removed `excludeApps=conky` — that is, it disabled the
+  protection added one line earlier. Order: clean first, write after.
 
-## Ловушки самих скриптов
+## Traps in the scripts themselves
 
-- **`set -o pipefail` + `grep -q` врут вместе.** `fc-list | grep -q 'шрифт'` возвращает
-  ошибку, даже когда шрифт есть: `grep -q` выходит на первом совпадении, `fc-list` ловит
-  `SIGPIPE`, и при `pipefail` весь конвейер считается упавшим. Проверка молча показывает
-  «не найдено». Лечится отказом от конвейера — здесь через `fc-match -f '%{family}'`.
+- **`set -o pipefail` and `grep -q` lie together.** `fc-list | grep -q 'font'` returns an
+  error even when the font is there: `grep -q` exits on the first match, `fc-list` catches
+  `SIGPIPE`, and with `pipefail` the whole pipeline counts as failed. The check silently
+  reports "not found". Fixed by dropping the pipeline — here via `fc-match -f '%{family}'`.
 
-# Часть II. плазмоид
+# Part II. the plasmoid
 
-## Чтение файлов из QML в plasmashell запрещено
+## Reading files from QML inside plasmashell is forbidden
 
-`XMLHttpRequest` к `file:///proc/stat` не работает: Qt отвечает «Using GET on a local file
-is disabled by default. Set `QML_XHR_ALLOW_FILE_READ` to 1». Переменная задаётся процессу
-**всей оболочки**, то есть ослабляет доступ к файлам для любого QML внутри неё, и требует
-перелогина. Проверено: в журнале plasmashell предупреждение на каждый тик, данных ноль.
+`XMLHttpRequest` to `file:///proc/stat` does not work: Qt answers "Using GET on a local
+file is disabled by default. Set `QML_XHR_ALLOW_FILE_READ` to 1". The variable is set on
+the process of **the whole shell**, so it loosens file access for any QML inside it, and it
+requires a re-login. Verified: the plasmashell journal gets a warning on every tick, and
+the data is zero.
 
-⚠️ Отсюда и решение 2 в `DECISIONS.md`: данные берутся у ksystemstats по подписке,
-а не вычитываются из `/proc` своими руками.
+⚠️ Hence decision 2 in `DECISIONS.md`: data comes from ksystemstats by subscription instead
+of being read out of `/proc` by hand.
 
-## plasmashell держит QML пакета в кэше
+## plasmashell keeps the package's QML in a cache
 
-Переустановки пакета мало. Пересоздания апплета на рабочем столе — тоже мало.
-Проверено метками в `Component.onCompleted`: новый код не выполнялся ни после
-`kpackagetool6 --upgrade`, ни после `remove()` + `addWidget()`; метка появилась
-только после `systemctl --user restart plasma-plasmashell.service`.
+Reinstalling the package is not enough. Recreating the applet on the desktop is not enough
+either. Verified with markers in `Component.onCompleted`: the new code did not run after
+`kpackagetool6 --upgrade`, nor after `remove()` + `addWidget()`; the marker appeared only
+after `systemctl --user restart plasma-plasmashell.service`.
 
-Поэтому `./install.sh --plasmoid` перезапускает оболочку сам — иначе правка молча
-не доедет, а время уйдёт на поиск несуществующей ошибки в QML.
+That is why `./install.sh --plasmoid` restarts the shell itself — otherwise an edit
+silently never arrives, and the time goes into hunting a QML bug that does not exist.
 
-📝 Метки для таких проверок ставить через `console.warn`: он в журнале виден точно.
+📝 Place markers for such checks with `console.warn`: it definitely shows up in the journal.
 
-## Скриптинг plasmashell — не полноценный QML
+## Scripting plasmashell is not full QML
 
-В `org.kde.PlasmaShell.evaluateScript` **нет объекта `Qt`**: `Qt.rect(...)` падает
-с `ReferenceError: Qt is not defined`. Присваивание `widget.geometry` обычным
-JS-объектом `{x, y, width, height}` проходит молча и **ничего не меняет**.
+`org.kde.PlasmaShell.evaluateScript` has **no `Qt` object**: `Qt.rect(...)` fails with
+`ReferenceError: Qt is not defined`. Assigning a plain JS object `{x, y, width, height}`
+to `widget.geometry` passes silently and **changes nothing**.
 
-Место и размер задаются только аргументами при создании:
+Position and size are set only through the creation arguments:
 
 ```js
 desktops()[0].addWidget("org.s1dd1.plaintop", 48, 44, 440, 815)
 ```
 
-Размер при этом подгоняется под сетку: 440x815 превращается в 448x816.
+The size is snapped to the grid in the process: 440x815 becomes 448x816.
 
-## Движка `systemmonitor` в Plasma 6 нет
+## There is no `systemmonitor` engine in Plasma 6
 
-Каталог движков — `/usr/lib/qt6/plugins/plasma5support/dataengine/`, и `systemmonitor`
-в нём отсутствует: есть `executable`, `time`, `powermanagement`, `soliddevice` и погодные.
-Весь мониторинг переехал в ksystemstats (`org.kde.ksysguard.sensors`).
+The data engine directory is `/usr/lib/qt6/plugins/plasma5support/dataengine/`, and
+`systemmonitor` is missing from it: there are `executable`, `time`, `powermanagement`,
+`soliddevice` and the weather ones. All monitoring moved to ksystemstats
+(`org.kde.ksysguard.sensors`).
 
-## Сенсоры отвечают не мгновенно
+## Sensors do not answer instantly
 
-Демон `ksystemstats` поднимается по первой подписке, и 1–1,5 с сенсор находится
-в состоянии «грузится» (`status: 1`). На старте надо рисовать прочерк: ноль в этот
-момент — неправда, а не значение.
+The `ksystemstats` daemon starts on the first subscription, and for 1–1.5 s the sensor
+stays in the "loading" state (`status: 1`). At startup, draw a dash: a zero at that moment
+is a falsehood, not a value.
 
-📝 Замер сделан в отдельном QML-движке той же версии Qt, не внутри оболочки.
+📝 Measured in a separate QML engine of the same Qt version, not inside the shell.
 
-## Готовое форматирование ломает моноширинные колонки
+## Ready-made formatting breaks monospace columns
 
-`formattedValue` и `Formatter` вставляют невидимые U+200B перед «%», U+2009 перед «°C»
-и U+00A0 в разделителе тысяч. В тексте, где колонки держатся на равной ширине символа,
-это видно сразу. Берём сырой `value` и форматируем сами.
+`formattedValue` and `Formatter` insert an invisible U+200B before "%", U+2009 before "°C",
+and U+00A0 in the thousands separator. In text whose columns rely on an equal character
+width, it shows immediately. Take the raw `value` and format it yourself.
 
-📝 Проверено там же — в отдельном движке; внутри оболочки формат не перепроверялся,
-потому что готовое форматирование мы и не используем.
+📝 Verified in the same place — the separate engine; the format was not re-checked inside
+the shell, because the ready-made formatting is not used at all.
 
-## Размер апплета задаётся `Layout.*` на корне — и только постоянный
+## The applet size is set by `Layout.*` on the root — and only as a constant
 
-`implicitWidth/Height` внутри `fullRepresentation` контейнер не спрашивает: размер он
-берёт из `Layout.minimum*`/`Layout.preferred*` **на корневом `PlasmoidItem`**.
+The containment does not ask for `implicitWidth/Height` inside `fullRepresentation`: it takes
+the size from `Layout.minimum*`/`Layout.preferred*` **on the root `PlasmoidItem`**.
 
-⚠️ И подсказка должна быть постоянной. Пока она считалась от высоты текста, контейнер
-пересобирал раскладку при каждом изменении числа строк — а строки прибывают по мере
-прихода данных (диски через 10 с, службы через 15 с). Каждая пересборка сбрасывала
-виджет в угол 0,0. Проверено многократно.
+⚠️ And the hint must be constant. While it was computed from the text height, the containment
+rebuilt the layout on every change in the number of lines — and lines arrive as the data
+comes in (disks after 10 s, services after 15 s). Every rebuild reset the widget into the
+0,0 corner. Verified many times over.
 
-## Место апплета программно не закрепляется
+## The applet position cannot be pinned programmatically
 
-Перепробовано, всё проверено исполнением:
+Tried, all confirmed by running it:
 
-| Попытка | Итог |
+| Attempt | Result |
 |---|---|
-| `addWidget(type, x, y, w, h)` | координаты игнорируются |
-| `widget.geometry = {x, y, …}` в скриптинге | проходит молча, ничего не меняет |
-| `Qt.rect(...)` там же | `ReferenceError: Qt is not defined` |
-| Запись `ItemGeometries` в конфиг при живой оболочке | затирается самой оболочкой |
-| То же при остановленной оболочке | **plasmashell всё равно ставит апплет в 0,0** |
+| `addWidget(type, x, y, w, h)` | coordinates ignored |
+| `widget.geometry = {x, y, …}` in scripting | passes silently, changes nothing |
+| `Qt.rect(...)` in the same place | `ReferenceError: Qt is not defined` |
+| Writing `ItemGeometries` into the config while the shell is running | overwritten by the shell itself |
+| The same with the shell stopped | **plasmashell still puts the applet at 0,0** |
 
-Поэтому зазор от края рисуется **внутри** виджета (настройки «Отступ слева/сверху»),
-а не координатами апплета: так он держится независимо от того, куда контейнер поставил
-апплет, и переживает перезапуск оболочки.
+That is why the gap from the edge is drawn **inside** the widget (the «Отступ
+слева/сверху» settings — left/top margin), not by the applet's coordinates: this way it
+holds no matter where the containment put the applet, and it survives a shell restart.
 
-## systemd глушит plasmashell после частых перезапусков
+## systemd silences plasmashell after frequent restarts
 
-При отладке QML оболочка перезапускается на каждую правку, и через несколько подряд
-systemd отвечает «start request repeated too quickly» — рабочий стол остаётся без
-панели. Лечится `systemctl --user reset-failed plasma-plasmashell.service` и повторным
-`start`. Между перезапусками нужна пауза; `install.sh --plasmoid` делает один.
+While debugging QML the shell restarts on every edit, and after a few in a row systemd
+answers "start request repeated too quickly" — the desktop is left without a panel. Fixed
+by `systemctl --user reset-failed plasma-plasmashell.service` and another `start`. A pause
+between restarts is needed; `install.sh --plasmoid` does one.
 
-## Логи Qt уходят в journald, а не в stderr
+## Qt logs go to journald, not to stderr
 
-`console.warn` из QML не виден в терминале — сообщение уходит в журнал. Для отладки
-`qml6` помогает `QT_FORCE_STDERR_LOGGING=1`, иначе кажется, что код вообще не выполняется.
+`console.warn` from QML is not visible in the terminal — the message goes to the journal.
+For debugging `qml6`, `QT_FORCE_STDERR_LOGGING=1` helps; without it the code looks like it
+never runs at all.
 
-## Роли моделей ksysguard берутся по имени
+## ksysguard model roles are addressed by name
 
-Номера ролей у моделей разные: `Value` — 265 у `SensorDataModel` и 256 у
-`ProcessDataModel`. Зашивать числа нельзя, но и угадывать не нужно: enum доступен
-в QML как `Sensors.SensorDataModel.Value` и `Proc.ProcessDataModel.Value`.
+Role numbers differ between models: `Value` is 265 in `SensorDataModel` and 256 in
+`ProcessDataModel`. Hardcoding the numbers is not an option, and guessing is not needed
+either: the enum is available in QML as `Sensors.SensorDataModel.Value` and
+`Proc.ProcessDataModel.Value`.
 
-⚠️ У `KSortFilterProxyModel` сортировка задаётся `sortRoleName: "Value"`;
-с `sortRole` компонент не строится вовсе.
+⚠️ For `KSortFilterProxyModel`, sorting is set with `sortRoleName: "Value"`;
+with `sortRole` the component does not build at all.

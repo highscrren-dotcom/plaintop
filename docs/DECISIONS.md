@@ -1,75 +1,79 @@
-# Решения по проекту
+# Project decisions
 
-Записаны с обоснованием, а не только с итогом: через месяц важнее понять «почему»,
-чем «что».
+English · [Русский](DECISIONS.ru.md)
 
-## 1. Движок виджета — плазмоид KDE, а не conky (20.09.2026)
+Recorded with the reasoning, not just the outcome: a month later it matters more to
+understand "why" than "what".
 
-**Решение:** целевая реализация — собственный плазмоид Plasma 6 на QML.
-Реализация на conky остаётся рабочей до замены и лежит в `conky/`.
+## 1. Widget engine — a KDE plasmoid, not conky (2026-09-20)
 
-**Почему не conky.** Он работает, но каждая из его особенностей под KDE стоила времени,
-и ни одна не была бы проблемой у плазмоида:
+**Decision:** the target implementation is our own Plasma 6 plasmoid in QML.
+The conky implementation stays working until it is replaced and lives in `conky/`.
 
-| Что болело у conky | У плазмоида |
+**Why not conky.** It works, but every one of its quirks under KDE cost us time,
+and none of them would be a problem for a plasmoid:
+
+| What hurt with conky | With a plasmoid |
 |---|---|
-| Нет click-through — гасили область ввода через X Shape | Плазмоид на рабочем столе не перехватывает клики by design |
-| Только X11, идёт через XWayland | QML нативно, Wayland без прослойки |
-| Три источника автозапуска, три перезагрузки на выяснение | KDE сам кладёт виджет и хранит в сессии |
-| `own_window_type` ломает прозрачность | Вопроса нет |
-| Свой язык конфига вместо структуры | QML + штатный конфиг плазмоида |
+| No click-through — we killed the input region through X Shape | A desktop plasmoid does not intercept clicks by design |
+| X11 only, goes through XWayland | QML natively, Wayland with no layer in between |
+| Three autostart sources, three reboots to find them | KDE places the widget itself and keeps it in the session |
+| `own_window_type` breaks transparency | Not an issue |
+| Its own config language instead of a structure | QML plus the plasmoid's built-in config |
 
-Подробности каждого пункта — `GOTCHAS.md`.
+Details on each point — `GOTCHAS.md`.
 
-**И главный довод.** У плазмоидов есть **штатное окно настроек**: Plasma сама строит
-диалог по `config/main.xml` и сохраняет значения. То есть редактор, ради которого
-затевался проект, получается в значительной части даром — вместо отдельного приложения
-на PySide6, которое пришлось бы писать и поддерживать.
+**And the main argument.** Plasmoids have a **built-in settings window**: Plasma builds
+the dialog itself from `config/main.xml` and stores the values. So the editor the project
+was started for largely comes for free — instead of a separate PySide6 application that
+we would have to write and maintain.
 
-**Чем платим.** Источники данных придётся делать самим. У conky из коробки два десятка
-подстановок: загрузка CPU, топ процессов, hwmon, NVIDIA, файловые системы, сеть.
-В плазмоиде это либо `QProcess`/`executable`-источники, либо чтение `/proc` и `/sys`
-из QML. Оценка: неделя против дня.
+**What we pay.** We will have to build the data sources ourselves. conky ships two dozen
+substitutions out of the box: CPU load, top processes, hwmon, NVIDIA, filesystems,
+network. In a plasmoid that is either `QProcess`/`executable` sources, or reading `/proc`
+and `/sys` from QML. Estimate: a week against a day.
 
-**Что смягчает цену.** Часть источников уже написана на Python и shell и от conky
-не зависит: раздельный счёт по узлам NUMA (`conky/plainext.lua`), состояние
-docker/ollama/обновлений (`conky/services.sh`). Их логика переносится почти как есть.
+**What softens the price.** Some of the sources are already written in Python and shell
+and do not depend on conky: per-NUMA-node accounting (`conky/plainext.lua`), the state of
+docker/ollama/updates (`conky/services.sh`). Their logic ports over almost as is.
 
-**Чего решение НЕ меняет.** Трёхслойная схема остаётся: описание (`schema/widget.json`) →
-генератор → интерфейс. Описание говорит, *что показывать*, а не *как это записать* —
-поэтому смена движка затрагивает только генератор. Именно ради этого схема и заводилась.
+**What the decision does NOT change.** The three-layer scheme stays: description
+(`schema/widget.json`) → generator → interface. The description says *what to show*,
+not *how to write it down* — so changing the engine touches only the generator. That is
+exactly why the schema was introduced.
 
-**Пересмотреть, если:** окажется, что плазмоид не может дать нужную плотность текста
-или частоту обновления без заметной нагрузки. Тогда conky остаётся — он рабочий.
+**Revisit if:** it turns out a plasmoid cannot give the text density or the refresh rate
+we need without noticeable load. Then conky stays — it works.
 
-## 2. Данные — из сенсоров ksystemstats, а не из `/proc` своими руками (20.09.2026)
+## 2. Data — from ksystemstats sensors, not from `/proc` by hand (2026-09-20)
 
-**Решение:** плазмоид подписывается на сенсоры через `org.kde.ksysguard.sensors`.
-Внешние команды (`sensors -u`, `nvidia-smi`, `ps`) — только на то, чего в сенсорах нет,
-и с редким интервалом.
+**Decision:** the plasmoid subscribes to sensors through `org.kde.ksysguard.sensors`.
+External commands (`sensors -u`, `nvidia-smi`, `ps`) only for what the sensors do not
+have, and on a rare interval.
 
-**Как выбирали.** Разобрали четыре способа, каждый проверен исполнением на s1dPC:
+**How we chose.** We took apart four approaches, each one verified by running it on s1dPC:
 
-| Способ | Итог |
+| Approach | Outcome |
 |---|---|
-| **Сенсоры ksysguard** | 620 готовых ID: `cpu/*`, `gpu/*`, `memory/*`, `disk/*`, `network/*`, `lmsensors/*`, `os/*`. Ноль запусков команд |
-| `DataSource{engine:"executable"}` | Работает, но это fork на каждый тик: `sensors -u` 25 мс, `nvidia-smi` 29 мс. Таймаута в движке нет вообще |
-| `XMLHttpRequest` к `file:///proc/stat` | **Отвергнут.** В plasmashell Qt его запрещает; включается только `QML_XHR_ALLOW_FILE_READ=1` на всю оболочку — системная настройка и ослабление доступа ради экономии 2 мс |
-| Движок `systemmonitor` | **Не существует в Plasma 6.** Проверено: `valid: false`. Мониторинг переехал в ksystemstats |
+| **ksysguard sensors** | 620 ready-made IDs: `cpu/*`, `gpu/*`, `memory/*`, `disk/*`, `network/*`, `lmsensors/*`, `os/*`. Zero command launches |
+| `DataSource{engine:"executable"}` | Works, but it is a fork on every tick: `sensors -u` 25 ms, `nvidia-smi` 29 ms. The engine has no timeout at all |
+| `XMLHttpRequest` to `file:///proc/stat` | **Rejected.** Inside plasmashell Qt forbids it; it turns on only with `QML_XHR_ALLOW_FILE_READ=1` for the whole shell — a system-wide setting and weaker access to save 2 ms |
+| The `systemmonitor` engine | **Does not exist in Plasma 6.** Verified: `valid: false`. Monitoring moved to ksystemstats |
 
-**Что это меняет в цене решения 1.** «Источники данных придётся делать самим» оказалось
-переоценкой: то, ради чего в conky брались `hwmon`, `nvidia-smi` и `ps`, в Plasma уже
-посчитано и отдаётся по подписке. Свои команды остаются только для docker, ollama
-и ожидающих обновлений — там их и так запускал `services.sh`.
+**What this changes in the price of decision 1.** "We will have to build the data sources
+ourselves" turned out to be an overestimate: what we reached for `hwmon`, `nvidia-smi`
+and `ps` for in conky, Plasma already computes and hands out by subscription. Our own
+commands remain only for docker, ollama and pending updates — `services.sh` was launching
+them there anyway.
 
-**Чем платим.** Зависимостью от демона `ksystemstats`: он поднимается по подписке
-(DBus-активация) и отвечает не мгновенно — первые 1–1,5 с сенсор в состоянии «грузится».
-Поэтому на старте рисуется прочерк, а не ноль: ноль соврал бы.
+**What we pay.** A dependency on the `ksystemstats` daemon: it comes up on subscription
+(DBus activation) and does not answer instantly — for the first 1–1.5 s a sensor is in
+the "loading" state. So at startup we draw a dash, not a zero: a zero would lie.
 
-**Отдельно про форматирование.** Готовые `formattedValue` и `Formatter` не используем:
-они вставляют U+200B перед «%» и U+2009 перед «°C». В моноширинном тексте от этого
-разъезжаются колонки — форматируем сами.
+**On formatting, separately.** We do not use the ready-made `formattedValue` and
+`Formatter`: they insert U+200B before "%" and U+2009 before "°C". In monospaced text
+that pulls the columns out of line — we format it ourselves.
 
-**Пересмотреть, если:** понадобятся величины, которых в сенсорах нет (обороты вентилятора
-GPU, encoder/decoder, детальный VRAM по процессам) — тогда к ним добавится `executable`
-с интервалом в несколько секунд, но не вместо сенсоров.
+**Revisit if:** we need values the sensors do not have (GPU fan speed, encoder/decoder,
+detailed VRAM per process) — then an `executable` with an interval of a few seconds joins
+them, but not instead of the sensors.

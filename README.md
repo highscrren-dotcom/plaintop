@@ -1,92 +1,159 @@
 # plaintop
 
-Текстовый монитор системы на рабочем столе, настраиваемый без правки кода.
+English · [Русский](README.ru.md)
 
-Стиль — от Rainmeter-скина [PlainExt](https://vsthemes.org/en/skins/rainmeter/41409-plainext.html):
-моноширинный текст прямо на фоне, полоски нагрузки из слешей, топ процессов, никаких рамок
-и скруглений. Название — «plain» оттуда плюс «top» от `htop`/`btop`.
+A text system monitor for the KDE Plasma desktop: monospaced text drawn straight onto the
+wallpaper — load bars made of slashes, process tops, no frames, no rounded corners.
 
-**Движок — собственный плазмоид Plasma 6** (QML). Целевая машина: CachyOS,
-KDE Plasma 6.7 / KWin Wayland.
+The look comes from the Rainmeter skin
+[PlainExt](https://vsthemes.org/en/skins/rainmeter/41409-plainext.html); the name is
+*plain* from there plus *top* from `htop`/`btop`.
 
-Первая рабочая реализация была на [conky](https://github.com/brndnmtthws/conky) и лежит
-в `conky/` — она рабочая и остаётся до замены. Почему уходим с неё:
-**[docs/DECISIONS.md](docs/DECISIONS.md)**.
+![plaintop on the desktop](docs/screenshot.png)
 
-```
-s1dd1\Dashboard\s1dPC
-14:28:30
-Воскресенье, 20 сентября
-CachyOS x86_64  7.2.6-1-cachyos
------------------------------------
-CPU //////////            51%
-S0 //////////////////    100%   node0
-S1                         0%   node1
-2x E5-2697 v4  36c/72t  37/26°C  1088/1104 rpm
-firefox                |  9,0%
-...
-```
+## What it shows
 
-## Состояние
+Clock, date, distro and kernel, total CPU load and load per NUMA node, CPU model with
+per-node temperatures and fan speeds, top processes by CPU and by memory, RAM, GPU with
+VRAM, temperature and power draw, filesystems with NVMe temperature, uptime, network
+throughput, the state of docker / ollama / pending updates, and a static hardware
+passport.
 
-**В работе:** плазмоид (`plasmoid/`). Пакет ставится, виджет стоит на рабочем столе
-и показывает живые данные — часы, загрузку и температуру CPU, занятость ОЗУ, аптайм;
-заголовок, шрифт, кегль и интервал правятся в штатном диалоге настроек. Данные берутся
-из сенсоров ksystemstats, без запуска внешних команд.
+Which of those appear, in what order, and with what parameters is **data, not code** —
+see [Three layers](#three-layers) below.
 
-**Остаётся в репозитории:** реализация на conky (`conky/`) — полный набор блоков
-(NUMA, температуры, топ процессов, GPU, диски, сеть, docker/ollama/обновления).
-Сейчас погашена, чтобы не мешать переносу: `./install.sh --conky-on` возвращает её.
+## Status
 
-## Куда идём: три слоя
+Built and used on one machine: CachyOS, Plasma 6.7.5, KWin on Wayland. It should work on
+any Plasma 6 desktop, but nothing else has been tested — reports welcome.
 
-Реализация на conky — рукописный текст на её собственном языке (`conky/plainext.conf`).
-Редактировать такое из интерфейса нечем: там нет структуры, только сплошной текст.
-Поэтому конструкция раскладывается на три слоя, и они **не зависят от движка**.
+The repository carries two implementations:
 
-| Слой | Что это | Где живёт |
-|---|---|---|
-| **Описание** | `schema/widget.json` — список блоков: тип, параметры, включён, позиция | общее для любого движка |
-| **Генератор** | превращает описание в то, что понимает движок | свой на каждый движок |
-| **Интерфейс** | правка описания | штатный диалог настроек плазмоида |
+| Directory | What it is |
+|---|---|
+| **`plasmoid/`** | the target implementation: a Plasma 6 widget in QML. Current work |
+| **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky). Works, kept until the plasmoid fully replaces it |
 
-Именно ради этого слой описания и заводится: он говорит, *что показывать*, а не *как это
-записать*. Смена движка меняет только генератор.
+Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 
-Виджет должен настраиваться без правки кода: включать и выключать блоки, менять их порядок,
-править внешний вид (цвета, шрифты, кегли, ширину, положение), настраивать параметры блоков
-(сколько процессов в топе, какие диски, какой сетевой интерфейс, интервалы) и **добавлять
-свои блоки с нуля** — произвольной командой или датчиком.
-
-## Установка
+## Install
 
 ```bash
-./install.sh --plasmoid   # поставить плазмоид, перезапустить оболочку, посадить на место
-./install.sh --status     # что стоит и что работает — обе реализации
-./install.sh              # разложить и запустить conky
-./install.sh --conky-off  # погасить conky / --conky-on — вернуть
+git clone https://github.com/s1dd1/plaintop.git
+cd plaintop
+./install.sh --plasmoid     # generate, install the package, restart the shell, place the widget
+./install.sh --status       # what is installed and what is running
 ```
 
-Плазмоид раскладывается в `~/.local/share/plasma/plasmoids/`, conky —
-в `~/.config/conky/`, его автозапуск — в `~/.config/autostart/`.
+The widget lands in `~/.local/share/plasma/plasmoids/org.s1dd1.plaintop/`. If it is not on
+the desktop yet, the installer adds it; you can also add it by hand through *Add Widgets*.
 
-Требуется: `conky`, `python-xlib`, `lm_sensors`, моноширинный шрифт
-(по умолчанию `JetBrainsMono Nerd Font Mono`).
+⚠️ `--plasmoid` restarts `plasmashell` on purpose: the shell caches a package's QML, and
+without a restart your edit silently does not arrive. That and a dozen other traps are in
+[docs/GOTCHAS.md](docs/GOTCHAS.md).
 
-## Как ведётся проект
+**Requirements:** Plasma 6 with `ksystemstats` (ships with Plasma), `python3` for the
+generator, and a monospace font — `JetBrainsMono Nerd Font Mono` by default. The conky
+implementation additionally needs `conky`, `python-xlib` and `lm_sensors`.
 
-Проект ведёт основная сессия, исследуют и строят агенты. Между сессиями состояние
-передаётся через два файла: **[STATE.md](STATE.md)** — где мы сейчас и какой следующий
-шаг, **[docs/JOURNAL.md](docs/JOURNAL.md)** — как сюда пришли, по записи на сессию.
+## Adapting it to your hardware
 
-Слово «продолжаем» в начале новой сессии означает полный подхват: прочитать состояние,
-последнюю запись журнала, историю git и **проверить исполнением**, потому что документ
-мог отстать от факта. Порядок целиком — **[docs/WORKFLOW.md](docs/WORKFLOW.md)**.
+The defaults describe the author's box, so a few values will be wrong on yours. All of
+them are settings — no code changes needed:
 
-## Почему всё устроено именно так
+| What | Where to change it | Default |
+|---|---|---|
+| Header text | settings → *"Общее"* (General) | `s1dd1\Dashboard` |
+| Network interface | settings → *"Блоки"* (Blocks) → *Сеть* | `enp4s0` |
+| Mount points | settings → *"Блоки"* → *Диски* | `/`, `/run/media/s1dd1/s1d` |
+| Fan and NVMe sensors | `plasmoid/package/contents/ui/main.qml`, the `rawSensorIds` list | `lmsensors/nct6779-isa-0a20/fan1`, `lmsensors/nvme-pci-0500/temp1` |
 
-Короткий ответ: под KDE на Wayland почти каждое «очевидное» решение оказывается
-неверным. Подробный — в **[docs/GOTCHAS.md](docs/GOTCHAS.md)**: тип окна, прозрачность,
-клики сквозь виджет, и почему нельзя просто запустить conky и забыть.
+To list the sensor ids your machine actually has:
 
-Читать до правки конфигов — там собрано то, что стоило нескольких перезагрузок.
+```bash
+busctl --user call org.kde.ksystemstats1 /org/kde/ksystemstats1 \
+  org.kde.ksystemstats1 allSensors | tr ' ' '\n' | grep -oE '"[a-z]+/[^"]+"' | sort -u
+```
+
+⚠️ Address `lm_sensors` chips **by name** (`nct6779-isa-0a20`), never by `hwmon` index —
+indexes move between reboots.
+
+## Three layers
+
+```
+schema/widget.json  ─┐                                    ┌─ settings dialog edits it
+                     ├─ generator ─→ engine (QML)         │
+schema/blocks.json  ─┘                                    └─ or edit the JSON directly
+```
+
+- **Description** — `schema/widget.json`: which blocks, in what order, with what
+  parameters. Says *what* to show, not *how* to write it, so it does not depend on the
+  engine.
+- **Vocabulary** — `schema/blocks.json`: the block types and the parameters each accepts.
+  The settings dialog is built from it, so a new block type needs no interface code.
+- **Generator** — `plasmoid/generate.py`: validates the description and turns it into a JS
+  module inside the package. A bad description stops the install instead of producing an
+  empty widget.
+
+Details: [schema/README.md](schema/README.md).
+
+## Settings
+
+Right-click the widget → *Настроить plaintop*. Two pages:
+
+- *"Общее"* (General) — header, font, size, widget size, edge padding, update interval.
+- *"Блоки"* (Blocks) — enable, disable, reorder, edit parameters, add a block of any type
+  from the vocabulary, remove one.
+
+Two block types are deliberately open-ended:
+
+- **`command`** — one line (or several) from the output of any command, with its own interval;
+- **`sensor`** — any `ksystemstats` sensor by id, with or without a bar.
+
+So a new reading usually means a new row in the description, not a patch to the code.
+
+## Fork it, bend it, send it back
+
+This is a personal dashboard that turned out to be a reasonable starting point for anyone
+who wants text on their Plasma desktop. **Fork it and make it yours** — the architecture
+was chosen so that most changes are data:
+
+- **Your own rows** — add a `command` or `sensor` block in the settings. No build step.
+- **A new block type** — one entry in `schema/blocks.json` plus one `case` in
+  `main.qml`. The settings page picks it up on its own.
+- **Another engine** — the description layer is engine-agnostic on purpose. Writing a
+  generator for waybar, eww, AGS or back to conky does not touch the description.
+- **Another machine** — different sensors, different distro, different everything: if the
+  defaults fight you, that is a bug worth reporting.
+
+Pull requests and issues are both welcome, and so is a fork that never comes back —
+that is what the license is for. Read [CONTRIBUTING.md](CONTRIBUTING.md) first; it is
+short and mostly about one rule: **claims about behaviour must be verified by running
+them, not by reading the docs.**
+
+## Why it is built this way
+
+Under KDE on Wayland almost every obvious answer turns out to be wrong. The two documents
+that make the rest of the code legible:
+
+- **[docs/GOTCHAS.md](docs/GOTCHAS.md)** — traps that cost real time: window type and
+  transparency for conky, click-through, the QML cache, applet size and placement, why
+  `XMLHttpRequest` to `file://` is refused inside `plasmashell`. Every line was verified by
+  running it.
+- **[docs/DECISIONS.md](docs/DECISIONS.md)** — decisions with their reasoning, their price,
+  and the condition that would reverse them.
+
+## How the project is run
+
+State travels between working sessions in two files: **[STATE.md](STATE.md)** — where the
+project stands and what the next step is; **[docs/JOURNAL.md](docs/JOURNAL.md)** — how it
+got here, one entry per session, failures included. The method itself is in
+[docs/WORKFLOW.md](docs/WORKFLOW.md).
+
+Those three are written in Russian: they are the working log, and translating a log is
+busywork. Everything a contributor needs is in English.
+
+## License
+
+[GPL-2.0-or-later](LICENSE), matching the license declared in the plasmoid's
+`metadata.json`.

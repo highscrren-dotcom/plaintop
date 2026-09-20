@@ -156,7 +156,8 @@ status() {
     echo "== Разложено"
     for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
         if [ -f "$DEST/$f" ]; then
-            if cmp -s "$REPO/conky/$f" "$DEST/$f"; then grn "  ✓ $f — совпадает с репо"
+            # Сравниваем с подставленным @HOME@, иначе проверка врёт на каждом файле.
+            if sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" | cmp -s - "$DEST/$f"; then grn "  ✓ $f — совпадает с репо"
             else red "  ≠ $f — РАЗОШЁЛСЯ с репо"; fi
         else red "  ✗ $f — не разложен"; fi
     done
@@ -201,7 +202,9 @@ deps || { echo; red "Не хватает зависимостей — поста
 echo; echo "== Раскладываю"
 mkdir -p "$DEST" "$AUTOSTART" "$APPS"
 for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
-    cp "$REPO/conky/$f" "$DEST/$f" && echo "  → $DEST/$f"
+    # ⚠️ @HOME@ подставляется здесь: сам conky переменные окружения в конфиге
+    # не раскрывает, а зашивать /home/<кто-то> в репозиторий нельзя.
+    sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" > "$DEST/$f" && echo "  → $DEST/$f"
 done
 chmod +x "$DEST"/*.sh "$DEST"/*.py
 cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && echo "  → $AUTOSTART/conky-plainext.desktop"

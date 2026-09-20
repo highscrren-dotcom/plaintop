@@ -1,20 +1,22 @@
-# schema — описание виджета
+# schema — the widget description
 
-Два файла, оба **от движка не зависят**:
+English · [Русский](README.ru.md)
 
-- **`widget.json`** — раскладка: какие блоки, в каком порядке, с какими параметрами.
-- **`blocks.json`** — словарь типов блоков: какие есть, какие параметры принимают.
-  Диалог настроек строится по нему, а не по списку в коде — иначе новый тип блока
-  требовал бы правки интерфейса.
+Two files, both **independent of the engine**:
 
-Запись блока:
+- **`widget.json`** — the layout: which blocks, in what order, with what parameters.
+- **`blocks.json`** — the dictionary of block types: which ones exist, what parameters they take.
+  The settings dialog is built from it rather than from a list in the code — otherwise a new block
+  type would mean editing the interface.
+
+A block entry:
 
 ```json
 { "id": "cpu", "type": "cpu", "enabled": true,
   "params": { "per_socket": true, "model_line": true, "top_processes": 5 } }
 ```
 
-## Как это попадает в виджет
+## How this gets into the widget
 
 ```
 schema/widget.json ─┐
@@ -22,25 +24,25 @@ schema/widget.json ─┐
 schema/blocks.json ─┘
 ```
 
-Генератор проверяет описание (неизвестный тип блока, незаявленный параметр, неверный
-тип значения) и проставляет значения по умолчанию из словаря. Негодное описание
-останавливает установку — лучше отказ, чем пустой виджет и поиск причины в QML.
+The generator validates the description (unknown block type, undeclared parameter, wrong value
+type) and fills in the defaults from the dictionary. An invalid description stops the installation —
+better a refusal than an empty widget and a hunt for the cause in QML.
 
-⚠️ Почему JS, а не чтение JSON из QML: в plasmashell запрещён `XMLHttpRequest`
-к `file://` (`docs/GOTCHAS.md`), а импорт `.js` работает.
+⚠️ Why JS and not reading the JSON from QML: in plasmashell `XMLHttpRequest` to `file://` is
+forbidden (`../docs/GOTCHAS.md`), while importing a `.js` file works.
 
-`description.js` генерируется и в git не хранится — правится только `schema/*.json`.
+`description.js` is generated and is not kept in git — only `schema/*.json` gets edited.
 
-## Открытые типы блоков
+## Open-ended block types
 
-Два типа не привязаны к конкретной величине и делают словарь расширяемым без правки кода:
+Two types are not tied to a particular quantity and make the dictionary extensible without code changes:
 
-- **`command`** — строка из вывода произвольной команды со своим интервалом;
-- **`sensor`** — любой датчик ksystemstats по его id, с полоской или без.
+- **`command`** — a line from the output of an arbitrary command, with its own interval;
+- **`sensor`** — any ksystemstats sensor by its id, with a bar or without one.
 
-## Правка из интерфейса
+## Editing from the interface
 
-Страница «Блоки» в настройках виджета читает ту же раскладку: включить, выключить,
-переставить, добавить блок любого типа из словаря, убрать, поправить параметры —
-и кладёт результат строкой JSON в настройки плазмоида. Пока там пусто, берётся
-раскладка из пакета; кнопка «Сбросить» возвращает её.
+The "Блоки" (Blocks) page in the widget settings reads that same layout: enable, disable, reorder,
+add a block of any type from the dictionary, remove one, adjust the parameters — and puts the
+result into the plasmoid's settings as a JSON string. As long as that is empty, the layout from the
+package is used; the "Сбросить" (Reset) button brings it back.

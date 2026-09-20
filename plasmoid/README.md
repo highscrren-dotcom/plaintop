@@ -1,66 +1,69 @@
-# plasmoid — целевая реализация
+# plasmoid — the target implementation
 
-Собственный плазмоид Plasma 6 на QML. Почему именно он — `../docs/DECISIONS.md`, решение 1.
-Откуда берутся данные — там же, решение 2.
+English · [Русский](README.ru.md)
 
-## Что уже есть
+A plasmoid of our own for Plasma 6, written in QML. Why this one — `../docs/DECISIONS.md`, decision 1.
+Where the data comes from — same file, decision 2.
 
-Минимальный рабочий пакет: ставится, появляется на рабочем столе, показывает живые
-данные, настройки из штатного диалога доезжают до QML.
+## What is already there
+
+A minimal working package: it installs, shows up on the desktop, displays live data, and
+settings from the stock dialog do reach the QML.
 
 ```
 package/
-  metadata.json                идентификатор org.s1dd1.plaintop
+  metadata.json                the org.s1dd1.plaintop identifier
   contents/
-    ui/main.qml                сам виджет: строит строки по описанию, подписки на сенсоры
-    ui/configGeneral.qml       страница «Общее»: шрифт, кегль, размер, отступ, интервал
-    ui/configBlocks.qml        страница «Блоки»: набор, порядок и параметры блоков
-    config/main.xml            схема значений — Plasma строит по ней диалог и хранилище
-    config/config.qml          список страниц настроек
-    code/description.js        раскладка и словарь, сгенерированные из schema/ (не в git)
-    code/services.sh           docker / ollama / обновления одной пачкой
+    ui/main.qml                the widget itself: builds the lines from the description, sensor subscriptions
+    ui/configGeneral.qml       the "Общее" (General) page: font, type size, size, padding, interval
+    ui/configBlocks.qml        the "Блоки" (Blocks) page: which blocks, their order and their parameters
+    config/main.xml            the value schema — Plasma builds the dialog and the store from it
+    config/config.qml          the list of settings pages
+    code/description.js        layout and dictionary generated from schema/ (not in git)
+    code/services.sh           docker / ollama / updates in one batch
 ```
 
-Показывает то же, что conky-реализация: заголовок с именем хоста, часы, дату, систему,
-загрузку CPU общую и по узлам NUMA, модель процессора с температурами и оборотами,
-топ процессов по CPU и памяти, ОЗУ, GPU с VRAM, диски с температурой NVMe, аптайм,
-сеть, состояние docker/ollama/обновлений и паспорт железа.
+Shows the same things as the conky implementation: a header with the hostname, clock, date,
+system, CPU load overall and per NUMA node, the processor model with temperatures and fan
+speeds, top processes by CPU and by memory, RAM, GPU with VRAM, disks with NVMe temperature,
+uptime, network, the state of docker/ollama/updates and the hardware spec sheet.
 
-**Набор и порядок блоков — из описания** (`../schema/widget.json`), правятся на странице
-«Блоки» в настройках: включить, выключить, переставить, поменять параметры, добавить
-свой блок — произвольной командой или любым датчиком ksystemstats.
+**Which blocks and in what order comes from the description** (`../schema/widget.json`), edited
+on the "Блоки" (Blocks) page in the settings: enable, disable, reorder, change parameters, add a
+block of your own — from an arbitrary command or from any ksystemstats sensor.
 
-## Установка
+## Installation
 
 ```bash
-./install.sh --plasmoid   # поставить/обновить пакет и перезапустить оболочку
-./install.sh --status     # в конце — раздел «Плазмоид»
+./install.sh --plasmoid   # install/update the package and restart the shell
+./install.sh --status     # the "Плазмоид" (Plasmoid) section at the end
 ```
 
-⚠️ Перезапуск оболочки в команде не для красоты: plasmashell держит QML пакета в кэше,
-и без него виджет остаётся со старой разметкой. Проверено — `../docs/GOTCHAS.md`.
+⚠️ The shell restart in that command is not there for looks: plasmashell keeps the package's QML
+in a cache, and without it the widget stays on the old layout. Verified — `../docs/GOTCHAS.md`.
 
-Добавить на рабочий стол — как обычный виджет, либо скриптом:
+Adding it to the desktop works like any other widget, or by script:
 
 ```bash
 qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
   'desktops()[0].addWidget("org.s1dd1.plaintop", 60, 800, 420, 220)'
 ```
 
-## Источники данных
+## Data sources
 
-Данные берутся у **ksystemstats** через `org.kde.ksysguard.sensors` — 620 готовых
-сенсоров на этой машине, без единого запуска внешней команды. Отвергнутые способы
-и цена каждого — `../docs/DECISIONS.md`, решение 2.
+The data comes from **ksystemstats** via `org.kde.ksysguard.sensors` — 620 ready-made sensors on
+this machine, without a single external command being launched. The rejected approaches and what
+each one costs — `../docs/DECISIONS.md`, decision 2.
 
-Что уже подписано: `cpu/all/usage`, `cpu/all/averageTemperature`,
+Subscribed to so far: `cpu/all/usage`, `cpu/all/averageTemperature`,
 `memory/physical/usedPercent`, `os/system/uptime`, `os/system/hostname`.
 
-## Что предстоит
+## What is still ahead
 
-- **Цвета в настройки** — палитра пока зашита в `main.qml` константами из PlainExt.
-- **Температуры по пакетам CPU** — сейчас берётся максимум по ядрам узла; в сенсорах
-  `coretemp-isa-000N` нет, за пакетами придётся идти в `sensors -u` редким запуском.
-- **Чтение и запись диска** в строке «/» — у conky там было `R:` и `W:`.
-- **Генератор для conky** — слой описания задумывался общим на оба движка;
-  сейчас генератор только один.
+- **Colors into the settings** — for now the palette is hardcoded in `main.qml` as constants from PlainExt.
+- **Per-package CPU temperatures** — currently the maximum across a node's cores is taken; the
+  sensors have no `coretemp-isa-000N`, so packages will have to be fetched from `sensors -u` by an
+  occasional call.
+- **Disk reads and writes** in the "/" line — conky had `R:` and `W:` there.
+- **A generator for conky** — the description layer was meant to be shared by both engines;
+  right now there is only one generator.
