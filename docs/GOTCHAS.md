@@ -320,3 +320,36 @@ code, as happened here.
 written as `Array.isArray(v) ? v : []` renders an empty list while the config holds two
 entries — and nothing warns, because both branches are valid. Copy it by `length` instead
 and the same code works for a JS array and for a variant list alike.
+
+## At boot the relay can start before PipeWire — and one bad line used to kill it
+
+The unit is ordered after `pipewire.service`, yet at boot cava still found no stream,
+exited, and wrote a terminal-title escape (`\x1b]0;cava…`) to stdout on the way out. The
+relay fed that line to `int()`, the reading thread died with a `ValueError`, and the relay
+went on answering HTTP with no cava and no restarts — `/state` read `frames: 0,
+restarts: 0` until the next reboot. The ring simply looked silent.
+
+Now a line that is not a frame is skipped, any error inside the loop ends in a restart
+rather than in a dead thread, and restarts back off to 10 s while cava cannot start at
+all. The unit also waits for `wireplumber` and `pipewire-pulse` — that narrows the race,
+but only the retry closes it. Reproduced with a fake `cava` that prints the same escape
+and exits: three restarts at 2, 4 and 8 s, no traceback.
+
+## A pid file does not know about the autostart
+
+The window hosts recorded their pid when started from `setup.py`, but the autostart entry
+launches `qml6` directly and writes nothing. After a reboot the file was stale: `--status`
+reported "not running" about a live window, and a restart left the old one alone and put a
+second copy on the desktop. The running windows are now found in the process table — the
+exact executable (`comm` is `qml6`) and the exact `window.qml` path among its arguments —
+which also keeps well clear of `pkill -f`.
+
+## Reassigning a `var` map from many handlers rebuilds everything that reads it
+
+Each of ~25 individual `Sensors.Sensor` objects published its value by copying a map and
+assigning the copy. Every line of the monitor reads that map, so every line was rebuilt
+once per sensor per second — the window cost 18% of a core for text that changes once a
+second. Mutating the map in place and rebuilding on one shared tick brought it to 9%
+(4.6% collecting, the rest drawing). The same rule for the sensor registry: its 10-second
+poll now assigns the id list only when it actually changed, instead of recreating every
+sensor object each time.

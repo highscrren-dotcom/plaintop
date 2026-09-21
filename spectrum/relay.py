@@ -140,7 +140,13 @@ def pump():
     of this relay let the reading thread end there and went on serving zeros forever, with
     the widget looking merely silent. So it is supervised: respawned, and restarted when
     the default output changes under it.
+
+    ⚠️ Nothing inside the loop may end the thread. At boot the relay can start before
+    PipeWire is up; cava then fails and writes a terminal-title escape (`\x1b]0;…`) to
+    stdout, which once reached int() and killed this thread for good — the relay kept
+    answering, with no cava and no restarts, until the next reboot.
     """
+    delay = 1
     while True:
         source_name = default_monitor() if SOURCE == "auto" else SOURCE
         state["source"] = source_name or "(default)"
@@ -150,23 +156,35 @@ def pump():
         except FileNotFoundError:
             print("cava not found", file=sys.stderr, flush=True)
             return
-        proc.stdin.write(cava_config(source_name))
-        proc.stdin.close()
-        threading.Thread(target=watch_device, args=(proc, source_name), daemon=True).start()
+        got_frames = False
+        try:
+            proc.stdin.write(cava_config(source_name))
+            proc.stdin.close()
+            threading.Thread(target=watch_device, args=(proc, source_name), daemon=True).start()
 
-        for line in proc.stdout:
-            parts = line.strip().split(";")
-            values = [int(p) for p in parts if p != ""]
-            if len(values) < BARS:
-                continue
-            state["raw"] = values[:BARS]
-            state["stamp"] = time.monotonic()
-            state["frames"] += 1
+            for line in proc.stdout:
+                try:
+                    values = [int(p) for p in line.strip().split(";") if p != ""]
+                except ValueError:
+                    continue            # a message or an escape sequence, not a frame
+                if len(values) < BARS:
+                    continue
+                state["raw"] = values[:BARS]
+                state["stamp"] = time.monotonic()
+                state["frames"] += 1
+                got_frames = True
+        except Exception as e:          # never let the supervisor die with its child
+            print(f"reading cava failed: {e!r}", file=sys.stderr, flush=True)
+            proc.kill()
 
         proc.wait()
         state["restarts"] += 1
-        print(f"cava exited (code {proc.returncode}), restarting", file=sys.stderr, flush=True)
-        time.sleep(1)
+        # Back off while cava cannot even start (no sound server yet), so a missing
+        # PipeWire costs a respawn every 10 s rather than every second.
+        delay = 1 if got_frames else min(delay * 2, 10)
+        print(f"cava exited (code {proc.returncode}), restarting in {delay} s",
+              file=sys.stderr, flush=True)
+        time.sleep(delay)
 
 
 def watch_device(proc, source_name):

@@ -14,6 +14,7 @@ window host gets one of its own.
 """
 import json
 import os
+import signal
 import shutil
 import subprocess
 import sys
@@ -268,17 +269,41 @@ def ensure_rule(x, y, width, height):
                    capture_output=True, check=False)
 
 
+def windows():
+    """Pids of every running instance of this window, however it was started.
+
+    ⚠️ Not a pid file: the autostart entry launches the window without writing one, so
+    after a reboot the file is stale, `status` said "not running" about a live window,
+    and `start` put a second copy on the desktop. And not `pkill -f`: that pattern would
+    also match the shell running this script. The process table, filtered by the exact
+    executable and the exact file, is the one source that cannot drift.
+    """
+    target = str(UI_DEST / "window.qml")
+    found = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            if (entry / "comm").read_text().strip() != "qml6":
+                continue
+            args = (entry / "cmdline").read_bytes().split(b"\0")
+        except OSError:
+            continue
+        if any(a.decode(errors="replace") == target for a in args):
+            found.append(int(entry.name))
+    return found
+
+
 def stop():
-    """Stop by recorded pid: pkill -f on the command line would also match this script."""
-    if not PIDFILE.exists():
-        print("  • окно не запущено (нет pid-файла)")
-        return
-    pid = PIDFILE.read_text().strip()
-    if pid.isdigit() and Path(f"/proc/{pid}").exists():
-        subprocess.run(["kill", pid], check=False)
-        print(f"  ✓ окно остановлено (pid {pid})")
-    else:
-        print("  • процесса по записанному pid нет")
+    pids = windows()
+    if not pids:
+        print("  • окно не запущено")
+    for pid in pids:
+        try:
+            os.kill(pid, signal.SIGTERM)
+            print(f"  ✓ окно остановлено (pid {pid})")
+        except ProcessLookupError:
+            pass
     PIDFILE.unlink(missing_ok=True)
 
 
@@ -307,8 +332,9 @@ def status():
     print(f"  редактор:   {'есть' if LAUNCHER.exists() else 'нет'} (qml6 {UI_DEST / 'settings.qml'})")
     _, data = read_kwinrules()
     print(f"  правило KWin: {'есть' if any(v.get('Description') == RULE_NAME for v in data.values()) else 'нет'}")
-    alive = PIDFILE.exists() and Path(f"/proc/{PIDFILE.read_text().strip()}").exists()
-    print(f"  окно:       {'работает' if alive else 'не запущено'}")
+    pids = windows()
+    print(f"  окно:       {'работает (pid ' + ', '.join(map(str, pids)) + ')' if pids else 'не запущено'}"
+          + ("  ⚠️ копий больше одной" if len(pids) > 1 else ""))
 
 
 def main():

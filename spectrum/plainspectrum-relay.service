@@ -1,8 +1,10 @@
 [Unit]
 Description=plainspectrum relay: cava spectrum over local HTTP
 Documentation=https://github.com/highscrren-dotcom/plaintop
-# The relay talks to PipeWire through cava, so it waits for the sound server.
-After=pipewire.service
+# The relay talks to PipeWire through cava and asks pactl for the default sink, so it
+# waits for the sound server, its session manager and the pulse layer. This only
+# narrows the boot race; relay.py still retries until they answer.
+After=pipewire.service wireplumber.service pipewire-pulse.service
 PartOf=graphical-session.target
 
 [Service]

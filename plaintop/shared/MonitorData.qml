@@ -141,17 +141,16 @@ Item {
         return out
     }
 
+    // Latest values of the individual sensors, mutated in place and never reassigned.
+    // ⚠️ Reassigning them made every line depend on each sensor: ~25 sensors updating once
+    // a second rebuilt all the lines ~25 times a second, 15% of a core for text that
+    // changes once. The lines are rebuilt on `tick` alone and read these maps then.
     property var named: ({})
     property var namedReady: ({})
 
     function publish(id, value, ready) {
-        const v = ({}), r = ({})
-        for (const k in named) v[k] = named[k]
-        for (const k in namedReady) r[k] = namedReady[k]
-        v[id] = value
-        r[id] = ready
-        named = v
-        namedReady = r
+        named[id] = value
+        namedReady[id] = ready
     }
 
     Instantiator {

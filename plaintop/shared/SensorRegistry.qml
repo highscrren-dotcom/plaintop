@@ -33,8 +33,13 @@ QtObject {
         return out
     }
 
+    // ⚠️ Assign only when the list really changed. Every assignment re-resolves the
+    // preferences, hands MonitorData a new id list and recreates every Sensor object —
+    // which the 10-second poll used to do for an unchanged tree.
     function refresh() {
-        ids = walk(undefined, [])
+        const fresh = walk(undefined, [])
+        if (fresh.join("\n") !== ids.join("\n"))
+            ids = fresh
     }
 
     function has(id) {
