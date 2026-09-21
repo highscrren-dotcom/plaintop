@@ -196,3 +196,36 @@ writers on one file is the mistake this project already paid for with `~/.config
 **Revisit if:** KDE gives an applet a way to decline the left button — then the window
 host, its KWin rule and its autostart all become unnecessary, and the editor stays useful
 anyway.
+
+## 6. Sensors are discovered, not written down (2026-09-21)
+
+**Decision:** no machine-specific sensor id lives in the code any more. Block parameters
+carry a **preference**, the vocabulary carries the pattern that finds a replacement, and
+`plaintop/shared/SensorRegistry.qml` enumerates what the machine actually reports. The
+editor offers that list instead of asking the user to know an id.
+
+**Why.** Three readings went quiet at once without a single error: a reboot renumbered the
+drive (`nvme-pci-0500` → `nvme-pci-0600`), the network interface was renamed
+(`enp4s0` → `enp5s0`), and the per-core temperatures had been latched from the count of
+physical processors instead of the count of cores. Nothing was broken — the config simply
+described hardware that no longer answers by those names. The same config on anyone else's
+machine describes nothing at all, which made the widget unusable outside this one desktop.
+
+**How it resolves.** A stored id wins when the machine still has it; otherwise the pattern
+picks the first match. So an id typed by hand keeps working, a stale one heals itself, and
+a fresh install with empty parameters finds its own sensors.
+
+**The editor side.** A parameter in `schema/blocks.json` may declare `pick`: `sensor` with
+a `pattern`, `iface`, or `mount`. The editor reads that field and offers a searchable list
+of the 664 sensors this machine reports — narrowed to the 5 that match a fan pattern — with
+the highlighted sensor's live value under the list, plus the mount points from
+`/proc/self/mounts` and the interfaces found in the tree. Nothing about a block type is
+hardcoded in the editor: the vocabulary says what can be chosen.
+
+**What we pay.** One `Sensors.Sensor` object per non-uniform sensor instead of one shared
+model — the model cannot be trusted with ids it may drop (see `GOTCHAS.md`) — and a poll of
+the sensor tree that slows to once every 10 s once the list settles. Measured cost of the
+monitor stayed where it was.
+
+**Revisit if:** a machine shows up where the tree is large enough that enumerating it is
+noticeable; then the registry caches to disk and refreshes on demand.

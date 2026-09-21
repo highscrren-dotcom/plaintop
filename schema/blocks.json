@@ -57,6 +57,13 @@
         "default": 5,
         "min": 0,
         "max": 15
+      },
+      "fans": {
+        "type": "stringlist",
+        "name": "Датчики вентиляторов (пусто — найти самим)",
+        "default": [],
+        "pick": "sensor",
+        "pattern": "^lmsensors/[^/]+/fan\\d+$"
       }
     }
   },
@@ -95,12 +102,20 @@
         "name": "Точки монтирования",
         "default": [
           "/"
-        ]
+        ],
+        "pick": "mount"
       },
       "nvme_temp": {
         "type": "bool",
         "name": "Температура NVMe у корня",
         "default": true
+      },
+      "nvmeSensor": {
+        "type": "string",
+        "name": "Датчик температуры NVMe (пусто — найти самому)",
+        "default": "",
+        "pick": "sensor",
+        "pattern": "^lmsensors/nvme-[^/]+/temp\\d+$"
       }
     }
   },
@@ -113,8 +128,9 @@
     "params": {
       "interface": {
         "type": "string",
-        "name": "Интерфейс",
-        "default": "enp4s0"
+        "name": "Интерфейс (пусто — найти самому)",
+        "default": "",
+        "pick": "iface"
       }
     }
   },
@@ -170,7 +186,9 @@
       "id": {
         "type": "string",
         "name": "Идентификатор датчика",
-        "default": "cpu/all/usage"
+        "default": "cpu/all/usage",
+        "pick": "sensor",
+        "pattern": ""
       },
       "bar": {
         "type": "bool",

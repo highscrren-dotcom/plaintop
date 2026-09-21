@@ -26,6 +26,7 @@ HOME = Path.home()
 UI_DEST = HOME / ".local/share/plaintop/ui"
 CONFIG = HOME / ".config/plaintop/monitor.json"
 AUTOSTART = HOME / ".config/autostart/plaintop-window.desktop"
+LAUNCHER = HOME / ".local/share/applications/plaintop-settings.desktop"
 PIDFILE = HOME / ".local/share/plaintop/window.pid"
 KWINRULES = HOME / ".config/kwinrulesrc"
 APPLETSRC = HOME / ".config/plasma-org.kde.plasma.desktop-appletsrc"
@@ -111,6 +112,23 @@ def build_config(overwrite_blocks=True):
                 pass
         if not blocks:
             blocks = packaged_blocks()
+    # ⚠️ Fill parameters the user's own layout predates. New params (a fan sensor id, an
+    # NVMe sensor id) are empty in the vocabulary on purpose — machine-specific values live
+    # in schema/widget.json — so a saved layout would silently lose those readings. This
+    # takes them from the packaged block of the same type once.
+    reference = {}
+    for b in packaged_blocks():
+        reference.setdefault(b["type"], b.get("params", {}))
+    filled = 0
+    for b in blocks:
+        params = b.setdefault("params", {})
+        for key, value in reference.get(b["type"], {}).items():
+            if key not in params:
+                params[key] = value
+                filled += 1
+    if filled:
+        print(f"  • параметров дополнено из пакетного описания: {filled}")
+
     cfg["blocks"] = blocks
 
     CONFIG.parent.mkdir(parents=True, exist_ok=True)
@@ -124,9 +142,16 @@ def build_config(overwrite_blocks=True):
 
 def deploy_files():
     UI_DEST.mkdir(parents=True, exist_ok=True)
-    for name in ("MonitorData.qml", "MonitorView.qml"):
+    for name in ("MonitorData.qml", "MonitorView.qml", "SensorRegistry.qml"):
         shutil.copy2(SRC / "shared" / name, UI_DEST / name)
-    shutil.copy2(SRC / "window" / "window.qml", UI_DEST / "window.qml")
+    for name in ("window.qml", "settings.qml"):
+        shutil.copy2(SRC / "window" / name, UI_DEST / name)
+    # The editor builds its block list from the vocabulary in the generated description.
+    desc = REPO / "plasmoid" / "package" / "contents" / "code" / "description.js"
+    if not desc.exists():
+        subprocess.run([sys.executable, str(REPO / "plasmoid" / "generate.py")], check=False)
+    if desc.exists():
+        shutil.copy2(desc, UI_DEST / "description.js")
     # The services block runs this; MonitorData resolves it next to itself by default.
     shutil.copy2(REPO / "plasmoid" / "package" / "contents" / "code" / "services.sh",
                  UI_DEST / "services.sh")
@@ -147,6 +172,29 @@ def write_autostart():
         "X-KDE-autostart-after=panel\n",
         encoding="utf-8")
     print(f"  → {AUTOSTART}")
+
+
+def write_launcher():
+    """A menu entry for the editor: this host has no Plasma dialog."""
+    LAUNCHER.parent.mkdir(parents=True, exist_ok=True)
+    LAUNCHER.write_text(
+        "[Desktop Entry]\n"
+        "Type=Application\n"
+        "Name=plaintop — настройки монитора\n"
+        "Comment=Вид, палитра и блоки текстового монитора\n"
+        f"Exec=env QML_XHR_ALLOW_FILE_READ=1 qml6 {UI_DEST / 'settings.qml'}\n"
+        "Icon=utilities-system-monitor\n"
+        "Terminal=false\n"
+        "Categories=Settings;Utility;\n",
+        encoding="utf-8")
+    print(f"  → {LAUNCHER}")
+
+
+def settings():
+    env = dict(os.environ, QML_XHR_ALLOW_FILE_READ="1")
+    subprocess.Popen(["qml6", str(UI_DEST / "settings.qml")], env=env, start_new_session=True,
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print("  ✓ редактор открыт")
 
 
 def read_kwinrules():
@@ -256,6 +304,7 @@ def status():
     else:
         print("  настройки:  нет")
     print(f"  автозапуск: {'есть' if AUTOSTART.exists() else 'нет'}")
+    print(f"  редактор:   {'есть' if LAUNCHER.exists() else 'нет'} (qml6 {UI_DEST / 'settings.qml'})")
     _, data = read_kwinrules()
     print(f"  правило KWin: {'есть' if any(v.get('Description') == RULE_NAME for v in data.values()) else 'нет'}")
     alive = PIDFILE.exists() and Path(f"/proc/{PIDFILE.read_text().strip()}").exists()
@@ -268,6 +317,7 @@ def main():
         deploy_files()
         cfg = build_config(overwrite_blocks=False)
         write_autostart()
+        write_launcher()
         ensure_rule(int(os.environ.get("PLAINTOP_X", 0)), int(os.environ.get("PLAINTOP_Y", 0)),
                     int(cfg["widgetWidth"]), int(cfg["widgetHeight"]))
         start()
@@ -275,7 +325,7 @@ def main():
         cfg = build_config(overwrite_blocks=True)
         ensure_rule(int(os.environ.get("PLAINTOP_X", 0)), int(os.environ.get("PLAINTOP_Y", 0)),
                     int(cfg["widgetWidth"]), int(cfg["widgetHeight"]))
-    elif action in ("start", "stop", "status"):
+    elif action in ("start", "stop", "status", "settings"):
         globals()[action]()
     else:
         sys.exit(f"неизвестное действие: {action}")

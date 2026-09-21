@@ -43,10 +43,19 @@ Only one host belongs on the desktop: they draw the same monitor.
 font, size, padding, widget size, update interval, the four palette colours, and `blocks`.
 The window re-reads it every two seconds, so an edit shows up without a restart.
 
-**The editor is still the plasmoid's dialog.** `--plaintop-export` reads what that dialog
-stored and writes it here, which keeps one editor for both hosts until the window host
-gets one of its own — the visualizer already has that pattern in
-`../spectrum/window/settings.qml`.
+**The editor is `window/settings.qml`**, started from the menu entry "plaintop — монитор"
+or with `./install.sh --plaintop-settings`. It shows the layout in the **real renderer**
+side by side with the settings — the same `MonitorView` the desktop draws, fed by a second
+`MonitorData`, so an edit is visible before it is saved. QML cannot write files, so the
+editor reads `GET /config?widget=monitor` from the relay and posts changes back; the relay
+stays the only writer. `--plaintop-export` still imports what the plasmoid's dialog stored.
+
+**Nothing has to be typed in by hand.** A parameter that holds a machine-specific id is
+offered as a list of what this machine reports: sensors from the sensor tree with the
+highlighted one's live value, network interfaces, mount points from `/proc/self/mounts`.
+The editor learns which parameters those are from `pick` in the vocabulary, so a new block
+type needs no editor change. An empty value means "find it yourself", and a stored one is
+only a preference — see decision 6 in `../docs/DECISIONS.md`.
 
 To move the monitor, edit the KWin rule (System Settings → Window Rules) or re-run
 `--plaintop-window` with `PLAINTOP_X` / `PLAINTOP_Y` set. The gap from the screen edge is
@@ -55,8 +64,6 @@ window at `0,0`.
 
 ## What is still ahead
 
-- **An editor for the window host**, like the visualizer's, so the plasmoid is not needed
-  as a settings dialog.
 - **One name for one widget.** The plasmoid host lives in `../plasmoid/` for historical
   reasons while its shared parts live here; `monitor/package`, `monitor/shared`,
   `monitor/window` would read better, and the rename is mechanical.

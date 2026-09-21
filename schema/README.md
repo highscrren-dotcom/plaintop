@@ -40,6 +40,27 @@ Two types are not tied to a particular quantity and make the dictionary extensib
 - **`command`** — a line from the output of an arbitrary command, with its own interval;
 - **`sensor`** — any ksystemstats sensor by its id, with a bar or without one.
 
+## Parameters the machine fills in itself
+
+A parameter in the dictionary may say what kind of thing it holds, so the editor can offer the
+machine's own list instead of asking for an id:
+
+```json
+"nvmeSensor": { "type": "string", "name": "NVMe temperature sensor (empty — find it)",
+                "default": "", "pick": "sensor",
+                "pattern": "^lmsensors/nvme-[^/]+/temp\\d+$" }
+```
+
+- **`pick`** — `sensor` (a searchable list of everything ksystemstats reports, with the highlighted
+  sensor's live value), `iface` (the network interfaces found in the sensor tree), or `mount`
+  (the mount points from `/proc/self/mounts`).
+- **`pattern`** — narrows the list, and is what the widget itself falls back to.
+
+A stored value is a **preference**, not a requirement: it wins while the machine has it, and when it
+does not, `pattern` finds the replacement. An empty value means "find it yourself" from the start —
+which is why the layout shipped in `widget.json` carries no sensor ids of the machine it was written
+on. See decision 6 in `../docs/DECISIONS.md`.
+
 ## Editing from the interface
 
 The "Блоки" (Blocks) page in the widget settings reads that same layout: enable, disable, reorder,

@@ -1,6 +1,9 @@
 import QtQuick
 import QtCore
 
+// The block description generated from schema/, deployed next to this file.
+import "description.js" as Description
+
 // Standalone host for the text monitor: the same lines, in a window that lets every click
 // through. A desktop plasmoid never hands over the left button — see docs/GOTCHAS.md.
 //
@@ -65,7 +68,11 @@ Window {
 
     MonitorData {
         id: monitorData
-        blocks: win.cfg.blocks !== undefined ? win.cfg.blocks : []
+        // No blocks in the config (a first start, or a file that did not parse) is not a
+        // reason to show nothing: the packaged description is the fallback, as in the
+        // plasmoid host.
+        blocks: (win.cfg.blocks !== undefined && win.cfg.blocks.length > 0)
+                ? win.cfg.blocks : Description.BLOCKS
         rate: win.num("updateInterval", 1000)
     }
 

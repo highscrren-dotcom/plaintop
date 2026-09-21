@@ -80,52 +80,166 @@ Item {
         }
     }
 
-    readonly property string netIface: blockParam("network", "interface", "enp4s0")
+    // What this machine actually has; the settings hold a preference, not a promise.
+    property SensorRegistry registry: SensorRegistry {}
+
     readonly property var mounts: blockParam("disks", "mounts", ["/"])
+
+    // ⚠️ Every machine-specific id goes through the registry: a preference is used when
+    // the machine has it, otherwise the sensor is discovered. Hardcoded ids rot — the NVMe
+    // chip name follows the PCI address and the network interface name can change on its
+    // own; both did on the development machine and both quietly removed a reading.
+    readonly property string netIface: {
+        const preferred = blockParam("network", "interface", "")
+        if (preferred.length > 0 && registry.has("network/" + preferred + "/download"))
+            return preferred
+        const found = registry.firstMatch("^network/(?!all)[^/]+/download$")
+        return found.length > 0 ? found.split("/")[1] : preferred
+    }
+
+    // ⚠️ Hardware-specific sensor ids are parameters, not literals: a fan chip and an
+    // NVMe sensor exist under different names on every machine, and lm_sensors chips are
+    // addressed by NAME rather than by hwmon index, because the indexes drift between
+    // reboots. Empty means "this machine does not have it", and the line simply omits it.
+    readonly property var fanSensors:
+        registry.resolveList(blockParam("cpu", "fans", []), "^lmsensors/[^/]+/fan\\d+$")
+
+    readonly property string nvmeSensor:
+        registry.resolve(blockParam("disks", "nvmeSensor", ""), "^lmsensors/nvme-[^/]+/temp1$")
 
     // ── Data ──────────────────────────────────────────────────────────────────
     // One SensorDataModel for all values: a single subscription instead of a hundred
     // objects. Roles are taken by name (Sensors.SensorDataModel.Value), not by number —
     // the numbers are not promised across Plasma versions.
+    // ⚠️ The core count comes from the sensors, not from a number in the code: this used
+    // to be a hardcoded 72, which is this machine and nobody else's. It is latched once a
+    // positive value arrives, so the subscription is not rebuilt on every reading.
+    property int coreCount: 0
+
     readonly property var coreIds: {
         const a = []
-        for (let i = 0; i < 72; i++) a.push("cpu/cpu" + i + "/usage")
-        for (let i = 0; i < 72; i++) a.push("cpu/cpu" + i + "/temperature")
+        for (let i = 0; i < coreCount; i++) a.push("cpu/cpu" + i + "/usage")
+        for (let i = 0; i < coreCount; i++) a.push("cpu/cpu" + i + "/temperature")
         return a
     }
 
     // ⚠️ Duplicates must be removed: SensorDataModel collapses identical ids, the
     // columns become fewer than the list entries, and reads by index slide off.
-    readonly property var sensorIds: {
+    readonly property var sensorIds: coreIds
+
+    // ⚠️ Two subscriptions on purpose. The uniform core arrays go through one
+    // SensorDataModel, which handles hundreds of them well. Everything else — including
+    // every machine-specific id — goes through individual Sensor objects, because a batch
+    // model silently dropped the lm_sensors ids from its columns (21 requested, 18
+    // columns, the fan and NVMe ids missing), while the same ids read fine one by one.
+    // Verified on s1dPC 2026-09-21. Individual sensors also carry `status`, so "this
+    // machine has no such sensor" is distinguishable from "the value is zero".
+    readonly property var namedIds: {
         const out = [], seen = ({})
-        for (const id of rawSensorIds) if (!seen[id]) { seen[id] = true; out.push(id) }
+        for (const id of rawSensorIds)
+            if (!seen[id]) { seen[id] = true; out.push(id) }
         return out
+    }
+
+    property var named: ({})
+    property var namedReady: ({})
+
+    function publish(id, value, ready) {
+        const v = ({}), r = ({})
+        for (const k in named) v[k] = named[k]
+        for (const k in namedReady) r[k] = namedReady[k]
+        v[id] = value
+        r[id] = ready
+        named = v
+        namedReady = r
+    }
+
+    Instantiator {
+        model: monitor.namedIds
+
+        delegate: Sensors.Sensor {
+            required property var modelData
+            sensorId: modelData
+            updateRateLimit: monitor.rate
+            onValueChanged: monitor.publish(sensorId, value, status === 2)
+            onStatusChanged: monitor.publish(sensorId, value, status === 2)
+        }
     }
 
     readonly property var rawSensorIds: [
         "cpu/all/usage",
         "memory/physical/usedPercent", "memory/physical/used", "memory/physical/total",
         "os/system/hostname", "os/system/name", "os/kernel/version",
-        "lmsensors/nct6779-isa-0a20/fan1", "lmsensors/nct6779-isa-0a20/fan2",
-        // ⚠️ lm_sensors sensors are addressed by chip NAME, not by hwmon index:
-        // the indexes drift between reboots.
-        "lmsensors/nvme-pci-0500/temp1",
+        "cpu/all/cpuCount", "cpu/all/coreCount",
         "gpu/gpu0/usage", "gpu/gpu0/temperature", "gpu/gpu0/usedVram",
         "gpu/gpu0/totalVram", "gpu/gpu0/power", "gpu/gpu0/name",
         "network/" + netIface + "/download", "network/" + netIface + "/upload",
         "os/system/uptime"
-    ].concat(coreIds).concat(customSensorIds)
+    ].concat(customSensorIds).concat(fanSensors).concat(
+        nvmeSensor.length > 0 ? [nvmeSensor] : [])
 
-    readonly property var colOf: {
+    // ⚠️ Columns are found by asking the model for each column's SensorId, never by the
+    // position in the requested list. SensorDataModel silently drops ids it cannot
+    // resolve — on this machine three of 165 — and every column after the gap shifts, so
+    // an index built from the request reads the wrong sensor or nothing at all. That is
+    // the difference between working here and working on a machine with other hardware.
+    property var colOf: ({})
+
+    function rebuildColumns() {
         const m = ({})
-        for (let i = 0; i < sensorIds.length; i++) m[sensorIds[i]] = i
-        return m
+        const n = mon.columnCount()
+        for (let c = 0; c < n; c++) {
+            const id = mon.data(mon.index(0, c), Sensors.SensorDataModel.SensorId)
+            if (id)
+                m[String(id)] = c
+        }
+        colOf = m
+    }
+
+    readonly property int missingSensors: Math.max(0, sensorIds.length - Object.keys(colOf).length)
+
+    Connections {
+        target: mon
+
+        function onColumnsInserted() { monitor.rebuildColumns() }
+        function onColumnsRemoved() { monitor.rebuildColumns() }
+        function onModelReset() { monitor.rebuildColumns() }
+    }
+
+    // The daemon answers a moment after the subscription, so the first rebuild has nothing
+    // to see; this keeps trying until the column count and the map agree.
+    Timer {
+        interval: 500
+        running: true
+        repeat: true
+        onTriggered: {
+            if (Object.keys(monitor.colOf).length !== mon.columnCount())
+                monitor.rebuildColumns()
+        }
     }
 
     Sensors.SensorDataModel {
         id: mon
         sensors: monitor.sensorIds
         updateRateLimit: monitor.rate
+    }
+
+    // Latch the core count once: cpu/all/cpuCount answers a moment after the daemon wakes,
+    // and rebuilding the subscription on every reading would be wasteful.
+    Timer {
+        interval: 500
+        running: monitor.coreCount === 0
+        repeat: true
+        onTriggered: {
+            // ⚠️ cpu/all/coreCount is the number of cpuN sensors (72 here); cpu/all/cpuCount
+            // is the number of physical CPUs (2). Latching the wrong one subscribed to two
+            // cores, and the per-node temperatures quietly disappeared. Verified.
+            const cores = Math.round(monitor.num("cpu/all/coreCount", 0))
+            const cpus = Math.round(monitor.num("cpu/all/cpuCount", 0))
+            const n = Math.max(cores, cpus)
+            if (n > 0)
+                monitor.coreCount = n
+        }
     }
 
     Proc.ProcessDataModel {
@@ -277,9 +391,20 @@ Item {
     }
 
     function sval(id) {
+        // Named sensors first, then the core model by column id.
+        const v = named[id]
+        if (v !== undefined)
+            return v
         const col = colOf[id]
-        if (col === undefined) return undefined
+        if (col === undefined)
+            return undefined
         return mon.data(mon.index(0, col), Sensors.SensorDataModel.Value)
+    }
+
+    function sensorReady(id) {
+        if (namedReady[id] !== undefined)
+            return namedReady[id] === true
+        return colOf[id] !== undefined
     }
 
     function num(id, fallback) {
@@ -331,7 +456,7 @@ Item {
         const set = nodeCpus[n]
         if (!set) return 0
         let sum = 0, cnt = 0
-        for (let i = 0; i < 72; i++) if (set[i]) { sum += num("cpu/cpu" + i + "/usage", 0); cnt++ }
+        for (let i = 0; i < coreCount; i++) if (set[i]) { sum += num("cpu/cpu" + i + "/usage", 0); cnt++ }
         return cnt > 0 ? sum / cnt : 0
     }
 
@@ -339,7 +464,7 @@ Item {
         const set = nodeCpus[n]
         if (!set) return 0
         let max = 0
-        for (let i = 0; i < 72; i++) if (set[i]) max = Math.max(max, num("cpu/cpu" + i + "/temperature", 0))
+        for (let i = 0; i < coreCount; i++) if (set[i]) max = Math.max(max, num("cpu/cpu" + i + "/temperature", 0))
         return max
     }
 
@@ -413,11 +538,14 @@ Item {
                 if (p.model_line !== false) {
                     const name = (cpuSockets > 1 ? cpuSockets + "x " : "") + (cpuModel || "CPU")
                     const t0 = Math.round(nodeTemp(0)), t1 = Math.round(nodeTemp(1))
-                    const f1 = Math.round(num("lmsensors/nct6779-isa-0a20/fan1", 0))
-                    const f2 = Math.round(num("lmsensors/nct6779-isa-0a20/fan2", 0))
+                    const rpm = []
+                    for (const id of fanSensors) {
+                        const v = Math.round(num(id, 0))
+                        if (v > 0) rpm.push(v)
+                    }
                     out.push(line(name + "  " + cpuCores + "c/" + cpuThreads + "t  "
                                   + (t0 > 0 ? t0 + "/" + t1 + "°C  " : "")
-                                  + (f1 > 0 ? f1 + "/" + f2 + " rpm" : ""), "dim"))
+                                 + (rpm.length > 0 ? rpm.join("/") + " rpm" : ""), "dim"))
                 }
                 for (const r of topRows(byCpu, 1, p.top_processes || 0, v => comma(v, 1) + "%"))
                     out.push(line(r))
@@ -452,7 +580,7 @@ Item {
                     out.push(line(barRow(name, d.pct)))
                     let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
                     if (d.target === "/" && p.nvme_temp !== false) {
-                        const t = Math.round(num("lmsensors/nvme-pci-0500/temp1", 0))
+                        const t = nvmeSensor.length > 0 ? Math.round(num(nvmeSensor, 0)) : 0
                         if (t > 0) note += "  nvme " + t + "°C"
                     }
                     out.push(line(note, "dim"))
@@ -470,7 +598,8 @@ Item {
                 break
 
             case "network": {
-                const iface = p.interface || netIface
+                // netIface already honours p.interface and falls back to discovery.
+                const iface = netIface
                 out.push(line(iface + "  Dl " + speed(num("network/" + iface + "/download", 0))
                               + "  Ul " + speed(num("network/" + iface + "/upload", 0)), "dim"))
                 break

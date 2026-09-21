@@ -1,0 +1,13 @@
+{
+  "fontFamily": "JetBrainsMono Nerd Font Mono",
+  "fontSize": 10,
+  "padLeft": 48,
+  "padTop": 44,
+  "widgetWidth": 500,
+  "widgetHeight": 950,
+  "updateInterval": 1000,
+  "colorFg": "#C8CCD4",
+  "colorAccent": "#E05561",
+  "colorDim": "#6B7280",
+  "colorValue": "#8FB6E0"
+}

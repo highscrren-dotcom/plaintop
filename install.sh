@@ -63,8 +63,7 @@ plasmoid_install() {
     # The renderer and the data side are shared with the standalone window host, so they
     # live in plaintop/shared/ and are copied into the package here. Two edited copies of
     # the same QML is how they drift apart.
-    cp "$REPO/plaintop/shared/MonitorData.qml" "$REPO/plaintop/shared/MonitorView.qml" \
-        "$REPO/plasmoid/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+    cp "$REPO/plaintop/shared/"*.qml "$REPO/plasmoid/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
 
     if ! python3 "$REPO/plasmoid/generate.py"; then
         red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
@@ -154,6 +153,13 @@ spectrum_install() {
 
     mkdir -p "$RELAY_DEST" "$UNIT_DEST"
     install -m 755 "$SPECTRUM_SRC/relay.py" "$RELAY_DEST/relay.py" && echo "  → $RELAY_DEST/relay.py"
+    # The relay reads the defaults next to itself, and it is the only writer of both
+    # settings files. Without them a first install comes up with an empty editor. Each
+    # file is taken from the widget it belongs to, so there is one copy to edit.
+    install -m 644 "$SPECTRUM_SRC/window/ring.default.json" "$RELAY_DEST/ring.default.json" \
+        && echo "  → $RELAY_DEST/ring.default.json"
+    install -m 644 "$REPO/plaintop/window/monitor.default.json" "$RELAY_DEST/monitor.default.json" \
+        && echo "  → $RELAY_DEST/monitor.default.json"
     install -m 644 "$SPECTRUM_SRC/plainspectrum-relay.service" "$UNIT_DEST/" \
         && echo "  → $UNIT_DEST/plainspectrum-relay.service"
 
@@ -417,11 +423,12 @@ case "${1:-}" in
   --spectrum-settings) spectrum_settings; exit $? ;;
   --plaintop-window)   plaintop_window; exit $? ;;
   --plaintop-export)   plaintop_export; exit $? ;;
+  --plaintop-settings) python3 "$REPO/plaintop/window/setup.py" settings; exit $? ;;
   --clicks-off)  clicks_set false "клики ловятся виджетами (можно настраивать мышью)"; exit $? ;;
   --clicks-on)   clicks_set true "клики проходят на рабочий стол"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--plasmoid|--plaintop-window|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--plasmoid|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }

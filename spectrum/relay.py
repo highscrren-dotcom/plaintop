@@ -34,53 +34,66 @@ RANGE = 1000            # ascii_max_range: 1000 steps, or the bars visibly step
 
 state = {"raw": [0] * BARS, "frames": 0, "stamp": 0.0, "restarts": 0, "source": ""}
 
-# The relay owns the settings file. QML cannot write files, so the ring and the settings
-# window both talk to this one owner over HTTP instead of racing over the file.
-CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "plainspectrum"
-CONFIG_PATH = CONFIG_DIR / "ring.json"
-DEFAULTS_PATH = Path(__file__).resolve().parent / "ring.default.json"
+# The relay owns the settings files of both widgets. QML cannot write files, so every
+# editor talks to this one owner over HTTP instead of racing over the file.
+#
+# ⚠️ The unit is still called plainspectrum-relay: renaming a running service for the sake
+# of a tidier name would cost the user their setup. What it is, is the local service for
+# the widgets — spectrum data plus settings storage.
+CONF_BASE = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+HERE = Path(__file__).resolve().parent
+CONFIGS = {
+    "ring": (CONF_BASE / "plainspectrum" / "ring.json", "ring.default.json"),
+    "monitor": (CONF_BASE / "plaintop" / "monitor.json", "monitor.default.json"),
+}
 config_lock = threading.Lock()
 
 
-def load_defaults():
-    for candidate in (DEFAULTS_PATH, Path(__file__).resolve().parent / "window" / "ring.default.json"):
-        if candidate.exists():
-            return json.loads(candidate.read_text(encoding="utf-8"))
+def config_paths(widget):
+    path, defaults = CONFIGS.get(widget, CONFIGS["ring"])
+    return path, HERE / defaults
+
+
+def load_defaults(defaults_path):
+    if defaults_path.exists():
+        return json.loads(defaults_path.read_text(encoding="utf-8"))
     return {}
 
 
-def read_config():
+def read_config(widget="ring"):
+    path, defaults_path = config_paths(widget)
     with config_lock:
-        if CONFIG_PATH.exists():
+        if path.exists():
             try:
-                return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+                return json.loads(path.read_text(encoding="utf-8"))
             except json.JSONDecodeError as e:
-                print(f"ring.json does not parse ({e}), falling back to defaults",
+                print(f"{path.name} does not parse ({e}), falling back to defaults",
                       file=sys.stderr, flush=True)
-        cfg = load_defaults()
+        cfg = load_defaults(defaults_path)
         if cfg:
-            CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-            CONFIG_PATH.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n",
-                                   encoding="utf-8")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n",
+                            encoding="utf-8")
         return cfg
 
 
-def write_config(patch):
-    """Merge a patch into the settings file, atomically."""
+def write_config(patch, widget="ring"):
+    """Merge a patch into a settings file, atomically."""
+    path, defaults_path = config_paths(widget)
     with config_lock:
         cfg = {}
-        if CONFIG_PATH.exists():
+        if path.exists():
             try:
-                cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+                cfg = json.loads(path.read_text(encoding="utf-8"))
             except json.JSONDecodeError:
-                cfg = load_defaults()
+                cfg = load_defaults(defaults_path)
         else:
-            cfg = load_defaults()
+            cfg = load_defaults(defaults_path)
         cfg.update(patch)
-        CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-        tmp = CONFIG_PATH.with_suffix(".json.tmp")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".json.tmp")
         tmp.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        tmp.replace(CONFIG_PATH)
+        tmp.replace(path)
         return cfg
 
 
@@ -201,8 +214,10 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             return
 
-        if urlparse(self.path).path == "/config":
-            self.send_json(read_config())
+        parsed = urlparse(self.path)
+        if parsed.path == "/config":
+            widget = parse_qs(parsed.query).get("widget", ["ring"])[0]
+            self.send_json(read_config(widget))
             return
 
         query = parse_qs(urlparse(self.path).query)
@@ -219,7 +234,9 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
-        if urlparse(self.path).path != "/config":
+        parsed = urlparse(self.path)
+        widget = parse_qs(parsed.query).get("widget", ["ring"])[0]
+        if parsed.path != "/config":
             self.send_response(404)
             self.send_header("Content-Length", "0")
             self.end_headers()
@@ -238,7 +255,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        self.send_json(write_config(patch))
+        self.send_json(write_config(patch, widget))
 
     def send_json(self, payload):
         body = json.dumps(payload, ensure_ascii=False).encode()

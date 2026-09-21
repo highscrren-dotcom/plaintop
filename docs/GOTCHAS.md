@@ -267,3 +267,56 @@ equivalent of the X Shape trick conky needed.
 ⚠️ The price is placement: under Wayland a window cannot position itself. `x` and `y` are
 ignored and KWin places the window where it likes, so a widget-like window needs a KWin
 rule to force position, size, keep-below and skip-taskbar.
+
+## `SensorDataModel` silently drops ids it cannot resolve
+
+Ask it for 165 sensors and it may give back 162 columns: the ids it cannot resolve are not
+reported, they simply are not there, and **every later column shifts**. Code that reads
+column *n* then gets a neighbour's value — on s1dPC the "NVMe temperature" read a fan.
+Re-subscribing does not help, and there is no cap on the count (200 core ids resolve fine).
+
+What works: address columns by their `SensorId` role instead of by position, and take
+everything that is not a uniform array through individual `Sensors.Sensor` objects. Those
+resolve the very same ids reliably and expose `status` — 2 means Ready, so a missing
+reading can be told apart from a zero one.
+
+## `cpu/all/coreCount` is not `cpu/all/cpuCount`
+
+`cpuCount` is the number of physical packages — 2 on this machine. `coreCount` is 72.
+Latching the length of the per-core arrays from `cpuCount` left the widget reading two
+temperatures out of 72 and looked exactly like "the core temperatures disappeared".
+
+## Chip names rot exactly like hwmon indexes
+
+The project already bans taking sensors by `hwmon` index. The chip name is no safer:
+after a reboot `lmsensors/nvme-pci-0500/temp1` became `nvme-pci-0600`, and the network
+interface went from `enp4s0` to `enp5s0`. A widget that carries such an id in its config
+goes quiet, without an error, on the machine it was written for — never mind another one.
+
+So ids are discovered: `SensorTreeModel` is enumerated once (675 entries here), a stored
+id is kept only as a **preference**, and when the machine no longer has it a pattern finds
+the replacement — `^lmsensors/nvme-[^/]+/temp\d+$` finds the drive whatever the bus
+renumbering did.
+
+## The sensor tree also contains regex templates
+
+Among the entries are `cpu/cpu\d+/temperature`, `gpu/gpu\d+/usage` and
+`network/(?!all).*/download` — 11 of 675 on s1dPC. They are patterns for whole groups, not
+sensors, and subscribing to one returns nothing. Filter them out by regex metacharacters
+(`( * \ ? [ ] | +`): a real id never contains any of them.
+
+## Kirigami's `FormLayout` complains when a `Repeater` rebuilds its children
+
+`TypeError: Cannot read property 'isSection' of null`, `Cannot read property 'Accessible'
+of null`, `Unable to assign [undefined] to int` — three lines per rebuild, every time the
+model of a `Repeater` inside a `FormLayout` changes. Reproduced with a 25-line file
+containing nothing but a `FormLayout`, a `Repeater` and one model swap: it is Kirigami's
+own noise, not a bug in the delegate. Worth knowing before spending an hour in your own
+code, as happened here.
+
+## A list reaches a `Repeater` delegate as a variant list, not a JS array
+
+`modelData.value` holding a list of strings: `Array.isArray()` returns **false**. A guard
+written as `Array.isArray(v) ? v : []` renders an empty list while the config holds two
+entries — and nothing warns, because both branches are valid. Copy it by `length` instead
+and the same code works for a JS array and for a variant list alike.
