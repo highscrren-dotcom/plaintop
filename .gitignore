@@ -18,3 +18,11 @@ CLAUDE.md
 
 # Рабочие копии сторонних инструментов
 .kilo/
+
+# Копии общих компонентов визуализатора: источник — spectrum/shared/
+spectrum/package/contents/ui/Ring.qml
+spectrum/package/contents/ui/Spectrum.qml
+spectrum/window/Ring.qml
+spectrum/window/Spectrum.qml
+# Копия значений по умолчанию рядом с реле — для установки
+spectrum/ring.default.json

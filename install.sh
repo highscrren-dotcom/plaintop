@@ -132,6 +132,12 @@ spectrum_install() {
     if ! command -v cava >/dev/null; then
         red "  ✗ нет cava — поставь: sudo pacman -S cava"; return 1
     fi
+    # The renderer and the data side are shared with the standalone window host, so they
+    # live in spectrum/shared/ and are copied into the package here. Keeping two edited
+    # copies of the same QML is how they drift apart.
+    cp "$SPECTRUM_SRC/shared/Ring.qml" "$SPECTRUM_SRC/shared/Spectrum.qml" \
+        "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+
     local mode=--install
     [ -d "$SPECTRUM_DEST" ] && mode=--upgrade
     if kpackagetool6 --type Plasma/Applet $mode "$SPECTRUM_SRC/package" >/dev/null 2>&1; then
@@ -165,6 +171,13 @@ spectrum_install() {
         dim "  plasmashell не под systemd — перезапусти оболочку сам"
     fi
 
+    # Two hosts draw the same ring, so only one belongs on the desktop. If the
+    # click-through window is set up, the plasmoid variant is installed but not placed.
+    if [ -f "$HOME/.config/autostart/plainspectrum-window.desktop" ]; then
+        dim "  окно со сквозными кликами настроено — плазмоид на стол не сажаю"
+        return 0
+    fi
+
     local n
     n=$(grep -c "^plugin=$SPECTRUM_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
     if [ "${n:-0}" -gt 0 ]; then
@@ -176,6 +189,27 @@ spectrum_install() {
     id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
         "print(desktops()[0].addWidget(\"$SPECTRUM_ID\").id)" 2>/dev/null | tr -dc '0-9')
     [ -n "$id" ] && grn "  ✓ добавлен на рабочий стол (id=$id)" || red "  ✗ не удалось добавить на рабочий стол"
+}
+
+# Standalone (click-through) host for the visualizer. A plasmoid never hands over the
+# left mouse button; a plain window with Qt.WindowTransparentForInput does — see
+# docs/GOTCHAS.md. Place, size and keep-below come from a KWin rule, because under
+# Wayland a window cannot position itself.
+spectrum_window() {
+    echo "== Спектр: окно со сквозными кликами"
+    if ! command -v qml6 >/dev/null; then
+        red "  ✗ нет qml6 (пакет qt6-declarative)"; return 1
+    fi
+    python3 "$SPECTRUM_SRC/window/setup.py" install
+}
+
+spectrum_settings() {
+    python3 "$SPECTRUM_SRC/window/setup.py" settings
+}
+
+spectrum_window_status() {
+    echo "== Спектр: окно"
+    python3 "$SPECTRUM_SRC/window/setup.py" status
 }
 
 spectrum_status() {
@@ -289,6 +323,7 @@ status() {
     [ -f "$APPS/conky.desktop" ] && grn "  ✓ заглушка пакетного conky.desktop" || red "  ✗ заглушки нет"
     echo; plasmoid_status
     echo; spectrum_status
+    echo; spectrum_window_status
 }
 
 deps() {
@@ -344,11 +379,13 @@ case "${1:-}" in
   --plasmoid)    plasmoid_install; exit $? ;;
   --conky-files) conky_deploy; echo; status; exit 0 ;;
   --spectrum)    spectrum_install; exit $? ;;
+  --spectrum-window)   spectrum_window; exit $? ;;
+  --spectrum-settings) spectrum_settings; exit $? ;;
   --clicks-off)  clicks_set false "клики ловятся виджетами (можно настраивать мышью)"; exit $? ;;
   --clicks-on)   clicks_set true "клики проходят на рабочий стол"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--spectrum|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }

@@ -94,11 +94,15 @@ indexes move between reboots.
 
 ## The audio visualizer
 
-`spectrum/` is a separate widget that draws the spectrum of whatever is playing — a ring,
-an arc or a line of ticks, in the same flat style. `cava` does the spectrum, a small
-systemd user service serves its bands over local HTTP, and the widget moves ready-made
-rectangles: the GPU stays at about half a percent because nothing is rasterized per frame.
-Details, settings and the measured cost: **[spectrum/README.md](spectrum/README.md)**.
+`spectrum/` draws the spectrum of whatever is playing — a ring, an arc or a line of ticks,
+in the same flat style. `cava` does the spectrum, a small systemd user service serves its
+bands over local HTTP, and the widget moves ready-made rectangles: the GPU stays at about
+half a percent because nothing is rasterized per frame.
+
+It comes with **two hosts** for the same renderer. The plasmoid has Plasma's settings
+dialog; the window host (`Qt.WindowTransparentForInput`) is the one you can click straight
+through, and it brings its own editor with a live preview. Details, settings and the
+measured cost: **[spectrum/README.md](spectrum/README.md)**.
 
 ## Three layers
 

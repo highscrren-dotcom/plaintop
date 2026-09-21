@@ -160,3 +160,39 @@ runtime dependencies.
 
 **Revisit if:** the CPU cost becomes a problem on a weaker machine — then a shader
 renderer is the next step, and it is a renderer swap, not a redesign.
+
+## 5. The visualizer gets a second host: a click-through window (2026-09-21)
+
+**Decision:** the ring also runs as a plain window with `Qt.WindowTransparentForInput`,
+with its own settings editor. The plasmoid host stays, installed but not placed once the
+window is set up. The renderer and the data side move to `spectrum/shared/` and are used
+by both.
+
+**Why.** The user's own observation split the problem in half: a right-click reaches an
+icon through the widget, a left-click does not. Four attempts to free the left button all
+failed — the table is in `GOTCHAS.md` — because the applet container keeps it for
+press-and-hold. A window with that flag caught **zero** clicks while being clicked, so it
+is the only way to a desktop widget you can click straight through.
+
+**What it costs, and what pays for it.**
+
+| | Plasmoid host | Window host |
+|---|---|---|
+| Left button through the widget | never | yes |
+| Settings dialog | Plasma's, for free | ours: `window/settings.qml` |
+| Position and size | the containment resets it | a KWin rule, because Wayland forbids self-placement |
+| Autostart | KDE keeps it in the session | our own `.desktop` |
+| Drawing and data | shared files, identical | shared files, identical |
+
+**This reverses one thing from decision 1**, which counted on Plasma's dialog making a
+separate editor unnecessary. For the window host there is no such dialog, so the editor is
+ours after all — 350 lines of QML with a live preview, next to the widget rather than
+instead of it.
+
+**Who owns the settings.** The relay. QML cannot write files, so the editor reads
+`GET /config` and posts to `POST /config`, and only the relay writes `ring.json`. Two
+writers on one file is the mistake this project already paid for with `~/.config/conky`.
+
+**Revisit if:** KDE gives an applet a way to decline the left button — then the window
+host, its KWin rule and its autostart all become unnecessary, and the editor stays useful
+anyway.
