@@ -31,16 +31,17 @@ What is in the repository:
 
 | Directory | What it is | State |
 |---|---|---|
-| **`plasmoid/`** | the text monitor: a Plasma 6 widget in QML | works, current |
+| **`plasmoid/`** | the text monitor, plasmoid host | works |
+| **`plaintop/`** | the monitor's shared renderer and its click-through window host | works |
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
-⚠️ **Half the mouse passes through.** With the *"Мышь"* (Mouse) setting on, the **right**
-button reaches the desktop through both widgets — an icon's menu and the desktop's own menu
-open normally. The **left** button never does: the applet container keeps it for
-press-and-hold. Four ways around it were tried and failed; the one thing that does work is a
-plain window with `Qt.WindowTransparentForInput`, which costs the stock settings dialog.
-Both are written up in [docs/GOTCHAS.md](docs/GOTCHAS.md).
+⚠️ **About the mouse.** A plasmoid hands over the right button and never the left one —
+four ways around it were tried and failed, see [docs/GOTCHAS.md](docs/GOTCHAS.md). So both
+widgets also have a **window host**: a plain window with `Qt.WindowTransparentForInput`,
+which every click passes through. That is what runs on the author's desktop now. It costs
+the stock settings dialog and needs a KWin rule for its place, since under Wayland a window
+cannot position itself.
 
 Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 

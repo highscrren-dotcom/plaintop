@@ -26,3 +26,9 @@ spectrum/window/Ring.qml
 spectrum/window/Spectrum.qml
 # Копия значений по умолчанию рядом с реле — для установки
 spectrum/ring.default.json
+
+# Копии общих компонентов монитора: источник — plaintop/shared/
+plasmoid/package/contents/ui/MonitorData.qml
+plasmoid/package/contents/ui/MonitorView.qml
+plaintop/window/MonitorData.qml
+plaintop/window/MonitorView.qml

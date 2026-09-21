@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
+import org.kde.kquickcontrols as KQuickControls
 
 KCM.SimpleKCM {
     id: page
@@ -13,6 +14,10 @@ KCM.SimpleKCM {
     property alias cfg_fontSize: sizeField.value
     property alias cfg_updateInterval: intervalField.value
     property alias cfg_clickThrough: clickBox.checked
+    property string cfg_colorFg: "#C8CCD4"
+    property string cfg_colorAccent: "#E05561"
+    property string cfg_colorDim: "#6B7280"
+    property string cfg_colorValue: "#8FB6E0"
     property alias cfg_widgetWidth: widthField.value
     property alias cfg_padLeft: padLeftField.value
     property alias cfg_padTop: padTopField.value
@@ -72,6 +77,30 @@ KCM.SimpleKCM {
             from: 100
             to: 2000
             stepSize: 8
+        }
+
+        KQuickControls.ColorButton {
+            Kirigami.FormData.label: i18n("Основной текст:")
+            color: page.cfg_colorFg
+            onColorChanged: page.cfg_colorFg = color.toString()
+        }
+
+        KQuickControls.ColorButton {
+            Kirigami.FormData.label: i18n("Заголовок:")
+            color: page.cfg_colorAccent
+            onColorChanged: page.cfg_colorAccent = color.toString()
+        }
+
+        KQuickControls.ColorButton {
+            Kirigami.FormData.label: i18n("Второстепенное:")
+            color: page.cfg_colorDim
+            onColorChanged: page.cfg_colorDim = color.toString()
+        }
+
+        KQuickControls.ColorButton {
+            Kirigami.FormData.label: i18n("Значения:")
+            color: page.cfg_colorValue
+            onColorChanged: page.cfg_colorValue = color.toString()
         }
 
         CheckBox {

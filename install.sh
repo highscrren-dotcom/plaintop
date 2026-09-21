@@ -60,6 +60,12 @@ plasmoid_install() {
     fi
     # Schema -> package. A bad schema aborts the install: better to refuse here than
     # to get an empty widget and hunt for the cause in QML.
+    # The renderer and the data side are shared with the standalone window host, so they
+    # live in plaintop/shared/ and are copied into the package here. Two edited copies of
+    # the same QML is how they drift apart.
+    cp "$REPO/plaintop/shared/MonitorData.qml" "$REPO/plaintop/shared/MonitorView.qml" \
+        "$REPO/plasmoid/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+
     if ! python3 "$REPO/plasmoid/generate.py"; then
         red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
     fi
@@ -281,11 +287,38 @@ plasmoid_place() {
     # hints inside the widget, and the container resets the position to the corner
     # anyway. The widget draws the gap from the screen edge itself (its left/top
     # offset settings).
+    # Two hosts draw the same monitor, so only one belongs on the desktop.
+    if [ -f "$HOME/.config/autostart/plaintop-window.desktop" ]; then
+        dim "  окно со сквозными кликами настроено — плазмоид на стол не сажаю"
+        return 0
+    fi
+
     local id
     id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
         "print(desktops()[0].addWidget(\"$PLASMOID_ID\").id)" 2>/dev/null | tr -dc '0-9')
     if [ -z "$id" ]; then red "  ✗ не удалось добавить на рабочий стол"; return 1; fi
     grn "  ✓ добавлен на рабочий стол (id=$id)"
+}
+
+# Standalone (click-through) host for the text monitor, same reasoning as the ring:
+# a plasmoid never hands over the left mouse button. Settings come from the plasmoid's own
+# dialog through `--plaintop-export`, so there is still one editor.
+plaintop_window() {
+    echo "== Монитор: окно со сквозными кликами"
+    if ! command -v qml6 >/dev/null; then
+        red "  ✗ нет qml6 (пакет qt6-declarative)"; return 1
+    fi
+    python3 "$REPO/plaintop/window/setup.py" install
+}
+
+plaintop_export() {
+    echo "== Монитор: настройки из плазмоида в окно"
+    python3 "$REPO/plaintop/window/setup.py" export
+}
+
+plaintop_window_status() {
+    echo "== Монитор: окно"
+    python3 "$REPO/plaintop/window/setup.py" status
 }
 
 plasmoid_status() {
@@ -322,6 +355,7 @@ status() {
     else red "  ✗ автозапуск не настроен"; fi
     [ -f "$APPS/conky.desktop" ] && grn "  ✓ заглушка пакетного conky.desktop" || red "  ✗ заглушки нет"
     echo; plasmoid_status
+    echo; plaintop_window_status
     echo; spectrum_status
     echo; spectrum_window_status
 }
@@ -381,11 +415,13 @@ case "${1:-}" in
   --spectrum)    spectrum_install; exit $? ;;
   --spectrum-window)   spectrum_window; exit $? ;;
   --spectrum-settings) spectrum_settings; exit $? ;;
+  --plaintop-window)   plaintop_window; exit $? ;;
+  --plaintop-export)   plaintop_export; exit $? ;;
   --clicks-off)  clicks_set false "клики ловятся виджетами (можно настраивать мышью)"; exit $? ;;
   --clicks-on)   clicks_set true "клики проходят на рабочий стол"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--check-input|--deps|--plasmoid|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on]"; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--plasmoid|--plaintop-window|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }

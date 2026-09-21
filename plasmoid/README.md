@@ -36,6 +36,12 @@ block of your own — from an arbitrary command or from any ksystemstats sensor.
 representation from taking input — the applet container still does. A desktop plasmoid
 cannot hand clicks on at all; what was tried is in `../docs/GOTCHAS.md`.
 
+## The other host
+
+The same renderer also runs as a standalone window whose clicks pass through to the
+desktop. The shared parts and that host live in **[../plaintop/README.md](../plaintop/README.md)**;
+this page is about the plasmoid one.
+
 ## Installation
 
 ```bash

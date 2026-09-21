@@ -16,6 +16,20 @@
     <entry name="header" type="String">
       <default>s1dd1\Dashboard</default>
     </entry>
+    <!-- Palette, carried over from conky/plainext.conf. The line builder works in roles
+         ("fg", "dim", "accent", "value") and the view maps them to these four. -->
+    <entry name="colorFg" type="String">
+      <default>#C8CCD4</default>
+    </entry>
+    <entry name="colorAccent" type="String">
+      <default>#E05561</default>
+    </entry>
+    <entry name="colorDim" type="String">
+      <default>#6B7280</default>
+    </entry>
+    <entry name="colorValue" type="String">
+      <default>#8FB6E0</default>
+    </entry>
     <entry name="fontFamily" type="String">
       <default>JetBrainsMono Nerd Font Mono</default>
     </entry>
