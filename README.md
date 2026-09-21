@@ -73,25 +73,22 @@ The visualizer additionally needs `cava`; the conky implementation needs `conky`
 
 ## Adapting it to your hardware
 
-The defaults describe the author's box, so a few values will be wrong on yours. All of
-them are settings — no code changes needed:
+Nothing about the author's machine is baked into the layout. Hardware-specific values are
+found on the machine the widget runs on:
 
-| What | Where to change it | Default |
+| What | How it is chosen | Change it in |
 |---|---|---|
-| Header text | settings → *"Общее"* (General) | `s1dd1\Dashboard` |
-| Network interface | settings → *"Блоки"* (Blocks) → *Сеть* | `enp4s0` |
-| Mount points | settings → *"Блоки"* → *Диски* | `/`, `/run/media/s1dd1/s1d` |
-| Fan and NVMe sensors | `plasmoid/package/contents/ui/main.qml`, the `rawSensorIds` list | `lmsensors/nct6779-isa-0a20/fan1`, `lmsensors/nvme-pci-0500/temp1` |
+| Network interface | the first real interface the sensor tree reports | editor → *"Блоки"* (Blocks) → *Сеть*, a menu of the interfaces found |
+| Fan and NVMe sensors | by pattern among the sensors this machine reports | editor → *"Блоки"* → *Процессор* / *Диски*, a searchable list with live values |
+| Mount points | `/` only — a mount point is a choice, not something to guess | editor → *"Блоки"* → *Диски*, a list of what is mounted now |
+| Header text | a setting | editor → *"Вид"* (Appearance) |
 
-To list the sensor ids your machine actually has:
+A value you pick is kept as a preference: while the machine still reports it, it wins; when
+a reboot renames the chip or the interface, the widget falls back to discovery instead of
+going quiet. Decision 6 in `docs/DECISIONS.md` explains why.
 
-```bash
-busctl --user call org.kde.ksystemstats1 /org/kde/ksystemstats1 \
-  org.kde.ksystemstats1 allSensors | tr ' ' '\n' | grep -oE '"[a-z]+/[^"]+"' | sort -u
-```
-
-⚠️ Address `lm_sensors` chips **by name** (`nct6779-isa-0a20`), never by `hwmon` index —
-indexes move between reboots.
+⚠️ If you ever write a sensor id by hand, address `lm_sensors` chips **by name**
+(`nct6779-isa-0a20`), never by `hwmon` index — indexes move between reboots.
 
 ## The audio visualizer
 
