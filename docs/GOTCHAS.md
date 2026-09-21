@@ -237,19 +237,25 @@ The same ring, same data: 3.9% of one core standing still at 30 fps, 12.3% spinn
 60 fps, 26.4% when drawn on a `Canvas` instead of scene items. If motion is not in the
 data, it is not worth its price.
 
-## A desktop plasmoid cannot pass clicks to the desktop
+## A desktop plasmoid passes the right button on, never the left
 
-Three attempts, all executed, all failed:
+`enabled: false` on the full representation is not useless — it hands the **right** button
+over, so the desktop's own context menu (and an icon's menu) opens through the widget. The
+**left** button never arrives: it is what the applet container watches for press-and-hold
+to enter edit mode (`editModeCondition: Plasmoid.immutable ? Manual : AfterPressAndHold`).
+
+Four attempts, all executed, all failed on the left button:
 
 | Attempt | Outcome |
 |---|---|
-| `enabled: false` on the full representation | the click still does not reach the desktop |
+| `enabled: false` on the full representation | right button passes through, left does not |
 | `locked = true` through plasmashell scripting | the property is read-only in Plasma 6; it stays `false` |
-| `immutability=2` on the containment, written while the shell was stopped | applied and survived, clicks still caught |
+| `immutability=2` on the containment | applied and survived a restart, left button still caught |
+| `immutability=2` on the containment **and** every applet | the condition above should become `Manual`, and the left button is still caught |
 
-The reason is in the shell's own code: `BasicAppletContainer` wraps every applet and its
-C++ base listens for the press itself — it needs press-and-hold to enter edit mode
-(`editModeCondition: AfterPressAndHold`). Nothing in the applet's QML can decline that.
+⚠️ The last row is the interesting one: locking the widgets does not free the left button
+even though the QML condition says it should stop waiting for press-and-hold. Whatever
+grabs it sits deeper, in `ItemContainer` itself. Nothing in an applet's QML can decline it.
 
 ## A plain window can: `Qt.WindowTransparentForInput` works under KWin Wayland
 

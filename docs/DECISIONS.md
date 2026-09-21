@@ -23,13 +23,14 @@ and none of them would be a problem for a plasmoid:
 
 Details on each point — `GOTCHAS.md`.
 
-⚠️ **Correction, 2026-09-20.** That row used to claim a desktop plasmoid "does not
-intercept clicks by design". It was written from memory, never executed, and the user's own
-desktop contradicted it: both widgets caught the mouse, so the desktop lost its context
-menu and rubber band over their area. The fix is a setting — `clickThrough`, which turns
-input off on the representation — plus `install.sh --clicks-on` / `--clicks-off`, because
-with clicks passing through the widget cannot be grabbed to reach its own dialog. The
-advantage over conky stands, but it costs a line of QML rather than nothing.
+⚠️ **Correction, 2026-09-21.** That row used to claim a desktop plasmoid "does not
+intercept clicks by design". It was written from memory, never executed, and the desktop
+contradicted it. What is actually true, after four attempts: turning input off on the
+representation (`clickThrough`, with `install.sh --clicks-on` / `--clicks-off` behind it)
+hands over the **right** button, so the desktop's menu opens through the widget — and the
+**left** button stays with the applet container no matter what, including with the widgets
+locked. Details and the table of attempts: `GOTCHAS.md`. Compared with conky this is still
+better, but it is half a click-through, not a free one.
 
 **And the main argument.** Plasmoids have a **built-in settings window**: Plasma builds
 the dialog itself from `config/main.xml` and stores the values. So the editor the project

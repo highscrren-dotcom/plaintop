@@ -35,11 +35,12 @@ What is in the repository:
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
-⚠️ Both widgets catch the mouse, so the desktop under them has no context menu and no
-rubber band. That is not an oversight: a desktop plasmoid cannot hand clicks on, and three
-ways to make it were tried and failed — the details, and the one thing that does work
-(a plain window with `Qt.WindowTransparentForInput`), are in
-[docs/GOTCHAS.md](docs/GOTCHAS.md).
+⚠️ **Half the mouse passes through.** With the *"Мышь"* (Mouse) setting on, the **right**
+button reaches the desktop through both widgets — an icon's menu and the desktop's own menu
+open normally. The **left** button never does: the applet container keeps it for
+press-and-hold. Four ways around it were tried and failed; the one thing that does work is a
+plain window with `Qt.WindowTransparentForInput`, which costs the stock settings dialog.
+Both are written up in [docs/GOTCHAS.md](docs/GOTCHAS.md).
 
 Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -126,12 +127,11 @@ Right-click the widget → *Настроить plaintop*. Two pages:
 - *"Блоки"* (Blocks) — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 
-**About the mouse.** Both widgets catch clicks and there is no way around it: the shell's
-applet container listens for the press itself. The *"Мышь"* (Mouse) setting, and the
-`./install.sh --clicks-on` / `--clicks-off` switches behind it, only stop the widget's own
-representation from taking input — which is not enough, as `docs/GOTCHAS.md` records with
-what was tried. They are kept because they cost nothing and would be the first half of a
-real fix.
+**About the mouse.** The *"Мышь"* (Mouse) setting — and the
+`./install.sh --clicks-on` / `--clicks-off` switches behind it — turns input off on the
+widget's own representation. That is enough for the right button, which then reaches the
+desktop through the widget, and never enough for the left one, which the applet container
+keeps for itself. `docs/GOTCHAS.md` lists the four attempts and what each one did.
 
 Two block types are deliberately open-ended:
 
