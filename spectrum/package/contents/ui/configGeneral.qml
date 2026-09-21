@@ -29,6 +29,11 @@ KCM.SimpleKCM {
     property alias cfg_guide: guideBox.checked
     property alias cfg_dataRate: rateField.value
     property alias cfg_smoothMs: smoothField.value
+    property alias cfg_hideWhenQuiet: quietBox.checked
+    property alias cfg_quietThreshold: quietLevelField.value
+    property alias cfg_quietDelayMs: quietDelayField.value
+    property alias cfg_fadeMs: fadeField.value
+    property alias cfg_idleRate: idleRateField.value
     property alias cfg_relayPort: portField.value
     property alias cfg_clickThrough: clickBox.checked
 
@@ -227,6 +232,54 @@ KCM.SimpleKCM {
             id: clickBox
             Kirigami.FormData.label: i18n("Мышь:")
             text: i18n("пропускать клики на рабочий стол")
+        }
+
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Тишина") }
+
+        CheckBox {
+            id: quietBox
+            Kirigami.FormData.label: i18n("В тишине:")
+            text: i18n("растворять кольцо")
+        }
+
+        SpinBox {
+            id: quietLevelField
+            Kirigami.FormData.label: i18n("Порог тишины, %:")
+            enabled: quietBox.checked
+            from: 0
+            to: 50
+        }
+
+        SpinBox {
+            id: quietDelayField
+            Kirigami.FormData.label: i18n("Ждать перед исчезновением, мс:")
+            enabled: quietBox.checked
+            from: 100
+            to: 10000
+            stepSize: 100
+        }
+
+        SpinBox {
+            id: fadeField
+            Kirigami.FormData.label: i18n("Появление и исчезновение, мс:")
+            enabled: quietBox.checked
+            from: 0
+            to: 3000
+            stepSize: 50
+        }
+
+        SpinBox {
+            id: idleRateField
+            Kirigami.FormData.label: i18n("Опросов в тишине, в секунду:")
+            enabled: quietBox.checked
+            from: 1
+            to: 30
+        }
+
+        Label {
+            text: i18n("Штрихи растут из самого кольца, поэтому «длина в тишине» 0\nдаёт появление буквально из ничего.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
         }
 
         SpinBox {

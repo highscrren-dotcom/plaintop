@@ -57,6 +57,8 @@ only where the pivot stands and how far it is turned changes.
 | Data frames per second | how often the widget polls the relay |
 | Smoothing, ms | the Qt animation that fills the gaps between data frames |
 | Mouse | clicks pass through to the desktop; `install.sh --clicks-off` is the way back |
+| Fade on silence | the ring dissolves when nothing plays and grows back out of the invisible ring |
+| Silence threshold, delay, fade, idle polls | when silence counts as silence, how long to wait, how slow the fade is, and how rarely to poll while hidden |
 
 ⚠️ Two settings are worth understanding before turning them up. **Blocks** draw
 bars × blocks items, so the cost scales with both. **Smoothing** is deliberately a Qt
@@ -67,7 +69,7 @@ more expensive.
 
 - **Peak hold** — a dot that keeps the maximum and sinks slowly.
 - **Source selection in the dialog** — right now the device is set in `relay.env`.
-- **Pause under a fullscreen window**, and a quiet mode that hides the widget.
+- **Pause under a fullscreen window** — silence already hides the ring and drops the polling to a few requests a second, but a game playing its own sound still keeps it awake.
 - **Frequency range in the dialog** — it reaches cava, so it needs the relay restarted.
 - **A shader renderer** — cheaper still, but it moves the work to the GPU, which was
   explicitly not wanted here.

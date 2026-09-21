@@ -93,6 +93,25 @@
       <default>70</default>
     </entry>
 
+    <!-- Silence. With nothing playing the ring fades out entirely and the widget drops
+         to idleRate polls a second, so quiet costs almost nothing. When sound returns the
+         ticks grow back out of the invisible ring. -->
+    <entry name="hideWhenQuiet" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="quietThreshold" type="Int">
+      <default>2</default>
+    </entry>
+    <entry name="quietDelayMs" type="Int">
+      <default>900</default>
+    </entry>
+    <entry name="fadeMs" type="Int">
+      <default>500</default>
+    </entry>
+    <entry name="idleRate" type="Int">
+      <default>4</default>
+    </entry>
+
     <!-- Source: the local relay that serves cava's bands over HTTP. -->
     <entry name="relayPort" type="Int">
       <default>8788</default>

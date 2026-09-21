@@ -41,6 +41,26 @@ PlasmoidItem {
     property var target: []
     property bool relayUp: false
 
+    // Silence handling. `sounding` goes true on the first loud frame and back to false
+    // after quietDelayMs without one, so a pause between tracks does not blink the ring.
+    property bool sounding: false
+    readonly property real quietLevel: cfg.quietThreshold / 100
+    readonly property real faceOpacity: (!cfg.hideWhenQuiet || sounding)
+        ? cfg.opacityPercent / 100
+        : 0
+
+    Timer {
+        id: quietTimer
+        interval: Math.max(100, root.cfg.quietDelayMs)
+        repeat: false
+        onTriggered: {
+            root.sounding = false
+            // Zero the ticks while hidden: when the sound returns they grow out of the
+            // ring rather than snapping to the level they had when it stopped.
+            root.levelsReady(new Array(root.count).fill(0))
+        }
+    }
+
     function poll() {
         const xhr = new XMLHttpRequest()
         xhr.onreadystatechange = function() {
@@ -56,7 +76,16 @@ PlasmoidItem {
             for (let i = 0; i < raw.length; i++)
                 values[i] = (+raw[i]) / 1000
             root.target = values
-            root.apply()
+            let peak = 0
+            for (let i = 0; i < values.length; i++)
+                if (values[i] > peak)
+                    peak = values[i]
+            if (peak > root.quietLevel) {
+                root.sounding = true
+                quietTimer.restart()
+            }
+            if (root.sounding || !root.cfg.hideWhenQuiet)
+                root.apply()
         }
         xhr.open("GET", "http://127.0.0.1:" + cfg.relayPort + "/bands?bars=" + count)
         xhr.send()
@@ -88,8 +117,12 @@ PlasmoidItem {
         root.levelsReady(mapped)
     }
 
+    // While hidden the widget only listens for sound returning, so it polls slowly:
+    // silence costs a few requests a second instead of thirty.
     Timer {
-        interval: Math.max(8, Math.round(1000 / Math.max(1, cfg.dataRate)))
+        interval: (root.sounding || !root.cfg.hideWhenQuiet)
+            ? Math.max(8, Math.round(1000 / Math.max(1, root.cfg.dataRate)))
+            : Math.max(100, Math.round(1000 / Math.max(1, root.cfg.idleRate)))
         running: true
         repeat: true
         triggeredOnStart: true
@@ -101,6 +134,10 @@ PlasmoidItem {
         // Input off means the click lands on the containment instead of the widget:
         // the desktop keeps its own context menu and rubber band selection.
         enabled: !root.cfg.clickThrough
+
+        // The whole face fades: one animation instead of one per tick.
+        opacity: root.faceOpacity
+        Behavior on opacity { NumberAnimation { duration: root.cfg.fadeMs } }
         implicitWidth: root.boardWidth
         implicitHeight: root.boardHeight
 
@@ -172,7 +209,6 @@ PlasmoidItem {
                             ? -root.base
                             : (root.cfg.growth === 2 ? -(root.base + height / 2) : -(root.base + height))
                         color: pivot.tint
-                        opacity: root.cfg.opacityPercent / 100
                         antialiasing: root.cfg.rounded
 
                         Behavior on height {
@@ -209,7 +245,7 @@ PlasmoidItem {
                                 radius: root.cfg.rounded ? width / 2 : 0
                                 y: parent.height - (index + 1) * (root.cfg.blockSize + root.cfg.blockGap)
                                 color: pivot.tint
-                                opacity: index < parent.parent.lit ? root.cfg.opacityPercent / 100 : 0
+                                opacity: index < parent.parent.lit ? 1 : 0
                                 antialiasing: root.cfg.rounded
 
                                 Behavior on opacity { NumberAnimation { duration: root.cfg.smoothMs } }

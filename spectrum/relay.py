@@ -15,6 +15,7 @@ the widget's JavaScript.
 """
 import os
 import subprocess
+import time
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -29,7 +30,7 @@ LOW_HZ = int(os.environ.get("PLAINSPECTRUM_LOW_HZ", "40"))
 HIGH_HZ = int(os.environ.get("PLAINSPECTRUM_HIGH_HZ", "16000"))
 RANGE = 1000            # ascii_max_range: 1000 steps, or the bars visibly step
 
-state = {"raw": [0] * BARS, "frames": 0}
+state = {"raw": [0] * BARS, "frames": 0, "stamp": 0.0}
 
 
 def cava_config():
@@ -66,6 +67,7 @@ def pump():
         if len(values) < BARS:
             continue
         state["raw"] = values[:BARS]
+        state["stamp"] = time.monotonic()
         state["frames"] += 1
     print("cava exited", file=sys.stderr, flush=True)
 
@@ -90,7 +92,11 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         query = parse_qs(urlparse(self.path).query)
         want = int(query.get("bars", [BARS])[0])
-        body = ",".join(str(v) for v in resample(state["raw"], want)).encode()
+        # cava falls asleep on silence (sleep_timer) and simply stops writing. Serving
+        # its last frame would leave the widget frozen mid-note, so silence is served
+        # as zeros once no frame has arrived for a second.
+        raw = state["raw"] if time.monotonic() - state["stamp"] < 1.0 else [0] * BARS
+        body = ",".join(str(v) for v in resample(raw, want)).encode()
         self.send_response(200)
         self.send_header("Content-Type", "text/plain")
         self.send_header("Content-Length", str(len(body)))
