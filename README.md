@@ -27,13 +27,19 @@ see [Three layers](#three-layers) below.
 Built and used on one machine: CachyOS, Plasma 6.7.5, KWin on Wayland. It should work on
 any Plasma 6 desktop, but nothing else has been tested — reports welcome.
 
-The repository carries two implementations:
+What is in the repository:
 
-| Directory | What it is |
-|---|---|
-| **`plasmoid/`** | the target implementation: a Plasma 6 widget in QML. Current work |
-| **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky). Works, kept until the plasmoid fully replaces it |
-| **`spectrum/`** | a second widget: an audio visualizer in the same plain style, with its own relay service |
+| Directory | What it is | State |
+|---|---|---|
+| **`plasmoid/`** | the text monitor: a Plasma 6 widget in QML | works, current |
+| **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
+| **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
+
+⚠️ Both widgets catch the mouse, so the desktop under them has no context menu and no
+rubber band. That is not an oversight: a desktop plasmoid cannot hand clicks on, and three
+ways to make it were tried and failed — the details, and the one thing that does work
+(a plain window with `Qt.WindowTransparentForInput`), are in
+[docs/GOTCHAS.md](docs/GOTCHAS.md).
 
 Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -59,8 +65,9 @@ The conky implementation has its own switches: `./install.sh` deploys and starts
 `--conky-off` and `--conky-on` turn it off and back on.
 
 **Requirements:** Plasma 6 with `ksystemstats` (ships with Plasma), `python3` for the
-generator, and a monospace font — `JetBrainsMono Nerd Font Mono` by default. The conky
-implementation additionally needs `conky`, `python-xlib` and `lm_sensors`.
+generator and the relay, and a monospace font — `JetBrainsMono Nerd Font Mono` by default.
+The visualizer additionally needs `cava`; the conky implementation needs `conky`,
+`python-xlib` and `lm_sensors`.
 
 ## Adapting it to your hardware
 
@@ -119,15 +126,12 @@ Right-click the widget → *Настроить plaintop*. Two pages:
 - *"Блоки"* (Blocks) — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 
-**Clicks pass through by default.** A desktop plasmoid does catch the mouse, which takes
-the context menu and the rubber band away from the desktop under it, so both widgets have
-a *"Мышь"* (Mouse) setting that turns input off. The way back does not go through the
-widget's own dialog — with clicks passing through there is nothing to right-click:
-
-```bash
-./install.sh --clicks-off   # widgets catch the mouse again, so they can be configured
-./install.sh --clicks-on    # clicks pass through to the desktop
-```
+**About the mouse.** Both widgets catch clicks and there is no way around it: the shell's
+applet container listens for the press itself. The *"Мышь"* (Mouse) setting, and the
+`./install.sh --clicks-on` / `--clicks-off` switches behind it, only stop the widget's own
+representation from taking input — which is not enough, as `docs/GOTCHAS.md` records with
+what was tried. They are kept because they cost nothing and would be the first half of a
+real fix.
 
 Two block types are deliberately open-ended:
 

@@ -42,8 +42,10 @@ Neither needs a code change — just a row in the description.
 | `plasmoid/generate.py` | description → JS module inside the package; validates before writing |
 | `schema/widget.json` | the default layout: which blocks, in what order, with what parameters |
 | `schema/blocks.json` | the vocabulary of block types and their parameters |
-| `conky/` | the first implementation; works, frozen, kept until the plasmoid replaces it |
-| `install.sh` | install, status, conky on/off — all operations idempotent |
+| `spectrum/package/` | the audio visualizer widget: one renderer for ring, arc and line |
+| `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service |
+| `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
+| `install.sh` | install, status, conky and clicks on/off — all operations idempotent |
 | `docs/` | traps, decisions, the working method, the session journal |
 
 `plasmoid/package/contents/code/description.js` is generated and not in git — edit
@@ -54,6 +56,7 @@ Neither needs a code change — just a row in the description.
 ```bash
 qmllint -I /usr/lib/qt6/qml plasmoid/package/contents/ui/main.qml   # before installing
 ./install.sh --plasmoid                                             # generate + install + restart the shell
+./install.sh --spectrum                                             # the visualizer: widget + relay service
 journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors land here
 ./install.sh --status                                               # what is installed and running
 ```

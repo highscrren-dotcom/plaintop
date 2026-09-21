@@ -15,7 +15,7 @@ package/
   metadata.json                the org.s1dd1.plaintop identifier
   contents/
     ui/main.qml                the widget itself: builds the lines from the description, sensor subscriptions
-    ui/configGeneral.qml       the "Общее" (General) page: font, type size, size, padding, interval
+    ui/configGeneral.qml       the "Общее" (General) page: font, sizes, padding, interval, mouse
     ui/configBlocks.qml        the "Блоки" (Blocks) page: which blocks, their order and their parameters
     config/main.xml            the value schema — Plasma builds the dialog and the store from it
     config/config.qml          the list of settings pages
@@ -31,6 +31,10 @@ uptime, network, the state of docker/ollama/updates and the hardware spec sheet.
 **Which blocks and in what order comes from the description** (`../schema/widget.json`), edited
 on the "Блоки" (Blocks) page in the settings: enable, disable, reorder, change parameters, add a
 block of your own — from an arbitrary command or from any ksystemstats sensor.
+
+⚠️ The widget catches the mouse, and the *"Мышь"* (Mouse) setting only stops its own
+representation from taking input — the applet container still does. A desktop plasmoid
+cannot hand clicks on at all; what was tried is in `../docs/GOTCHAS.md`.
 
 ## Installation
 

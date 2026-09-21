@@ -56,7 +56,7 @@ only where the pivot stands and how far it is turned changes.
 | Guide circle | a thin static ring under the ticks |
 | Data frames per second | how often the widget polls the relay |
 | Smoothing, ms | the Qt animation that fills the gaps between data frames |
-| Mouse | clicks pass through to the desktop; `install.sh --clicks-off` is the way back |
+| Mouse | stops the representation from taking input — not enough for real click-through, see `../docs/GOTCHAS.md` |
 | Fade on silence | the ring dissolves when nothing plays and grows back out of the invisible ring |
 | Silence threshold, delay, fade, idle polls | when silence counts as silence, how long to wait, how slow the fade is, and how rarely to poll while hidden |
 
