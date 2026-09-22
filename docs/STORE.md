@@ -92,6 +92,8 @@ https://github.com/highscrren-dotcom/plaintop
 
 ## plainspectrum — audio visualizer
 
+Published 2026-09-22: https://store.kde.org/p/2372815/
+
 - **File:** `dist/plainspectrum-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Multimedia
 - **License:** GPL-2.0-or-later

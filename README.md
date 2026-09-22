@@ -46,9 +46,13 @@ Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Install
 
-**From the KDE Store** — the monitor as a plasmoid, no repository needed:
-[store.kde.org/p/2372814](https://store.kde.org/p/2372814/), or in Plasma *Add Widgets… →
-Get New Widgets… → Download New Plasma Widgets* and search for `plaintop`.
+**From the KDE Store** — in Plasma *Add Widgets… → Get New Widgets… → Download New Plasma
+Widgets*, search for the name:
+
+- the monitor, `plaintop` — [store.kde.org/p/2372814](https://store.kde.org/p/2372814/), no
+  repository needed;
+- the visualizer, `plainspectrum` — [store.kde.org/p/2372815](https://store.kde.org/p/2372815/);
+  it draws nothing until the relay below is installed.
 
 **From the repository** — both widgets, the click-through window hosts and the relay:
 
