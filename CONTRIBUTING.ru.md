@@ -62,6 +62,7 @@ qmllint -I /usr/lib/qt6/qml monitor/package/contents/ui/main.qml    # до ус�
 ./install.sh --spectrum                                             # визуализатор: виджет + служба реле
 journalctl --user -b --since "-1min" | grep -i plaintop             # ошибки QML приходят сюда
 ./install.sh --status                                               # что установлено и что работает
+./install.sh --pack                                                 # файлы .plasmoid для релиза → dist/
 ```
 
 Три вещи, которые иначе съедят вам вечер — все три разобраны в

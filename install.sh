@@ -51,6 +51,26 @@ for w, cls in ws:
 PY
 }
 
+# Make the monitor package complete: install and pack both start here, so what gets
+# installed and what gets published cannot differ.
+monitor_prepare() {
+    # The renderer and the data side are shared with the standalone window host, so they
+    # live in monitor/shared/ and are copied into the package here. Two edited copies of
+    # the same QML is how they drift apart.
+    cp "$REPO/monitor/shared/"*.qml "$PLASMOID_SRC/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+    # Schema -> package. A bad schema aborts the install: better to refuse here than
+    # to get an empty widget and hunt for the cause in QML.
+    if ! python3 "$REPO/monitor/generate.py"; then
+        red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
+    fi
+}
+
+spectrum_prepare() {
+    # Same as the monitor: the shared QML lives in spectrum/shared/ and is copied in.
+    cp "$SPECTRUM_SRC/shared/Ring.qml" "$SPECTRUM_SRC/shared/Spectrum.qml" \
+        "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+}
+
 # The plasmoid installs idempotently: kpackagetool6 decides by itself whether this is
 # an install or an upgrade, and the state is applied either way.
 plasmoid_install() {
@@ -58,16 +78,7 @@ plasmoid_install() {
     if ! command -v kpackagetool6 >/dev/null; then
         red "  ✗ kpackagetool6 не найден — плазмоид не поставить"; return 1
     fi
-    # Schema -> package. A bad schema aborts the install: better to refuse here than
-    # to get an empty widget and hunt for the cause in QML.
-    # The renderer and the data side are shared with the standalone window host, so they
-    # live in monitor/shared/ and are copied into the package here. Two edited copies of
-    # the same QML is how they drift apart.
-    cp "$REPO/monitor/shared/"*.qml "$PLASMOID_SRC/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
-
-    if ! python3 "$REPO/monitor/generate.py"; then
-        red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
-    fi
+    monitor_prepare || return 1
     local mode=--install
     [ -d "$PLASMOID_DEST" ] && mode=--upgrade
     if kpackagetool6 --type Plasma/Applet $mode "$PLASMOID_SRC" >/dev/null 2>&1; then
@@ -85,6 +96,37 @@ plasmoid_install() {
         dim "  plasmashell не под systemd — перезапусти оболочку сам, иначе QML останется старым"
     fi
     plasmoid_place
+}
+
+# A .plasmoid per widget, for the KDE Store or a GitHub release: the package exactly as
+# the install lays it out, zipped with metadata.json at the root — the layout
+# kpackagetool6 and "Get New Widgets" expect. Python's zipfile does the packing, since
+# zip itself is not always installed. Each archive is then installed into a throwaway
+# package root: a file that does not install must not reach the store.
+pack() {
+    echo "== Сборка .plasmoid → dist/"
+    command -v kpackagetool6 >/dev/null || { red "  ✗ kpackagetool6 не найден — проверить архивы нечем"; return 1; }
+    monitor_prepare || return 1
+    spectrum_prepare || return 1
+    mkdir -p "$REPO/dist"
+    local src name out root
+    for src in "$PLASMOID_SRC" "$SPECTRUM_SRC/package"; do
+        name=$(python3 -c 'import json, sys
+k = json.load(open(sys.argv[1]))["KPlugin"]
+print(k["Name"] + "-" + k["Version"])' "$src/metadata.json") \
+            || { red "  ✗ $src/metadata.json не читается"; return 1; }
+        out="$REPO/dist/$name.plasmoid"
+        rm -f "$out"
+        (cd "$src" && python3 -m zipfile -c "$out" metadata.json contents) \
+            || { red "  ✗ $out не собрался"; return 1; }
+        root=$(mktemp -d)
+        if kpackagetool6 --type Plasma/Applet --install "$out" --packageroot "$root" >/dev/null 2>&1; then
+            grn "  ✓ dist/$name.plasmoid — ставится"
+        else
+            red "  ✗ dist/$name.plasmoid собран, но kpackagetool6 его не ставит"; rm -rf "$root"; return 1
+        fi
+        rm -rf "$root"
+    done
 }
 
 # Stop conky while the move to the plasmoid is under way — and bring it back.
@@ -137,11 +179,7 @@ spectrum_install() {
     if ! command -v cava >/dev/null; then
         red "  ✗ нет cava — поставь: sudo pacman -S cava"; return 1
     fi
-    # The renderer and the data side are shared with the standalone window host, so they
-    # live in spectrum/shared/ and are copied into the package here. Keeping two edited
-    # copies of the same QML is how they drift apart.
-    cp "$SPECTRUM_SRC/shared/Ring.qml" "$SPECTRUM_SRC/shared/Spectrum.qml" \
-        "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+    spectrum_prepare || return 1
 
     local mode=--install
     [ -d "$SPECTRUM_DEST" ] && mode=--upgrade
@@ -440,6 +478,7 @@ case "${1:-}" in
   --check-input) input_shape; exit 0 ;;
   --deps)        deps; exit $? ;;
   --plasmoid)    plasmoid_install; exit $? ;;
+  --pack)        pack; exit $? ;;
   --conky-files) conky_deploy; echo; status; exit 0 ;;
   --spectrum)    spectrum_install; exit $? ;;
   --spectrum-window)   spectrum_window; exit $? ;;
@@ -451,7 +490,7 @@ case "${1:-}" in
   --clicks-on)   clicks_set true "клики проходят на рабочий стол"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--plasmoid|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
+  -h|--help)     echo "Использование: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }

@@ -7,7 +7,8 @@
             }
         ],
         "Category": "Multimedia",
-        "Description": "Кольцевой визуализатор звука в духе PlainExt",
+        "Description": "Audio visualizer in the spirit of PlainExt: a ring, an arc or a line. Needs its cava relay — see the website",
+        "Description[ru]": "Визуализатор звука в духе PlainExt: кольцо, дуга или линия. Нужна служба-реле с cava — см. сайт проекта",
         "EnabledByDefault": true,
         "FormFactors": [
             "desktop"
@@ -16,7 +17,9 @@
         "Id": "org.s1dd1.plainspectrum",
         "License": "GPL-2.0+",
         "Name": "plainspectrum",
-        "Version": "0.1"
+        "Version": "0.1",
+        "Website": "https://github.com/highscrren-dotcom/plaintop",
+        "BugReportUrl": "https://github.com/highscrren-dotcom/plaintop/issues"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }

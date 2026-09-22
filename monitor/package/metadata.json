@@ -7,7 +7,8 @@
             }
         ],
         "Category": "System Information",
-        "Description": "Текстовый монитор системы в духе PlainExt",
+        "Description": "Text system monitor for the desktop, in the spirit of the PlainExt Rainmeter skin",
+        "Description[ru]": "Текстовый монитор системы для рабочего стола в духе скина PlainExt для Rainmeter",
         "EnabledByDefault": true,
         "FormFactors": [
             "desktop"
@@ -16,7 +17,9 @@
         "Id": "org.s1dd1.plaintop",
         "License": "GPL-2.0+",
         "Name": "plaintop",
-        "Version": "0.1"
+        "Version": "0.1",
+        "Website": "https://github.com/highscrren-dotcom/plaintop",
+        "BugReportUrl": "https://github.com/highscrren-dotcom/plaintop/issues"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }

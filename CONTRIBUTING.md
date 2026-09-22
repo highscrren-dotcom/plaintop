@@ -61,6 +61,7 @@ qmllint -I /usr/lib/qt6/qml monitor/package/contents/ui/main.qml    # before ins
 ./install.sh --spectrum                                             # the visualizer: widget + relay service
 journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors land here
 ./install.sh --status                                               # what is installed and running
+./install.sh --pack                                                 # .plasmoid files for a release → dist/
 ```
 
 Three things that will otherwise waste your afternoon — all three are in
