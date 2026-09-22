@@ -30,6 +30,12 @@ FPS = int(os.environ.get("PLAINSPECTRUM_FPS", "30"))
 NOISE = int(os.environ.get("PLAINSPECTRUM_NOISE", "60"))
 LOW_HZ = int(os.environ.get("PLAINSPECTRUM_LOW_HZ", "40"))
 HIGH_HZ = int(os.environ.get("PLAINSPECTRUM_HIGH_HZ", "16000"))
+# Seconds of exact digital silence before cava goes to sleep: no FFT, no output, one look
+# at the input a second. Measured on s1dPC: cava 3.9% of a core in silence without it,
+# 0.35% with it, and this relay's reading thread goes quiet too. The price is waking up —
+# the first frame comes 0.04–1 s after the sound returns (a FIFO test, 7 runs). Three
+# seconds keeps the pause between two tracks awake.
+SLEEP = int(os.environ.get("PLAINSPECTRUM_SLEEP", "3"))
 RANGE = 1000            # ascii_max_range: 1000 steps, or the bars visibly step
 
 state = {"raw": [0] * BARS, "frames": 0, "stamp": 0.0, "restarts": 0, "source": ""}
@@ -122,6 +128,7 @@ def cava_config(source_name):
         f"lower_cutoff_freq={LOW_HZ}\n"
         f"higher_cutoff_freq={HIGH_HZ}\n"
         f"noise_reduction={NOISE}\n"
+        f"sleep_timer={SLEEP}\n"
         "[input]\n"
         "method=pipewire\n"
         f"{source}"
@@ -240,9 +247,9 @@ class Handler(BaseHTTPRequestHandler):
 
         query = parse_qs(urlparse(self.path).query)
         want = int(query.get("bars", [BARS])[0])
-        # cava falls asleep on silence (sleep_timer) and simply stops writing. Serving
-        # its last frame would leave the widget frozen mid-note, so silence is served
-        # as zeros once no frame has arrived for a second.
+        # cava falls asleep on silence (sleep_timer, set in cava_config) and simply stops
+        # writing. Serving its last frame would leave the widget frozen mid-note, so
+        # silence is served as zeros once no frame has arrived for a second.
         raw = state["raw"] if time.monotonic() - state["stamp"] < 1.0 else [0] * BARS
         body = ",".join(str(v) for v in resample(raw, want)).encode()
         self.send_response(200)

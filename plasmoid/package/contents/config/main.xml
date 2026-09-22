@@ -51,6 +51,10 @@
     <entry name="updateInterval" type="Int">
       <default>1000</default>
     </entry>
+    <!-- Seconds between reads of the process list: the most expensive thing collected. -->
+    <entry name="processInterval" type="Int">
+      <default>2</default>
+    </entry>
     <!-- Block layout as a single JSON string. When empty, the layout generated from
          schema/widget.json and shipped in the package is used (contents/code/description.js). -->
     <entry name="blocksJson" type="String">

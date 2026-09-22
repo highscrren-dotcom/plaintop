@@ -49,6 +49,7 @@ PlasmoidItem {
         id: monitorData
         blocks: root.blocks
         rate: root.cfg.updateInterval
+        processInterval: root.cfg.processInterval
         servicesScript: Qt.resolvedUrl("../code/services.sh").toString().replace("file://", "")
     }
 

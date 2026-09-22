@@ -125,7 +125,8 @@ Details: [schema/README.md](schema/README.md).
 
 Right-click the widget → *Настроить plaintop*. Two pages:
 
-- *"Общее"* (General) — header, font, size, widget size, edge padding, update interval.
+- *"Общее"* (General) — header, font, size, widget size, edge padding, update interval, how
+  often the process list is read.
 - *"Блоки"* (Blocks) — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 

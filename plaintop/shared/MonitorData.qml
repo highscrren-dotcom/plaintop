@@ -20,6 +20,7 @@ Item {
     // Set by the host.
     property var blocks: []
     property int rate: 1000
+    property int processInterval: 2          // seconds between process-list reads
 
     // ⚠️ Path set by the host: the script sits in contents/code/ inside the plasmoid
     // package and next to the QML in the standalone host, so a relative guess here left
@@ -241,9 +242,49 @@ Item {
         }
     }
 
+    // ⚠️ The process list is the most expensive thing collected here: the model reads all
+    // of /proc (~900 processes on s1dPC) on its own timer, fixed at 2 s inside libksysguard,
+    // whatever `rate` says. Measured 2026-09-22: 3.2% of a core at 2 s, 1.3% at 10 s. So it
+    // runs only when some block shows a top list, and for an interval above 2 s it is
+    // switched on for a single read per period — `enabled` starts and stops that timer,
+    // the first read lands 2 s after the start, and the model sleeps again right after it.
+    readonly property bool needProcesses: {
+        for (const b of blocks)
+            if ((b.type === "cpu" || b.type === "memory") && b.enabled !== false
+                    && ((b.params || {}).top_processes || 0) > 0)
+                return true
+        return false
+    }
+    readonly property bool processDuty: processInterval > 2
+    property bool processAwake: false
+
     Proc.ProcessDataModel {
         id: procs
         enabledAttributes: ["name", "usage", "memory"]
+        enabled: monitor.needProcesses && (!monitor.processDuty || monitor.processAwake)
+    }
+
+    Timer {
+        interval: monitor.processInterval * 1000
+        running: monitor.needProcesses && monitor.processDuty
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            monitor.processAwake = true
+            processSafety.restart()
+        }
+    }
+
+    // One read has landed: back to sleep. The safety net covers a read that never came.
+    Connections {
+        target: procs
+        function onDataChanged() { monitor.processAwake = false }
+    }
+
+    Timer {
+        id: processSafety
+        interval: 3000
+        onTriggered: monitor.processAwake = false
     }
 
     KItem.KSortFilterProxyModel {

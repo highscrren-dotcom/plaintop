@@ -6,6 +6,7 @@
   "widgetWidth": 500,
   "widgetHeight": 950,
   "updateInterval": 1000,
+  "processInterval": 2,
   "colorFg": "#C8CCD4",
   "colorAccent": "#E05561",
   "colorDim": "#6B7280",

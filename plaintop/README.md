@@ -41,6 +41,9 @@ Only one host belongs on the desktop: they draw the same monitor.
 
 `~/.config/plaintop/monitor.json` — appearance and the block description in one file:
 font, size, padding, widget size, update interval, the four palette colours, and `blocks`.
+`processInterval` is how often, in seconds, the process list behind the top lists is read:
+it is the most expensive thing collected — about 3% of a core at the default 2 s, about
+1.3% at 10 s, measured with ~900 processes.
 The window re-reads it every two seconds, so an edit shows up without a restart.
 
 **The editor is `window/settings.qml`**, started from the menu entry "plaintop — монитор"

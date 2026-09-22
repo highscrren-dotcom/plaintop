@@ -48,11 +48,18 @@ Item {
         y: view.padTop
         spacing: 0
 
+        // ⚠️ The model is a count, not the array. `lines` is a new array on every tick, and
+        // a Repeater handed an array destroys and recreates every delegate when it changes:
+        // 41 lines rebuilt 1.4 times a second, 3.5% of a core. With a count the delegates
+        // stay, their bindings re-read their line, and a Text whose string did not change
+        // does no work. Measured on s1dPC 2026-09-22, same picture compared by screenshot.
         Repeater {
-            model: view.lines
+            model: view.lines.length
 
             Item {
-                required property var modelData
+                id: lineItem
+                required property int index
+                readonly property var modelData: view.lines[index] || ({ kind: "parts", parts: [] })
 
                 implicitWidth: modelData.kind === "clock" ? clockRow.implicitWidth : partsRow.implicitWidth
                 implicitHeight: modelData.kind === "clock" ? clockRow.implicitHeight : partsRow.implicitHeight
@@ -85,12 +92,14 @@ Item {
                     spacing: 0
 
                     Repeater {
-                        model: partsRow.visible ? modelData.parts : []
+                        // A count here too, for the same reason.
+                        model: partsRow.visible ? lineItem.modelData.parts.length : 0
 
                         Line {
-                            required property var modelData
-                            text: modelData.text
-                            color: view.paint(modelData.role)
+                            required property int index
+                            readonly property var part: lineItem.modelData.parts[index] || ({ text: "", role: "fg" })
+                            text: part.text
+                            color: view.paint(part.role)
                         }
                     }
                 }

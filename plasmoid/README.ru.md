@@ -15,7 +15,7 @@ package/
   metadata.json                идентификатор org.s1dd1.plaintop
   contents/
     ui/main.qml                сам виджет: строит строки по описанию, подписки на сенсоры
-    ui/configGeneral.qml       страница «Общее»: шрифт, размеры, отступы, интервал, мышь
+    ui/configGeneral.qml       страница «Общее»: шрифт, размеры, отступы, интервалы, мышь
     ui/configBlocks.qml        страница «Блоки»: набор, порядок и параметры блоков
     config/main.xml            схема значений — Plasma строит по ней диалог и хранилище
     config/config.qml          список страниц настроек

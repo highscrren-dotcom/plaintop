@@ -15,7 +15,7 @@ package/
   metadata.json                the org.s1dd1.plaintop identifier
   contents/
     ui/main.qml                the widget itself: builds the lines from the description, sensor subscriptions
-    ui/configGeneral.qml       the "Общее" (General) page: font, sizes, padding, interval, mouse
+    ui/configGeneral.qml       the "Общее" (General) page: font, sizes, padding, intervals, mouse
     ui/configBlocks.qml        the "Блоки" (Blocks) page: which blocks, their order and their parameters
     config/main.xml            the value schema — Plasma builds the dialog and the store from it
     config/config.qml          the list of settings pages

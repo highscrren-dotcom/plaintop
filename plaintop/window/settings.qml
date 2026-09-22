@@ -348,6 +348,19 @@ ApplicationWindow {
                     onValueModified: app.change("updateInterval", value)
                 }
 
+                SpinBox {
+                    Kirigami.FormData.label: "Топ процессов, раз в … с:"
+                    from: 2; to: 60
+                    value: app.num("processInterval", 2)
+                    onValueModified: app.change("processInterval", value)
+                }
+
+                Label {
+                    text: "Список процессов — самое дорогое в сборе: раз в 2 с\nоколо 3 % ядра, раз в 10 с — около 1,3 %"
+                    opacity: 0.7
+                    font: Kirigami.Theme.smallFont
+                }
+
                 Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: "Место" }
 
                 SpinBox {
@@ -677,6 +690,7 @@ ApplicationWindow {
                 id: previewData
                 blocks: app.blocks
                 rate: app.num("updateInterval", 1000)
+                processInterval: app.num("processInterval", 2)
                 servicesScript: Qt.resolvedUrl("services.sh").toString().replace("file://", "")
             }
 

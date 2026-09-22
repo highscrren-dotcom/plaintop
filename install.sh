@@ -232,7 +232,23 @@ spectrum_status() {
         rel=${f#"$SPECTRUM_SRC/package"/}
         cmp -s "$f" "$SPECTRUM_DEST/$rel" || { red "  ≠ $rel — РАЗОШЁЛСЯ с репо"; diff=1; }
     done < <(find "$SPECTRUM_SRC/package" -type f)
+    # Same trap as the text widget: shared QML is copied into the package only on install.
+    for f in "$SPECTRUM_SRC/shared/"*.qml; do
+        cmp -s "$f" "$SPECTRUM_DEST/contents/ui/$(basename "$f")" \
+            || { red "  ≠ shared/$(basename "$f") — РАЗОШЁЛСЯ с репо"; diff=1; }
+    done
     [ $diff -eq 0 ] && grn "  ✓ виджет установлен, файлы совпадают с репо"
+
+    # The relay runs from its own copy; a port that answers says nothing about which code.
+    local relay_diff=0 pair
+    for pair in "$SPECTRUM_SRC/relay.py:$RELAY_DEST/relay.py" \
+                "$SPECTRUM_SRC/window/ring.default.json:$RELAY_DEST/ring.default.json" \
+                "$REPO/plaintop/window/monitor.default.json:$RELAY_DEST/monitor.default.json" \
+                "$SPECTRUM_SRC/plainspectrum-relay.service:$UNIT_DEST/plainspectrum-relay.service"; do
+        cmp -s "${pair%%:*}" "${pair#*:}" \
+            || { red "  ≠ $(basename "${pair#*:}") — реле разошлось с репо: ./install.sh --spectrum"; relay_diff=1; }
+    done
+    [ $relay_diff -eq 0 ] && grn "  ✓ реле разложено, файлы совпадают с репо"
 
     if systemctl --user --quiet is-active plainspectrum-relay.service; then
         local port
@@ -335,6 +351,13 @@ plasmoid_status() {
         rel=${f#"$PLASMOID_SRC"/}
         cmp -s "$f" "$PLASMOID_DEST/$rel" || { red "  ≠ $rel — РАЗОШЁЛСЯ с репо"; diff=1; }
     done < <(find "$PLASMOID_SRC" -type f)
+    # ⚠️ The shared QML reaches the package only as a copy made at install time, so the
+    # loop above compares the installed file with that old copy and passes after any edit
+    # in plaintop/shared/. Compare with the source itself.
+    for f in "$REPO/plaintop/shared/"*.qml; do
+        cmp -s "$f" "$PLASMOID_DEST/contents/ui/$(basename "$f")" \
+            || { red "  ≠ shared/$(basename "$f") — РАЗОШЁЛСЯ с репо"; diff=1; }
+    done
     [ $diff -eq 0 ] && grn "  ✓ установлен, файлы совпадают с репо"
     # Presence on the desktop is read from the session config, not guessed.
     local n; n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)

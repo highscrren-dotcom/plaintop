@@ -13,6 +13,7 @@ KCM.SimpleKCM {
     property alias cfg_fontFamily: fontField.text
     property alias cfg_fontSize: sizeField.value
     property alias cfg_updateInterval: intervalField.value
+    property alias cfg_processInterval: processField.value
     property alias cfg_clickThrough: clickBox.checked
     property string cfg_colorFg: "#C8CCD4"
     property string cfg_colorAccent: "#E05561"
@@ -121,6 +122,19 @@ KCM.SimpleKCM {
             from: 200
             to: 10000
             stepSize: 100
+        }
+
+        SpinBox {
+            id: processField
+            Kirigami.FormData.label: i18n("Топ процессов, раз в … с:")
+            from: 2
+            to: 60
+        }
+
+        Label {
+            text: i18n("Список процессов — самое дорогое в сборе: раз в 2 с\nоколо 3 % ядра, раз в 10 с — около 1,3 %")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
         }
 
     }

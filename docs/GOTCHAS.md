@@ -353,3 +353,47 @@ second. Mutating the map in place and rebuilding on one shared tick brought it t
 (4.6% collecting, the rest drawing). The same rule for the sensor registry: its 10-second
 poll now assigns the id list only when it actually changed, instead of recreating every
 sensor object each time.
+
+## A `Repeater` fed a JS array recreates every delegate when the array changes
+
+The monitor builds its lines as a new array on every tick, and the `Repeater` took that
+array as its model — so every tick destroyed all 41 line items and built them again,
+`Text` layout included. Counted with a `Component.onCompleted` counter: ~57 delegates a
+second at a 700 ms interval. Giving the `Repeater` the count (`lines.length`) and letting
+each delegate read `lines[index]` keeps the items; a `Text` whose string did not change
+does nothing. The window went from 8.0% of a core to 4.5%, the same picture on screenshots.
+
+## A child's CPU time is not in the parent's own
+
+`utime + stime` of the monitor window left out everything its `executable` data sources
+ran — those go to `cutime + cstime` once reaped. The services script was 615 ms of CPU
+per run, every 15 s: 4.3% of a core around the clock, measured over 15 hours, and missing
+from every earlier figure. `pacman -Qu` alone was 362 ms; it now runs only when the
+pacman database changes. Measure children too, or a shell-out hides in plain sight.
+
+## `ProcessDataModel` reads all of /proc every 2 s, whatever else is set
+
+The period is fixed inside libksysguard (2000 ms) and does not follow the widget's
+interval. `enabled` starts and stops that timer; enabling does not read at once, the first
+read lands 2 s later. Switching it on for one read per period works: CPU usage is computed
+from the real elapsed time — a process spinning one core read 99–100% both at 2 s and at
+one read per 10 s. Cost with ~900 processes: 3.2% of a core at 2 s, 1.3% at 10 s.
+
+## cava computes through silence unless `sleep_timer` is set
+
+Silence is all-zero samples, and cava keeps running its FFT and writing frames through it:
+3.9% of a core. `sleep_timer=N` makes it stop after N seconds of silence and look at the
+input once a second — 0.35%. The relay had a comment saying cava falls asleep, but the
+setting itself was never passed, so it never did. The price is waking up: the first frame
+comes 0.04–1 s after the sound returns, measured by feeding cava a FIFO.
+
+## A status check that compares with the install-time copy passes after every edit
+
+The shared QML is copied into the plasmoid package at install time, and `--status`
+compared the installed package with that copy — after an edit in `shared/` both were old
+and the check said "match". The window hosts were checked only for existence: the monitor
+window ran a `SensorRegistry.qml` one fix behind the repository for a day. `--status` now
+compares with the sources, including the relay, and says when a window was started before
+its files were deployed (`ctime` of the files, since `copy2` carries the source `mtime`
+over; process start through `/proc/uptime`, since `btime` is a whole second and flagged a
+window started 0.05 s after its deploy).

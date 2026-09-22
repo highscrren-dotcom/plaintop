@@ -44,8 +44,11 @@ owner beats two writers — the same rule this project already learned about `~/
 ```
 
 Needs `cava` and `qml6` (`qt6-declarative`). The relay's own knobs — device, band count,
-frame rate, noise reduction, frequency range — are environment in the service unit;
-override them in `~/.config/plainspectrum/relay.env`.
+frame rate, noise reduction, frequency range, how soon cava sleeps in silence — are
+environment in the service unit; override them in `~/.config/plainspectrum/relay.env`.
+After three seconds of silence cava stops computing and looks at the input once a second
+(`PLAINSPECTRUM_SLEEP`, `0` turns it off): 3.9% of a core in silence becomes 0.35%, and
+the ring appears up to a second later when the sound returns.
 
 ⚠️ Only one host belongs on the desktop: they draw the same ring. `--spectrum` installs
 the plasmoid but does not place it once the window host is set up.

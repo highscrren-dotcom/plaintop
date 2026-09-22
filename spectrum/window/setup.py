@@ -9,12 +9,14 @@ Qt.WindowTransparentForInput does.
 rule matched on the window title. The rule is written here, idempotently, next to whatever
 rules the user already has.
 """
+import filecmp
 import json
 import os
 import signal
 import shutil
 import subprocess
 import sys
+import time
 import uuid
 from pathlib import Path
 
@@ -31,12 +33,57 @@ RULE_NAME = "plainspectrum ring"
 TITLE = "plainspectrum"
 
 
+REINSTALL = "./install.sh --spectrum-window"
+
+
+def deployed_files():
+    """(source, destination) of every file the window runs from. One list serves both the
+    copy and the status check, so the check cannot miss a file the copy gained."""
+    pairs = [(SRC / "shared" / name, UI_DEST / name) for name in ("Ring.qml", "Spectrum.qml")]
+    pairs += [(SRC / "window" / name, UI_DEST / name) for name in ("window.qml", "settings.qml")]
+    return pairs
+
+
+def stale_files():
+    """Deployed files that are missing or differ from the repository."""
+    return [dst.name for src, dst in deployed_files()
+            if not dst.exists() or not filecmp.cmp(src, dst, shallow=False)]
+
+
+def started_before_deploy(pid):
+    """True when the window was started before its newest file was deployed.
+
+    qml6 reads the QML once, at start: a window that outlived a deploy keeps running the
+    old code however well the files match.
+    """
+    # ⚠️ Through /proc/uptime, not the btime of /proc/stat: btime is a whole second, and
+    # a window started 0.05 s after its deploy was reported as older than it.
+    try:
+        ticks = int(Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[19])
+        uptime = float(Path("/proc/uptime").read_text().split()[0])
+    except (OSError, ValueError, IndexError):
+        return False
+    started = time.time() - uptime + ticks / os.sysconf("SC_CLK_TCK")
+    # ctime, not mtime: copy2 carries the source's mtime over, ctime is when it landed here.
+    newest = max((dst.stat().st_ctime for _, dst in deployed_files() if dst.exists()), default=0)
+    return started + 0.5 < newest
+
+
+def files_status():
+    """⚠️ Existence is not enough: on 2026-09-22 the monitor window ran a SensorRegistry.qml one
+    fix behind the repository for a day, and the status line said only "есть"."""
+    if not (UI_DEST / "window.qml").exists():
+        return f"нет ({UI_DEST})"
+    stale = stale_files()
+    if stale:
+        return f"⚠️ разошлись с репо: {', '.join(stale)} — переложить: {REINSTALL}"
+    return f"совпадают с репо ({UI_DEST})"
+
+
 def deploy_files():
     UI_DEST.mkdir(parents=True, exist_ok=True)
-    for name in ("Ring.qml", "Spectrum.qml"):
-        shutil.copy2(SRC / "shared" / name, UI_DEST / name)
-    for name in ("window.qml", "settings.qml"):
-        shutil.copy2(SRC / "window" / name, UI_DEST / name)
+    for src, dst in deployed_files():
+        shutil.copy2(src, dst)
     print(f"  → {UI_DEST}")
 
     if not CONFIG.exists():
@@ -217,7 +264,7 @@ def start():
 
 
 def status():
-    print(f"  файлы:      {'есть' if (UI_DEST / 'window.qml').exists() else 'нет'} ({UI_DEST})")
+    print(f"  файлы:      {files_status()}")
     print(f"  настройки:  {'есть' if CONFIG.exists() else 'нет'} ({CONFIG})")
     print(f"  автозапуск: {'есть' if AUTOSTART.exists() else 'нет'}")
     print(f"  редактор:   {'есть' if LAUNCHER.exists() else 'нет'} (qml6 {UI_DEST / 'settings.qml'})")
@@ -227,6 +274,8 @@ def status():
     pids = windows()
     print(f"  окно:       {'работает (pid ' + ', '.join(map(str, pids)) + ')' if pids else 'не запущено'}"
           + ("  ⚠️ копий больше одной" if len(pids) > 1 else ""))
+    if any(started_before_deploy(pid) for pid in pids):
+        print(f"  ⚠️ окно запущено раньше, чем разложены файлы, — работает старый код: {REINSTALL}")
 
 
 def main():

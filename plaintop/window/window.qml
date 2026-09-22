@@ -74,6 +74,7 @@ Window {
         blocks: (win.cfg.blocks !== undefined && win.cfg.blocks.length > 0)
                 ? win.cfg.blocks : Description.BLOCKS
         rate: win.num("updateInterval", 1000)
+        processInterval: win.num("processInterval", 2)
     }
 
     MonitorView {
