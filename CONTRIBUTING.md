@@ -44,14 +44,17 @@ Neither needs a code change — just a row in the description.
 | `monitor/generate.py` | description → JS module inside the package; validates before writing |
 | `schema/widget.json` | the default layout: which blocks, in what order, with what parameters |
 | `schema/blocks.json` | the vocabulary of block types and their parameters |
-| `spectrum/package/` | the audio visualizer widget: one renderer for ring, arc and line |
-| `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service |
+| `spectrum/package/` | the audio visualizer as a Plasma 6 widget, with its settings page |
+| `spectrum/shared/` | the visualizer's renderer — one for ring, arc and line — copied into both hosts |
+| `spectrum/window/` | the visualizer's click-through window host and its editor |
+| `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service; owns both widgets' window settings |
+| `po/` | translation catalogs, one domain per widget; `extract.py` refreshes them, `build.py` compiles |
 | `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
-| `install.sh` | install, status, conky and clicks on/off — all operations idempotent |
-| `docs/` | traps, decisions, the working method, the session journal |
+| `install.sh` | install, status, `.plasmoid` builds, conky and clicks on/off — all operations idempotent |
+| `docs/` | traps, decisions, the working method, the session journal, the KDE Store texts |
 
-`monitor/package/contents/code/description.js` is generated and not in git — edit
-`schema/*.json` instead.
+Generated and not in git: `monitor/package/contents/code/description.js` (edit
+`schema/*.json` instead), the packages' `contents/locale/` (edit `po/`), `dist/`.
 
 ## The development cycle
 

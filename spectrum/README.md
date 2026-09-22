@@ -43,9 +43,10 @@ owner beats two writers — the same rule this project already learned about `~/
 ./install.sh --status              # both hosts, the relay port, the KWin rule, the window
 ```
 
-Needs `cava` and `qml6` (`qt6-declarative`). The relay's own knobs — device, band count,
-frame rate, noise reduction, frequency range, how soon cava sleeps in silence — are
-environment in the service unit; override them in `~/.config/plainspectrum/relay.env`.
+Needs `cava`, `qml6` (`qt6-declarative`) and `msgfmt` (gettext, for the translations).
+The relay's own knobs — device, band count, frame rate, noise reduction, frequency range,
+how soon cava sleeps in silence — are environment in the service unit; override them in
+`~/.config/plainspectrum/relay.env`.
 After three seconds of silence cava stops computing and looks at the input once a second
 (`PLAINSPECTRUM_SLEEP`, `0` turns it off): 3.9% of a core in silence becomes 0.35%, and
 the ring appears up to a second later when the sound returns.
@@ -68,7 +69,7 @@ The editor groups them as the widget does: shape, appearance, behaviour.
 | Bars, thickness, spacing | density and weight of the ticks |
 | Radius, span, start angle | the ring's geometry |
 | Length at silence / at maximum | how far a tick reaches |
-| Growth | outward, inward, or both ways from the baseline |
+| Growth | from the baseline: outward, inward or both ways on a ring; up, down or both ways on a line |
 | Mirror, reverse | fold the spectrum back on itself, or flip its direction |
 | Element | a solid bar or a ladder of blocks |
 | Block size and gap | the ladder's step; the number of blocks follows from the reach |

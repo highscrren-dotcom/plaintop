@@ -49,13 +49,18 @@ Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 ```bash
 git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
-./install.sh --plasmoid     # generate, install the package, restart the shell, place the widget
-./install.sh --spectrum    # the audio visualizer: widget + relay service
-./install.sh --status       # what is installed and what is running
+./install.sh --plasmoid          # the monitor as a plasmoid: generate, install, restart the shell
+./install.sh --plaintop-window   # …or as a click-through window, with its own editor
+./install.sh --spectrum          # the audio visualizer: plasmoid + relay service
+./install.sh --spectrum-window   # …and its click-through window
+./install.sh --status            # what is installed and what is running
 ```
 
-The widget lands in `~/.local/share/plasma/plasmoids/org.s1dd1.plaintop/`. If it is not on
-the desktop yet, the installer adds it; you can also add it by hand through *Add Widgets*.
+One host per widget belongs on the desktop — they draw the same thing. The plasmoid lands
+in `~/.local/share/plasma/plasmoids/org.s1dd1.plaintop/`; the installer places it on the
+desktop unless that widget's window host is set up, and *Add Widgets* works as usual.
+`./install.sh --pack` builds the same packages as `.plasmoid` files into `dist/`, for the
+KDE Store or a release.
 
 ⚠️ `--plasmoid` restarts `plasmashell` on purpose: the shell caches a package's QML, and
 without a restart your edit silently does not arrive. That and a dozen other traps are in
@@ -65,10 +70,12 @@ The conky implementation has its own switches: `./install.sh` deploys and starts
 `--conky-files` deploys without starting (useful while it is switched off),
 `--conky-off` and `--conky-on` turn it off and back on.
 
-**Requirements:** Plasma 6 with `ksystemstats` (ships with Plasma), `python3` for the
-generator and the relay, and a monospace font — `JetBrainsMono Nerd Font Mono` by default.
-The visualizer additionally needs `cava`; the conky implementation needs `conky`,
-`python-xlib` and `lm_sensors`.
+**Requirements:** Plasma 6 with `ksystemstats` (ships with Plasma) and KDE Frameworks
+6.23 or newer (for `KI18nContext`, decision 7), `python3` for the generator, the setup
+scripts and the relay, `msgfmt` from gettext for the translations, `qml6`
+(qt6-declarative) for the window hosts, and a monospace font — `JetBrainsMono Nerd Font
+Mono` by default. The visualizer additionally needs `cava`; the conky implementation needs
+`conky`, `python-xlib` and `lm_sensors`.
 
 ## Adapting it to your hardware
 
@@ -129,6 +136,10 @@ Right-click the widget → *Configure plaintop…*. Two pages:
 - *Blocks* — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 
+The window hosts have no Plasma dialog; each brings an editor with a live preview in the
+real renderer — the menu entries "plaintop — monitor settings" and "plainspectrum —
+settings", or `./install.sh --plaintop-settings` / `--spectrum-settings`.
+
 **About the mouse.** The *Mouse* setting — and the
 `./install.sh --clicks-on` / `--clicks-off` switches behind it — turns input off on the
 widget's own representation. That is enough for the right button, which then reaches the
@@ -159,7 +170,7 @@ was chosen so that most changes are data:
 
 - **Your own rows** — add a `command` or `sensor` block in the settings. No build step.
 - **A new block type** — one entry in `schema/blocks.json` plus one `case` in
-  `main.qml`. The settings page picks it up on its own.
+  `monitor/shared/MonitorData.qml`. Both settings pages pick it up on their own.
 - **Another engine** — the description layer is engine-agnostic on purpose. Writing a
   generator for waybar, eww, AGS or back to conky does not touch the description.
 - **Another machine** — different sensors, different distro, different everything: if the
