@@ -186,8 +186,13 @@ ApplicationWindow {
 
                 ComboBox {
                     Kirigami.FormData.label: tr.i18n("Growth:")
-                    model: [tr.i18nc("growth", "outward"), tr.i18nc("growth", "inward"),
-                            tr.i18nc("growth", "both ways")]
+                    // The same three indices read differently on a line, as on the
+                    // plasmoid's page: a ring grows outward, a line grows up.
+                    model: app.num("layout", 0) === 0
+                        ? [tr.i18nc("growth", "outward"), tr.i18nc("growth", "inward"),
+                           tr.i18nc("growth", "both ways")]
+                        : [tr.i18nc("growth", "up"), tr.i18nc("growth", "down"),
+                           tr.i18nc("growth", "both ways")]
                     currentIndex: app.num("growth", 0)
                     onActivated: app.change("growth", currentIndex)
                 }

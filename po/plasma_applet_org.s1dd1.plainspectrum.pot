@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:39+0500\n"
+"POT-Creation-Date: 2026-09-22 13:49+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -90,36 +90,38 @@ msgid "Growth:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:128
-#: spectrum/window/settings.qml:189
+#: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "outward"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:128
-#: spectrum/window/settings.qml:189
+#: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "inward"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:128
 #: spectrum/package/contents/ui/configGeneral.qml:129
-#: spectrum/window/settings.qml:190
+#: spectrum/window/settings.qml:193 spectrum/window/settings.qml:195
 msgctxt "growth"
 msgid "both ways"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "up"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "down"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:134
-#: spectrum/window/settings.qml:196
+#: spectrum/window/settings.qml:201
 msgid "Order:"
 msgstr ""
 
@@ -132,51 +134,51 @@ msgid "reverse band order"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:143
-#: spectrum/window/settings.qml:208
+#: spectrum/window/settings.qml:213
 msgctxt "settings section"
 msgid "Appearance"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:147
-#: spectrum/window/settings.qml:211
+#: spectrum/window/settings.qml:216
 msgid "Element:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:148
-#: spectrum/window/settings.qml:212
+#: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Bar"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:148
-#: spectrum/window/settings.qml:212
+#: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Blocks"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:153
-#: spectrum/window/settings.qml:218
+#: spectrum/window/settings.qml:223
 msgid "Block, px:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
-#: spectrum/window/settings.qml:225
+#: spectrum/window/settings.qml:230
 msgid "Block gap, px:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:169
-#: spectrum/window/settings.qml:232
+#: spectrum/window/settings.qml:237
 msgid "Ends:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:170
-#: spectrum/window/settings.qml:233
+#: spectrum/window/settings.qml:238
 msgctxt "bar ends"
 msgid "rounded"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:175
-#: spectrum/window/settings.qml:239
+#: spectrum/window/settings.qml:244
 msgid "Colour:"
 msgstr ""
 
@@ -185,18 +187,18 @@ msgid "High-frequency colour:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:192
-#: spectrum/window/settings.qml:256
+#: spectrum/window/settings.qml:261
 msgctxt "high-frequency colour"
 msgid "custom"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:200
-#: spectrum/window/settings.qml:263
+#: spectrum/window/settings.qml:268
 msgid "Opacity, %:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:208
-#: spectrum/window/settings.qml:270
+#: spectrum/window/settings.qml:275
 msgid "Circle:"
 msgstr ""
 
@@ -205,18 +207,18 @@ msgid "a thin guide under the bars"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:213
-#: spectrum/window/settings.qml:276
+#: spectrum/window/settings.qml:281
 msgctxt "settings section"
 msgid "Behaviour"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:217
-#: spectrum/window/settings.qml:279
+#: spectrum/window/settings.qml:284
 msgid "Data frames per second:"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:225
-#: spectrum/window/settings.qml:286
+#: spectrum/window/settings.qml:291
 msgid "Smoothing, ms:"
 msgstr ""
 
@@ -234,7 +236,7 @@ msgid "Silence"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:241
-#: spectrum/window/settings.qml:293
+#: spectrum/window/settings.qml:298
 msgid "In silence:"
 msgstr ""
 
@@ -243,7 +245,7 @@ msgid "dissolve the ring"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:247
-#: spectrum/window/settings.qml:300
+#: spectrum/window/settings.qml:305
 msgid "Silence threshold, %:"
 msgstr ""
 
@@ -320,39 +322,39 @@ msgstr ""
 msgid "Gap (line layout), px:"
 msgstr ""
 
-#: spectrum/window/settings.qml:197
+#: spectrum/window/settings.qml:202
 msgid "mirrored"
 msgstr ""
 
-#: spectrum/window/settings.qml:203
+#: spectrum/window/settings.qml:208
 msgid "reverse order"
 msgstr ""
 
-#: spectrum/window/settings.qml:245
+#: spectrum/window/settings.qml:250
 msgid "Highs colour:"
 msgstr ""
 
-#: spectrum/window/settings.qml:271
+#: spectrum/window/settings.qml:276
 msgid "a thin guide"
 msgstr ""
 
-#: spectrum/window/settings.qml:294
+#: spectrum/window/settings.qml:299
 msgid "dissolve"
 msgstr ""
 
-#: spectrum/window/settings.qml:307
+#: spectrum/window/settings.qml:312
 msgid "Delay before vanishing, ms:"
 msgstr ""
 
-#: spectrum/window/settings.qml:314
+#: spectrum/window/settings.qml:319
 msgid "Fade, ms:"
 msgstr ""
 
-#: spectrum/window/settings.qml:321
+#: spectrum/window/settings.qml:326
 msgid "Polls in silence:"
 msgstr ""
 
-#: spectrum/window/settings.qml:385
+#: spectrum/window/settings.qml:390
 #, kde-format
 msgid "live preview · scale %1"
 msgstr ""
