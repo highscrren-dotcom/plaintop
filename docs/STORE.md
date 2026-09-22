@@ -34,6 +34,8 @@ The store is run by Pling, not by KDE; there is no review before a product goes 
 
 ## plaintop — text system monitor
 
+Published 2026-09-22: https://store.kde.org/p/2372814/
+
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
 - **License:** GPL-2.0-or-later

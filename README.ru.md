@@ -47,6 +47,12 @@ GPU с VRAM, температурой и потреблением, файлов�
 
 ## Установка
 
+**Из KDE Store** — монитор плазмоидом, без репозитория:
+[store.kde.org/p/2372814](https://store.kde.org/p/2372814/), или в Plasma «Добавить
+виджеты… → Загрузить новые виджеты… → Загрузить виджеты Plasma...» и поиск `plaintop`.
+
+**Из репозитория** — оба виджета, оконные хосты со сквозными кликами и реле:
+
 ```bash
 git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
