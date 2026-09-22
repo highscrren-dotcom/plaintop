@@ -72,6 +72,9 @@ spectrum_prepare() {
     # Same as the monitor: the shared QML lives in spectrum/shared/ and is copied in.
     cp "$SPECTRUM_SRC/shared/Ring.qml" "$SPECTRUM_SRC/shared/Spectrum.qml" \
         "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+    # Catalogs, as for the monitor: contents/locale for the plasmoid, and the window host
+    # deploys the same .mo files (decision 7).
+    python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainspectrum "$SPECTRUM_SRC/package/contents/locale" || return 1
 }
 
 # The plasmoid installs idempotently: kpackagetool6 decides by itself whether this is

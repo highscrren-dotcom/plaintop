@@ -90,7 +90,8 @@ PlasmoidItem {
             color: root.cfg.color
             opacity: 0.7
             font.family: "monospace"
-            text: "нет данных: служба plainspectrum-relay не отвечает\nпорт " + root.cfg.relayPort
+            text: i18n("no data: the plainspectrum-relay service does not answer\nport %1",
+                       root.cfg.relayPort)
             horizontalAlignment: Text.AlignHCenter
         }
     }

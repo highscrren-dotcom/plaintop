@@ -94,6 +94,14 @@ def kde_format(pot):
     pot.write_text("\n\n".join(out), encoding="utf-8")
 
 
+def same_but_date(a, b):
+    """True when two templates differ at most in POT-Creation-Date, which xgettext
+    rewrites on every run — a diff of nothing but a timestamp is noise."""
+    def strip(t):
+        return [l for l in t.splitlines() if not l.startswith('"POT-Creation-Date:')]
+    return strip(a) == strip(b)
+
+
 def template(domain, spec):
     pot = PO / f"{domain}.pot"
     with tempfile.TemporaryDirectory() as tmp:
@@ -107,8 +115,12 @@ def template(domain, spec):
             src.write_text(schema_calls(), encoding="utf-8")
             parts.append(tmp / "schema.pot")
             xgettext(["schema/blocks.json"], tmp, parts[1])
-        subprocess.run(["msgcat", "--use-first", "-o", str(pot), *map(str, parts)], check=True)
-    kde_format(pot)
+        fresh = tmp / "all.pot"
+        subprocess.run(["msgcat", "--use-first", "-o", str(fresh), *map(str, parts)], check=True)
+        kde_format(fresh)
+        text = fresh.read_text(encoding="utf-8")
+        if not pot.exists() or not same_but_date(pot.read_text(encoding="utf-8"), text):
+            pot.write_text(text, encoding="utf-8")
     return pot
 
 

@@ -28,7 +28,7 @@ reproduction beats a paragraph of reasoning.
 | **A generator for another engine** | the description layer is engine-agnostic on purpose — waybar, eww, AGS, or back to conky |
 | **Hardware and distro portability** | the defaults describe one machine; every hardcoded sensor id you replace with discovery is a win |
 | **A trap you hit** | a PR to `docs/GOTCHAS.md` with a reproduction is worth as much as code |
-| **Translation** | the monitor speaks through gettext catalogs in `po/`: a new language is one command and a `.po` file — see [Translations](#translations); the visualizer is being converted next |
+| **Translation** | both widgets speak through gettext catalogs in `po/`: a new language is one command and a `.po` file — see [Translations](#translations) |
 
 Before adding a block type, check whether the open-ended ones already cover you: `command`
 runs any shell command on its own interval, `sensor` shows any `ksystemstats` sensor by id.
@@ -120,7 +120,8 @@ The generator needs no changes: validation is driven by the vocabulary.
 ## Translations
 
 The widgets use KDE's own ki18n with gettext catalogs, one domain per widget —
-`plasma_applet_org.s1dd1.plaintop` for the monitor. The language is Plasma's
+`plasma_applet_org.s1dd1.plaintop` for the monitor, `plasma_applet_org.s1dd1.plainspectrum`
+for the visualizer. The language is Plasma's
 (System Settings → Region & Language); dates and decimal separators follow its Formats.
 Why this design and what it costs — `docs/DECISIONS.md`, decision 7.
 
@@ -128,8 +129,9 @@ Why this design and what it costs — `docs/DECISIONS.md`, decision 7.
 python3 po/extract.py            # refresh po/*.pot from the sources, merge into every language
 python3 po/extract.py --init uk  # start a new language
 lokalize po/uk/plasma_applet_org.s1dd1.plaintop.po   # or Poedit, or any .po editor
-./install.sh --plasmoid          # builds the .mo files into the package
-./install.sh --plaintop-window   # and into ~/.local/share/locale for the window host
+./install.sh --plasmoid          # builds the monitor's .mo files into its package
+./install.sh --plaintop-window   # and into ~/.local/share/locale for its window host
+./install.sh --spectrum          # the same for the visualizer, --spectrum-window for its window
 ```
 
 Rules for the source strings:
@@ -165,8 +167,8 @@ the relay, so an empty config directory costs it nothing.
 - **New rules become checks first.** If a rule can live in `install.sh` as a check, put it
   there rather than in a document.
 - **Comments are English, and so are the source strings users see** — through the
-  catalogs, see [Translations](#translations). The visualizer's strings and the output of
-  `install.sh` are still Russian; converting them is the next step.
+  catalogs, see [Translations](#translations). The output of `install.sh` and the setup
+  scripts in the terminal is still Russian.
 
 ## Commits and pull requests
 

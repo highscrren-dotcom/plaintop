@@ -29,6 +29,11 @@ AUTOSTART = HOME / ".config/autostart/plainspectrum-window.desktop"
 LAUNCHER = HOME / ".local/share/applications/plainspectrum-settings.desktop"
 PIDFILE = HOME / ".local/share/plainspectrum/window.pid"
 KWINRULES = HOME / ".config/kwinrulesrc"
+# Translations: the plasmoid's own catalogs, built into its package and deployed where the
+# editor's KI18nContext looks for them — XDG_DATA_HOME/locale (decision 7).
+DOMAIN = "plasma_applet_org.s1dd1.plainspectrum"
+LOCALE_BUILD = SRC / "package" / "contents" / "locale"
+LOCALE_DEST = HOME / ".local/share/locale"
 RULE_NAME = "plainspectrum ring"
 TITLE = "plainspectrum"
 
@@ -36,11 +41,20 @@ TITLE = "plainspectrum"
 REINSTALL = "./install.sh --spectrum-window"
 
 
+def build_catalogs(quiet=False):
+    """po/*/<domain>.po → LOCALE_BUILD, the same files the plasmoid package carries."""
+    r = subprocess.run([sys.executable, str(REPO / "po" / "build.py"), DOMAIN, str(LOCALE_BUILD)],
+                       capture_output=quiet, text=True)
+    return r.returncode == 0
+
+
 def deployed_files():
     """(source, destination) of every file the window runs from. One list serves both the
     copy and the status check, so the check cannot miss a file the copy gained."""
     pairs = [(SRC / "shared" / name, UI_DEST / name) for name in ("Ring.qml", "Spectrum.qml")]
     pairs += [(SRC / "window" / name, UI_DEST / name) for name in ("window.qml", "settings.qml")]
+    pairs += [(mo, LOCALE_DEST / mo.relative_to(LOCALE_BUILD))
+              for mo in sorted(LOCALE_BUILD.glob("*/LC_MESSAGES/*.mo"))]
     return pairs
 
 
@@ -74,6 +88,8 @@ def files_status():
     fix behind the repository for a day, and the status line said only "есть"."""
     if not (UI_DEST / "window.qml").exists():
         return f"нет ({UI_DEST})"
+    if not build_catalogs(quiet=True):
+        return "⚠️ переводы не собираются: python3 po/build.py"
     stale = stale_files()
     if stale:
         return f"⚠️ разошлись с репо: {', '.join(stale)} — переложить: {REINSTALL}"
@@ -82,7 +98,10 @@ def files_status():
 
 def deploy_files():
     UI_DEST.mkdir(parents=True, exist_ok=True)
+    if not build_catalogs():
+        sys.exit(1)
     for src, dst in deployed_files():
+        dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
     print(f"  → {UI_DEST}")
 

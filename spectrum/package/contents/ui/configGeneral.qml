@@ -37,7 +37,7 @@ KCM.SimpleKCM {
     property alias cfg_relayPort: portField.value
     property alias cfg_clickThrough: clickBox.checked
 
-    // Цвета хранятся строкой, а ColorButton работает с color — переводим на месте.
+    // Colours are stored as strings, while ColorButton works with a color: converted in place.
     property string cfg_color: "#C8CCD4"
     property string cfg_colorHigh: ""
 
@@ -47,17 +47,17 @@ KCM.SimpleKCM {
         anchors.left: parent.left
         anchors.right: parent.right
 
-        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Форма") }
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Shape") }
 
         ComboBox {
             id: layoutBox
-            Kirigami.FormData.label: i18n("Раскладка:")
-            model: [i18n("Кольцо"), i18n("Линия")]
+            Kirigami.FormData.label: i18n("Layout:")
+            model: [i18nc("layout", "Ring"), i18nc("layout", "Line")]
         }
 
         SpinBox {
             id: barsField
-            Kirigami.FormData.label: i18n("Штрихов:")
+            Kirigami.FormData.label: i18n("Bars:")
             from: 8
             to: 512
             stepSize: 8
@@ -65,7 +65,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: radiusField
-            Kirigami.FormData.label: i18n("Радиус, px:")
+            Kirigami.FormData.label: i18n("Radius, px:")
             visible: page.ring
             from: 20
             to: 2000
@@ -74,7 +74,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: spanField
-            Kirigami.FormData.label: i18n("Охват, °:")
+            Kirigami.FormData.label: i18n("Span, °:")
             visible: page.ring
             from: 30
             to: 360
@@ -83,7 +83,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: startField
-            Kirigami.FormData.label: i18n("Начальный угол, °:")
+            Kirigami.FormData.label: i18n("Start angle, °:")
             visible: page.ring
             from: 0
             to: 359
@@ -92,7 +92,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: spacingField
-            Kirigami.FormData.label: i18n("Зазор между штрихами, px:")
+            Kirigami.FormData.label: i18n("Gap between bars, px:")
             visible: !page.ring
             from: 0
             to: 60
@@ -100,14 +100,14 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: thicknessField
-            Kirigami.FormData.label: i18n("Толщина штриха, px:")
+            Kirigami.FormData.label: i18n("Bar thickness, px:")
             from: 1
             to: 60
         }
 
         SpinBox {
             id: minLenField
-            Kirigami.FormData.label: i18n("Длина в тишине, px:")
+            Kirigami.FormData.label: i18n("Length at silence, px:")
             from: 0
             to: 400
             stepSize: 2
@@ -115,7 +115,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: maxLenField
-            Kirigami.FormData.label: i18n("Добавка на максимуме, px:")
+            Kirigami.FormData.label: i18n("Extra length at maximum, px:")
             from: 10
             to: 1000
             stepSize: 10
@@ -123,34 +123,34 @@ KCM.SimpleKCM {
 
         ComboBox {
             id: growthBox
-            Kirigami.FormData.label: i18n("Рост:")
+            Kirigami.FormData.label: i18n("Growth:")
             model: page.ring
-                ? [i18n("наружу"), i18n("внутрь"), i18n("в обе стороны")]
-                : [i18n("вверх"), i18n("вниз"), i18n("в обе стороны")]
+                ? [i18nc("growth", "outward"), i18nc("growth", "inward"), i18nc("growth", "both ways")]
+                : [i18nc("growth", "up"), i18nc("growth", "down"), i18nc("growth", "both ways")]
         }
 
         CheckBox {
             id: mirrorBox
-            Kirigami.FormData.label: i18n("Порядок:")
-            text: i18n("зеркально (низкие частоты по краям)")
+            Kirigami.FormData.label: i18n("Order:")
+            text: i18n("mirrored (low frequencies at the edges)")
         }
 
         CheckBox {
             id: reverseBox
-            text: i18n("обратный порядок полос")
+            text: i18n("reverse band order")
         }
 
-        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Вид") }
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Appearance") }
 
         ComboBox {
             id: elementBox
-            Kirigami.FormData.label: i18n("Элемент:")
-            model: [i18n("Полоска"), i18n("Блоки")]
+            Kirigami.FormData.label: i18n("Element:")
+            model: [i18nc("element shape", "Bar"), i18nc("element shape", "Blocks")]
         }
 
         SpinBox {
             id: blockSizeField
-            Kirigami.FormData.label: i18n("Блок, px:")
+            Kirigami.FormData.label: i18n("Block, px:")
             visible: elementBox.currentIndex === 1
             from: 2
             to: 40
@@ -158,7 +158,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: blockGapField
-            Kirigami.FormData.label: i18n("Зазор блоков, px:")
+            Kirigami.FormData.label: i18n("Block gap, px:")
             visible: elementBox.currentIndex === 1
             from: 0
             to: 40
@@ -166,19 +166,19 @@ KCM.SimpleKCM {
 
         CheckBox {
             id: roundedBox
-            Kirigami.FormData.label: i18n("Концы:")
-            text: i18n("скруглять")
+            Kirigami.FormData.label: i18n("Ends:")
+            text: i18nc("bar ends", "rounded")
         }
 
         KQuickControls.ColorButton {
             id: colorButton
-            Kirigami.FormData.label: i18n("Цвет:")
+            Kirigami.FormData.label: i18n("Colour:")
             color: page.cfg_color
             onColorChanged: page.cfg_color = color.toString()
         }
 
         RowLayout {
-            Kirigami.FormData.label: i18n("Цвет высоких частот:")
+            Kirigami.FormData.label: i18n("High-frequency colour:")
 
             KQuickControls.ColorButton {
                 id: colorHighButton
@@ -189,7 +189,7 @@ KCM.SimpleKCM {
 
             CheckBox {
                 id: highEnabled
-                text: i18n("свой")
+                text: i18nc("high-frequency colour", "custom")
                 checked: page.cfg_colorHigh.length > 0
                 onToggled: page.cfg_colorHigh = checked ? colorHighButton.color.toString() : ""
             }
@@ -197,7 +197,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: opacityField
-            Kirigami.FormData.label: i18n("Прозрачность, %:")
+            Kirigami.FormData.label: i18n("Opacity, %:")
             from: 10
             to: 100
             stepSize: 5
@@ -205,16 +205,16 @@ KCM.SimpleKCM {
 
         CheckBox {
             id: guideBox
-            Kirigami.FormData.label: i18n("Окружность:")
+            Kirigami.FormData.label: i18n("Circle:")
             visible: page.ring
-            text: i18n("тонкая направляющая под штрихами")
+            text: i18n("a thin guide under the bars")
         }
 
-        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Поведение") }
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Behaviour") }
 
         SpinBox {
             id: rateField
-            Kirigami.FormData.label: i18n("Кадров данных в секунду:")
+            Kirigami.FormData.label: i18n("Data frames per second:")
             from: 5
             to: 60
             stepSize: 5
@@ -222,7 +222,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: smoothField
-            Kirigami.FormData.label: i18n("Сглаживание, мс:")
+            Kirigami.FormData.label: i18n("Smoothing, ms:")
             from: 0
             to: 400
             stepSize: 10
@@ -230,21 +230,21 @@ KCM.SimpleKCM {
 
         CheckBox {
             id: clickBox
-            Kirigami.FormData.label: i18n("Мышь:")
-            text: i18n("пропускать клики на рабочий стол")
+            Kirigami.FormData.label: i18n("Mouse:")
+            text: i18n("let clicks through to the desktop")
         }
 
-        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Тишина") }
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Silence") }
 
         CheckBox {
             id: quietBox
-            Kirigami.FormData.label: i18n("В тишине:")
-            text: i18n("растворять кольцо")
+            Kirigami.FormData.label: i18n("In silence:")
+            text: i18n("dissolve the ring")
         }
 
         SpinBox {
             id: quietLevelField
-            Kirigami.FormData.label: i18n("Порог тишины, %:")
+            Kirigami.FormData.label: i18n("Silence threshold, %:")
             enabled: quietBox.checked
             from: 0
             to: 50
@@ -252,7 +252,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: quietDelayField
-            Kirigami.FormData.label: i18n("Ждать перед исчезновением, мс:")
+            Kirigami.FormData.label: i18n("Wait before vanishing, ms:")
             enabled: quietBox.checked
             from: 100
             to: 10000
@@ -261,7 +261,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: fadeField
-            Kirigami.FormData.label: i18n("Появление и исчезновение, мс:")
+            Kirigami.FormData.label: i18n("Fade in and out, ms:")
             enabled: quietBox.checked
             from: 0
             to: 3000
@@ -270,29 +270,29 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: idleRateField
-            Kirigami.FormData.label: i18n("Опросов в тишине, в секунду:")
+            Kirigami.FormData.label: i18n("Polls per second in silence:")
             enabled: quietBox.checked
             from: 1
             to: 30
         }
 
         Label {
-            text: i18n("Штрихи растут из самого кольца, поэтому «длина в тишине» 0\nдаёт появление буквально из ничего.")
+            text: i18n("The bars grow out of the ring itself, so a “length at silence” of 0\nmakes them appear out of literally nothing.")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }
 
         SpinBox {
             id: portField
-            Kirigami.FormData.label: i18n("Порт реле:")
+            Kirigami.FormData.label: i18n("Relay port:")
             from: 1024
             to: 65535
             editable: true
         }
 
         Label {
-            Kirigami.FormData.label: i18n("Источник:")
-            text: i18n("спектр считает cava в службе plainspectrum-relay;\nчастоты и устройство задаются в ~/.config/plainspectrum/relay.env")
+            Kirigami.FormData.label: i18n("Source:")
+            text: i18n("the spectrum is computed by cava in the plainspectrum-relay service;\nthe frequencies and the device are set in ~/.config/plainspectrum/relay.env")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }

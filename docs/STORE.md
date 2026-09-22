@@ -40,7 +40,8 @@ settings; a block can also be any ksystemstats sensor or any command. Sensors sp
 a machine — fans, NVMe, the network interface — are found on the machine itself.
 Data comes from ksystemstats, the same service as Plasma's System Monitor.
 
-Note: the interface is in Russian for now. The updates line reads pacman.
+The interface follows Plasma's language — English and Russian so far, more to come;
+translations are welcome as .po files. The updates line reads pacman.
 
 Want the monitor to let clicks through to the desktop? A plasmoid cannot do that — the
 repository has a window host that can, plus an editor with a live preview:
@@ -56,7 +57,8 @@ Rainmeter: часы и дата, система, загрузка CPU общая
 Набор блоков, порядок и параметры — на странице «Блоки» в настройках; блоком может быть
 любой датчик ksystemstats или любая команда. Привязанные к машине датчики — вентиляторы,
 NVMe, сетевой интерфейс — находятся на самой машине. Данные берутся у ksystemstats — той
-же службы, что у «Системного монитора» Plasma. Строка обновлений читает pacman.
+же службы, что у «Системного монитора» Plasma. Интерфейс говорит на языке Plasma — пока
+английский и русский. Строка обновлений читает pacman.
 
 Нужно, чтобы клики проходили сквозь монитор на рабочий стол? Плазмоид так не умеет —
 в репозитории есть оконный хост, который умеет, и редактор с живым просмотром:
