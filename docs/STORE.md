@@ -15,14 +15,32 @@ The files to upload are built by:
 so what it builds is known to install. The version in the file name comes from each
 widget's `metadata.json`; bump it there before building a new upload.
 
+## Uploading
+
+The store is run by Pling, not by KDE; there is no review before a product goes live.
+
+- **Account:** an opendesktop.org (Pling) account; KDE Identity is not used.
+- **Add Product:** https://store.kde.org/product/add.
+- **Category matters:** Plasma 6's *Get New Widgets…* reads *Plasma 6 Extensions*
+  (`Categories=Plasma 6 Extensions` in `/usr/share/knsrcfiles/plasmoids.knsrc`) — a Plasma 5
+  category or *System Monitor 6 Applets* never shows up there.
+- **Title:** letters, digits and a few signs only — `plaintop`, `plainspectrum`.
+- **Description:** plain text works; BBCode (`[b]`, `[url]`, `[list]`…) is supported.
+- **Images:** a logo and gallery pictures; the gallery is shown at 770×540, so a landscape
+  picture fits better than the tall widget.
+- **An update:** bump `Version` in `metadata.json`, run `--pack`, upload the new file and
+  bump the product's version. Plasma offers the update when the store version changes,
+  and kpackage refuses to install a `Version` that is not newer.
+
 ## plaintop — text system monitor
 
 - **File:** `dist/plaintop-<version>.plasmoid`
-- **Category:** Plasma 6 widgets
+- **Category:** Plasma 6 Extensions → Monitoring
 - **License:** GPL-2.0-or-later
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
 - **Tags:** system monitor, conky, rainmeter, text, sensors, cpu, gpu, numa
-- **Screenshot:** `docs/screenshot.png`
+- **Images:** a square logo of the clock and a landscape gallery picture of the whole
+  monitor, both rendered offscreen by the real renderer in an English session
 
 **Summary:** A text system monitor for the desktop, in the spirit of the PlainExt Rainmeter skin.
 
@@ -73,11 +91,11 @@ https://github.com/highscrren-dotcom/plaintop
 ## plainspectrum — audio visualizer
 
 - **File:** `dist/plainspectrum-<version>.plasmoid`
-- **Category:** Plasma 6 widgets
+- **Category:** Plasma 6 Extensions → Multimedia
 - **License:** GPL-2.0-or-later
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
 - **Tags:** audio, visualizer, spectrum, cava, ring, music
-- **Screenshot:** none yet — take one of the ring while music plays.
+- **Images:** the ring while music plays — it dissolves in silence, so a picture needs sound
 
 **Summary:** An audio visualizer in the spirit of PlainExt: a ring, an arc or a line. Needs its cava relay.
 
