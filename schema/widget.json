@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "_": "Раскладка виджета: какие блоки, в каком порядке, с какими параметрами. От движка не зависит — генератор превращает это в то, что понимает движок. Словарь типов — blocks.json.",
+  "_": "The widget layout: which blocks, in what order, with what parameters. It does not depend on the engine — the generator turns it into what the engine understands. The vocabulary of types is blocks.json.",
   "blocks": [
     {
       "id": "head",

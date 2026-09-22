@@ -424,3 +424,22 @@ compares with the sources, including the relay, and says when a window was start
 its files were deployed (`ctime` of the files, since `copy2` carries the source `mtime`
 over; process start through `/proc/uptime`, since `btime` is a whole second and flagged a
 window started 0.05 s after its deploy).
+
+## xgettext marks ki18n placeholders as JavaScript format
+
+Run over QML with `-L JavaScript`, xgettext flags a string like `"%1d"` as
+`javascript-format`. That is the wrong format: ki18n's placeholders are `%1`…`%99`, and the
+Russian `"%1д"` then comes out of `msgmerge` fuzzy — ignored at run time. `po/extract.py`
+drops the JavaScript flag and marks every string with `%1`… as `kde-format`, which
+`msgfmt --check` really does check: a translation that loses `%2` fails the build.
+Verified on s1dPC 2026-09-22.
+
+## KDE's Formats win over `LANG` and `LC_ALL`
+
+To look at the widget as an English user would, `LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+LANGUAGE=en` is not enough under Plasma: the words switch, but the date stays
+"Вторник, сентября 22" and the decimal separator a comma. The KDE integration that
+Kirigami loads applies `~/.config/plasma-localerc` (System Settings → Formats) over the
+environment. With an empty `XDG_CONFIG_HOME` the same run gives "Tuesday, September 22"
+and "9.2 GiB". This is right for users — Formats are theirs to choose apart from the
+language — and only matters for tests.

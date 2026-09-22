@@ -4,6 +4,7 @@ import org.kde.plasma.plasma5support as P5Support
 import org.kde.ksysguard.sensors as Sensors
 import org.kde.ksysguard.process as Proc
 import org.kde.kitemmodels as KItem
+import org.kde.ki18n
 
 // Data side of the text monitor, with no visuals of its own: subscriptions, one-shot
 // readings, the slow commands, and the lines built from the description.
@@ -28,6 +29,14 @@ Item {
     property string servicesScript: Qt.resolvedUrl("services.sh").toString().replace("file://", "")
 
     readonly property int barWidth: 18          // bar width in characters, as in the lua
+
+    // ⚠️ Translations go through a context object, not a bare i18n(): this file runs in
+    // the plasmoid, where i18n() exists, and in the bare qml6 window host, where it does
+    // not. The domain is the plasmoid's own, so both hosts read one catalog — see
+    // decision 7 in docs/DECISIONS.md.
+    readonly property KI18nContext tr: KI18nContext {
+        translationDomain: "plasma_applet_org.s1dd1.plaintop"
+    }
 
     // A parameter of an enabled block of this type — needed where sensor subscriptions
     // depend on it, not only the text.
@@ -408,11 +417,13 @@ Item {
         connectedSources: ["bash " + monitor.servicesScript]
 
         onNewData: function(source, data) {
+            // "key|field|field…": the script reports numbers and states, the text is made
+            // in serviceText(), where the catalog and its plural forms are.
             const rows = []
             for (const line of String(data.stdout).trim().split("\n")) {
-                const i = line.indexOf("|")
-                if (i < 0) continue
-                rows.push({ label: line.slice(0, i), value: line.slice(i + 1) })
+                const f = line.split("|")
+                if (f.length < 2) continue
+                rows.push({ label: f[0], fields: f.slice(1) })
             }
             monitor.serviceRows = rows
         }
@@ -470,8 +481,9 @@ Item {
         return String(label).padEnd(3).slice(0, 3) + " " + bar(value) + " " + pct(value)
     }
 
+    // The decimal separator is the locale's: a comma under ru_RU, a point under en_US.
     function comma(x, digits) {
-        return x.toFixed(digits).replace(".", ",")
+        return x.toFixed(digits).replace(".", Qt.locale().decimalPoint)
     }
 
     function gib(bytes) {
@@ -488,7 +500,9 @@ Item {
         const d = Math.floor(secs / 86400)
         const h = Math.floor(secs % 86400 / 3600)
         const m = Math.floor(secs % 3600 / 60)
-        return (d > 0 ? d + "д " : "") + h + "ч " + m + "м"
+        return (d > 0 ? tr.i18nc("uptime: days, abbreviated", "%1d", d) + " " : "")
+            + tr.i18nc("uptime: hours, abbreviated", "%1h", h) + " "
+            + tr.i18nc("uptime: minutes, abbreviated", "%1m", m)
     }
 
     // ── Values ────────────────────────────────────────────────────────────────
@@ -533,6 +547,26 @@ Item {
         ] }
     }
 
+    function serviceText(r) {
+        const f = r.fields
+        switch (r.label) {
+        case "docker":
+            return f[0] === "noaccess"
+                ? tr.i18nc("docker: the user is not in the docker group yet", "needs re-login")
+                : tr.i18nc("docker: running containers of all containers", "%1 of %2",
+                           f[0], f[1])
+        case "ollama":
+            return f[0] === "model"
+                ? f[1]
+                : tr.i18ncp("ollama: no model loaded; how many are installed",
+                            "idle, %1 model", "idle, %1 models", Number(f[1]) || 0)
+        case "pacman":
+            return tr.i18ncp("pacman: pending updates", "%1 update", "%1 updates",
+                             Number(f[0]) || 0)
+        }
+        return f.join(" ")
+    }
+
     readonly property var lines: {
         tick
         const out = []
@@ -561,7 +595,9 @@ Item {
             case "date": {
                 // ⚠️ Qt.formatDate takes the C locale and produces "Sunday, 20 September"
                 // even under ru_RU. Only toLocaleDateString gives the Russian names.
-                const d = new Date().toLocaleDateString(Qt.locale(), "dddd, d MMMM")
+                // The names follow the locale; the order is the translation's to set.
+                const d = new Date().toLocaleDateString(Qt.locale(),
+                    tr.i18nc("date line: a Qt date pattern, no year", "dddd, MMMM d"))
                 out.push(line(d.charAt(0).toUpperCase() + d.slice(1), "value"))
                 break
             }
@@ -633,13 +669,16 @@ Item {
                 // Configured but not mounted: say so instead of staying silent.
                 for (const m of (p.mounts || [])) {
                     if (!diskRows.some(d => d.target === m))
-                        out.push(line(m.split("/").pop() + " | не смонтирован", "dim"))
+                        out.push(line(m.split("/").pop() + " | "
+                                      + tr.i18nc("disks: a configured mount point is absent",
+                                                 "not mounted"), "dim"))
                 }
                 break
             }
 
             case "uptime":
-                out.push(line("аптайм " + human(num("os/system/uptime", 0))))
+                out.push(line(tr.i18nc("uptime line", "uptime %1",
+                                       human(num("os/system/uptime", 0)))))
                 break
 
             case "network": {
@@ -651,7 +690,7 @@ Item {
             }
 
             case "services":
-                for (const s of serviceRows) out.push(kvLine(s.label, s.value))
+                for (const s of serviceRows) out.push(kvLine(s.label, serviceText(s)))
                 break
 
             case "command": {

@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kquickcontrols as KQuickControls
 import org.kde.ksysguard.sensors as Sensors
+import org.kde.ki18n
 
 import "description.js" as Description
 
@@ -20,7 +21,7 @@ ApplicationWindow {
     width: 1000
     height: 760
     visible: true
-    title: "plaintop — настройки монитора"
+    title: tr.i18n("plaintop — monitor settings")
 
     readonly property int port: 8788
 
@@ -40,7 +41,7 @@ ApplicationWindow {
             if (xhr.readyState !== XMLHttpRequest.DONE)
                 return
             if (xhr.status !== 200) {
-                status.text = "реле не отвечает на порту " + app.port
+                status.text = tr.i18n("the relay does not answer on port %1", app.port)
                 return
             }
             app.cfg = JSON.parse(xhr.responseText)
@@ -50,7 +51,7 @@ ApplicationWindow {
                          ? app.cfg.blocks : Description.BLOCKS
             app.loaded = true
             app.refreshList()
-            status.text = "настройки прочитаны"
+            status.text = tr.i18n("settings read")
         }
         xhr.open("GET", "http://127.0.0.1:" + port + "/config?widget=monitor")
         xhr.send()
@@ -85,7 +86,7 @@ ApplicationWindow {
             const xhr = new XMLHttpRequest()
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE)
-                    status.text = xhr.status === 200 ? "сохранено" : "не сохранилось: " + xhr.status
+                    status.text = xhr.status === 200 ? tr.i18n("saved") : tr.i18n("not saved: %1", xhr.status)
             }
             xhr.open("POST", "http://127.0.0.1:" + app.port + "/config?widget=monitor")
             xhr.setRequestHeader("Content-Type", "application/json")
@@ -102,6 +103,13 @@ ApplicationWindow {
     // Ids rot: a chip renumbers, an interface is renamed, a disk is unplugged. So the
     // editor never asks the user to know an id — it offers what the machine reports now.
     SensorRegistry { id: registry }
+
+    // The plasmoid's own catalog: the bare qml6 runner has no i18n(), so the calls go
+    // through a context object (decision 7 in docs/DECISIONS.md).
+    KI18nContext {
+        id: tr
+        translationDomain: "plasma_applet_org.s1dd1.plaintop"
+    }
 
     readonly property var interfaces: registry.interfaces
 
@@ -182,7 +190,8 @@ ApplicationWindow {
     readonly property var types: {
         const out = []
         for (const key in Description.VOCAB)
-            out.push({ type: key, name: Description.VOCAB[key].name || key })
+            out.push({ type: key, name: Description.VOCAB[key].name
+                                        ? tr.i18nc("schema: block name", Description.VOCAB[key].name) : key })
         return out
     }
 
@@ -193,8 +202,8 @@ ApplicationWindow {
             const b = blocks[i]
             const spec = Description.VOCAB[b.type] || { name: b.type }
             listModel.append({
-                title: spec.name || b.type,
-                subtitle: b.id + (spec.hint ? " — " + spec.hint : ""),
+                title: spec.name ? tr.i18nc("schema: block name", spec.name) : b.type,
+                subtitle: b.id + (spec.hint ? " — " + tr.i18nc("schema: block hint", spec.hint) : ""),
                 isOn: b.enabled !== false
             })
         }
@@ -287,14 +296,14 @@ ApplicationWindow {
                 id: tabs
                 Layout.fillWidth: true
 
-                TabButton { text: "Вид" }
-                TabButton { text: "Блоки" }
+                TabButton { text: tr.i18nc("settings page", "Appearance") }
+                TabButton { text: tr.i18nc("settings page", "Blocks") }
             }
 
-            Label { id: status; text: "загрузка…" }
+            Label { id: status; text: tr.i18n("loading…") }
 
             Button {
-                text: "Перечитать"
+                text: tr.i18n("Reload")
                 onClicked: app.load()
             }
         }
@@ -320,100 +329,100 @@ ApplicationWindow {
             Kirigami.FormLayout {
                 width: parent.width
 
-                Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: "Текст" }
+                Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: tr.i18nc("settings section", "Text") }
 
                 TextField {
-                    Kirigami.FormData.label: "Шрифт:"
+                    Kirigami.FormData.label: tr.i18n("Font:")
                     text: app.num("fontFamily", "JetBrainsMono Nerd Font Mono")
                     Layout.fillWidth: true
                     onEditingFinished: app.change("fontFamily", text)
                 }
 
                 SpinBox {
-                    Kirigami.FormData.label: "Кегль:"
+                    Kirigami.FormData.label: tr.i18nc("font size", "Size:")
                     from: 6; to: 32
                     value: app.num("fontSize", 10)
                     onValueModified: app.change("fontSize", value)
                 }
 
                 SpinBox {
-                    Kirigami.FormData.label: "Интервал обновления, мс:"
+                    Kirigami.FormData.label: tr.i18n("Update interval, ms:")
                     from: 200; to: 10000; stepSize: 100
                     value: app.num("updateInterval", 1000)
                     onValueModified: app.change("updateInterval", value)
                 }
 
                 SpinBox {
-                    Kirigami.FormData.label: "Топ процессов, раз в … с:"
+                    Kirigami.FormData.label: tr.i18n("Top processes, every … s:")
                     from: 2; to: 60
                     value: app.num("processInterval", 2)
                     onValueModified: app.change("processInterval", value)
                 }
 
                 Label {
-                    text: "Список процессов — самое дорогое в сборе: раз в 2 с\nоколо 3 % ядра, раз в 10 с — около 1,3 %"
+                    text: tr.i18n("The process list is the most expensive thing collected: every 2 s\nabout 3% of a core, every 10 s about 1.3%")
                     opacity: 0.7
                     font: Kirigami.Theme.smallFont
                 }
 
-                Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: "Место" }
+                Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: tr.i18nc("settings section", "Placement") }
 
                 SpinBox {
-                    Kirigami.FormData.label: "Отступ слева, px:"
+                    Kirigami.FormData.label: tr.i18n("Left padding, px:")
                     from: 0; to: 500; stepSize: 4
                     value: app.num("padLeft", 48)
                     onValueModified: app.change("padLeft", value)
                 }
 
                 SpinBox {
-                    Kirigami.FormData.label: "Отступ сверху, px:"
+                    Kirigami.FormData.label: tr.i18n("Top padding, px:")
                     from: 0; to: 500; stepSize: 4
                     value: app.num("padTop", 44)
                     onValueModified: app.change("padTop", value)
                 }
 
                 SpinBox {
-                    Kirigami.FormData.label: "Ширина, px:"
+                    Kirigami.FormData.label: tr.i18n("Width, px:")
                     from: 100; to: 2000; stepSize: 10
                     value: app.num("widgetWidth", 500)
                     onValueModified: app.change("widgetWidth", value)
                 }
 
                 SpinBox {
-                    Kirigami.FormData.label: "Высота, px:"
+                    Kirigami.FormData.label: tr.i18n("Height, px:")
                     from: 100; to: 2000; stepSize: 10
                     value: app.num("widgetHeight", 950)
                     onValueModified: app.change("widgetHeight", value)
                 }
 
                 Label {
-                    text: "Размер и место окна держит правило KWin — после смены размера\nперезапустите: ./install.sh --plaintop-window"
+                    text: tr.i18n("The window's size and place are kept by a KWin rule — after a size change\nrerun: ./install.sh --plaintop-window")
                     opacity: 0.7
                     font: Kirigami.Theme.smallFont
                 }
 
-                Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: "Палитра" }
+                Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: tr.i18nc("settings section", "Palette") }
 
                 KQuickControls.ColorButton {
-                    Kirigami.FormData.label: "Основной текст:"
+                    Kirigami.FormData.label: tr.i18nc("palette: colour of", "Main text:")
                     color: app.num("colorFg", "#C8CCD4")
                     onColorChanged: app.change("colorFg", color.toString())
                 }
 
                 KQuickControls.ColorButton {
-                    Kirigami.FormData.label: "Заголовок:"
+                    Kirigami.FormData.label: tr.i18nc("palette: colour of", "Header:")
                     color: app.num("colorAccent", "#E05561")
                     onColorChanged: app.change("colorAccent", color.toString())
                 }
 
                 KQuickControls.ColorButton {
-                    Kirigami.FormData.label: "Второстепенное:"
+                    Kirigami.FormData.label: tr.i18nc("palette: colour of", "Secondary:")
                     color: app.num("colorDim", "#6B7280")
                     onColorChanged: app.change("colorDim", color.toString())
                 }
 
                 KQuickControls.ColorButton {
-                    Kirigami.FormData.label: "Значения:"
+                    Kirigami.FormData.label: tr.i18nc("palette: colour of", "Values:")
                     color: app.num("colorValue", "#8FB6E0")
                     onColorChanged: app.change("colorValue", color.toString())
                 }
@@ -427,7 +436,7 @@ ApplicationWindow {
             Kirigami.InlineMessage {
                 Layout.fillWidth: true
                 visible: true
-                text: "Набор и порядок блоков. Правки уходят в монитор через две секунды."
+                text: tr.i18n("The blocks and their order. Edits reach the monitor within two seconds.")
             }
 
             RowLayout {
@@ -479,21 +488,21 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignTop
 
                     Button {
-                        text: "Выше"
+                        text: tr.i18n("Up")
                         icon.name: "go-up"
                         enabled: app.selected > 0
                         onClicked: app.move(app.selected, app.selected - 1)
                     }
 
                     Button {
-                        text: "Ниже"
+                        text: tr.i18n("Down")
                         icon.name: "go-down"
                         enabled: app.selected >= 0 && app.selected < app.blocks.length - 1
                         onClicked: app.move(app.selected, app.selected + 1)
                     }
 
                     Button {
-                        text: "Убрать"
+                        text: tr.i18n("Remove")
                         icon.name: "list-remove"
                         enabled: app.selected >= 0
                         onClicked: app.removeBlock(app.selected)
@@ -512,7 +521,7 @@ ApplicationWindow {
                 }
 
                 Button {
-                    text: "Добавить блок"
+                    text: tr.i18n("Add block")
                     icon.name: "list-add"
                     enabled: typeBox.currentIndex >= 0
                     onClicked: app.addBlock(app.types[typeBox.currentIndex].type)
@@ -550,7 +559,7 @@ ApplicationWindow {
                         readonly property bool autoable: modelData.pick === "sensor"
                                                          || modelData.pick === "iface"
 
-                        Kirigami.FormData.label: modelData.name + ":"
+                        Kirigami.FormData.label: tr.i18nc("schema: parameter name", modelData.name) + ":"
                         implicitWidth: col.implicitWidth
                         implicitHeight: col.implicitHeight
 
@@ -576,7 +585,7 @@ ApplicationWindow {
                             ComboBox {
                                 visible: pd.modelData.pick === "iface"
                                 Layout.minimumWidth: 280
-                                model: ["— найти самому —"].concat(app.interfaces)
+                                model: [tr.i18nc("interface menu: automatic choice", "— find it —")].concat(app.interfaces)
                                 currentIndex: {
                                     const i = app.interfaces.indexOf(String(pd.modelData.value || ""))
                                     return i < 0 ? 0 : i + 1
@@ -596,9 +605,14 @@ ApplicationWindow {
                                 visible: pd.modelData.pick === "iface"
                                          && registry.bestInterface.length > 0
                                          && app.interfaces.indexOf(wanted) < 0
-                                text: (wanted.length > 0 ? wanted + " нет на машине — " : "")
-                                      + "найден: " + registry.bestInterface
-                                      + (registry.netSettled ? "" : " (выбираю…)")
+                                readonly property string found: registry.netSettled
+                                    ? tr.i18nc("interface hint", "found: %1", registry.bestInterface)
+                                    : tr.i18nc("interface hint", "found: %1 (choosing…)",
+                                               registry.bestInterface)
+                                text: wanted.length > 0
+                                      ? tr.i18nc("interface hint", "%1 is not on this machine — %2",
+                                                 wanted, found)
+                                      : found
                                 font: Kirigami.Theme.smallFont
                                 opacity: 0.7
                             }
@@ -610,14 +624,14 @@ ApplicationWindow {
 
                                 TextField {
                                     Layout.minimumWidth: 260
-                                    placeholderText: pd.autoable ? "пусто — найти самому" : ""
+                                    placeholderText: pd.autoable ? tr.i18nc("placeholder", "empty — find it") : ""
                                     text: String(pd.modelData.value || "")
                                     onEditingFinished: app.setParam(pd.modelData.key, text)
                                 }
 
                                 Button {
                                     visible: pd.pickable
-                                    text: "Выбрать…"
+                                    text: tr.i18n("Choose…")
                                     icon.name: "search"
                                     onClicked: app.pickInto(pd.modelData.key, pd.modelData.pick,
                                                             pd.modelData.pattern, false)
@@ -625,7 +639,7 @@ ApplicationWindow {
 
                                 Button {
                                     visible: pd.autoable
-                                    text: "Авто"
+                                    text: tr.i18n("Auto")
                                     icon.name: "edit-clear"
                                     onClicked: app.setParam(pd.modelData.key, "")
                                 }
@@ -659,14 +673,14 @@ ApplicationWindow {
 
                                 Label {
                                     visible: pd.listNow.length === 0
-                                    text: pd.autoable ? "пусто — найти самим" : "ничего не выбрано"
+                                    text: pd.autoable ? tr.i18nc("placeholder", "empty — find them") : tr.i18n("nothing chosen")
                                     font: Kirigami.Theme.smallFont
                                     opacity: 0.7
                                 }
 
                                 RowLayout {
                                     Button {
-                                        text: "Добавить…"
+                                        text: tr.i18n("Add…")
                                         icon.name: "list-add"
                                         enabled: pd.pickable
                                         onClicked: app.pickInto(pd.modelData.key, pd.modelData.pick,
@@ -675,7 +689,7 @@ ApplicationWindow {
 
                                     Button {
                                         visible: pd.autoable && pd.listNow.length > 0
-                                        text: "Авто"
+                                        text: tr.i18n("Auto")
                                         icon.name: "edit-clear"
                                         onClicked: app.setParam(pd.modelData.key, [])
                                     }
@@ -732,9 +746,9 @@ ApplicationWindow {
                 anchors.bottomMargin: 8
                 color: "#6B7280"
                 font: Kirigami.Theme.smallFont
-                text: "живой просмотр · " + previewView.width + "x" + previewView.height
-                      + " · масштаб " + previewView.scale.toFixed(2)
-                      + " · строк " + previewData.lines.length
+                text: tr.i18n("live preview · %1x%2 · scale %3 · lines %4",
+                              previewView.width, previewView.height,
+                              previewView.scale.toFixed(2), previewData.lines.length)
             }
         }
     }
@@ -750,7 +764,7 @@ ApplicationWindow {
 
     Dialog {
         id: sensorDialog
-        title: "Датчики этой машины"
+        title: tr.i18n("Sensors of this machine")
         modal: true
         parent: Overlay.overlay
         anchors.centerIn: parent
@@ -798,11 +812,11 @@ ApplicationWindow {
                 TextField {
                     id: sensorSearch
                     Layout.fillWidth: true
-                    placeholderText: "поиск: часть идентификатора"
+                    placeholderText: tr.i18n("search: part of an id")
                 }
 
                 CheckBox {
-                    text: "только подходящие"
+                    text: tr.i18n("matching only")
                     visible: sensorDialog.pattern.length > 0
                     checked: sensorDialog.narrowed
                     onToggled: sensorDialog.narrowed = checked
@@ -810,8 +824,8 @@ ApplicationWindow {
             }
 
             Label {
-                text: "показано " + sensorDialog.items.length + " из " + registry.ids.length
-                      + (registry.ready ? "" : " · дерево ещё читается")
+                text: tr.i18n("shown %1 of %2", sensorDialog.items.length, registry.ids.length)
+                      + (registry.ready ? "" : " · " + tr.i18n("the tree is still being read"))
                 font: Kirigami.Theme.smallFont
                 opacity: 0.7
             }
@@ -846,20 +860,20 @@ ApplicationWindow {
                 text: probe.sensorId.length === 0
                       ? "—"
                       : probe.name + " · " + probe.formattedValue
-                        + (probe.status === 2 ? "" : "  (данных нет)")
+                        + (probe.status === 2 ? "" : "  (" + tr.i18n("no data") + ")")
             }
 
             TextField {
                 id: sensorManual
                 Layout.fillWidth: true
-                placeholderText: "или впишите идентификатор вручную"
+                placeholderText: tr.i18n("or type an id by hand")
             }
         }
     }
 
     Dialog {
         id: mountDialog
-        title: "Точки монтирования этой машины"
+        title: tr.i18n("Mount points of this machine")
         modal: true
         parent: Overlay.overlay
         anchors.centerIn: parent
@@ -896,13 +910,13 @@ ApplicationWindow {
 
                 Label {
                     Layout.fillWidth: true
-                    text: "смонтировано сейчас: " + app.mounts.length
+                    text: tr.i18n("mounted now: %1", app.mounts.length)
                     font: Kirigami.Theme.smallFont
                     opacity: 0.7
                 }
 
                 Button {
-                    text: "Перечитать"
+                    text: tr.i18n("Reload")
                     icon.name: "view-refresh"
                     onClicked: app.loadMounts()
                 }
@@ -947,7 +961,7 @@ ApplicationWindow {
             TextField {
                 id: mountManual
                 Layout.fillWidth: true
-                placeholderText: "или впишите путь вручную"
+                placeholderText: tr.i18n("or type a path by hand")
             }
         }
     }

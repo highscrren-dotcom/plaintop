@@ -229,3 +229,38 @@ monitor stayed where it was.
 
 **Revisit if:** a machine shows up where the tree is large enough that enumerating it is
 noticeable; then the registry caches to disk and refreshes on demand.
+
+## 7. Translations — KDE's own ki18n, the language follows Plasma (2026-09-22)
+
+**Decision:** every user-visible string goes through ki18n with gettext catalogs, one
+domain per widget — `plasma_applet_org.s1dd1.plaintop` and
+`plasma_applet_org.s1dd1.plainspectrum`. The source strings are English; Russian becomes a
+translation like any other. Files that only the plasmoid loads call `i18n()` directly;
+QML shared by both hosts and the window hosts' own files call it through a `KI18nContext`
+(`import org.kde.ki18n`) with the same domain, since the bare `qml6` runner has no
+`i18n()` of its own. The catalogs live in `po/`; the install compiles them with `msgfmt`
+into the plasmoid package (`contents/locale`) and, for the window hosts, into
+`~/.local/share/locale`.
+
+**Why this and not a dictionary of our own.** The alternative was a JS dictionary
+generated from the same `.po` files, which would have given a per-widget language switch
+that works without a restart. The user dropped the switch as a requirement, and without
+it ki18n wins on everything else: it is the standard path for Plasma widgets and for the
+KDE Store, translators get the tools they already use, and plural forms come from each
+catalog's own rules — "1 обновление, 3 обновления, 5 обновлений" needs no code of ours.
+
+**Verified before anything was converted:** a throwaway plasmoid run in `plasmawindowed`
+(the same libplasma as plasmashell) translated from its `contents/locale` through bare
+`i18n()`, through `KI18nContext`, and from a separate shared component, with Russian plurals
+right for 1, 3 and 5; with `LANGUAGE=en` it fell back to the English source strings.
+
+**What we pay.**
+- The language is Plasma's (System Settings → Region & Language) and changes after the
+  shell and the windows restart; a widget cannot have a language of its own.
+- `KI18nContext` needs KDE Frameworks 6.23 or newer; on an older Plasma 6 the window hosts
+  and the shared QML will not load.
+- The install needs `msgfmt` from gettext.
+
+**Revisit if:** a per-widget language becomes a requirement, or `KI18nContext` turns out to
+be missing where the widgets have to run. Then the dictionary generated from the same `.po`
+files replaces ki18n, and the catalogs stay as they are.

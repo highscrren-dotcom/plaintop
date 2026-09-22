@@ -43,8 +43,9 @@ KCM.SimpleKCM {
             const b = blocks[i]
             const spec = Description.VOCAB[b.type] || { name: b.type }
             listModel.append({
-                title: spec.name || b.type,
-                subtitle: b.id + (spec.hint ? " — " + spec.hint : ""),
+                // The vocabulary is English source text; the contexts match po/extract.py.
+                title: spec.name ? i18nc("schema: block name", spec.name) : b.type,
+                subtitle: b.id + (spec.hint ? " — " + i18nc("schema: block hint", spec.hint) : ""),
                 isOn: b.enabled !== false
             })
         }
@@ -65,7 +66,8 @@ KCM.SimpleKCM {
     readonly property var types: {
         const out = []
         for (const key in Description.VOCAB)
-            out.push({ type: key, name: Description.VOCAB[key].name || key })
+            out.push({ type: key, name: Description.VOCAB[key].name
+                                        ? i18nc("schema: block name", Description.VOCAB[key].name) : key })
         return out
     }
 
@@ -129,7 +131,7 @@ KCM.SimpleKCM {
         Kirigami.InlineMessage {
             Layout.fillWidth: true
             visible: true
-            text: i18n("Порядок и набор блоков. Раскладка по умолчанию берётся из schema/widget.json.")
+            text: i18n("The blocks and their order. The default layout comes from schema/widget.json.")
         }
 
         RowLayout {
@@ -185,28 +187,28 @@ KCM.SimpleKCM {
 
                 Button {
                     icon.name: "go-up"
-                    text: i18n("Выше")
+                    text: i18n("Up")
                     enabled: page.selected > 0
                     onClicked: page.move(page.selected, page.selected - 1)
                 }
 
                 Button {
                     icon.name: "go-down"
-                    text: i18n("Ниже")
+                    text: i18n("Down")
                     enabled: page.selected >= 0 && page.selected < page.blocks.length - 1
                     onClicked: page.move(page.selected, page.selected + 1)
                 }
 
                 Button {
                     icon.name: "list-remove"
-                    text: i18n("Убрать")
+                    text: i18n("Remove")
                     enabled: page.selected >= 0
                     onClicked: page.removeBlock(page.selected)
                 }
 
                 Button {
                     icon.name: "edit-reset"
-                    text: i18n("Сбросить")
+                    text: i18n("Reset")
                     onClicked: { page.cfg_blocksJson = ""; page.load() }
                 }
             }
@@ -224,7 +226,7 @@ KCM.SimpleKCM {
 
             Button {
                 icon.name: "list-add"
-                text: i18n("Добавить блок")
+                text: i18n("Add block")
                 enabled: typeBox.currentIndex >= 0
                 onClicked: page.addBlock(page.types[typeBox.currentIndex].type)
             }
@@ -240,7 +242,7 @@ KCM.SimpleKCM {
                 // The parameter editor is picked by the type from the vocabulary.
                 Item {
                     required property var modelData
-                    Kirigami.FormData.label: modelData.name + ":"
+                    Kirigami.FormData.label: i18nc("schema: parameter name", modelData.name) + ":"
                     implicitWidth: row.implicitWidth
                     implicitHeight: row.implicitHeight
 

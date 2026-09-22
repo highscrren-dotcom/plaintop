@@ -24,11 +24,11 @@ reproduction beats a paragraph of reasoning.
 
 | Contribution | Why it is easy here |
 |---|---|
-| **A new block type** | one entry in `schema/blocks.json` + one `case` in `main.qml`; the settings page builds itself from the vocabulary |
+| **A new block type** | one entry in `schema/blocks.json` + one `case` in `monitor/shared/MonitorData.qml`; the settings pages build themselves from the vocabulary |
 | **A generator for another engine** | the description layer is engine-agnostic on purpose — waybar, eww, AGS, or back to conky |
 | **Hardware and distro portability** | the defaults describe one machine; every hardcoded sensor id you replace with discovery is a win |
 | **A trap you hit** | a PR to `docs/GOTCHAS.md` with a reproduction is worth as much as code |
-| **Translation** | docs are English + Russian mirrors (`FILE.md` / `FILE.ru.md`); the strings the user sees are still Russian |
+| **Translation** | the monitor speaks through gettext catalogs in `po/`: a new language is one command and a `.po` file — see [Translations](#translations); the visualizer is being converted next |
 
 Before adding a block type, check whether the open-ended ones already cover you: `command`
 runs any shell command on its own interval, `sensor` shows any `ksystemstats` sensor by id.
@@ -92,11 +92,14 @@ Three things that will otherwise waste your afternoon — all three are in
 
    Parameter types are `bool`, `int` (optionally `min`/`max`), `string`, `stringlist`.
    The generator rejects anything else, and the settings page renders an editor per type.
+   Names and hints are English source strings: `python3 po/extract.py` puts them into the
+   catalogs, and the editors translate them where they are shown.
 
 2. **Default layout** — optionally add the block to `schema/widget.json`. Users can add it
    themselves from the settings page either way.
 
-3. **Rendering** — one `case` in the lines builder in `main.qml`:
+3. **Rendering** — one `case` in the lines builder in `monitor/shared/MonitorData.qml`,
+   which both hosts share. Any word it shows goes through `tr.i18n()`:
 
    ```js
    case "fan": {
@@ -114,6 +117,42 @@ Three things that will otherwise waste your afternoon — all three are in
 
 The generator needs no changes: validation is driven by the vocabulary.
 
+## Translations
+
+The widgets use KDE's own ki18n with gettext catalogs, one domain per widget —
+`plasma_applet_org.s1dd1.plaintop` for the monitor. The language is Plasma's
+(System Settings → Region & Language); dates and decimal separators follow its Formats.
+Why this design and what it costs — `docs/DECISIONS.md`, decision 7.
+
+```bash
+python3 po/extract.py            # refresh po/*.pot from the sources, merge into every language
+python3 po/extract.py --init uk  # start a new language
+lokalize po/uk/plasma_applet_org.s1dd1.plaintop.po   # or Poedit, or any .po editor
+./install.sh --plasmoid          # builds the .mo files into the package
+./install.sh --plaintop-window   # and into ~/.local/share/locale for the window host
+```
+
+Rules for the source strings:
+
+- **They are English.** Russian is a translation like any other.
+- **Placeholders are `%1`, `%2`**, never a string glued to a number: "shown %1 of %2",
+  not `"shown " + a + " of " + b`. A translator needs the whole sentence.
+- **Numbers with a noun use the plural call**, `i18np` / `i18ncp`: Russian, Ukrainian and
+  Polish have three forms, and the catalog's own rules pick them.
+- **Give context where a word is ambiguous**: `i18nc("palette: colour of", "Header:")`.
+- **Files only the plasmoid loads call `i18n()`**; QML shared by both hosts and the window
+  hosts' own files call `tr.i18n()` through a `KI18nContext`, since the bare `qml6`
+  runner has no `i18n()` of its own.
+- **Do not translate keys**: window titles the KWin rules match (`plaintop`), sensor ids,
+  config keys, block ids.
+
+`msgfmt --check` runs on every install, so a translation that drops a `%1` fails there
+instead of on screen. To see the widget in another language without changing yours, run
+the editor (`~/.local/share/plaintop/ui/settings.qml`) with `LANGUAGE=de` — and with an
+empty `XDG_CONFIG_HOME` if its live preview should take that locale's dates and numbers
+too, since KDE applies your own Formats over `LANG`. The editor reads its settings from
+the relay, so an empty config directory costs it nothing.
+
 ## Style
 
 - **Comments say why, not what.** The code is readable; the reason it is shaped that way
@@ -125,10 +164,9 @@ The generator needs no changes: validation is driven by the vocabulary.
   reboots.
 - **New rules become checks first.** If a rule can live in `install.sh` as a check, put it
   there rather than in a document.
-- **Comments are English. User-visible strings are not, yet.** The widget's settings
-  labels, the rows it draws (`ОЗУ`, `аптайм`, `не смонтирован`) and `install.sh` output
-  are still Russian. Doing that properly means real i18n — `i18n()` calls with
-  translation catalogs — which is an open invitation, not a decided design.
+- **Comments are English, and so are the source strings users see** — through the
+  catalogs, see [Translations](#translations). The visualizer's strings and the output of
+  `install.sh` are still Russian; converting them is the next step.
 
 ## Commits and pull requests
 

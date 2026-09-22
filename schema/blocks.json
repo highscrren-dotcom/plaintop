@@ -1,66 +1,66 @@
 {
-  "_": "Словарь типов блоков. Диалог настроек строится по нему, а не по списку в коде: новый тип блока не должен требовать правки интерфейса.",
+  "_": "Vocabulary of block types. The settings dialogs are built from it, not from a list in the code: a new block type must not need an interface change. The texts are English source strings; po/extract.py puts them into the catalogs.",
   "header": {
-    "name": "Заголовок",
-    "hint": "Строка вверху: ваш текст и имя хоста через «\\»; без текста — только имя хоста",
+    "name": "Header",
+    "hint": "The top line: your text and the hostname joined by “\\”; with no text, only the hostname",
     "params": {
       "text": {
         "type": "string",
-        "name": "Текст",
+        "name": "Text",
         "default": ""
       },
       "hostname": {
         "type": "bool",
-        "name": "Дописывать имя хоста",
+        "name": "Append the hostname",
         "default": true
       }
     }
   },
   "clock": {
-    "name": "Часы",
+    "name": "Clock",
     "params": {
       "seconds": {
         "type": "bool",
-        "name": "Секунды мелким кеглем",
+        "name": "Seconds in a small size",
         "default": true
       }
     }
   },
   "date": {
-    "name": "Дата",
+    "name": "Date",
     "params": {}
   },
   "os": {
-    "name": "Система и ядро",
+    "name": "System and kernel",
     "params": {}
   },
   "separator": {
-    "name": "Разделитель",
+    "name": "Separator",
     "params": {}
   },
   "cpu": {
-    "name": "Процессор",
+    "name": "Processor",
     "params": {
       "per_socket": {
         "type": "bool",
-        "name": "Строки по узлам NUMA",
+        "name": "Lines per NUMA node",
         "default": true
       },
       "model_line": {
         "type": "bool",
-        "name": "Модель, температуры, вентиляторы",
+        "name": "Model, temperatures, fans",
         "default": true
       },
       "top_processes": {
         "type": "int",
-        "name": "Процессов в топе",
+        "name": "Processes in the top list",
         "default": 5,
         "min": 0,
         "max": 15
       },
       "fans": {
         "type": "stringlist",
-        "name": "Датчики вентиляторов (пусто — найти самим)",
+        "name": "Fan sensors (empty — find them)",
         "default": [],
         "pick": "sensor",
         "pattern": "^lmsensors/[^/]+/fan\\d+$"
@@ -68,16 +68,16 @@
     }
   },
   "memory": {
-    "name": "Память",
+    "name": "Memory",
     "params": {
       "totals": {
         "type": "bool",
-        "name": "Строка «занято / всего»",
+        "name": "The “used / total” line",
         "default": true
       },
       "top_processes": {
         "type": "int",
-        "name": "Процессов в топе",
+        "name": "Processes in the top list",
         "default": 5,
         "min": 0,
         "max": 15
@@ -85,21 +85,21 @@
     }
   },
   "gpu": {
-    "name": "Видеокарта",
+    "name": "Graphics card",
     "params": {
       "details": {
         "type": "bool",
-        "name": "Строка VRAM, температуры и потребления",
+        "name": "VRAM, temperature and power line",
         "default": true
       }
     }
   },
   "disks": {
-    "name": "Диски",
+    "name": "Disks",
     "params": {
       "mounts": {
         "type": "stringlist",
-        "name": "Точки монтирования",
+        "name": "Mount points",
         "default": [
           "/"
         ],
@@ -107,12 +107,12 @@
       },
       "nvme_temp": {
         "type": "bool",
-        "name": "Температура NVMe у корня",
+        "name": "NVMe temperature on the root line",
         "default": true
       },
       "nvmeSensor": {
         "type": "string",
-        "name": "Датчик температуры NVMe (пусто — найти самому)",
+        "name": "NVMe temperature sensor (empty — find it)",
         "default": "",
         "pick": "sensor",
         "pattern": "^lmsensors/nvme-[^/]+/temp\\d+$"
@@ -120,54 +120,54 @@
     }
   },
   "uptime": {
-    "name": "Аптайм",
+    "name": "Uptime",
     "params": {}
   },
   "network": {
-    "name": "Сеть",
+    "name": "Network",
     "params": {
       "interface": {
         "type": "string",
-        "name": "Интерфейс (пусто — найти самому)",
+        "name": "Interface (empty — find it)",
         "default": "",
         "pick": "iface"
       }
     }
   },
   "services": {
-    "name": "Службы",
-    "hint": "docker, ollama, ожидающие обновления — свой скрипт в пакете",
+    "name": "Services",
+    "hint": "docker, ollama, pending updates — a script inside the package",
     "params": {}
   },
   "passport": {
-    "name": "Паспорт железа",
-    "hint": "Статичные строки: процессор, видеокарта, плата",
+    "name": "Hardware spec sheet",
+    "hint": "Static lines: processor, graphics card, board",
     "params": {}
   },
   "command": {
-    "name": "Своя команда",
-    "hint": "Строка из вывода произвольной команды",
+    "name": "Custom command",
+    "hint": "A line from the output of any command",
     "params": {
       "label": {
         "type": "string",
-        "name": "Метка",
+        "name": "Label",
         "default": "cmd"
       },
       "command": {
         "type": "string",
-        "name": "Команда",
+        "name": "Command",
         "default": "echo ok"
       },
       "interval": {
         "type": "int",
-        "name": "Интервал, с",
+        "name": "Interval, s",
         "default": 30,
         "min": 1,
         "max": 3600
       },
       "lines": {
         "type": "int",
-        "name": "Сколько строк показывать",
+        "name": "Lines to show",
         "default": 1,
         "min": 1,
         "max": 20
@@ -175,34 +175,34 @@
     }
   },
   "sensor": {
-    "name": "Свой датчик",
-    "hint": "Любой сенсор ksystemstats по его id",
+    "name": "Custom sensor",
+    "hint": "Any ksystemstats sensor by its id",
     "params": {
       "label": {
         "type": "string",
-        "name": "Метка",
+        "name": "Label",
         "default": "SEN"
       },
       "id": {
         "type": "string",
-        "name": "Идентификатор датчика",
+        "name": "Sensor id",
         "default": "cpu/all/usage",
         "pick": "sensor",
         "pattern": ""
       },
       "bar": {
         "type": "bool",
-        "name": "Рисовать полоску",
+        "name": "Draw a bar",
         "default": true
       },
       "suffix": {
         "type": "string",
-        "name": "Приписка после значения",
+        "name": "Suffix after the value",
         "default": ""
       },
       "digits": {
         "type": "int",
-        "name": "Знаков после запятой",
+        "name": "Decimal places",
         "default": 0,
         "min": 0,
         "max": 3

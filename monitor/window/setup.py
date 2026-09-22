@@ -33,6 +33,11 @@ LAUNCHER = HOME / ".local/share/applications/plaintop-settings.desktop"
 PIDFILE = HOME / ".local/share/plaintop/window.pid"
 KWINRULES = HOME / ".config/kwinrulesrc"
 APPLETSRC = HOME / ".config/plasma-org.kde.plasma.desktop-appletsrc"
+# Translations: the plasmoid's own catalogs, built into its package and deployed where the
+# window's KI18nContext looks for them — XDG_DATA_HOME/locale (decision 7).
+DOMAIN = "plasma_applet_org.s1dd1.plaintop"
+LOCALE_BUILD = SRC / "package" / "contents" / "locale"
+LOCALE_DEST = HOME / ".local/share/locale"
 RULE_NAME = "plaintop monitor"
 TITLE = "plaintop"
 
@@ -147,6 +152,13 @@ def build_config(overwrite_blocks=True):
 REINSTALL = "./install.sh --plaintop-window"
 
 
+def build_catalogs(quiet=False):
+    """po/*/<domain>.po → LOCALE_BUILD, the same files the plasmoid package carries."""
+    r = subprocess.run([sys.executable, str(REPO / "po" / "build.py"), DOMAIN, str(LOCALE_BUILD)],
+                       capture_output=quiet, text=True)
+    return r.returncode == 0
+
+
 def deployed_files():
     """(source, destination) of every file the window runs from. One list serves both the
     copy and the status check, so the check cannot miss a file the copy gained."""
@@ -156,6 +168,8 @@ def deployed_files():
     # The services block runs this; MonitorData resolves it next to itself by default.
     pairs.append((SRC / "package" / "contents" / "code" / "services.sh",
                   UI_DEST / "services.sh"))
+    pairs += [(mo, LOCALE_DEST / mo.relative_to(LOCALE_BUILD))
+              for mo in sorted(LOCALE_BUILD.glob("*/LC_MESSAGES/*.mo"))]
     return pairs
 
 
@@ -189,6 +203,8 @@ def files_status():
     behind the repository for a day, and the status line said only "есть"."""
     if not (UI_DEST / "window.qml").exists():
         return f"нет ({UI_DEST})"
+    if not build_catalogs(quiet=True):
+        return "⚠️ переводы не собираются: python3 po/build.py"
     stale = stale_files()
     if stale:
         return f"⚠️ разошлись с репо: {', '.join(stale)} — переложить: {REINSTALL}"
@@ -197,7 +213,10 @@ def files_status():
 
 def deploy_files():
     UI_DEST.mkdir(parents=True, exist_ok=True)
+    if not build_catalogs():
+        sys.exit(1)
     for src, dst in deployed_files():
+        dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
     (UI_DEST / "services.sh").chmod(0o755)
     # The editor builds its block list from the vocabulary in the generated description.

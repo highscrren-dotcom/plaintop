@@ -30,20 +30,20 @@ KCM.SimpleKCM {
 
         TextField {
             id: fontField
-            Kirigami.FormData.label: i18n("Шрифт:")
+            Kirigami.FormData.label: i18n("Font:")
             Layout.fillWidth: true
         }
 
         SpinBox {
             id: sizeField
-            Kirigami.FormData.label: i18n("Кегль:")
+            Kirigami.FormData.label: i18nc("font size", "Size:")
             from: 6
             to: 32
         }
 
         SpinBox {
             id: padLeftField
-            Kirigami.FormData.label: i18n("Отступ слева, px:")
+            Kirigami.FormData.label: i18n("Left padding, px:")
             from: 0
             to: 500
             stepSize: 4
@@ -51,7 +51,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: padTopField
-            Kirigami.FormData.label: i18n("Отступ сверху, px:")
+            Kirigami.FormData.label: i18n("Top padding, px:")
             from: 0
             to: 500
             stepSize: 4
@@ -59,7 +59,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: widthField
-            Kirigami.FormData.label: i18n("Ширина, px:")
+            Kirigami.FormData.label: i18n("Width, px:")
             from: 100
             to: 2000
             stepSize: 8
@@ -67,51 +67,51 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: heightField
-            Kirigami.FormData.label: i18n("Высота, px:")
+            Kirigami.FormData.label: i18n("Height, px:")
             from: 100
             to: 2000
             stepSize: 8
         }
 
         KQuickControls.ColorButton {
-            Kirigami.FormData.label: i18n("Основной текст:")
+            Kirigami.FormData.label: i18nc("palette: colour of", "Main text:")
             color: page.cfg_colorFg
             onColorChanged: page.cfg_colorFg = color.toString()
         }
 
         KQuickControls.ColorButton {
-            Kirigami.FormData.label: i18n("Заголовок:")
+            Kirigami.FormData.label: i18nc("palette: colour of", "Header:")
             color: page.cfg_colorAccent
             onColorChanged: page.cfg_colorAccent = color.toString()
         }
 
         KQuickControls.ColorButton {
-            Kirigami.FormData.label: i18n("Второстепенное:")
+            Kirigami.FormData.label: i18nc("palette: colour of", "Secondary:")
             color: page.cfg_colorDim
             onColorChanged: page.cfg_colorDim = color.toString()
         }
 
         KQuickControls.ColorButton {
-            Kirigami.FormData.label: i18n("Значения:")
+            Kirigami.FormData.label: i18nc("palette: colour of", "Values:")
             color: page.cfg_colorValue
             onColorChanged: page.cfg_colorValue = color.toString()
         }
 
         CheckBox {
             id: clickBox
-            Kirigami.FormData.label: i18n("Мышь:")
-            text: i18n("пропускать клики на рабочий стол")
+            Kirigami.FormData.label: i18n("Mouse:")
+            text: i18n("let clicks through to the desktop")
         }
 
         Label {
-            text: i18n("Когда клики пропускаются, виджет мышью не берётся.\nПопасть в настройки: режим правки рабочего стола\nили ./install.sh с ключом clicks off")
+            text: i18n("While clicks go through, the widget cannot be grabbed with the mouse.\nTo reach the settings: the desktop's edit mode\nor ./install.sh with the clicks off switch")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }
 
         SpinBox {
             id: intervalField
-            Kirigami.FormData.label: i18n("Интервал, мс:")
+            Kirigami.FormData.label: i18n("Interval, ms:")
             from: 200
             to: 10000
             stepSize: 100
@@ -119,13 +119,13 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: processField
-            Kirigami.FormData.label: i18n("Топ процессов, раз в … с:")
+            Kirigami.FormData.label: i18n("Top processes, every … s:")
             from: 2
             to: 60
         }
 
         Label {
-            text: i18n("Список процессов — самое дорогое в сборе: раз в 2 с\nоколо 3 % ядра, раз в 10 с — около 1,3 %")
+            text: i18n("The process list is the most expensive thing collected: every 2 s\nabout 3% of a core, every 10 s about 1.3%")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }

@@ -63,6 +63,9 @@ monitor_prepare() {
     if ! python3 "$REPO/monitor/generate.py"; then
         red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
     fi
+    # Catalogs po/*/<domain>.po → contents/locale, where libplasma looks for the applet's
+    # translations. The window host deploys the same .mo files (decision 7).
+    python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plaintop "$PLASMOID_SRC/contents/locale" || return 1
 }
 
 spectrum_prepare() {
