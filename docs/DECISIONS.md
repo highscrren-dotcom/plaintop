@@ -368,7 +368,10 @@ visualizer loaded without QML warnings.
 
 **Revisit if:** KDE changes the wrapper — its type, its place as the applet's parent, or
 `editModeCondition` goes away — or offers an official way for an applet to decline the
-mouse. Then use that and drop the binding.
+mouse. Then use that and drop the binding. If hover or keyboard input inside a
+click-through widget is ever needed: an empty `containmentMask` on the wrapper itself
+instead of `enabled: false` keeps the applet subtree enabled (research of 2026-09-22,
+7 of 7 on a stand, not yet on the desktop).
 
 ## 9. The window hosts are retired — the plasmoid is the only host (2026-09-22)
 
