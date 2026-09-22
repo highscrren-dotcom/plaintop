@@ -77,10 +77,10 @@ found on the machine the widget runs on:
 
 | What | How it is chosen | Change it in |
 |---|---|---|
-| Network interface | among the connected hardware interfaces: the one with a gateway, then the one that carried the most traffic | editor → *"Блоки"* (Blocks) → *Сеть*, a menu of the interfaces found |
-| Fan and NVMe sensors | by pattern among the sensors this machine reports | editor → *"Блоки"* → *Процессор* / *Диски*, a searchable list with live values |
-| Mount points | `/` only — a mount point is a choice, not something to guess | editor → *"Блоки"* → *Диски*, a list of what is mounted now |
-| Header text | yours to write; empty by default, so only the hostname shows | editor → *"Блоки"* → *Заголовок* |
+| Network interface | among the connected hardware interfaces: the one with a gateway, then the one that carried the most traffic | editor → *Blocks* → *Network*, a menu of the interfaces found |
+| Fan and NVMe sensors | by pattern among the sensors this machine reports | editor → *Blocks* → *Processor* / *Disks*, a searchable list with live values |
+| Mount points | `/` only — a mount point is a choice, not something to guess | editor → *Blocks* → *Disks*, a list of what is mounted now |
+| Header text | yours to write; empty by default, so only the hostname shows | editor → *Blocks* → *Header* |
 
 A value you pick is kept as a preference: while the machine still reports it, it wins; when
 a reboot renames the chip or the interface, the widget falls back to discovery instead of
@@ -122,14 +122,14 @@ Details: [schema/README.md](schema/README.md).
 
 ## Settings
 
-Right-click the widget → *Настроить plaintop*. Two pages:
+Right-click the widget → *Configure plaintop…*. Two pages:
 
-- *"Общее"* (General) — font, size, edge padding, widget size, the four palette colours,
+- *General* — font, size, edge padding, widget size, the four palette colours,
   the mouse, update interval, how often the process list is read.
-- *"Блоки"* (Blocks) — enable, disable, reorder, edit parameters, add a block of any type
+- *Blocks* — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 
-**About the mouse.** The *"Мышь"* (Mouse) setting — and the
+**About the mouse.** The *Mouse* setting — and the
 `./install.sh --clicks-on` / `--clicks-off` switches behind it — turns input off on the
 widget's own representation. That is enough for the right button, which then reaches the
 desktop through the widget, and never enough for the left one, which the applet container
@@ -141,6 +141,15 @@ Two block types are deliberately open-ended:
 - **`sensor`** — any `ksystemstats` sensor by id, with or without a bar.
 
 So a new reading usually means a new row in the description, not a patch to the code.
+
+## Languages
+
+Both widgets, their editors and their menu entries follow Plasma's language (System
+Settings → Region & Language); dates and decimal separators follow its Formats. There are
+ten: English, Russian, Ukrainian, German, French, Spanish, Brazilian Portuguese, Polish,
+Simplified Chinese and Japanese. Everything but English and Russian is a machine
+translation — corrections are welcome as pull requests, and a new language is one command:
+see [CONTRIBUTING.md → Translations](CONTRIBUTING.md#translations).
 
 ## Fork it, bend it, send it back
 

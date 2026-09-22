@@ -50,7 +50,7 @@ X Shape extension (`conky/clickthrough.py`, needs `python-xlib`).
 Check the result by reading it back, not by eye:
 ```
 Bounding (what gets drawn): 440x748
-Input    (what catches the mouse): 0 rectangles   ← клики проходят (clicks pass through)
+Input    (what catches the mouse): 0 rectangles   ← clicks pass through
 ```
 
 ⚠️ **Checking with `xdotool mousemove` is pointless.** Wayland blocks synthetic mouse
@@ -192,8 +192,8 @@ Tried, all confirmed by running it:
 | Writing `ItemGeometries` into the config while the shell is running | overwritten by the shell itself |
 | The same with the shell stopped | **plasmashell still puts the applet at 0,0** |
 
-That is why the gap from the edge is drawn **inside** the widget (the «Отступ
-слева/сверху» settings — left/top margin), not by the applet's coordinates: this way it
+That is why the gap from the edge is drawn **inside** the widget (the *Left padding* /
+*Top padding* settings), not by the applet's coordinates: this way it
 holds no matter where the containment put the applet, and it survives a shell restart.
 
 ## systemd silences plasmashell after frequent restarts
@@ -443,3 +443,14 @@ Kirigami loads applies `~/.config/plasma-localerc` (System Settings → Formats)
 environment. With an empty `XDG_CONFIG_HOME` the same run gives "Tuesday, September 22"
 and "9.2 GiB". This is right for users — Formats are theirs to choose apart from the
 language — and only matters for tests.
+
+## A locale that is not generated silently turns every translation off
+
+`locale -a` on s1dPC lists only C, en_US and ru_RU. Run the widget with
+`LC_ALL=de_DE.UTF-8 LANGUAGE=de` and glibc, not finding the locale, falls back to C — and
+in the C locale gettext ignores `LANGUAGE`. Every string stays English, while the date is
+German, because Qt names weekdays and months from its own data. All four translation runs
+hit this independently. Without root, build the locale into a scratch directory and point
+glibc at it: `localedef -i de_DE -f UTF-8 $DIR/de_DE.UTF-8`, then add `LOCPATH=$DIR`.
+Leaving `LC_ALL` alone also works — `LANGUAGE` is honoured under any generated locale —
+but then the date stays in yours.

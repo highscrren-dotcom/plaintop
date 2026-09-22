@@ -31,13 +31,13 @@ showed.
 
 **Which blocks and in what order comes from the description** (`../schema/widget.json`):
 enable, disable, reorder, change parameters, add a block of your own — from an arbitrary
-command or from any ksystemstats sensor. Both hosts edit it: the plasmoid on the "Блоки"
-(Blocks) page of its dialog, the window in its editor.
+command or from any ksystemstats sensor. Both hosts edit it: the plasmoid on the *Blocks*
+page of its dialog, the window in its editor.
 
 ## Why two hosts
 
 A desktop plasmoid never hands over the left mouse button — four ways were tried, see
-`../docs/GOTCHAS.md`; the *"Мышь"* (Mouse) setting only frees the right one. A plain window
+`../docs/GOTCHAS.md`; the *Mouse* setting only frees the right one. A plain window
 with `Qt.WindowTransparentForInput` hands over both, so the monitor can sit over the
 desktop without stealing clicks from the icons under it.
 
@@ -69,8 +69,8 @@ qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
 ## Settings
 
 **The plasmoid** keeps its settings in Plasma's store: `package/contents/config/main.xml`
-is the schema, and the dialog has two pages — *"Общее"* (General: font, sizes, padding,
-the four palette colours, mouse, intervals) and *"Блоки"* (Blocks), where the header
+is the schema, and the dialog has two pages — *General* (font, sizes, padding, the four
+palette colours, mouse, intervals) and *Blocks*, where the header
 text lives too — empty by default, so a fresh install shows only the hostname.
 
 **The window** reads `~/.config/plaintop/monitor.json` — appearance and the block
@@ -81,7 +81,7 @@ top lists is read: it is the most expensive thing collected — about 3% of a co
 default 2 s, about 1.3% at 10 s, measured with ~900 processes.
 
 **The window's editor is `window/settings.qml`**, started from the menu entry
-"plaintop — монитор" or with `./install.sh --plaintop-settings`. It shows the layout in the
+"plaintop — monitor settings" or with `./install.sh --plaintop-settings`. It shows the layout in the
 **real renderer** side by side with the settings — the same `MonitorView` the desktop
 draws, fed by a second `MonitorData`, so an edit is visible before it is saved. QML cannot
 write files, so the editor reads `GET /config?widget=monitor` from the relay and posts

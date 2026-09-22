@@ -35,13 +35,14 @@ the processor with temperatures and fan speeds, top processes by CPU and by memo
 GPU with VRAM, disks with NVMe temperature, uptime, network, docker/ollama/updates and a
 hardware spec sheet.
 
-The blocks, their order and their parameters are set on the "Блоки" (Blocks) page of the
+The blocks, their order and their parameters are set on the Blocks page of the
 settings; a block can also be any ksystemstats sensor or any command. Sensors specific to
 a machine — fans, NVMe, the network interface — are found on the machine itself.
 Data comes from ksystemstats, the same service as Plasma's System Monitor.
 
-The interface follows Plasma's language — English and Russian so far, more to come;
-translations are welcome as .po files. The updates line reads pacman.
+The interface follows Plasma's language: English, Russian, Ukrainian, German, French,
+Spanish, Brazilian Portuguese, Polish, Simplified Chinese, Japanese — all but English and
+Russian machine-translated, corrections welcome. The updates line reads pacman.
 
 Want the monitor to let clicks through to the desktop? A plasmoid cannot do that — the
 repository has a window host that can, plus an editor with a live preview:
@@ -57,8 +58,10 @@ Rainmeter: часы и дата, система, загрузка CPU общая
 Набор блоков, порядок и параметры — на странице «Блоки» в настройках; блоком может быть
 любой датчик ksystemstats или любая команда. Привязанные к машине датчики — вентиляторы,
 NVMe, сетевой интерфейс — находятся на самой машине. Данные берутся у ksystemstats — той
-же службы, что у «Системного монитора» Plasma. Интерфейс говорит на языке Plasma — пока
-английский и русский. Строка обновлений читает pacman.
+же службы, что у «Системного монитора» Plasma. Интерфейс говорит на языке Plasma: английский,
+русский, украинский, немецкий, французский, испанский, португальский (Бразилия), польский,
+китайский и японский — всё, кроме английского и русского, переведено машинно, исправления
+приветствуются. Строка обновлений читает pacman.
 
 Нужно, чтобы клики проходили сквозь монитор на рабочий стол? Плазмоид так не умеет —
 в репозитории есть оконный хост, который умеет, и редактор с живым просмотром:

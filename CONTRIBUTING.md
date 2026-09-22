@@ -123,7 +123,9 @@ The widgets use KDE's own ki18n with gettext catalogs, one domain per widget —
 `plasma_applet_org.s1dd1.plaintop` for the monitor, `plasma_applet_org.s1dd1.plainspectrum`
 for the visualizer. The language is Plasma's
 (System Settings → Region & Language); dates and decimal separators follow its Formats.
-Why this design and what it costs — `docs/DECISIONS.md`, decision 7.
+Why this design and what it costs — `docs/DECISIONS.md`, decision 7. There are ten
+languages in `po/`; all but English (the source) and Russian are machine translations
+waiting for a native speaker — a review of one is as welcome as a new one.
 
 ```bash
 python3 po/extract.py            # refresh po/*.pot from the sources, merge into every language
@@ -147,13 +149,19 @@ Rules for the source strings:
   runner has no `i18n()` of its own.
 - **Do not translate keys**: window titles the KWin rules match (`plaintop`), sensor ids,
   config keys, block ids.
+- **The menu and autostart entries** the window hosts' `setup.py` writes are marked with
+  `N_(context, text)`; `setup.py` adds a `Name[xx]=` line per language from the built
+  catalogs.
 
 `msgfmt --check` runs on every install, so a translation that drops a `%1` fails there
 instead of on screen. To see the widget in another language without changing yours, run
-the editor (`~/.local/share/plaintop/ui/settings.qml`) with `LANGUAGE=de` — and with an
-empty `XDG_CONFIG_HOME` if its live preview should take that locale's dates and numbers
-too, since KDE applies your own Formats over `LANG`. The editor reads its settings from
-the relay, so an empty config directory costs it nothing.
+the editor (`~/.local/share/plaintop/ui/settings.qml`) with `LANGUAGE=de`. For that
+locale's dates and numbers in its live preview too, set `LANG`/`LC_ALL` to it and give it
+an empty `XDG_CONFIG_HOME`, since KDE applies your own Formats over `LANG`; the editor reads
+its settings from the relay, so the empty config directory costs it nothing. ⚠️ The locale
+must be generated (`locale -a`), or gettext falls back to C and shows English — without
+root, `localedef -i de_DE -f UTF-8 $DIR/de_DE.UTF-8` and `LOCPATH=$DIR` do it (see
+`docs/GOTCHAS.md`).
 
 ## Style
 
@@ -167,8 +175,9 @@ the relay, so an empty config directory costs it nothing.
 - **New rules become checks first.** If a rule can live in `install.sh` as a check, put it
   there rather than in a document.
 - **Comments are English, and so are the source strings users see** — through the
-  catalogs, see [Translations](#translations). The output of `install.sh` and the setup
-  scripts in the terminal is still Russian.
+  catalogs, see [Translations](#translations). Terminal output — `install.sh`, the setup
+  scripts, the generator — is plain English and is not translated: whoever installs
+  from the repository reads it.
 
 ## Commits and pull requests
 

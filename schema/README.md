@@ -63,7 +63,7 @@ on. See decision 6 in `../docs/DECISIONS.md`.
 
 ## Editing from the interface
 
-The "Блоки" (Blocks) page in the widget settings reads that same layout: enable, disable, reorder,
+The *Blocks* page in the widget settings reads that same layout: enable, disable, reorder,
 add a block of any type from the dictionary, remove one, adjust the parameters — and puts the
 result into the plasmoid's settings as a JSON string. As long as that is empty, the layout from the
-package is used; the "Сбросить" (Reset) button brings it back.
+package is used; the *Reset* button brings it back.
