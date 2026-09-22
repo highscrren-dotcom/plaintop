@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:25+0500\n"
+"POT-Creation-Date: 2026-09-22 13:34+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -369,6 +369,26 @@ msgstr "当前已挂载：%1"
 #: monitor/window/settings.qml:964
 msgid "or type a path by hand"
 msgstr "或手动输入路径"
+
+#: monitor/window/setup.py:174
+msgctxt "autostart entry: name"
+msgid "plaintop — text monitor"
+msgstr "plaintop — 文本监视器"
+
+#: monitor/window/setup.py:176
+msgctxt "autostart entry: comment"
+msgid "The monitor in its own window, clicks pass through"
+msgstr "在独立窗口中显示监视器，点击可穿透"
+
+#: monitor/window/setup.py:177
+msgctxt "menu entry: name"
+msgid "plaintop — monitor settings"
+msgstr "plaintop — 监视器设置"
+
+#: monitor/window/setup.py:178
+msgctxt "menu entry: comment"
+msgid "Appearance, palette and blocks of the text monitor"
+msgstr "文本监视器的外观、调色板和区块"
 
 #: schema/blocks.json:1
 msgctxt "schema: block name"

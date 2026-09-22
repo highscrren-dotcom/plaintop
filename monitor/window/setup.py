@@ -13,6 +13,7 @@ plasmoid's own settings dialog, so the dialog stays the editor for both hosts un
 window host gets one of its own.
 """
 import filecmp
+import gettext
 import json
 import os
 import signal
@@ -152,6 +153,31 @@ def build_config(overwrite_blocks=True):
 REINSTALL = "./install.sh --plaintop-window"
 
 
+# ── Menu and autostart entries ───────────────────────────────────────────────
+# The .desktop files are UI too: English Name/Comment, plus Name[xx]/Comment[xx] for every
+# language whose catalog translates them. N_ only marks the text for po/extract.py; the
+# translation happens here, when the file is written, from the .mo files just built.
+def N_(context, text):
+    return context, text
+
+
+def desktop_key(key, entry):
+    context, text = entry
+    out = f"{key}={text}\n"
+    for mo in sorted(LOCALE_BUILD.glob(f"*/LC_MESSAGES/{DOMAIN}.mo")):
+        with open(mo, "rb") as f:
+            translated = gettext.GNUTranslations(f).pgettext(context, text)
+        if translated != text:
+            out += f"{key}[{mo.parent.parent.name}]={translated}\n"
+    return out
+
+AUTOSTART_NAME = N_("autostart entry: name", "plaintop — text monitor")
+AUTOSTART_COMMENT = N_("autostart entry: comment",
+                       "The monitor in its own window, clicks pass through")
+LAUNCHER_NAME = N_("menu entry: name", "plaintop — monitor settings")
+LAUNCHER_COMMENT = N_("menu entry: comment", "Appearance, palette and blocks of the text monitor")
+
+
 def build_catalogs(quiet=False):
     """po/*/<domain>.po → LOCALE_BUILD, the same files the plasmoid package carries."""
     r = subprocess.run([sys.executable, str(REPO / "po" / "build.py"), DOMAIN, str(LOCALE_BUILD)],
@@ -233,9 +259,9 @@ def write_autostart():
     AUTOSTART.write_text(
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=plaintop — текстовый монитор\n"
-        "Comment=Монитор отдельным окном, клики проходят насквозь\n"
-        f"Exec=env QML_XHR_ALLOW_FILE_READ=1 qml6 {UI_DEST / 'window.qml'}\n"
+        + desktop_key("Name", AUTOSTART_NAME)
+        + desktop_key("Comment", AUTOSTART_COMMENT)
+        + f"Exec=env QML_XHR_ALLOW_FILE_READ=1 qml6 {UI_DEST / 'window.qml'}\n"
         "Terminal=false\n"
         "X-GNOME-Autostart-enabled=true\n"
         "X-KDE-autostart-after=panel\n",
@@ -249,9 +275,9 @@ def write_launcher():
     LAUNCHER.write_text(
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=plaintop — настройки монитора\n"
-        "Comment=Вид, палитра и блоки текстового монитора\n"
-        f"Exec=env QML_XHR_ALLOW_FILE_READ=1 qml6 {UI_DEST / 'settings.qml'}\n"
+        + desktop_key("Name", LAUNCHER_NAME)
+        + desktop_key("Comment", LAUNCHER_COMMENT)
+        + f"Exec=env QML_XHR_ALLOW_FILE_READ=1 qml6 {UI_DEST / 'settings.qml'}\n"
         "Icon=utilities-system-monitor\n"
         "Terminal=false\n"
         "Categories=Settings;Utility;\n",

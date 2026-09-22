@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:25+0500\n"
+"POT-Creation-Date: 2026-09-22 13:34+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Ukrainian\n"
@@ -33,7 +33,8 @@ msgstr "Блоки"
 #: monitor/package/contents/ui/configBlocks.qml:134
 msgid ""
 "The blocks and their order. The default layout comes from schema/widget.json."
-msgstr "Блоки та їхній порядок. Типове компонування береться з schema/widget.json."
+msgstr ""
+"Блоки та їхній порядок. Типове компонування береться з schema/widget.json."
 
 #: monitor/package/contents/ui/configBlocks.qml:190
 #: monitor/window/settings.qml:491
@@ -375,6 +376,26 @@ msgstr "змонтовано зараз: %1"
 msgid "or type a path by hand"
 msgstr "або введіть шлях вручну"
 
+#: monitor/window/setup.py:174
+msgctxt "autostart entry: name"
+msgid "plaintop — text monitor"
+msgstr "plaintop — текстовий монітор"
+
+#: monitor/window/setup.py:176
+msgctxt "autostart entry: comment"
+msgid "The monitor in its own window, clicks pass through"
+msgstr "Монітор в окремому вікні, клацання проходять наскрізь"
+
+#: monitor/window/setup.py:177
+msgctxt "menu entry: name"
+msgid "plaintop — monitor settings"
+msgstr "plaintop — налаштування монітора"
+
+#: monitor/window/setup.py:178
+msgctxt "menu entry: comment"
+msgid "Appearance, palette and blocks of the text monitor"
+msgstr "Вигляд, палітра і блоки текстового монітора"
+
 #: schema/blocks.json:1
 msgctxt "schema: block name"
 msgid "Header"
@@ -385,7 +406,9 @@ msgctxt "schema: block hint"
 msgid ""
 "The top line: your text and the hostname joined by “\\”; with no text, only "
 "the hostname"
-msgstr "Верхній рядок: ваш текст та ім’я хоста через «\\»; без тексту — лише ім’я хоста"
+msgstr ""
+"Верхній рядок: ваш текст та ім’я хоста через «\\»; без тексту — лише ім’я "
+"хоста"
 
 #: schema/blocks.json:3
 msgctxt "schema: parameter name"

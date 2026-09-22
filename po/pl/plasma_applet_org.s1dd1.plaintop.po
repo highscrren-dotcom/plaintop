@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:25+0500\n"
+"POT-Creation-Date: 2026-09-22 13:34+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Polish\n"
@@ -33,7 +33,8 @@ msgstr "Bloki"
 #: monitor/package/contents/ui/configBlocks.qml:134
 msgid ""
 "The blocks and their order. The default layout comes from schema/widget.json."
-msgstr "Bloki i ich kolejność. Domyślny układ pochodzi z pliku schema/widget.json."
+msgstr ""
+"Bloki i ich kolejność. Domyślny układ pochodzi z pliku schema/widget.json."
 
 #: monitor/package/contents/ui/configBlocks.qml:190
 #: monitor/window/settings.qml:491
@@ -277,7 +278,8 @@ msgstr "Paleta"
 
 #: monitor/window/settings.qml:439
 msgid "The blocks and their order. Edits reach the monitor within two seconds."
-msgstr "Bloki i ich kolejność. Zmiany trafiają do monitora w ciągu dwóch sekund."
+msgstr ""
+"Bloki i ich kolejność. Zmiany trafiają do monitora w ciągu dwóch sekund."
 
 #: monitor/window/settings.qml:588
 msgctxt "interface menu: automatic choice"
@@ -375,6 +377,26 @@ msgstr "obecnie zamontowane: %1"
 msgid "or type a path by hand"
 msgstr "lub wpisz ścieżkę ręcznie"
 
+#: monitor/window/setup.py:174
+msgctxt "autostart entry: name"
+msgid "plaintop — text monitor"
+msgstr "plaintop — monitor tekstowy"
+
+#: monitor/window/setup.py:176
+msgctxt "autostart entry: comment"
+msgid "The monitor in its own window, clicks pass through"
+msgstr "Monitor we własnym oknie, kliknięcia przechodzą na wylot"
+
+#: monitor/window/setup.py:177
+msgctxt "menu entry: name"
+msgid "plaintop — monitor settings"
+msgstr "plaintop — ustawienia monitora"
+
+#: monitor/window/setup.py:178
+msgctxt "menu entry: comment"
+msgid "Appearance, palette and blocks of the text monitor"
+msgstr "Wygląd, paleta i bloki monitora tekstowego"
+
 #: schema/blocks.json:1
 msgctxt "schema: block name"
 msgid "Header"
@@ -385,7 +407,9 @@ msgctxt "schema: block hint"
 msgid ""
 "The top line: your text and the hostname joined by “\\”; with no text, only "
 "the hostname"
-msgstr "Górny wiersz: twój tekst i nazwa hosta połączone znakiem „\\”; bez tekstu — tylko nazwa hosta"
+msgstr ""
+"Górny wiersz: twój tekst i nazwa hosta połączone znakiem „\\”; bez tekstu — "
+"tylko nazwa hosta"
 
 #: schema/blocks.json:3
 msgctxt "schema: parameter name"

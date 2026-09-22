@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:49+0500\n"
+"POT-Creation-Date: 2026-09-22 13:51+0500\n"
 "PO-Revision-Date: 2026-09-22 13:49+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Spanish\n"
@@ -367,3 +367,23 @@ msgstr "Sondeos en silencio:"
 #, kde-format
 msgid "live preview · scale %1"
 msgstr "vista previa en vivo · escala %1"
+
+#: spectrum/window/setup.py:63
+msgctxt "autostart entry: name"
+msgid "plainspectrum — audio visualizer"
+msgstr "plainspectrum — visualizador de audio"
+
+#: spectrum/window/setup.py:65
+msgctxt "autostart entry: comment"
+msgid "The spectrum ring in its own window, clicks pass through"
+msgstr "El anillo del espectro en su propia ventana, los clics lo atraviesan"
+
+#: spectrum/window/setup.py:66
+msgctxt "menu entry: name"
+msgid "plainspectrum — settings"
+msgstr "plainspectrum — configuración"
+
+#: spectrum/window/setup.py:67
+msgctxt "menu entry: comment"
+msgid "Shape, colour and behaviour of the spectrum ring"
+msgstr "Forma, color y comportamiento del anillo del espectro"

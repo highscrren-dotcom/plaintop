@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:25+0500\n"
+"POT-Creation-Date: 2026-09-22 13:34+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Japanese\n"
@@ -32,7 +32,8 @@ msgstr "ブロック"
 #: monitor/package/contents/ui/configBlocks.qml:134
 msgid ""
 "The blocks and their order. The default layout comes from schema/widget.json."
-msgstr "ブロックとその順序。既定のレイアウトは schema/widget.json から取られます。"
+msgstr ""
+"ブロックとその順序。既定のレイアウトは schema/widget.json から取られます。"
 
 #: monitor/package/contents/ui/configBlocks.qml:190
 #: monitor/window/settings.qml:491
@@ -370,6 +371,26 @@ msgstr "現在マウント中: %1"
 msgid "or type a path by hand"
 msgstr "またはパスを手入力"
 
+#: monitor/window/setup.py:174
+msgctxt "autostart entry: name"
+msgid "plaintop — text monitor"
+msgstr "plaintop — テキストモニター"
+
+#: monitor/window/setup.py:176
+msgctxt "autostart entry: comment"
+msgid "The monitor in its own window, clicks pass through"
+msgstr "モニターを独立したウィンドウで表示、クリックは透過します"
+
+#: monitor/window/setup.py:177
+msgctxt "menu entry: name"
+msgid "plaintop — monitor settings"
+msgstr "plaintop — モニターの設定"
+
+#: monitor/window/setup.py:178
+msgctxt "menu entry: comment"
+msgid "Appearance, palette and blocks of the text monitor"
+msgstr "テキストモニターの外観、パレット、ブロック"
+
 #: schema/blocks.json:1
 msgctxt "schema: block name"
 msgid "Header"
@@ -380,7 +401,9 @@ msgctxt "schema: block hint"
 msgid ""
 "The top line: your text and the hostname joined by “\\”; with no text, only "
 "the hostname"
-msgstr "最上行: テキストとホスト名を「\\」でつなぎます。テキストがなければホスト名のみ"
+msgstr ""
+"最上行: テキストとホスト名を「\\」でつなぎます。テキストがなければホスト名の"
+"み"
 
 #: schema/blocks.json:3
 msgctxt "schema: parameter name"

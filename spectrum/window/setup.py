@@ -10,6 +10,7 @@ rule matched on the window title. The rule is written here, idempotently, next t
 rules the user already has.
 """
 import filecmp
+import gettext
 import json
 import os
 import signal
@@ -39,6 +40,31 @@ TITLE = "plainspectrum"
 
 
 REINSTALL = "./install.sh --spectrum-window"
+
+
+# ── Menu and autostart entries ───────────────────────────────────────────────
+# The .desktop files are UI too: English Name/Comment, plus Name[xx]/Comment[xx] for every
+# language whose catalog translates them. N_ only marks the text for po/extract.py; the
+# translation happens here, when the file is written, from the .mo files just built.
+def N_(context, text):
+    return context, text
+
+
+def desktop_key(key, entry):
+    context, text = entry
+    out = f"{key}={text}\n"
+    for mo in sorted(LOCALE_BUILD.glob(f"*/LC_MESSAGES/{DOMAIN}.mo")):
+        with open(mo, "rb") as f:
+            translated = gettext.GNUTranslations(f).pgettext(context, text)
+        if translated != text:
+            out += f"{key}[{mo.parent.parent.name}]={translated}\n"
+    return out
+
+AUTOSTART_NAME = N_("autostart entry: name", "plainspectrum — audio visualizer")
+AUTOSTART_COMMENT = N_("autostart entry: comment",
+                       "The spectrum ring in its own window, clicks pass through")
+LAUNCHER_NAME = N_("menu entry: name", "plainspectrum — settings")
+LAUNCHER_COMMENT = N_("menu entry: comment", "Shape, colour and behaviour of the spectrum ring")
 
 
 def build_catalogs(quiet=False):
@@ -120,9 +146,9 @@ def write_autostart():
     AUTOSTART.write_text(
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=plainspectrum — визуализатор звука\n"
-        "Comment=Кольцо спектра отдельным окном, клики проходят насквозь\n"
-        f"Exec=env QML_XHR_ALLOW_FILE_READ=1 qml6 {UI_DEST / 'window.qml'}\n"
+        + desktop_key("Name", AUTOSTART_NAME)
+        + desktop_key("Comment", AUTOSTART_COMMENT)
+        + f"Exec=env QML_XHR_ALLOW_FILE_READ=1 qml6 {UI_DEST / 'window.qml'}\n"
         "Terminal=false\n"
         "X-GNOME-Autostart-enabled=true\n"
         "X-KDE-autostart-after=panel\n",
@@ -136,9 +162,9 @@ def write_launcher():
     LAUNCHER.write_text(
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=plainspectrum — настройки\n"
-        "Comment=Форма, цвет и поведение кольца спектра\n"
-        f"Exec=qml6 {UI_DEST / 'settings.qml'}\n"
+        + desktop_key("Name", LAUNCHER_NAME)
+        + desktop_key("Comment", LAUNCHER_COMMENT)
+        + f"Exec=qml6 {UI_DEST / 'settings.qml'}\n"
         "Icon=audio-volume-high\n"
         "Terminal=false\n"
         "Categories=Settings;Utility;\n",

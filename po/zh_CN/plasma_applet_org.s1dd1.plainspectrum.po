@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:49+0500\n"
+"POT-Creation-Date: 2026-09-22 13:51+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -365,3 +365,23 @@ msgstr "静音时轮询："
 #, kde-format
 msgid "live preview · scale %1"
 msgstr "实时预览 · 缩放 %1"
+
+#: spectrum/window/setup.py:63
+msgctxt "autostart entry: name"
+msgid "plainspectrum — audio visualizer"
+msgstr "plainspectrum — 音频可视化"
+
+#: spectrum/window/setup.py:65
+msgctxt "autostart entry: comment"
+msgid "The spectrum ring in its own window, clicks pass through"
+msgstr "在独立窗口中显示频谱圆环，点击可穿透"
+
+#: spectrum/window/setup.py:66
+msgctxt "menu entry: name"
+msgid "plainspectrum — settings"
+msgstr "plainspectrum — 设置"
+
+#: spectrum/window/setup.py:67
+msgctxt "menu entry: comment"
+msgid "Shape, colour and behaviour of the spectrum ring"
+msgstr "频谱圆环的形状、颜色和行为"
