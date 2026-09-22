@@ -9,9 +9,12 @@
     <!-- Click-through: with input disabled the clicks reach the containment, so the
          desktop behaves as if the widget were not there. The way back is Plasma's edit
          mode, or the installer's "clicks off" switch. XML comments forbid a double
-         hyphen, so the flag is spelled out rather than quoted. -->
+         hyphen, so the flag is spelled out rather than quoted.
+         Off by default: a plasmoid frees only the right button this way, never the left,
+         and a first install that cannot be right-clicked hides its own settings. Real
+         click-through is the window host's job. -->
     <entry name="clickThrough" type="Bool">
-      <default>true</default>
+      <default>false</default>
     </entry>
     <!-- Palette, carried over from conky/plainext.conf. The line builder works in roles
          ("fg", "dim", "accent", "value") and the view maps them to these four. -->

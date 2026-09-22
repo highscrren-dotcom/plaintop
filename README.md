@@ -140,7 +140,8 @@ The window hosts have no Plasma dialog; each brings an editor with a live previe
 real renderer — the menu entries "plaintop — monitor settings" and "plainspectrum —
 settings", or `./install.sh --plaintop-settings` / `--spectrum-settings`.
 
-**About the mouse.** The *Mouse* setting — and the
+**About the mouse.** Out of the box the plasmoid takes clicks like any widget, so a
+right-click reaches its settings. The *Mouse* setting — and the
 `./install.sh --clicks-on` / `--clicks-off` switches behind it — turns input off on the
 widget's own representation. That is enough for the right button, which then reaches the
 desktop through the widget, and never enough for the left one, which the applet container

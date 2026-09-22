@@ -44,8 +44,9 @@ The interface follows Plasma's language: English, Russian, Ukrainian, German, Fr
 Spanish, Brazilian Portuguese, Polish, Simplified Chinese, Japanese — all but English and
 Russian machine-translated, corrections welcome. The updates line reads pacman.
 
-Want the monitor to let clicks through to the desktop? A plasmoid cannot do that — the
-repository has a window host that can, plus an editor with a live preview:
+Out of the box the widget takes clicks like any other; General → Mouse lets the right
+button through to the desktop. A plasmoid can never pass the left one — for full
+click-through the repository has a window host, plus an editor with a live preview:
 https://github.com/highscrren-dotcom/plaintop
 
 ———
@@ -63,8 +64,9 @@ NVMe, сетевой интерфейс — находятся на самой �
 китайский и японский — всё, кроме английского и русского, переведено машинно, исправления
 приветствуются. Строка обновлений читает pacman.
 
-Нужно, чтобы клики проходили сквозь монитор на рабочий стол? Плазмоид так не умеет —
-в репозитории есть оконный хост, который умеет, и редактор с живым просмотром:
+Сразу после установки виджет ловит клики, как любой другой; «Общее → Мышь» пропускает
+на рабочий стол правую кнопку. Левую плазмоид не отдаёт никогда — для настоящих сквозных
+кликов в репозитории есть оконный хост и редактор с живым просмотром:
 https://github.com/highscrren-dotcom/plaintop
 ```
 
