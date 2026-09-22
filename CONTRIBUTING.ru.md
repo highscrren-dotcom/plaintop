@@ -39,8 +39,10 @@
 
 | Путь | Что там |
 |---|---|
-| `plasmoid/package/` | виджет Plasma 6: QML, схема настроек, страницы диалога, скрипт служб |
-| `plasmoid/generate.py` | описание → JS-модуль в пакете; проверяет прежде чем писать |
+| `monitor/package/` | текстовый монитор как виджет Plasma 6: QML, схема настроек, страницы диалога, скрипт служб |
+| `monitor/shared/` | данные и рендерер монитора, при установке копируются в оба хоста |
+| `monitor/window/` | оконный хост монитора со сквозными кликами и его редактор |
+| `monitor/generate.py` | описание → JS-модуль в пакете; проверяет прежде чем писать |
 | `schema/widget.json` | раскладка по умолчанию: какие блоки, в каком порядке, с чем |
 | `schema/blocks.json` | словарь типов блоков и их параметров |
 | `spectrum/package/` | виджет-визуализатор звука: один рендерер на кольцо, дугу и линию |
@@ -49,13 +51,13 @@
 | `install.sh` | установка, состояние, conky и клики вкл/выкл — все операции идемпотентны |
 | `docs/` | грабли, решения, метод работы, журнал сессий |
 
-`plasmoid/package/contents/code/description.js` генерируется и в git не хранится —
+`monitor/package/contents/code/description.js` генерируется и в git не хранится —
 правьте `schema/*.json`.
 
 ## Цикл разработки
 
 ```bash
-qmllint -I /usr/lib/qt6/qml plasmoid/package/contents/ui/main.qml   # до установки
+qmllint -I /usr/lib/qt6/qml monitor/package/contents/ui/main.qml    # до установки
 ./install.sh --plasmoid                                             # сгенерировать + поставить + перезапустить оболочку
 ./install.sh --spectrum                                             # визуализатор: виджет + служба реле
 journalctl --user -b --since "-1min" | grep -i plaintop             # ошибки QML приходят сюда

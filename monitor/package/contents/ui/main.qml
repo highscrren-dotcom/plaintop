@@ -30,7 +30,7 @@ PlasmoidItem {
 
     // What to show and in which order comes from the description. The user's edit sits in
     // the settings as a JSON string; when it is empty, take the one generated from
-    // schema/widget.json (plasmoid/generate.py puts it in the package).
+    // schema/widget.json (monitor/generate.py puts it in the package).
     readonly property var blocks: {
         const raw = cfg.blocksJson
         if (raw && raw.length > 0) {

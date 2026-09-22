@@ -31,8 +31,7 @@ What is in the repository:
 
 | Directory | What it is | State |
 |---|---|---|
-| **`plasmoid/`** | the text monitor, plasmoid host | works |
-| **`plaintop/`** | the monitor's shared renderer and its click-through window host | works |
+| **`monitor/`** | the text monitor: a plasmoid host, a click-through window host and the renderer they share | works |
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
@@ -115,7 +114,7 @@ schema/blocks.json  ─┘                                    └─ or edit the
   engine.
 - **Vocabulary** — `schema/blocks.json`: the block types and the parameters each accepts.
   The settings dialog is built from it, so a new block type needs no interface code.
-- **Generator** — `plasmoid/generate.py`: validates the description and turns it into a JS
+- **Generator** — `monitor/generate.py`: validates the description and turns it into a JS
   module inside the package. A bad description stops the install instead of producing an
   empty widget.
 

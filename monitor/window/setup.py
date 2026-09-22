@@ -23,8 +23,8 @@ import time
 import uuid
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parent.parent.parent   # <repo>/plaintop/window/setup.py
-SRC = REPO / "plaintop"
+REPO = Path(__file__).resolve().parent.parent.parent   # <repo>/monitor/window/setup.py
+SRC = REPO / "monitor"
 HOME = Path.home()
 UI_DEST = HOME / ".local/share/plaintop/ui"
 CONFIG = HOME / ".config/plaintop/monitor.json"
@@ -54,9 +54,9 @@ DEFAULTS = {
 
 def packaged_blocks():
     """The generated description: the same one the plasmoid falls back to."""
-    js = REPO / "plasmoid" / "package" / "contents" / "code" / "description.js"
+    js = SRC / "package" / "contents" / "code" / "description.js"
     if not js.exists():
-        subprocess.run([sys.executable, str(REPO / "plasmoid" / "generate.py")], check=False)
+        subprocess.run([sys.executable, str(SRC / "generate.py")], check=False)
     if not js.exists():
         return []
     text = js.read_text(encoding="utf-8")
@@ -154,7 +154,7 @@ def deployed_files():
              for name in ("MonitorData.qml", "MonitorView.qml", "SensorRegistry.qml")]
     pairs += [(SRC / "window" / name, UI_DEST / name) for name in ("window.qml", "settings.qml")]
     # The services block runs this; MonitorData resolves it next to itself by default.
-    pairs.append((REPO / "plasmoid" / "package" / "contents" / "code" / "services.sh",
+    pairs.append((SRC / "package" / "contents" / "code" / "services.sh",
                   UI_DEST / "services.sh"))
     return pairs
 
@@ -201,9 +201,9 @@ def deploy_files():
         shutil.copy2(src, dst)
     (UI_DEST / "services.sh").chmod(0o755)
     # The editor builds its block list from the vocabulary in the generated description.
-    desc = REPO / "plasmoid" / "package" / "contents" / "code" / "description.js"
+    desc = SRC / "package" / "contents" / "code" / "description.js"
     if not desc.exists():
-        subprocess.run([sys.executable, str(REPO / "plasmoid" / "generate.py")], check=False)
+        subprocess.run([sys.executable, str(SRC / "generate.py")], check=False)
     if desc.exists():
         shutil.copy2(desc, UI_DEST / "description.js")
     print(f"  → {UI_DEST}")

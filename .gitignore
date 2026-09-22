@@ -10,8 +10,8 @@ dist/
 .idea/
 .vscode/
 
-# Генерируется plasmoid/generate.py из schema/*.json
-plasmoid/package/contents/code/description.js
+# Генерируется monitor/generate.py из schema/*.json
+monitor/package/contents/code/description.js
 
 # Рабочие инструкции сессии — только локально, в публичный репозиторий не идут
 CLAUDE.md
@@ -25,12 +25,12 @@ spectrum/package/contents/ui/Spectrum.qml
 spectrum/window/Ring.qml
 spectrum/window/Spectrum.qml
 
-# Копии общих компонентов монитора: источник — plaintop/shared/
-plasmoid/package/contents/ui/MonitorData.qml
-plasmoid/package/contents/ui/MonitorView.qml
-plaintop/window/MonitorData.qml
-plaintop/window/MonitorView.qml
-plasmoid/package/contents/ui/SensorRegistry.qml
-plaintop/window/SensorRegistry.qml
-plaintop/window/description.js
-plaintop/window/services.sh
+# Копии общих компонентов монитора: источник — monitor/shared/
+monitor/package/contents/ui/MonitorData.qml
+monitor/package/contents/ui/MonitorView.qml
+monitor/window/MonitorData.qml
+monitor/window/MonitorView.qml
+monitor/package/contents/ui/SensorRegistry.qml
+monitor/window/SensorRegistry.qml
+monitor/window/description.js
+monitor/window/services.sh

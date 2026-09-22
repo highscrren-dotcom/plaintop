@@ -201,7 +201,7 @@ anyway.
 
 **Decision:** no machine-specific sensor id lives in the code any more. Block parameters
 carry a **preference**, the vocabulary carries the pattern that finds a replacement, and
-`plaintop/shared/SensorRegistry.qml` enumerates what the machine actually reports. The
+`monitor/shared/SensorRegistry.qml` enumerates what the machine actually reports. The
 editor offers that list instead of asking the user to know an id.
 
 **Why.** Three readings went quiet at once without a single error: a reboot renumbered the

@@ -20,7 +20,7 @@ A block entry:
 
 ```
 schema/widget.json ─┐
-                    ├─ plasmoid/generate.py ─→ package/contents/code/description.js ─→ main.qml
+                    ├─ monitor/generate.py ──→ package/contents/code/description.js ─→ main.qml
 schema/blocks.json ─┘
 ```
 

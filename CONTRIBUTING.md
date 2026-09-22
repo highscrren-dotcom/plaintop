@@ -38,8 +38,10 @@ Neither needs a code change — just a row in the description.
 
 | Path | What lives there |
 |---|---|
-| `plasmoid/package/` | the Plasma 6 widget: QML, config schema, settings pages, the services script |
-| `plasmoid/generate.py` | description → JS module inside the package; validates before writing |
+| `monitor/package/` | the text monitor as a Plasma 6 widget: QML, config schema, settings pages, the services script |
+| `monitor/shared/` | the monitor's data side and renderer, copied into both hosts on install |
+| `monitor/window/` | the monitor's click-through window host and its editor |
+| `monitor/generate.py` | description → JS module inside the package; validates before writing |
 | `schema/widget.json` | the default layout: which blocks, in what order, with what parameters |
 | `schema/blocks.json` | the vocabulary of block types and their parameters |
 | `spectrum/package/` | the audio visualizer widget: one renderer for ring, arc and line |
@@ -48,13 +50,13 @@ Neither needs a code change — just a row in the description.
 | `install.sh` | install, status, conky and clicks on/off — all operations idempotent |
 | `docs/` | traps, decisions, the working method, the session journal |
 
-`plasmoid/package/contents/code/description.js` is generated and not in git — edit
+`monitor/package/contents/code/description.js` is generated and not in git — edit
 `schema/*.json` instead.
 
 ## The development cycle
 
 ```bash
-qmllint -I /usr/lib/qt6/qml plasmoid/package/contents/ui/main.qml   # before installing
+qmllint -I /usr/lib/qt6/qml monitor/package/contents/ui/main.qml    # before installing
 ./install.sh --plasmoid                                             # generate + install + restart the shell
 ./install.sh --spectrum                                             # the visualizer: widget + relay service
 journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors land here

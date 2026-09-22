@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Deploy plaintop into the system and start it.
 #
-# Source of truth: the conky/ and plasmoid/ directories of this repo. Files flow from
-# here into ~/.config/conky and ~/.local/share/plasma/plasmoids, never the other way
-# around: edit in the repo, then run ./install.sh.
+# Source of truth: the conky/, monitor/ and spectrum/ directories of this repo. Files
+# flow from here into ~/.config/conky, ~/.local/share/plasma/plasmoids and the rest,
+# never the other way around: edit in the repo, then run ./install.sh.
 set -uo pipefail
 cd "$(dirname "$0")"
 REPO=$PWD
@@ -11,7 +11,7 @@ DEST="$HOME/.config/conky"
 AUTOSTART="$HOME/.config/autostart"
 APPS="$HOME/.local/share/applications"
 PLASMOID_ID="org.s1dd1.plaintop"
-PLASMOID_SRC="$REPO/plasmoid/package"
+PLASMOID_SRC="$REPO/monitor/package"
 PLASMOID_DEST="$HOME/.local/share/plasma/plasmoids/$PLASMOID_ID"
 SPECTRUM_ID="org.s1dd1.plainspectrum"
 SPECTRUM_SRC="$REPO/spectrum"
@@ -61,11 +61,11 @@ plasmoid_install() {
     # Schema -> package. A bad schema aborts the install: better to refuse here than
     # to get an empty widget and hunt for the cause in QML.
     # The renderer and the data side are shared with the standalone window host, so they
-    # live in plaintop/shared/ and are copied into the package here. Two edited copies of
+    # live in monitor/shared/ and are copied into the package here. Two edited copies of
     # the same QML is how they drift apart.
-    cp "$REPO/plaintop/shared/"*.qml "$REPO/plasmoid/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+    cp "$REPO/monitor/shared/"*.qml "$PLASMOID_SRC/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
 
-    if ! python3 "$REPO/plasmoid/generate.py"; then
+    if ! python3 "$REPO/monitor/generate.py"; then
         red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
     fi
     local mode=--install
@@ -158,7 +158,7 @@ spectrum_install() {
     # file is taken from the widget it belongs to, so there is one copy to edit.
     install -m 644 "$SPECTRUM_SRC/window/ring.default.json" "$RELAY_DEST/ring.default.json" \
         && echo "  → $RELAY_DEST/ring.default.json"
-    install -m 644 "$REPO/plaintop/window/monitor.default.json" "$RELAY_DEST/monitor.default.json" \
+    install -m 644 "$REPO/monitor/window/monitor.default.json" "$RELAY_DEST/monitor.default.json" \
         && echo "  → $RELAY_DEST/monitor.default.json"
     install -m 644 "$SPECTRUM_SRC/plainspectrum-relay.service" "$UNIT_DEST/" \
         && echo "  → $UNIT_DEST/plainspectrum-relay.service"
@@ -243,7 +243,7 @@ spectrum_status() {
     local relay_diff=0 pair
     for pair in "$SPECTRUM_SRC/relay.py:$RELAY_DEST/relay.py" \
                 "$SPECTRUM_SRC/window/ring.default.json:$RELAY_DEST/ring.default.json" \
-                "$REPO/plaintop/window/monitor.default.json:$RELAY_DEST/monitor.default.json" \
+                "$REPO/monitor/window/monitor.default.json:$RELAY_DEST/monitor.default.json" \
                 "$SPECTRUM_SRC/plainspectrum-relay.service:$UNIT_DEST/plainspectrum-relay.service"; do
         cmp -s "${pair%%:*}" "${pair#*:}" \
             || { red "  ≠ $(basename "${pair#*:}") — реле разошлось с репо: ./install.sh --spectrum"; relay_diff=1; }
@@ -330,17 +330,17 @@ plaintop_window() {
     if ! command -v qml6 >/dev/null; then
         red "  ✗ нет qml6 (пакет qt6-declarative)"; return 1
     fi
-    python3 "$REPO/plaintop/window/setup.py" install
+    python3 "$REPO/monitor/window/setup.py" install
 }
 
 plaintop_export() {
     echo "== Монитор: настройки из плазмоида в окно"
-    python3 "$REPO/plaintop/window/setup.py" export
+    python3 "$REPO/monitor/window/setup.py" export
 }
 
 plaintop_window_status() {
     echo "== Монитор: окно"
-    python3 "$REPO/plaintop/window/setup.py" status
+    python3 "$REPO/monitor/window/setup.py" status
 }
 
 plasmoid_status() {
@@ -353,8 +353,8 @@ plasmoid_status() {
     done < <(find "$PLASMOID_SRC" -type f)
     # ⚠️ The shared QML reaches the package only as a copy made at install time, so the
     # loop above compares the installed file with that old copy and passes after any edit
-    # in plaintop/shared/. Compare with the source itself.
-    for f in "$REPO/plaintop/shared/"*.qml; do
+    # in monitor/shared/. Compare with the source itself.
+    for f in "$REPO/monitor/shared/"*.qml; do
         cmp -s "$f" "$PLASMOID_DEST/contents/ui/$(basename "$f")" \
             || { red "  ≠ shared/$(basename "$f") — РАЗОШЁЛСЯ с репо"; diff=1; }
     done
@@ -446,7 +446,7 @@ case "${1:-}" in
   --spectrum-settings) spectrum_settings; exit $? ;;
   --plaintop-window)   plaintop_window; exit $? ;;
   --plaintop-export)   plaintop_export; exit $? ;;
-  --plaintop-settings) python3 "$REPO/plaintop/window/setup.py" settings; exit $? ;;
+  --plaintop-settings) python3 "$REPO/monitor/window/setup.py" settings; exit $? ;;
   --clicks-off)  clicks_set false "клики ловятся виджетами (можно настраивать мышью)"; exit $? ;;
   --clicks-on)   clicks_set true "клики проходят на рабочий стол"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
