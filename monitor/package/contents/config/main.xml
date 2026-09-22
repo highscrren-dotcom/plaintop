@@ -13,9 +13,6 @@
     <entry name="clickThrough" type="Bool">
       <default>true</default>
     </entry>
-    <entry name="header" type="String">
-      <default>s1dd1\Dashboard</default>
-    </entry>
     <!-- Palette, carried over from conky/plainext.conf. The line builder works in roles
          ("fg", "dim", "accent", "value") and the view maps them to these four. -->
     <entry name="colorFg" type="String">

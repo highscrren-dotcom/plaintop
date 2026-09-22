@@ -70,7 +70,8 @@ qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
 
 **The plasmoid** keeps its settings in Plasma's store: `package/contents/config/main.xml`
 is the schema, and the dialog has two pages — *"Общее"* (General: font, sizes, padding,
-intervals, mouse) and *"Блоки"* (Blocks).
+the four palette colours, mouse, intervals) and *"Блоки"* (Blocks), where the header
+text lives too — empty by default, so a fresh install shows only the hostname.
 
 **The window** reads `~/.config/plaintop/monitor.json` — appearance and the block
 description in one file: font, size, padding, widget size, update interval, the four
@@ -112,9 +113,6 @@ add. The rejected approaches and what each one costs — `../docs/DECISIONS.md`,
 
 ## What is still ahead
 
-- **Colours in the plasmoid's dialog** — the window has them in its settings; `main.xml`
-  has no colour entries, so the plasmoid draws `MonitorView`'s defaults, the PlainExt
-  palette.
 - **Per-package CPU temperatures** — currently the maximum across a node's cores is taken;
   the sensors have no `coretemp-isa-000N`, so packages will have to be fetched from
   `sensors -u` by an occasional call.

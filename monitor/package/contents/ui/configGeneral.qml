@@ -9,7 +9,6 @@ import org.kde.kquickcontrols as KQuickControls
 KCM.SimpleKCM {
     id: page
 
-    property alias cfg_header: headerField.text
     property alias cfg_fontFamily: fontField.text
     property alias cfg_fontSize: sizeField.value
     property alias cfg_updateInterval: intervalField.value
@@ -28,12 +27,6 @@ KCM.SimpleKCM {
     Kirigami.FormLayout {
         anchors.left: parent.left
         anchors.right: parent.right
-
-        TextField {
-            id: headerField
-            Kirigami.FormData.label: i18n("Заголовок:")
-            Layout.fillWidth: true
-        }
 
         TextField {
             id: fontField

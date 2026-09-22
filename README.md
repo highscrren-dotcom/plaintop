@@ -80,7 +80,7 @@ found on the machine the widget runs on:
 | Network interface | among the connected hardware interfaces: the one with a gateway, then the one that carried the most traffic | editor → *"Блоки"* (Blocks) → *Сеть*, a menu of the interfaces found |
 | Fan and NVMe sensors | by pattern among the sensors this machine reports | editor → *"Блоки"* → *Процессор* / *Диски*, a searchable list with live values |
 | Mount points | `/` only — a mount point is a choice, not something to guess | editor → *"Блоки"* → *Диски*, a list of what is mounted now |
-| Header text | a setting | editor → *"Вид"* (Appearance) |
+| Header text | yours to write; empty by default, so only the hostname shows | editor → *"Блоки"* → *Заголовок* |
 
 A value you pick is kept as a preference: while the machine still reports it, it wins; when
 a reboot renames the chip or the interface, the widget falls back to discovery instead of
@@ -124,8 +124,8 @@ Details: [schema/README.md](schema/README.md).
 
 Right-click the widget → *Настроить plaintop*. Two pages:
 
-- *"Общее"* (General) — header, font, size, widget size, edge padding, update interval, how
-  often the process list is read.
+- *"Общее"* (General) — font, size, edge padding, widget size, the four palette colours,
+  the mouse, update interval, how often the process list is read.
 - *"Блоки"* (Blocks) — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 

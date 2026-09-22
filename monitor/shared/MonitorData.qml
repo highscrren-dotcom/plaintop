@@ -543,8 +543,13 @@ Item {
 
             switch (b.type) {
             case "header": {
+                // The text is the user's own and empty by default: no stranger's name on
+                // a fresh install. Nothing is joined to an empty part, so no stray "\".
                 const host = p.hostname === false ? "" : sval("os/system/hostname")
-                out.push(line((p.text || "") + (host ? "\\" + host : ""), "accent"))
+                const parts = [String(p.text || ""), String(host || "")]
+                const head = parts.filter(s => s.length > 0).join("\\")
+                if (head.length > 0)
+                    out.push(line(head, "accent"))
                 break
             }
             case "clock": {
