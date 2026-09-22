@@ -30,7 +30,7 @@ try:
     from Xlib import display
     from Xlib.ext import shape
 except ImportError:
-    print("  python-xlib не установлен — проверить область ввода нечем"); sys.exit(0)
+    print("  python-xlib is not installed — cannot check the input region"); sys.exit(0)
 d = display.Display(); root = d.screen().root
 def walk(w, out):
     try: cls = w.get_wm_class()
@@ -42,11 +42,11 @@ def walk(w, out):
     return out
 ws = walk(root, [])
 if not ws:
-    print("  окон conky нет"); sys.exit(0)
+    print("  no conky windows"); sys.exit(0)
 for w, cls in ws:
     g = w.get_geometry()
     n = len(list(w.shape_get_rectangles(shape.SK.Input).rectangles))
-    verdict = "клики проходят" if n == 0 else "ЛОВИТ КЛИКИ"
+    verdict = "clicks pass through" if n == 0 else "CATCHES CLICKS"
     print(f"  {hex(w.id)}  class={cls[0]}  {g.width}x{g.height}  input={n} → {verdict}")
 PY
 }
@@ -57,11 +57,11 @@ monitor_prepare() {
     # The renderer and the data side are shared with the standalone window host, so they
     # live in monitor/shared/ and are copied into the package here. Two edited copies of
     # the same QML is how they drift apart.
-    cp "$REPO/monitor/shared/"*.qml "$PLASMOID_SRC/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+    cp "$REPO/monitor/shared/"*.qml "$PLASMOID_SRC/contents/ui/" || { red "  ✗ shared files were not copied"; return 1; }
     # Schema -> package. A bad schema aborts the install: better to refuse here than
     # to get an empty widget and hunt for the cause in QML.
     if ! python3 "$REPO/monitor/generate.py"; then
-        red "  ✗ описание в schema/ не прошло проверку — пакет не обновлён"; return 1
+        red "  ✗ the description in schema/ failed validation — package not updated"; return 1
     fi
     # Catalogs po/*/<domain>.po → contents/locale, where libplasma looks for the applet's
     # translations. The window host deploys the same .mo files (decision 7).
@@ -71,7 +71,7 @@ monitor_prepare() {
 spectrum_prepare() {
     # Same as the monitor: the shared QML lives in spectrum/shared/ and is copied in.
     cp "$SPECTRUM_SRC/shared/Ring.qml" "$SPECTRUM_SRC/shared/Spectrum.qml" \
-        "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ общие файлы не скопировались"; return 1; }
+        "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ shared files were not copied"; return 1; }
     # Catalogs, as for the monitor: contents/locale for the plasmoid, and the window host
     # deploys the same .mo files (decision 7).
     python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainspectrum "$SPECTRUM_SRC/package/contents/locale" || return 1
@@ -80,9 +80,9 @@ spectrum_prepare() {
 # The plasmoid installs idempotently: kpackagetool6 decides by itself whether this is
 # an install or an upgrade, and the state is applied either way.
 plasmoid_install() {
-    echo "== Плазмоид"
+    echo "== Plasmoid"
     if ! command -v kpackagetool6 >/dev/null; then
-        red "  ✗ kpackagetool6 не найден — плазмоид не поставить"; return 1
+        red "  ✗ kpackagetool6 not found — cannot install the plasmoid"; return 1
     fi
     monitor_prepare || return 1
     local mode=--install
@@ -90,16 +90,16 @@ plasmoid_install() {
     if kpackagetool6 --type Plasma/Applet $mode "$PLASMOID_SRC" >/dev/null 2>&1; then
         grn "  ✓ $PLASMOID_ID ($mode)"
     else
-        red "  ✗ $PLASMOID_ID — $mode не прошёл"; return 1
+        red "  ✗ $PLASMOID_ID — $mode failed"; return 1
     fi
     # ⚠️ Verified 2026-09-20: plasmashell caches the package QML. Reinstalling is not
     # enough, and neither is re-creating the applet — the new layout shows up only
     # after the shell restarts. So we drive the state to completion here instead of
     # leaving it to the user.
     if systemctl --user --quiet is-active plasma-plasmashell.service; then
-        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell перезапущен — виджет с новым QML"
+        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell restarted — the widget runs the new QML"
     else
-        dim "  plasmashell не под systemd — перезапусти оболочку сам, иначе QML останется старым"
+        dim "  plasmashell is not under systemd — restart the shell yourself, or the old QML stays"
     fi
     plasmoid_place
 }
@@ -110,8 +110,8 @@ plasmoid_install() {
 # zip itself is not always installed. Each archive is then installed into a throwaway
 # package root: a file that does not install must not reach the store.
 pack() {
-    echo "== Сборка .plasmoid → dist/"
-    command -v kpackagetool6 >/dev/null || { red "  ✗ kpackagetool6 не найден — проверить архивы нечем"; return 1; }
+    echo "== Building .plasmoid → dist/"
+    command -v kpackagetool6 >/dev/null || { red "  ✗ kpackagetool6 not found — cannot check the archives"; return 1; }
     monitor_prepare || return 1
     spectrum_prepare || return 1
     mkdir -p "$REPO/dist"
@@ -120,16 +120,16 @@ pack() {
         name=$(python3 -c 'import json, sys
 k = json.load(open(sys.argv[1]))["KPlugin"]
 print(k["Name"] + "-" + k["Version"])' "$src/metadata.json") \
-            || { red "  ✗ $src/metadata.json не читается"; return 1; }
+            || { red "  ✗ $src/metadata.json cannot be read"; return 1; }
         out="$REPO/dist/$name.plasmoid"
         rm -f "$out"
         (cd "$src" && python3 -m zipfile -c "$out" metadata.json contents) \
-            || { red "  ✗ $out не собрался"; return 1; }
+            || { red "  ✗ $out failed to build"; return 1; }
         root=$(mktemp -d)
         if kpackagetool6 --type Plasma/Applet --install "$out" --packageroot "$root" >/dev/null 2>&1; then
-            grn "  ✓ dist/$name.plasmoid — ставится"
+            grn "  ✓ dist/$name.plasmoid — installs"
         else
-            red "  ✗ dist/$name.plasmoid собран, но kpackagetool6 его не ставит"; rm -rf "$root"; return 1
+            red "  ✗ dist/$name.plasmoid built, but kpackagetool6 does not install it"; rm -rf "$root"; return 1
         fi
         rm -rf "$root"
     done
@@ -139,27 +139,27 @@ print(k["Name"] + "-" + k["Version"])' "$src/metadata.json") \
 # ⚠️ Use `pkill -x conky` only: the pattern `pkill -f 'conky -c'` matches the command
 # line of our own shell and kills it.
 conky_off() {
-    echo "== Гашу conky"
-    pkill -x conky && grn "  ✓ процесс остановлен" || dim "  conky и так не запущен"
+    echo "== Stopping conky"
+    pkill -x conky && grn "  ✓ process stopped" || dim "  conky was not running"
     if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
         # Hidden=true is the standard XDG way to disable autostart; the file stays in place.
         grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop" \
             || printf 'Hidden=true\n' >> "$AUTOSTART/conky-plainext.desktop"
-        grn "  ✓ автозапуск выключен (Hidden=true)"
+        grn "  ✓ autostart disabled (Hidden=true)"
     else
-        dim "  автозапуска и так нет"
+        dim "  no autostart entry anyway"
     fi
     # excludeApps in ksmserverrc already stops the session from restoring conky at login.
     echo; status
 }
 
 conky_on() {
-    echo "== Возвращаю conky"
+    echo "== Bringing conky back"
     if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
         sed -i '/^Hidden=true$/d' "$AUTOSTART/conky-plainext.desktop"
-        grn "  ✓ автозапуск включён"
+        grn "  ✓ autostart enabled"
     else
-        cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && grn "  ✓ автозапуск восстановлен"
+        cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && grn "  ✓ autostart restored"
     fi
     pgrep -x conky >/dev/null || "$DEST/start.sh" >/dev/null 2>&1 &
     sleep 8
@@ -181,9 +181,9 @@ plasmashell_ready() {
 # bands over local HTTP. A service rather than a process started by the widget: it
 # has to survive a shell restart and die with the session, not linger as an orphan.
 spectrum_install() {
-    echo "== Спектр"
+    echo "== Spectrum"
     if ! command -v cava >/dev/null; then
-        red "  ✗ нет cava — поставь: sudo pacman -S cava"; return 1
+        red "  ✗ cava is missing — install it: sudo pacman -S cava"; return 1
     fi
     spectrum_prepare || return 1
 
@@ -192,7 +192,7 @@ spectrum_install() {
     if kpackagetool6 --type Plasma/Applet $mode "$SPECTRUM_SRC/package" >/dev/null 2>&1; then
         grn "  ✓ $SPECTRUM_ID ($mode)"
     else
-        red "  ✗ пакет виджета не установился"; return 1
+        red "  ✗ the widget package did not install"; return 1
     fi
 
     mkdir -p "$RELAY_DEST" "$UNIT_DEST"
@@ -214,37 +214,37 @@ spectrum_install() {
     systemctl --user restart plainspectrum-relay.service
     sleep 2
     if systemctl --user --quiet is-active plainspectrum-relay.service; then
-        grn "  ✓ служба реле работает"
+        grn "  ✓ relay service is running"
     else
-        red "  ✗ служба реле не поднялась — journalctl --user -u plainspectrum-relay"; return 1
+        red "  ✗ relay service did not come up — journalctl --user -u plainspectrum-relay"; return 1
     fi
 
     # ⚠️ Same reason as for the text widget: plasmashell caches a package's QML, so
     # without a restart the edit silently does not arrive.
     if systemctl --user --quiet is-active plasma-plasmashell.service; then
-        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell перезапущен"
+        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell restarted"
     else
-        dim "  plasmashell не под systemd — перезапусти оболочку сам"
+        dim "  plasmashell is not under systemd — restart the shell yourself"
     fi
 
     # Two hosts draw the same ring, so only one belongs on the desktop. If the
     # click-through window is set up, the plasmoid variant is installed but not placed.
     if [ -f "$HOME/.config/autostart/plainspectrum-window.desktop" ]; then
-        dim "  окно со сквозными кликами настроено — плазмоид на стол не сажаю"
+        dim "  click-through window is set up — not placing the plasmoid on the desktop"
         return 0
     fi
 
     local n
     n=$(grep -c "^plugin=$SPECTRUM_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
     if [ "${n:-0}" -gt 0 ]; then
-        dim "  уже на рабочем столе — место не трогаю"
+        dim "  already on the desktop — leaving its place alone"
         return 0
     fi
-    plasmashell_ready || { red "  ✗ plasmashell не отвечает — добавь виджет вручную"; return 1; }
+    plasmashell_ready || { red "  ✗ plasmashell does not respond — add the widget by hand"; return 1; }
     local id
     id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
         "print(desktops()[0].addWidget(\"$SPECTRUM_ID\").id)" 2>/dev/null | tr -dc '0-9')
-    [ -n "$id" ] && grn "  ✓ добавлен на рабочий стол (id=$id)" || red "  ✗ не удалось добавить на рабочий стол"
+    [ -n "$id" ] && grn "  ✓ added to the desktop (id=$id)" || red "  ✗ could not add it to the desktop"
 }
 
 # Standalone (click-through) host for the visualizer. A plasmoid never hands over the
@@ -252,9 +252,9 @@ spectrum_install() {
 # docs/GOTCHAS.md. Place, size and keep-below come from a KWin rule, because under
 # Wayland a window cannot position itself.
 spectrum_window() {
-    echo "== Спектр: окно со сквозными кликами"
+    echo "== Spectrum: click-through window"
     if ! command -v qml6 >/dev/null; then
-        red "  ✗ нет qml6 (пакет qt6-declarative)"; return 1
+        red "  ✗ qml6 is missing (package qt6-declarative)"; return 1
     fi
     python3 "$SPECTRUM_SRC/window/setup.py" install
 }
@@ -264,24 +264,24 @@ spectrum_settings() {
 }
 
 spectrum_window_status() {
-    echo "== Спектр: окно"
+    echo "== Spectrum: window"
     python3 "$SPECTRUM_SRC/window/setup.py" status
 }
 
 spectrum_status() {
-    echo "== Спектр"
-    if [ ! -d "$SPECTRUM_DEST" ]; then dim "  виджет не установлен"; return 0; fi
+    echo "== Spectrum"
+    if [ ! -d "$SPECTRUM_DEST" ]; then dim "  widget not installed"; return 0; fi
     local diff=0 f rel
     while IFS= read -r f; do
         rel=${f#"$SPECTRUM_SRC/package"/}
-        cmp -s "$f" "$SPECTRUM_DEST/$rel" || { red "  ≠ $rel — РАЗОШЁЛСЯ с репо"; diff=1; }
+        cmp -s "$f" "$SPECTRUM_DEST/$rel" || { red "  ≠ $rel — DIFFERS from the repo"; diff=1; }
     done < <(find "$SPECTRUM_SRC/package" -type f)
     # Same trap as the text widget: shared QML is copied into the package only on install.
     for f in "$SPECTRUM_SRC/shared/"*.qml; do
         cmp -s "$f" "$SPECTRUM_DEST/contents/ui/$(basename "$f")" \
-            || { red "  ≠ shared/$(basename "$f") — РАЗОШЁЛСЯ с репо"; diff=1; }
+            || { red "  ≠ shared/$(basename "$f") — DIFFERS from the repo"; diff=1; }
     done
-    [ $diff -eq 0 ] && grn "  ✓ виджет установлен, файлы совпадают с репо"
+    [ $diff -eq 0 ] && grn "  ✓ widget installed, files match the repo"
 
     # The relay runs from its own copy; a port that answers says nothing about which code.
     local relay_diff=0 pair
@@ -290,9 +290,9 @@ spectrum_status() {
                 "$REPO/monitor/window/monitor.default.json:$RELAY_DEST/monitor.default.json" \
                 "$SPECTRUM_SRC/plainspectrum-relay.service:$UNIT_DEST/plainspectrum-relay.service"; do
         cmp -s "${pair%%:*}" "${pair#*:}" \
-            || { red "  ≠ $(basename "${pair#*:}") — реле разошлось с репо: ./install.sh --spectrum"; relay_diff=1; }
+            || { red "  ≠ $(basename "${pair#*:}") — relay differs from the repo: ./install.sh --spectrum"; relay_diff=1; }
     done
-    [ $relay_diff -eq 0 ] && grn "  ✓ реле разложено, файлы совпадают с репо"
+    [ $relay_diff -eq 0 ] && grn "  ✓ relay deployed, files match the repo"
 
     if systemctl --user --quiet is-active plainspectrum-relay.service; then
         local port
@@ -301,18 +301,18 @@ spectrum_status() {
         # ⚠️ Checking that the service is "active" is not enough: what matters is that
         # the port actually returns numbers, so read it instead of trusting systemd.
         if curl -s --max-time 2 "http://127.0.0.1:$port/bands?bars=8" | grep -qE "^[0-9]+(,[0-9]+)*$"; then
-            grn "  ✓ реле отвечает на порту $port"
+            grn "  ✓ relay answers on port $port"
         else
-            red "  ≠ служба работает, но порт $port не отдаёт данные"
+            red "  ≠ service is running, but port $port returns no data"
         fi
     else
-        dim "  служба реле не запущена — ./install.sh --spectrum"
+        dim "  relay service is not running — ./install.sh --spectrum"
     fi
 
     local n
     n=$(grep -c "^plugin=$SPECTRUM_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
-    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ добавлен на рабочий стол ($n шт.)"
-    else dim "  на рабочий стол не добавлен"; fi
+    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ added to the desktop (instances: $n)"
+    else dim "  not added to the desktop"; fi
 }
 
 # Click-through for both widgets at once. This is the way back: with clicks passing
@@ -320,8 +320,8 @@ spectrum_status() {
 # out of reach — the switch has to work without it.
 clicks_set() {
     local value=$1 human=$2
-    echo "== Клики"
-    plasmashell_ready || { red "  ✗ plasmashell не отвечает"; return 1; }
+    echo "== Clicks"
+    plasmashell_ready || { red "  ✗ plasmashell does not respond"; return 1; }
     local out
     out=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
 var d = desktops()[0];
@@ -337,9 +337,9 @@ for (var i = 0; i < d.widgetIds.length; i++) {
 }
 print(n);" 2>/dev/null | tr -dc '0-9')
     if [ -n "$out" ] && [ "$out" -gt 0 ]; then
-        grn "  ✓ $human — виджетов затронуто: $out"
+        grn "  ✓ $human — widgets affected: $out"
     else
-        red "  ✗ виджеты на рабочем столе не найдены"; return 1
+        red "  ✗ no widgets found on the desktop"; return 1
     fi
 }
 
@@ -347,86 +347,86 @@ print(n);" 2>/dev/null | tr -dc '0-9')
 plasmoid_place() {
     local n
     n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
-    if [ "${n:-0}" -gt 0 ]; then dim "  уже на рабочем столе — место не трогаю"; return 0; fi
-    plasmashell_ready || { red "  ✗ plasmashell не отвечает — добавь виджет вручную"; return 1; }
+    if [ "${n:-0}" -gt 0 ]; then dim "  already on the desktop — leaving its place alone"; return 0; fi
+    plasmashell_ready || { red "  ✗ plasmashell does not respond — add the widget by hand"; return 1; }
     # ⚠️ Coordinates in addWidget are useless: position and size come from the Layout.*
     # hints inside the widget, and the container resets the position to the corner
     # anyway. The widget draws the gap from the screen edge itself (its left/top
     # offset settings).
     # Two hosts draw the same monitor, so only one belongs on the desktop.
     if [ -f "$HOME/.config/autostart/plaintop-window.desktop" ]; then
-        dim "  окно со сквозными кликами настроено — плазмоид на стол не сажаю"
+        dim "  click-through window is set up — not placing the plasmoid on the desktop"
         return 0
     fi
 
     local id
     id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
         "print(desktops()[0].addWidget(\"$PLASMOID_ID\").id)" 2>/dev/null | tr -dc '0-9')
-    if [ -z "$id" ]; then red "  ✗ не удалось добавить на рабочий стол"; return 1; fi
-    grn "  ✓ добавлен на рабочий стол (id=$id)"
+    if [ -z "$id" ]; then red "  ✗ could not add it to the desktop"; return 1; fi
+    grn "  ✓ added to the desktop (id=$id)"
 }
 
 # Standalone (click-through) host for the text monitor, same reasoning as the ring:
 # a plasmoid never hands over the left mouse button. Settings come from the plasmoid's own
 # dialog through `--plaintop-export`, so there is still one editor.
 plaintop_window() {
-    echo "== Монитор: окно со сквозными кликами"
+    echo "== Monitor: click-through window"
     if ! command -v qml6 >/dev/null; then
-        red "  ✗ нет qml6 (пакет qt6-declarative)"; return 1
+        red "  ✗ qml6 is missing (package qt6-declarative)"; return 1
     fi
     python3 "$REPO/monitor/window/setup.py" install
 }
 
 plaintop_export() {
-    echo "== Монитор: настройки из плазмоида в окно"
+    echo "== Monitor: settings from the plasmoid to the window"
     python3 "$REPO/monitor/window/setup.py" export
 }
 
 plaintop_window_status() {
-    echo "== Монитор: окно"
+    echo "== Monitor: window"
     python3 "$REPO/monitor/window/setup.py" status
 }
 
 plasmoid_status() {
-    echo "== Плазмоид"
-    if [ ! -d "$PLASMOID_DEST" ]; then red "  ✗ не установлен"; return 0; fi
+    echo "== Plasmoid"
+    if [ ! -d "$PLASMOID_DEST" ]; then red "  ✗ not installed"; return 0; fi
     local diff=0 f rel
     while IFS= read -r f; do
         rel=${f#"$PLASMOID_SRC"/}
-        cmp -s "$f" "$PLASMOID_DEST/$rel" || { red "  ≠ $rel — РАЗОШЁЛСЯ с репо"; diff=1; }
+        cmp -s "$f" "$PLASMOID_DEST/$rel" || { red "  ≠ $rel — DIFFERS from the repo"; diff=1; }
     done < <(find "$PLASMOID_SRC" -type f)
     # ⚠️ The shared QML reaches the package only as a copy made at install time, so the
     # loop above compares the installed file with that old copy and passes after any edit
     # in monitor/shared/. Compare with the source itself.
     for f in "$REPO/monitor/shared/"*.qml; do
         cmp -s "$f" "$PLASMOID_DEST/contents/ui/$(basename "$f")" \
-            || { red "  ≠ shared/$(basename "$f") — РАЗОШЁЛСЯ с репо"; diff=1; }
+            || { red "  ≠ shared/$(basename "$f") — DIFFERS from the repo"; diff=1; }
     done
-    [ $diff -eq 0 ] && grn "  ✓ установлен, файлы совпадают с репо"
+    [ $diff -eq 0 ] && grn "  ✓ installed, files match the repo"
     # Presence on the desktop is read from the session config, not guessed.
     local n; n=$(grep -c "^plugin=$PLASMOID_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
-    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ добавлен на рабочий стол ($n шт.)"
-    else dim "  на рабочий стол не добавлен"; fi
+    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ added to the desktop (instances: $n)"
+    else dim "  not added to the desktop"; fi
 }
 
 status() {
-    echo "== Процессы"
-    if pgrep -x conky >/dev/null; then pgrep -ax conky | sed 's/^/  /'; else dim "  conky не запущен"; fi
-    echo "== Окно и область ввода"; input_shape
-    echo "== Разложено"
+    echo "== Processes"
+    if pgrep -x conky >/dev/null; then pgrep -ax conky | sed 's/^/  /'; else dim "  conky is not running"; fi
+    echo "== Window and input region"; input_shape
+    echo "== Deployed"
     for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
         if [ -f "$DEST/$f" ]; then
             # Compare against the @HOME@-substituted text, or the check lies on every file.
-            if sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" | cmp -s - "$DEST/$f"; then grn "  ✓ $f — совпадает с репо"
-            else red "  ≠ $f — РАЗОШЁЛСЯ с репо"; fi
-        else red "  ✗ $f — не разложен"; fi
+            if sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" | cmp -s - "$DEST/$f"; then grn "  ✓ $f — matches the repo"
+            else red "  ≠ $f — DIFFERS from the repo"; fi
+        else red "  ✗ $f — not deployed"; fi
     done
     if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
         if grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop"; then
-            dim "  • автозапуск выключен (Hidden=true) — вернуть: ./install.sh --conky-on"
-        else grn "  ✓ автозапуск"; fi
-    else red "  ✗ автозапуск не настроен"; fi
-    [ -f "$APPS/conky.desktop" ] && grn "  ✓ заглушка пакетного conky.desktop" || red "  ✗ заглушки нет"
+            dim "  • autostart disabled (Hidden=true) — to re-enable: ./install.sh --conky-on"
+        else grn "  ✓ autostart"; fi
+    else red "  ✗ autostart not set up"; fi
+    [ -f "$APPS/conky.desktop" ] && grn "  ✓ mask over the packaged conky.desktop" || red "  ✗ no mask"
     echo; plasmoid_status
     echo; plaintop_window_status
     echo; spectrum_status
@@ -435,18 +435,18 @@ status() {
 
 deps() {
     local miss=0
-    echo "== Зависимости"
+    echo "== Dependencies"
     command -v conky >/dev/null && grn "  ✓ conky $(conky --version 2>/dev/null | head -1 | awk '{print $2}')" || { red "  ✗ conky"; miss=1; }
-    python3 -c "import Xlib" 2>/dev/null && grn "  ✓ python-xlib" || { red "  ✗ python-xlib (нужен для click-through)"; miss=1; }
-    command -v sensors >/dev/null && grn "  ✓ lm_sensors" || { red "  ✗ lm_sensors (температуры и обороты)"; miss=1; }
+    python3 -c "import Xlib" 2>/dev/null && grn "  ✓ python-xlib" || { red "  ✗ python-xlib (needed for click-through)"; miss=1; }
+    command -v sensors >/dev/null && grn "  ✓ lm_sensors" || { red "  ✗ lm_sensors (temperatures and fan speeds)"; miss=1; }
     # ⚠️ No pipeline here, on purpose: under set -o pipefail the `fc-list | grep -q`
     # combination lies. grep -q exits on the first match, fc-list takes SIGPIPE, the
     # pipeline returns an error — and the check reports "not found" although the font
     # is installed.
     local fam; fam=$(fc-match -f '%{family}' 'JetBrainsMono Nerd Font Mono' 2>/dev/null)
     case "$fam" in
-        *"JetBrainsMono Nerd Font Mono"*) grn "  ✓ шрифт JetBrainsMono Nerd Font Mono" ;;
-        *) red "  ✗ шрифт JetBrainsMono Nerd Font Mono (ttf-jetbrains-mono-nerd)"; miss=1 ;;
+        *"JetBrainsMono Nerd Font Mono"*) grn "  ✓ font JetBrainsMono Nerd Font Mono" ;;
+        *) red "  ✗ font JetBrainsMono Nerd Font Mono (ttf-jetbrains-mono-nerd)"; miss=1 ;;
     esac
     return $miss
 }
@@ -454,7 +454,7 @@ deps() {
 # Deploy the conky files without starting it: conky may be switched off on purpose
 # while the files in the repository have already moved on.
 conky_deploy() {
-    echo; echo "== Раскладываю"
+    echo; echo "== Deploying"
     mkdir -p "$DEST" "$AUTOSTART" "$APPS"
     # ⚠️ Deploying files must not flip conky on. Copying the autostart entry overwrites
     # the Hidden=true put there by --conky-off, so remember it and put it back.
@@ -469,7 +469,7 @@ conky_deploy() {
     cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && echo "  → $AUTOSTART/conky-plainext.desktop"
     # A mask over /usr/share/applications/conky.desktop: otherwise KWin starts the packaged
     # conky with its default config. The user directory comes first in XDG_DATA_DIRS.
-    cp "$REPO/conky/conky-mask.desktop" "$APPS/conky.desktop" && echo "  → $APPS/conky.desktop (заглушка)"
+    cp "$REPO/conky/conky-mask.desktop" "$APPS/conky.desktop" && echo "  → $APPS/conky.desktop (mask)"
 
     # excludeApps must match own_window_class, or the exclusion silently does nothing.
     if command -v kwriteconfig6 >/dev/null; then
@@ -492,14 +492,14 @@ case "${1:-}" in
   --plaintop-window)   plaintop_window; exit $? ;;
   --plaintop-export)   plaintop_export; exit $? ;;
   --plaintop-settings) python3 "$REPO/monitor/window/setup.py" settings; exit $? ;;
-  --clicks-off)  clicks_set false "клики ловятся виджетами (можно настраивать мышью)"; exit $? ;;
-  --clicks-on)   clicks_set true "клики проходят на рабочий стол"; exit $? ;;
+  --clicks-off)  clicks_set false "widgets catch clicks (can be configured with the mouse)"; exit $? ;;
+  --clicks-on)   clicks_set true "clicks pass through to the desktop"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Использование: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
+  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
 esac
 
-deps || { echo; red "Не хватает зависимостей — поставь их и повтори."; exit 1; }
+deps || { echo; red "Missing dependencies — install them and try again."; exit 1; }
 
 conky_deploy
 
@@ -507,7 +507,7 @@ conky_deploy
 # unlike a plain deploy, which keeps whatever state it found.
 sed -i '/^Hidden=true$/d' "$AUTOSTART/conky-plainext.desktop"
 
-echo; echo "== Запускаю"
+echo; echo "== Starting"
 "$DEST/start.sh" >/dev/null 2>&1 &
 sleep 8
 echo; status

@@ -31,29 +31,29 @@ def check(widget, vocab):
     errors = []
     seen = set()
     for i, block in enumerate(widget.get("blocks", [])):
-        where = f"блок {i} (id={block.get('id', '?')})"
+        where = f"block {i} (id={block.get('id', '?')})"
         bid = block.get("id")
         if not bid:
-            errors.append(f"{where}: нет id")
+            errors.append(f"{where}: no id")
         elif bid in seen:
-            errors.append(f"{where}: id повторяется")
+            errors.append(f"{where}: duplicate id")
         else:
             seen.add(bid)
 
         btype = block.get("type")
         spec = vocab.get(btype)
         if spec is None:
-            errors.append(f"{where}: неизвестный тип «{btype}» — его нет в blocks.json")
+            errors.append(f'{where}: unknown type "{btype}" — not in blocks.json')
             continue
 
         params = spec.get("params", {})
         for key, value in (block.get("params") or {}).items():
             if key not in params:
-                errors.append(f"{where}: параметр «{key}» не объявлен у типа «{btype}»")
+                errors.append(f'{where}: parameter "{key}" is not declared by type "{btype}"')
                 continue
             want = params[key]["type"]
             if not TYPES[want](value):
-                errors.append(f"{where}: параметр «{key}» должен быть {want}, а это {value!r}")
+                errors.append(f'{where}: parameter "{key}" must be {want}, got {value!r}')
     return errors
 
 
@@ -79,7 +79,7 @@ def main():
 
     errors = check(widget, vocab)
     if errors:
-        print("Описание не годится:", file=sys.stderr)
+        print("The description is invalid:", file=sys.stderr)
         for e in errors:
             print("  ✗ " + e, file=sys.stderr)
         return 1
@@ -94,7 +94,7 @@ def main():
         f"var VOCAB = {dump(vocab)}\n",
         encoding="utf-8",
     )
-    print(f"  ✓ описание: {len(blocks)} блоков → {OUT.relative_to(ROOT)}")
+    print(f"  ✓ description (blocks: {len(blocks)}) → {OUT.relative_to(ROOT)}")
     return 0
 
 

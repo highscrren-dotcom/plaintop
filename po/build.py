@@ -37,8 +37,8 @@ if __name__ == "__main__":
     try:
         mos = build(sys.argv[1], sys.argv[2])
     except FileNotFoundError:
-        sys.exit("  ✗ нет msgfmt — поставь gettext")
+        sys.exit("  ✗ msgfmt is missing — install gettext")
     except subprocess.CalledProcessError as e:
-        sys.exit(f"  ✗ каталог не собрался: {e.cmd[-1]}")
+        sys.exit(f"  ✗ catalog failed to build: {e.cmd[-1]}")
     langs = sorted(m.parent.parent.name for m in mos)
-    print(f"  ✓ переводы {sys.argv[1]}: {', '.join(langs) or 'нет'}")
+    print(f"  ✓ translations for {sys.argv[1]}: {', '.join(langs) or 'none'}")

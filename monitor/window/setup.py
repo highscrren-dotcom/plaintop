@@ -137,7 +137,7 @@ def build_config(overwrite_blocks=True):
                 params[key] = value
                 filled += 1
     if filled:
-        print(f"  • параметров дополнено из пакетного описания: {filled}")
+        print(f"  • parameters filled in from the packaged description: {filled}")
 
     cfg["blocks"] = blocks
 
@@ -145,8 +145,8 @@ def build_config(overwrite_blocks=True):
     tmp = CONFIG.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp.replace(CONFIG)
-    print(f"  → {CONFIG} ({len(cfg['blocks'])} блоков, шрифт {cfg['fontSize']} пт"
-          f"{', из настроек плазмоида' if ok else ', по умолчанию'})")
+    print(f"  → {CONFIG} (blocks: {len(cfg['blocks'])}, font {cfg['fontSize']} pt"
+          f"{', from the plasmoid settings' if ok else ', defaults'})")
     return cfg
 
 
@@ -226,15 +226,15 @@ def started_before_deploy(pid):
 
 def files_status():
     """⚠️ Existence is not enough: on 2026-09-22 the window ran a SensorRegistry.qml one fix
-    behind the repository for a day, and the status line said only "есть"."""
+    behind the repository for a day, and the status line said only "present"."""
     if not (UI_DEST / "window.qml").exists():
-        return f"нет ({UI_DEST})"
+        return f"missing ({UI_DEST})"
     if not build_catalogs(quiet=True):
-        return "⚠️ переводы не собираются: python3 po/build.py"
+        return "⚠️ translations do not build: python3 po/build.py"
     stale = stale_files()
     if stale:
-        return f"⚠️ разошлись с репо: {', '.join(stale)} — переложить: {REINSTALL}"
-    return f"совпадают с репо ({UI_DEST})"
+        return f"⚠️ differ from the repo: {', '.join(stale)} — redeploy: {REINSTALL}"
+    return f"match the repo ({UI_DEST})"
 
 
 def deploy_files():
@@ -289,7 +289,7 @@ def settings():
     env = dict(os.environ, QML_XHR_ALLOW_FILE_READ="1")
     subprocess.Popen(["qml6", str(UI_DEST / "settings.qml")], env=env, start_new_session=True,
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    print("  ✓ редактор открыт")
+    print("  ✓ editor opened")
 
 
 def read_kwinrules():
@@ -358,7 +358,7 @@ def ensure_rule(x, y, width, height):
         out.append("")
     KWINRULES.parent.mkdir(parents=True, exist_ok=True)
     KWINRULES.write_text("\n".join(out), encoding="utf-8")
-    print(f"  → {KWINRULES}: правило «{RULE_NAME}» ({x},{y} {width}x{height})")
+    print(f'  → {KWINRULES}: rule "{RULE_NAME}" ({x},{y} {width}x{height})')
     subprocess.run(["qdbus6", "org.kde.KWin", "/KWin", "reconfigure"],
                    capture_output=True, check=False)
 
@@ -391,11 +391,11 @@ def windows():
 def stop():
     pids = windows()
     if not pids:
-        print("  • окно не запущено")
+        print("  • window is not running")
     for pid in pids:
         try:
             os.kill(pid, signal.SIGTERM)
-            print(f"  ✓ окно остановлено (pid {pid})")
+            print(f"  ✓ window stopped (pid {pid})")
         except ProcessLookupError:
             pass
     PIDFILE.unlink(missing_ok=True)
@@ -409,28 +409,28 @@ def start():
                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     PIDFILE.parent.mkdir(parents=True, exist_ok=True)
     PIDFILE.write_text(str(proc.pid))
-    print(f"  ✓ окно запущено (pid {proc.pid})")
+    print(f"  ✓ window started (pid {proc.pid})")
 
 
 def status():
-    print(f"  файлы:      {files_status()}")
+    print(f"  files:      {files_status()}")
     if CONFIG.exists():
         try:
             cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
-            print(f"  настройки:  есть, блоков {len(cfg.get('blocks', []))}")
+            print(f"  settings:   present, blocks: {len(cfg.get('blocks', []))}")
         except json.JSONDecodeError:
-            print("  настройки:  файл есть, но не разбирается")
+            print("  settings:   file present, but does not parse")
     else:
-        print("  настройки:  нет")
-    print(f"  автозапуск: {'есть' if AUTOSTART.exists() else 'нет'}")
-    print(f"  редактор:   {'есть' if LAUNCHER.exists() else 'нет'} (qml6 {UI_DEST / 'settings.qml'})")
+        print("  settings:   missing")
+    print(f"  autostart:  {'present' if AUTOSTART.exists() else 'missing'}")
+    print(f"  editor:     {'present' if LAUNCHER.exists() else 'missing'} (qml6 {UI_DEST / 'settings.qml'})")
     _, data = read_kwinrules()
-    print(f"  правило KWin: {'есть' if any(v.get('Description') == RULE_NAME for v in data.values()) else 'нет'}")
+    print(f"  KWin rule:  {'present' if any(v.get('Description') == RULE_NAME for v in data.values()) else 'missing'}")
     pids = windows()
-    print(f"  окно:       {'работает (pid ' + ', '.join(map(str, pids)) + ')' if pids else 'не запущено'}"
-          + ("  ⚠️ копий больше одной" if len(pids) > 1 else ""))
+    print(f"  window:     {'running (pid ' + ', '.join(map(str, pids)) + ')' if pids else 'not running'}"
+          + ("  ⚠️ more than one instance" if len(pids) > 1 else ""))
     if any(started_before_deploy(pid) for pid in pids):
-        print(f"  ⚠️ окно запущено раньше, чем разложены файлы, — работает старый код: {REINSTALL}")
+        print(f"  ⚠️ the window started before the files were deployed — it runs the old code: {REINSTALL}")
 
 
 def main():
@@ -450,7 +450,7 @@ def main():
     elif action in ("start", "stop", "status", "settings"):
         globals()[action]()
     else:
-        sys.exit(f"неизвестное действие: {action}")
+        sys.exit(f"unknown action: {action}")
 
 
 if __name__ == "__main__":
