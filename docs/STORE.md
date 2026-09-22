@@ -15,10 +15,9 @@ The files to upload are built by:
 so what it builds is known to install. The version in the file name comes from each
 widget's `metadata.json`; bump it there before building a new upload.
 
-⚠️ The pages published on 2026-09-22 are version 0.1 and still carry the earlier mouse
-paragraph ("lets the right button through", "a plasmoid can never pass the left one"); the
-text below is newer and reaches the store only with the next upload — 0.2, which both
-`metadata.json` already say and which carries the click-through change.
+⚠️ Updated to 0.2 on 2026-09-22 (13:54 and 13:55 UTC in the store's API): the pages carry the
+text below, `plaintop-0.2.plasmoid` and `plainspectrum-0.2.plasmoid` (MD5 equal to the
+built files); the 0.1 files are still listed beside them.
 
 ## Uploading
 
