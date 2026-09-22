@@ -103,12 +103,7 @@ ApplicationWindow {
     // editor never asks the user to know an id — it offers what the machine reports now.
     SensorRegistry { id: registry }
 
-    readonly property var interfaces: {
-        const out = []
-        for (const id of registry.match("^network/(?!all)[^/]+/download$"))
-            out.push(id.split("/")[1])
-        return out
-    }
+    readonly property var interfaces: registry.interfaces
 
     // Real filesystems only: /proc, cgroups and the rest of the pseudo mounts are noise.
     readonly property var fsTypes: ["ext2", "ext3", "ext4", "btrfs", "xfs", "f2fs", "zfs",
@@ -589,6 +584,23 @@ ApplicationWindow {
                                 onActivated: app.setParam(pd.modelData.key,
                                                           currentIndex === 0
                                                           ? "" : app.interfaces[currentIndex - 1])
+                            }
+
+                            // What "find it yourself" lands on — not in the menu item itself:
+                            // relabelling the model under a bound currentIndex invites drift.
+                            // ⚠️ Also shown for a saved name the machine no longer has: the
+                            // menu then reads "find it yourself" too, and a renamed interface
+                            // (enp4s0 → enp5s0 here) would otherwise hide behind it.
+                            Label {
+                                readonly property string wanted: String(pd.modelData.value || "")
+                                visible: pd.modelData.pick === "iface"
+                                         && registry.bestInterface.length > 0
+                                         && app.interfaces.indexOf(wanted) < 0
+                                text: (wanted.length > 0 ? wanted + " нет на машине — " : "")
+                                      + "найден: " + registry.bestInterface
+                                      + (registry.netSettled ? "" : " (выбираю…)")
+                                font: Kirigami.Theme.smallFont
+                                opacity: 0.7
                             }
 
                             // A single value: still typeable, with the picker beside it.

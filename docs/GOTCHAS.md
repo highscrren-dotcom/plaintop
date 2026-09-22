@@ -305,6 +305,33 @@ Among the entries are `cpu/cpu\d+/temperature`, `gpu/gpu\d+/usage` and
 sensors, and subscribing to one returns nothing. Filter them out by regex metacharacters
 (`( * \ ? [ ] | +`): a real id never contains any of them.
 
+## Network interfaces come out of the tree in hash order
+
+"The first interface in the tree" is not a choice but a coin toss. ksystemstats keeps
+devices in a `QHash` (`SensorContainer` in libksysguard), so with two connected devices —
+Wi-Fi plus a dock, two ports — the order changes from one daemon start to the next. The
+tree is clean, though: the NetworkManager backend publishes only Ethernet, Wi-Fi,
+Bluetooth, modem and ADSL devices with an active connection, and the rtnetlink backend
+only `ARPHRD_ETHER` links with no link type that are UP. `docker0`, tun (sing-box,
+WireGuard), veth and `lo` appear in neither: on s1dPC `nmcli` reports four connected
+devices and the tree holds one. Read in the ksystemstats 6.7.5 source.
+
+So the candidates are sorted and ranked: a default gateway first (a non-empty
+`ipv4gateway` or `ipv6gateway` — only the NetworkManager backend fills them, the
+rtnetlink one never does), then the traffic carried (`totalDownload`), then the name.
+They are ranked once per set of interfaces so the pick does not flicker, the probes
+unsubscribe as soon as the pick is made, and with a single interface they are never
+created at all.
+
+## Inside a `Sensors.Sensor`, a bare `name` is the sensor's own property
+
+`Sensor` has its own `name`, `shortName`, `value`, `unit`, `status` and `enabled`, and an
+unqualified identifier in a binding inside it is looked up there first. In a delegate
+with a `name` property, `sensorId: "network/" + name + "/download"` came out as
+`network//download` — the sensor's display name, empty until metadata arrives — and the
+sensor stayed in Loading; `probe.name` gave `network/enp5s0/download`. Verified on s1dPC
+2026-09-22. Refer to the delegate by its `id`.
+
 ## Kirigami's `FormLayout` complains when a `Repeater` rebuilds its children
 
 `TypeError: Cannot read property 'isSection' of null`, `Cannot read property 'Accessible'

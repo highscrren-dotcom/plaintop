@@ -78,7 +78,7 @@ found on the machine the widget runs on:
 
 | What | How it is chosen | Change it in |
 |---|---|---|
-| Network interface | the first real interface the sensor tree reports | editor → *"Блоки"* (Blocks) → *Сеть*, a menu of the interfaces found |
+| Network interface | among the connected hardware interfaces: the one with a gateway, then the one that carried the most traffic | editor → *"Блоки"* (Blocks) → *Сеть*, a menu of the interfaces found |
 | Fan and NVMe sensors | by pattern among the sensors this machine reports | editor → *"Блоки"* → *Процессор* / *Диски*, a searchable list with live values |
 | Mount points | `/` only — a mount point is a choice, not something to guess | editor → *"Блоки"* → *Диски*, a list of what is mounted now |
 | Header text | a setting | editor → *"Вид"* (Appearance) |

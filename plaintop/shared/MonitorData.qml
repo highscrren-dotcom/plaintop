@@ -94,8 +94,8 @@ Item {
         const preferred = blockParam("network", "interface", "")
         if (preferred.length > 0 && registry.has("network/" + preferred + "/download"))
             return preferred
-        const found = registry.firstMatch("^network/(?!all)[^/]+/download$")
-        return found.length > 0 ? found.split("/")[1] : preferred
+        // Not the first one listed: the daemon lists interfaces in hash order.
+        return registry.bestInterface.length > 0 ? registry.bestInterface : preferred
     }
 
     // ⚠️ Hardware-specific sensor ids are parameters, not literals: a fan chip and an

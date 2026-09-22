@@ -38,8 +38,19 @@ QtObject {
     // which the 10-second poll used to do for an unchanged tree.
     function refresh() {
         const fresh = walk(undefined, [])
-        if (fresh.join("\n") !== ids.join("\n"))
-            ids = fresh
+        if (fresh.join("\n") === ids.join("\n"))
+            return
+        ids = fresh
+        const ifs = match("^network/(?!all)[^/]+/download$").map(id => id.split("/")[1]).sort()
+        if (ifs.join(" ") !== interfaces.join(" ")) {
+            // Keep the current pick while the new set is being ranked, if it is still here.
+            netSettled = false
+            if (ifs.indexOf(bestInterface) < 0)
+                bestInterface = ifs.length > 0 ? ifs[0] : ""
+            interfaces = ifs
+            if (ifs.length < 2)
+                netSettled = true
+        }
     }
 
     function has(id) {
@@ -67,6 +78,79 @@ QtObject {
     function resolveList(preferred, pattern) {
         const kept = (preferred || []).filter(id => has(id))
         return kept.length > 0 ? kept : match(pattern)
+    }
+
+    // ── The network interface worth showing ───────────────────────────────────
+    // ksystemstats publishes only hardware links that are up — docker bridges, tun and
+    // veth never reach the tree — but it keeps them in a hash, so with two of them (Wi-Fi
+    // plus a dock, two ports) "the first one" changed from one daemon start to the next.
+    // So the candidates are sorted and ranked: a default gateway first (the NetworkManager
+    // backend fills it; the rtnetlink one never does), then the traffic carried so far,
+    // then the name. Ranked once per set of interfaces, so the pick does not flicker.
+    property var interfaces: []
+    property string bestInterface: ""
+    property bool netSettled: false
+
+    function rankInterfaces(force) {
+        if (netSettled)
+            return
+        const probes = []
+        for (let i = 0; i < netProbes.count; i++) {
+            const p = netProbes.objectAt(i)
+            if (!p || (!force && !p.answered))
+                return      // someone has not answered yet
+            probes.push(p)
+        }
+        if (probes.length === 0)
+            return
+        probes.sort((a, b) => (b.hasGateway - a.hasGateway) || (b.carried - a.carried)
+                              || (a.name < b.name ? -1 : 1))
+        bestInterface = probes[0].name
+        netSettled = true
+    }
+
+    // A single interface needs no ranking, so the usual machine subscribes to nothing here.
+    // The probes unsubscribe once the pick is made: totals change twice a second.
+    property var netProbes: Instantiator {
+        model: registry.interfaces.length > 1 ? registry.interfaces : []
+
+        delegate: QtObject {
+            id: probe
+            required property var modelData
+            readonly property string name: String(modelData)
+
+            property var gateway4: Sensors.Sensor {
+                sensorId: "network/" + probe.name + "/ipv4gateway"
+                enabled: !registry.netSettled
+            }
+            property var gateway6: Sensors.Sensor {
+                sensorId: "network/" + probe.name + "/ipv6gateway"
+                enabled: !registry.netSettled
+            }
+            property var total: Sensors.Sensor {
+                sensorId: "network/" + probe.name + "/totalDownload"
+                enabled: !registry.netSettled
+            }
+
+            // ⚠️ `probe.` is not decoration: inside a Sensor a bare `name` is the sensor's
+            // own display name. The status turns Ready on metadata; the value comes later.
+            readonly property bool answered: gateway4.value !== undefined
+                                             && gateway6.value !== undefined
+                                             && total.value !== undefined
+            readonly property bool hasGateway: String(gateway4.value || "").length > 0
+                                               || String(gateway6.value || "").length > 0
+            readonly property real carried: Number(total.value) || 0
+
+            onAnsweredChanged: if (answered) registry.rankInterfaces(false)
+        }
+
+        onObjectAdded: registry.netTimeout.restart()
+    }
+
+    // A sensor that never answers must not keep the provisional pick forever.
+    property var netTimeout: Timer {
+        interval: 3000
+        onTriggered: registry.rankInterfaces(true)
     }
 
     // The daemon answers a moment after start, and plugins can appear later.
