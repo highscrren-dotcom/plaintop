@@ -1,0 +1,578 @@
+# Machine translation, not yet reviewed by a native speaker. Corrections are welcome as pull requests.
+# Chinese translations for plaintop package.
+# Copyright (C) 2026 THE plaintop'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the plaintop package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plaintop\n"
+"Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
+"POT-Creation-Date: 2026-09-22 13:25+0500\n"
+"PO-Revision-Date: 2026-09-22 13:56+0500\n"
+"Last-Translator: Machine translation\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: monitor/package/contents/config/config.qml:7
+msgctxt "settings page"
+msgid "General"
+msgstr "常规"
+
+#: monitor/package/contents/config/config.qml:13
+#: monitor/window/settings.qml:300
+msgctxt "settings page"
+msgid "Blocks"
+msgstr "区块"
+
+#: monitor/package/contents/ui/configBlocks.qml:134
+msgid ""
+"The blocks and their order. The default layout comes from schema/widget.json."
+msgstr "区块及其顺序。默认布局来自 schema/widget.json。"
+
+#: monitor/package/contents/ui/configBlocks.qml:190
+#: monitor/window/settings.qml:491
+msgid "Up"
+msgstr "上移"
+
+#: monitor/package/contents/ui/configBlocks.qml:197
+#: monitor/window/settings.qml:498
+msgid "Down"
+msgstr "下移"
+
+#: monitor/package/contents/ui/configBlocks.qml:204
+#: monitor/window/settings.qml:505
+msgid "Remove"
+msgstr "移除"
+
+#: monitor/package/contents/ui/configBlocks.qml:211
+msgid "Reset"
+msgstr "重置"
+
+#: monitor/package/contents/ui/configBlocks.qml:229
+#: monitor/window/settings.qml:524
+msgid "Add block"
+msgstr "添加区块"
+
+#: monitor/package/contents/ui/configGeneral.qml:33
+#: monitor/window/settings.qml:335
+msgid "Font:"
+msgstr "字体："
+
+#: monitor/package/contents/ui/configGeneral.qml:39
+#: monitor/window/settings.qml:342
+msgctxt "font size"
+msgid "Size:"
+msgstr "字号："
+
+#: monitor/package/contents/ui/configGeneral.qml:46
+#: monitor/window/settings.qml:371
+msgid "Left padding, px:"
+msgstr "左边距 (px)："
+
+#: monitor/package/contents/ui/configGeneral.qml:54
+#: monitor/window/settings.qml:378
+msgid "Top padding, px:"
+msgstr "上边距 (px)："
+
+#: monitor/package/contents/ui/configGeneral.qml:62
+#: monitor/window/settings.qml:385
+msgid "Width, px:"
+msgstr "宽度 (px)："
+
+#: monitor/package/contents/ui/configGeneral.qml:70
+#: monitor/window/settings.qml:392
+msgid "Height, px:"
+msgstr "高度 (px)："
+
+#: monitor/package/contents/ui/configGeneral.qml:77
+#: monitor/window/settings.qml:407
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "主文字："
+
+#: monitor/package/contents/ui/configGeneral.qml:83
+#: monitor/window/settings.qml:413
+msgctxt "palette: colour of"
+msgid "Header:"
+msgstr "标题："
+
+#: monitor/package/contents/ui/configGeneral.qml:89
+#: monitor/window/settings.qml:419
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "次要文字："
+
+#: monitor/package/contents/ui/configGeneral.qml:95
+#: monitor/window/settings.qml:425
+msgctxt "palette: colour of"
+msgid "Values:"
+msgstr "数值："
+
+#: monitor/package/contents/ui/configGeneral.qml:102
+msgid "Mouse:"
+msgstr "鼠标："
+
+#: monitor/package/contents/ui/configGeneral.qml:103
+msgid "let clicks through to the desktop"
+msgstr "让点击穿透到桌面"
+
+#: monitor/package/contents/ui/configGeneral.qml:107
+msgid ""
+"While clicks go through, the widget cannot be grabbed with the mouse.\n"
+"To reach the settings: the desktop's edit mode\n"
+"or ./install.sh with the clicks off switch"
+msgstr ""
+"点击穿透时，无法用鼠标抓取此小部件。\n"
+"要打开设置：使用桌面的编辑模式，\n"
+"或带 clicks off 开关运行 ./install.sh"
+
+#: monitor/package/contents/ui/configGeneral.qml:114
+msgid "Interval, ms:"
+msgstr "间隔 (毫秒)："
+
+#: monitor/package/contents/ui/configGeneral.qml:122
+#: monitor/window/settings.qml:356
+msgid "Top processes, every … s:"
+msgstr "进程排行，每 … 秒："
+
+#: monitor/package/contents/ui/configGeneral.qml:128
+#: monitor/window/settings.qml:363
+msgid ""
+"The process list is the most expensive thing collected: every 2 s\n"
+"about 3% of a core, every 10 s about 1.3%"
+msgstr ""
+"进程列表是采集开销最大的一项：每 2 秒\n"
+"约占一个核心的 3%，每 10 秒约 1.3%"
+
+#: monitor/shared/MonitorData.qml:503
+#, kde-format
+msgctxt "uptime: days, abbreviated"
+msgid "%1d"
+msgstr "%1天"
+
+#: monitor/shared/MonitorData.qml:504
+#, kde-format
+msgctxt "uptime: hours, abbreviated"
+msgid "%1h"
+msgstr "%1小时"
+
+#: monitor/shared/MonitorData.qml:505
+#, kde-format
+msgctxt "uptime: minutes, abbreviated"
+msgid "%1m"
+msgstr "%1分"
+
+#: monitor/shared/MonitorData.qml:555
+msgctxt "docker: the user is not in the docker group yet"
+msgid "needs re-login"
+msgstr "需重新登录"
+
+#: monitor/shared/MonitorData.qml:556
+#, kde-format
+msgctxt "docker: running containers of all containers"
+msgid "%1 of %2"
+msgstr "%1（共 %2）"
+
+#: monitor/shared/MonitorData.qml:562
+#, kde-format
+msgctxt "ollama: no model loaded; how many are installed"
+msgid "idle, %1 model"
+msgid_plural "idle, %1 models"
+msgstr[0] "空闲，%1 个模型"
+
+#: monitor/shared/MonitorData.qml:564
+#, kde-format
+msgctxt "pacman: pending updates"
+msgid "%1 update"
+msgid_plural "%1 updates"
+msgstr[0] "%1 个更新"
+
+#: monitor/shared/MonitorData.qml:600
+msgctxt "date line: a Qt date pattern, no year"
+msgid "dddd, MMMM d"
+msgstr "M'月'd'日' dddd"
+
+#: monitor/shared/MonitorData.qml:674
+msgctxt "disks: a configured mount point is absent"
+msgid "not mounted"
+msgstr "未挂载"
+
+#: monitor/shared/MonitorData.qml:680
+#, kde-format
+msgctxt "uptime line"
+msgid "uptime %1"
+msgstr "运行时间 %1"
+
+#: monitor/window/settings.qml:24
+msgid "plaintop — monitor settings"
+msgstr "plaintop — 监视器设置"
+
+#: monitor/window/settings.qml:44
+#, kde-format
+msgid "the relay does not answer on port %1"
+msgstr "中继在端口 %1 上无响应"
+
+#: monitor/window/settings.qml:54
+msgid "settings read"
+msgstr "已读取设置"
+
+#: monitor/window/settings.qml:89
+msgid "saved"
+msgstr "已保存"
+
+#: monitor/window/settings.qml:89
+#, kde-format
+msgid "not saved: %1"
+msgstr "未保存：%1"
+
+#: monitor/window/settings.qml:299
+msgctxt "settings page"
+msgid "Appearance"
+msgstr "外观"
+
+#: monitor/window/settings.qml:303
+msgid "loading…"
+msgstr "正在加载…"
+
+#: monitor/window/settings.qml:306 monitor/window/settings.qml:919
+msgid "Reload"
+msgstr "重新加载"
+
+#: monitor/window/settings.qml:332
+msgctxt "settings section"
+msgid "Text"
+msgstr "文字"
+
+#: monitor/window/settings.qml:349
+msgid "Update interval, ms:"
+msgstr "更新间隔 (毫秒)："
+
+#: monitor/window/settings.qml:368
+msgctxt "settings section"
+msgid "Placement"
+msgstr "位置"
+
+#: monitor/window/settings.qml:399
+msgid ""
+"The window's size and place are kept by a KWin rule — after a size change\n"
+"rerun: ./install.sh --plaintop-window"
+msgstr ""
+"窗口的大小和位置由 KWin 规则保持——更改大小后\n"
+"请重新运行：./install.sh --plaintop-window"
+
+#: monitor/window/settings.qml:404
+msgctxt "settings section"
+msgid "Palette"
+msgstr "调色板"
+
+#: monitor/window/settings.qml:439
+msgid "The blocks and their order. Edits reach the monitor within two seconds."
+msgstr "区块及其顺序。修改会在两秒内应用到监视器。"
+
+#: monitor/window/settings.qml:588
+msgctxt "interface menu: automatic choice"
+msgid "— find it —"
+msgstr "— 自动查找 —"
+
+#: monitor/window/settings.qml:609
+#, kde-format
+msgctxt "interface hint"
+msgid "found: %1"
+msgstr "已找到：%1"
+
+#: monitor/window/settings.qml:610
+#, kde-format
+msgctxt "interface hint"
+msgid "found: %1 (choosing…)"
+msgstr "已找到：%1（选择中…）"
+
+#: monitor/window/settings.qml:613
+#, kde-format
+msgctxt "interface hint"
+msgid "%1 is not on this machine — %2"
+msgstr "本机没有 %1——%2"
+
+#: monitor/window/settings.qml:627
+msgctxt "placeholder"
+msgid "empty — find it"
+msgstr "留空则自动查找"
+
+#: monitor/window/settings.qml:634
+msgid "Choose…"
+msgstr "选择…"
+
+#: monitor/window/settings.qml:642 monitor/window/settings.qml:692
+msgid "Auto"
+msgstr "自动"
+
+#: monitor/window/settings.qml:676
+msgctxt "placeholder"
+msgid "empty — find them"
+msgstr "留空则自动查找"
+
+#: monitor/window/settings.qml:676
+msgid "nothing chosen"
+msgstr "未选择"
+
+#: monitor/window/settings.qml:683
+msgid "Add…"
+msgstr "添加…"
+
+#: monitor/window/settings.qml:749
+#, kde-format
+msgid "live preview · %1x%2 · scale %3 · lines %4"
+msgstr "实时预览 · %1x%2 · 缩放 %3 · %4 行"
+
+#: monitor/window/settings.qml:767
+msgid "Sensors of this machine"
+msgstr "本机传感器"
+
+#: monitor/window/settings.qml:815
+msgid "search: part of an id"
+msgstr "搜索：ID 的一部分"
+
+#: monitor/window/settings.qml:819
+msgid "matching only"
+msgstr "仅显示匹配项"
+
+#: monitor/window/settings.qml:827
+#, kde-format
+msgid "shown %1 of %2"
+msgstr "已显示 %1 项，共 %2 项"
+
+#: monitor/window/settings.qml:828
+msgid "the tree is still being read"
+msgstr "传感器树仍在读取中"
+
+#: monitor/window/settings.qml:863
+msgid "no data"
+msgstr "无数据"
+
+#: monitor/window/settings.qml:869
+msgid "or type an id by hand"
+msgstr "或手动输入 ID"
+
+#: monitor/window/settings.qml:876
+msgid "Mount points of this machine"
+msgstr "本机挂载点"
+
+#: monitor/window/settings.qml:913
+#, kde-format
+msgid "mounted now: %1"
+msgstr "当前已挂载：%1"
+
+#: monitor/window/settings.qml:964
+msgid "or type a path by hand"
+msgstr "或手动输入路径"
+
+#: schema/blocks.json:1
+msgctxt "schema: block name"
+msgid "Header"
+msgstr "标题"
+
+#: schema/blocks.json:2
+msgctxt "schema: block hint"
+msgid ""
+"The top line: your text and the hostname joined by “\\”; with no text, only "
+"the hostname"
+msgstr "顶部一行：您的文字和主机名，以“\\”连接；没有文字时只显示主机名"
+
+#: schema/blocks.json:3
+msgctxt "schema: parameter name"
+msgid "Text"
+msgstr "文字"
+
+#: schema/blocks.json:4
+msgctxt "schema: parameter name"
+msgid "Append the hostname"
+msgstr "附加主机名"
+
+#: schema/blocks.json:5
+msgctxt "schema: block name"
+msgid "Clock"
+msgstr "时钟"
+
+#: schema/blocks.json:6
+msgctxt "schema: parameter name"
+msgid "Seconds in a small size"
+msgstr "秒数用小字号"
+
+#: schema/blocks.json:7
+msgctxt "schema: block name"
+msgid "Date"
+msgstr "日期"
+
+#: schema/blocks.json:8
+msgctxt "schema: block name"
+msgid "System and kernel"
+msgstr "系统和内核"
+
+#: schema/blocks.json:9
+msgctxt "schema: block name"
+msgid "Separator"
+msgstr "分隔线"
+
+#: schema/blocks.json:10
+msgctxt "schema: block name"
+msgid "Processor"
+msgstr "处理器"
+
+#: schema/blocks.json:11
+msgctxt "schema: parameter name"
+msgid "Lines per NUMA node"
+msgstr "每个 NUMA 节点一行"
+
+#: schema/blocks.json:12
+msgctxt "schema: parameter name"
+msgid "Model, temperatures, fans"
+msgstr "型号、温度、风扇"
+
+#: schema/blocks.json:13 schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Processes in the top list"
+msgstr "排行中的进程数"
+
+#: schema/blocks.json:14
+msgctxt "schema: parameter name"
+msgid "Fan sensors (empty — find them)"
+msgstr "风扇传感器（留空则自动查找）"
+
+#: schema/blocks.json:15
+msgctxt "schema: block name"
+msgid "Memory"
+msgstr "内存"
+
+#: schema/blocks.json:16
+msgctxt "schema: parameter name"
+msgid "The “used / total” line"
+msgstr "“已用 / 总计”行"
+
+#: schema/blocks.json:18
+msgctxt "schema: block name"
+msgid "Graphics card"
+msgstr "显卡"
+
+#: schema/blocks.json:19
+msgctxt "schema: parameter name"
+msgid "VRAM, temperature and power line"
+msgstr "VRAM、温度和功耗行"
+
+#: schema/blocks.json:20
+msgctxt "schema: block name"
+msgid "Disks"
+msgstr "磁盘"
+
+#: schema/blocks.json:21
+msgctxt "schema: parameter name"
+msgid "Mount points"
+msgstr "挂载点"
+
+#: schema/blocks.json:22
+msgctxt "schema: parameter name"
+msgid "NVMe temperature on the root line"
+msgstr "在根分区行显示 NVMe 温度"
+
+#: schema/blocks.json:23
+msgctxt "schema: parameter name"
+msgid "NVMe temperature sensor (empty — find it)"
+msgstr "NVMe 温度传感器（留空则自动查找）"
+
+#: schema/blocks.json:24
+msgctxt "schema: block name"
+msgid "Uptime"
+msgstr "运行时间"
+
+#: schema/blocks.json:25
+msgctxt "schema: block name"
+msgid "Network"
+msgstr "网络"
+
+#: schema/blocks.json:26
+msgctxt "schema: parameter name"
+msgid "Interface (empty — find it)"
+msgstr "网络接口（留空则自动查找）"
+
+#: schema/blocks.json:27
+msgctxt "schema: block name"
+msgid "Services"
+msgstr "服务"
+
+#: schema/blocks.json:28
+msgctxt "schema: block hint"
+msgid "docker, ollama, pending updates — a script inside the package"
+msgstr "docker、ollama、待安装更新——由包内的脚本提供"
+
+#: schema/blocks.json:29
+msgctxt "schema: block name"
+msgid "Hardware spec sheet"
+msgstr "硬件规格"
+
+#: schema/blocks.json:30
+msgctxt "schema: block hint"
+msgid "Static lines: processor, graphics card, board"
+msgstr "静态行：处理器、显卡、主板"
+
+#: schema/blocks.json:31
+msgctxt "schema: block name"
+msgid "Custom command"
+msgstr "自定义命令"
+
+#: schema/blocks.json:32
+msgctxt "schema: block hint"
+msgid "A line from the output of any command"
+msgstr "任意命令输出中的一行"
+
+#: schema/blocks.json:33 schema/blocks.json:39
+msgctxt "schema: parameter name"
+msgid "Label"
+msgstr "标签"
+
+#: schema/blocks.json:34
+msgctxt "schema: parameter name"
+msgid "Command"
+msgstr "命令"
+
+#: schema/blocks.json:35
+msgctxt "schema: parameter name"
+msgid "Interval, s"
+msgstr "间隔 (秒)"
+
+#: schema/blocks.json:36
+msgctxt "schema: parameter name"
+msgid "Lines to show"
+msgstr "显示行数"
+
+#: schema/blocks.json:37
+msgctxt "schema: block name"
+msgid "Custom sensor"
+msgstr "自定义传感器"
+
+#: schema/blocks.json:38
+msgctxt "schema: block hint"
+msgid "Any ksystemstats sensor by its id"
+msgstr "按 ID 指定的任意 ksystemstats 传感器"
+
+#: schema/blocks.json:40
+msgctxt "schema: parameter name"
+msgid "Sensor id"
+msgstr "传感器 ID"
+
+#: schema/blocks.json:41
+msgctxt "schema: parameter name"
+msgid "Draw a bar"
+msgstr "绘制进度条"
+
+#: schema/blocks.json:42
+msgctxt "schema: parameter name"
+msgid "Suffix after the value"
+msgstr "数值后缀"
+
+#: schema/blocks.json:43
+msgctxt "schema: parameter name"
+msgid "Decimal places"
+msgstr "小数位数"

@@ -1,4 +1,5 @@
-# Russian translations for plaintop package.
+# Machine translation, not yet reviewed by a native speaker. Corrections are welcome as pull requests.
+# Japanese translations for plaintop package.
 # Copyright (C) 2026 THE plaintop'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the plaintop package.
 # Automatically generated, 2026.
@@ -8,283 +9,282 @@ msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
 "POT-Creation-Date: 2026-09-22 13:49+0500\n"
-"PO-Revision-Date: 2026-09-22 13:39+0500\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
-"Language: ru\n"
+"PO-Revision-Date: 2026-09-22 13:56+0500\n"
+"Last-Translator: Machine translation\n"
+"Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: spectrum/package/contents/config/config.qml:7
 msgctxt "settings page"
 msgid "Ring"
-msgstr "Кольцо"
+msgstr "リング"
 
 #: spectrum/package/contents/ui/configGeneral.qml:50
 #: spectrum/window/settings.qml:122
 msgctxt "settings section"
 msgid "Shape"
-msgstr "Форма"
+msgstr "形状"
 
 #: spectrum/package/contents/ui/configGeneral.qml:54
 #: spectrum/window/settings.qml:125
 msgid "Layout:"
-msgstr "Раскладка:"
+msgstr "レイアウト:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:55
 #: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Ring"
-msgstr "Кольцо"
+msgstr "リング"
 
 #: spectrum/package/contents/ui/configGeneral.qml:55
 #: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Line"
-msgstr "Линия"
+msgstr "直線"
 
 #: spectrum/package/contents/ui/configGeneral.qml:60
 #: spectrum/window/settings.qml:132
 msgid "Bars:"
-msgstr "Штрихов:"
+msgstr "バーの本数:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:68
 #: spectrum/window/settings.qml:139
 msgid "Radius, px:"
-msgstr "Радиус, px:"
+msgstr "半径 (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:77
 #: spectrum/window/settings.qml:146
 msgid "Span, °:"
-msgstr "Охват, °:"
+msgstr "円弧の範囲 (°):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:86
 #: spectrum/window/settings.qml:153
 msgid "Start angle, °:"
-msgstr "Начальный угол, °:"
+msgstr "開始角度 (°):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:95
 msgid "Gap between bars, px:"
-msgstr "Зазор между штрихами, px:"
+msgstr "バーの間隔 (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:103
 #: spectrum/window/settings.qml:160
 msgid "Bar thickness, px:"
-msgstr "Толщина штриха, px:"
+msgstr "バーの太さ (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:110
 #: spectrum/window/settings.qml:174
 msgid "Length at silence, px:"
-msgstr "Длина в тишине, px:"
+msgstr "無音時の長さ (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:118
 #: spectrum/window/settings.qml:181
 msgid "Extra length at maximum, px:"
-msgstr "Добавка на максимуме, px:"
+msgstr "最大時の追加の長さ (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:126
 #: spectrum/window/settings.qml:188
 msgid "Growth:"
-msgstr "Рост:"
+msgstr "伸びる方向:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:128
 #: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "outward"
-msgstr "наружу"
+msgstr "外向き"
 
 #: spectrum/package/contents/ui/configGeneral.qml:128
 #: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "inward"
-msgstr "внутрь"
+msgstr "内向き"
 
 #: spectrum/package/contents/ui/configGeneral.qml:128
 #: spectrum/package/contents/ui/configGeneral.qml:129
 #: spectrum/window/settings.qml:193 spectrum/window/settings.qml:195
 msgctxt "growth"
 msgid "both ways"
-msgstr "в обе стороны"
+msgstr "両方向"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
 #: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "up"
-msgstr "вверх"
+msgstr "上向き"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
 #: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "down"
-msgstr "вниз"
+msgstr "下向き"
 
 #: spectrum/package/contents/ui/configGeneral.qml:134
 #: spectrum/window/settings.qml:201
 msgid "Order:"
-msgstr "Порядок:"
+msgstr "順序:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:135
 msgid "mirrored (low frequencies at the edges)"
-msgstr "зеркально (низкие частоты по краям)"
+msgstr "ミラー (低音域を両端に)"
 
 #: spectrum/package/contents/ui/configGeneral.qml:140
 msgid "reverse band order"
-msgstr "обратный порядок полос"
+msgstr "帯域の順序を反転"
 
 #: spectrum/package/contents/ui/configGeneral.qml:143
 #: spectrum/window/settings.qml:213
 msgctxt "settings section"
 msgid "Appearance"
-msgstr "Вид"
+msgstr "外観"
 
 #: spectrum/package/contents/ui/configGeneral.qml:147
 #: spectrum/window/settings.qml:216
 msgid "Element:"
-msgstr "Элемент:"
+msgstr "要素:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:148
 #: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Bar"
-msgstr "Полоска"
+msgstr "バー"
 
 #: spectrum/package/contents/ui/configGeneral.qml:148
 #: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Blocks"
-msgstr "Блоки"
+msgstr "ブロック"
 
 #: spectrum/package/contents/ui/configGeneral.qml:153
 #: spectrum/window/settings.qml:223
 msgid "Block, px:"
-msgstr "Блок, px:"
+msgstr "ブロック (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
 #: spectrum/window/settings.qml:230
 msgid "Block gap, px:"
-msgstr "Зазор блоков, px:"
+msgstr "ブロックの間隔 (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:169
 #: spectrum/window/settings.qml:237
 msgid "Ends:"
-msgstr "Концы:"
+msgstr "端:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:170
 #: spectrum/window/settings.qml:238
 msgctxt "bar ends"
 msgid "rounded"
-msgstr "скруглять"
+msgstr "丸める"
 
 #: spectrum/package/contents/ui/configGeneral.qml:175
 #: spectrum/window/settings.qml:244
 msgid "Colour:"
-msgstr "Цвет:"
+msgstr "色:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:181
 msgid "High-frequency colour:"
-msgstr "Цвет высоких частот:"
+msgstr "高音域の色:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:192
 #: spectrum/window/settings.qml:261
 msgctxt "high-frequency colour"
 msgid "custom"
-msgstr "свой"
+msgstr "カスタム"
 
 #: spectrum/package/contents/ui/configGeneral.qml:200
 #: spectrum/window/settings.qml:268
 msgid "Opacity, %:"
-msgstr "Непрозрачность, %:"
+msgstr "不透明度 (%):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:208
 #: spectrum/window/settings.qml:275
 msgid "Circle:"
-msgstr "Окружность:"
+msgstr "円:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:210
 msgid "a thin guide under the bars"
-msgstr "тонкая направляющая под штрихами"
+msgstr "バーの下に細いガイド線"
 
 #: spectrum/package/contents/ui/configGeneral.qml:213
 #: spectrum/window/settings.qml:281
 msgctxt "settings section"
 msgid "Behaviour"
-msgstr "Поведение"
+msgstr "動作"
 
 #: spectrum/package/contents/ui/configGeneral.qml:217
 #: spectrum/window/settings.qml:284
 msgid "Data frames per second:"
-msgstr "Кадров данных в секунду:"
+msgstr "毎秒のデータフレーム数:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:225
 #: spectrum/window/settings.qml:291
 msgid "Smoothing, ms:"
-msgstr "Сглаживание, мс:"
+msgstr "スムージング (ミリ秒):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:233
 msgid "Mouse:"
-msgstr "Мышь:"
+msgstr "マウス:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:234
 msgid "let clicks through to the desktop"
-msgstr "пропускать клики на рабочий стол"
+msgstr "クリックをデスクトップに通す"
 
 #: spectrum/package/contents/ui/configGeneral.qml:237
 msgctxt "settings section"
 msgid "Silence"
-msgstr "Тишина"
+msgstr "無音"
 
 #: spectrum/package/contents/ui/configGeneral.qml:241
 #: spectrum/window/settings.qml:298
 msgid "In silence:"
-msgstr "В тишине:"
+msgstr "無音時:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:242
 msgid "dissolve the ring"
-msgstr "растворять кольцо"
+msgstr "リングを消す"
 
 #: spectrum/package/contents/ui/configGeneral.qml:247
 #: spectrum/window/settings.qml:305
 msgid "Silence threshold, %:"
-msgstr "Порог тишины, %:"
+msgstr "無音のしきい値 (%):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:255
 msgid "Wait before vanishing, ms:"
-msgstr "Ждать перед исчезновением, мс:"
+msgstr "消えるまでの待ち時間 (ミリ秒):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:264
 msgid "Fade in and out, ms:"
-msgstr "Появление и исчезновение, мс:"
+msgstr "フェードイン/アウト (ミリ秒):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:273
 msgid "Polls per second in silence:"
-msgstr "Опросов в тишине, в секунду:"
+msgstr "無音時の毎秒ポーリング回数:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:280
 msgid ""
 "The bars grow out of the ring itself, so a “length at silence” of 0\n"
 "makes them appear out of literally nothing."
 msgstr ""
-"Штрихи растут из самого кольца, поэтому «длина в тишине» 0\n"
-"даёт появление буквально из ничего."
+"バーはリング自体から伸びるため、「無音時の長さ」を 0 にすると\n"
+"文字どおり何もないところから現れます。"
 
 #: spectrum/package/contents/ui/configGeneral.qml:287
 msgid "Relay port:"
-msgstr "Порт реле:"
+msgstr "リレーのポート:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:294
 msgid "Source:"
-msgstr "Источник:"
+msgstr "ソース:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:295
 msgid ""
 "the spectrum is computed by cava in the plainspectrum-relay service;\n"
 "the frequencies and the device are set in ~/.config/plainspectrum/relay.env"
 msgstr ""
-"спектр считает cava в службе plainspectrum-relay;\n"
-"частоты и устройство задаются в ~/.config/plainspectrum/relay.env"
+"スペクトルは plainspectrum-relay サービス内の cava が計算します。\n"
+"周波数とデバイスは ~/.config/plainspectrum/relay.env で設定します"
 
 #: spectrum/package/contents/ui/main.qml:93
 #, kde-format
@@ -292,76 +292,76 @@ msgid ""
 "no data: the plainspectrum-relay service does not answer\n"
 "port %1"
 msgstr ""
-"нет данных: служба plainspectrum-relay не отвечает\n"
-"порт %1"
+"データなし: plainspectrum-relay サービスが応答しません\n"
+"ポート %1"
 
 #: spectrum/window/settings.qml:20
 msgid "plainspectrum — settings"
-msgstr "plainspectrum — настройки"
+msgstr "plainspectrum — 設定"
 
 #: spectrum/window/settings.qml:38
 #, kde-format
 msgid "the relay does not answer on port %1"
-msgstr "реле не отвечает на порту %1"
+msgstr "リレーがポート %1 で応答しません"
 
 #: spectrum/window/settings.qml:43
 msgid "settings read"
-msgstr "настройки прочитаны"
+msgstr "設定を読み込みました"
 
 #: spectrum/window/settings.qml:73
 msgid "saved"
-msgstr "сохранено"
+msgstr "保存しました"
 
 #: spectrum/window/settings.qml:73
 #, kde-format
 msgid "not saved: %1"
-msgstr "не сохранилось: %1"
+msgstr "保存できませんでした: %1"
 
 #: spectrum/window/settings.qml:98
 msgid "loading…"
-msgstr "загрузка…"
+msgstr "読み込み中…"
 
 #: spectrum/window/settings.qml:103
 msgid "Reload"
-msgstr "Перечитать"
+msgstr "再読み込み"
 
 #: spectrum/window/settings.qml:167
 msgid "Gap (line layout), px:"
-msgstr "Зазор (для линии), px:"
+msgstr "直線時の間隔 (px):"
 
 #: spectrum/window/settings.qml:202
 msgid "mirrored"
-msgstr "зеркально"
+msgstr "ミラー"
 
 #: spectrum/window/settings.qml:208
 msgid "reverse order"
-msgstr "обратный порядок"
+msgstr "逆順"
 
 #: spectrum/window/settings.qml:250
 msgid "Highs colour:"
-msgstr "Цвет высоких:"
+msgstr "高音域の色:"
 
 #: spectrum/window/settings.qml:276
 msgid "a thin guide"
-msgstr "тонкая направляющая"
+msgstr "細いガイド線"
 
 #: spectrum/window/settings.qml:299
 msgid "dissolve"
-msgstr "растворять"
+msgstr "消す"
 
 #: spectrum/window/settings.qml:312
 msgid "Delay before vanishing, ms:"
-msgstr "Ждать до исчезновения, мс:"
+msgstr "消えるまでの遅延 (ミリ秒):"
 
 #: spectrum/window/settings.qml:319
 msgid "Fade, ms:"
-msgstr "Появление, мс:"
+msgstr "フェード (ミリ秒):"
 
 #: spectrum/window/settings.qml:326
 msgid "Polls in silence:"
-msgstr "Опросов в тишине:"
+msgstr "無音時のポーリング:"
 
 #: spectrum/window/settings.qml:390
 #, kde-format
 msgid "live preview · scale %1"
-msgstr "живой просмотр · масштаб %1"
+msgstr "ライブプレビュー · 倍率 %1"

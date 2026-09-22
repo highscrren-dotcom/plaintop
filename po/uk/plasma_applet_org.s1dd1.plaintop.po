@@ -1,0 +1,583 @@
+# Machine translation, not yet reviewed by a native speaker. Corrections are welcome as pull requests.
+# Ukrainian translations for plaintop package.
+# Copyright (C) 2026 THE plaintop'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the plaintop package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plaintop\n"
+"Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
+"POT-Creation-Date: 2026-09-22 13:25+0500\n"
+"PO-Revision-Date: 2026-09-22 13:25+0500\n"
+"Last-Translator: Machine translation\n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: monitor/package/contents/config/config.qml:7
+msgctxt "settings page"
+msgid "General"
+msgstr "Загальне"
+
+#: monitor/package/contents/config/config.qml:13
+#: monitor/window/settings.qml:300
+msgctxt "settings page"
+msgid "Blocks"
+msgstr "Блоки"
+
+#: monitor/package/contents/ui/configBlocks.qml:134
+msgid ""
+"The blocks and their order. The default layout comes from schema/widget.json."
+msgstr "Блоки та їхній порядок. Типове компонування береться з schema/widget.json."
+
+#: monitor/package/contents/ui/configBlocks.qml:190
+#: monitor/window/settings.qml:491
+msgid "Up"
+msgstr "Вище"
+
+#: monitor/package/contents/ui/configBlocks.qml:197
+#: monitor/window/settings.qml:498
+msgid "Down"
+msgstr "Нижче"
+
+#: monitor/package/contents/ui/configBlocks.qml:204
+#: monitor/window/settings.qml:505
+msgid "Remove"
+msgstr "Вилучити"
+
+#: monitor/package/contents/ui/configBlocks.qml:211
+msgid "Reset"
+msgstr "Скинути"
+
+#: monitor/package/contents/ui/configBlocks.qml:229
+#: monitor/window/settings.qml:524
+msgid "Add block"
+msgstr "Додати блок"
+
+#: monitor/package/contents/ui/configGeneral.qml:33
+#: monitor/window/settings.qml:335
+msgid "Font:"
+msgstr "Шрифт:"
+
+#: monitor/package/contents/ui/configGeneral.qml:39
+#: monitor/window/settings.qml:342
+msgctxt "font size"
+msgid "Size:"
+msgstr "Розмір:"
+
+#: monitor/package/contents/ui/configGeneral.qml:46
+#: monitor/window/settings.qml:371
+msgid "Left padding, px:"
+msgstr "Відступ зліва, px:"
+
+#: monitor/package/contents/ui/configGeneral.qml:54
+#: monitor/window/settings.qml:378
+msgid "Top padding, px:"
+msgstr "Відступ згори, px:"
+
+#: monitor/package/contents/ui/configGeneral.qml:62
+#: monitor/window/settings.qml:385
+msgid "Width, px:"
+msgstr "Ширина, px:"
+
+#: monitor/package/contents/ui/configGeneral.qml:70
+#: monitor/window/settings.qml:392
+msgid "Height, px:"
+msgstr "Висота, px:"
+
+#: monitor/package/contents/ui/configGeneral.qml:77
+#: monitor/window/settings.qml:407
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "Основний текст:"
+
+#: monitor/package/contents/ui/configGeneral.qml:83
+#: monitor/window/settings.qml:413
+msgctxt "palette: colour of"
+msgid "Header:"
+msgstr "Заголовок:"
+
+#: monitor/package/contents/ui/configGeneral.qml:89
+#: monitor/window/settings.qml:419
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "Другорядний:"
+
+#: monitor/package/contents/ui/configGeneral.qml:95
+#: monitor/window/settings.qml:425
+msgctxt "palette: colour of"
+msgid "Values:"
+msgstr "Значення:"
+
+#: monitor/package/contents/ui/configGeneral.qml:102
+msgid "Mouse:"
+msgstr "Миша:"
+
+#: monitor/package/contents/ui/configGeneral.qml:103
+msgid "let clicks through to the desktop"
+msgstr "пропускати клацання на стільницю"
+
+#: monitor/package/contents/ui/configGeneral.qml:107
+msgid ""
+"While clicks go through, the widget cannot be grabbed with the mouse.\n"
+"To reach the settings: the desktop's edit mode\n"
+"or ./install.sh with the clicks off switch"
+msgstr ""
+"Поки клацання проходять наскрізь, віджет не взяти мишею.\n"
+"Дістатися налаштувань: режим редагування стільниці\n"
+"або ./install.sh з перемикачем clicks off"
+
+#: monitor/package/contents/ui/configGeneral.qml:114
+msgid "Interval, ms:"
+msgstr "Інтервал, мс:"
+
+#: monitor/package/contents/ui/configGeneral.qml:122
+#: monitor/window/settings.qml:356
+msgid "Top processes, every … s:"
+msgstr "Топ процесів, кожні … с:"
+
+#: monitor/package/contents/ui/configGeneral.qml:128
+#: monitor/window/settings.qml:363
+msgid ""
+"The process list is the most expensive thing collected: every 2 s\n"
+"about 3% of a core, every 10 s about 1.3%"
+msgstr ""
+"Список процесів — найдорожче з того, що збирається: кожні 2 с\n"
+"близько 3 % ядра, кожні 10 с — близько 1,3 %"
+
+#: monitor/shared/MonitorData.qml:503
+#, kde-format
+msgctxt "uptime: days, abbreviated"
+msgid "%1d"
+msgstr "%1д"
+
+#: monitor/shared/MonitorData.qml:504
+#, kde-format
+msgctxt "uptime: hours, abbreviated"
+msgid "%1h"
+msgstr "%1год"
+
+#: monitor/shared/MonitorData.qml:505
+#, kde-format
+msgctxt "uptime: minutes, abbreviated"
+msgid "%1m"
+msgstr "%1хв"
+
+#: monitor/shared/MonitorData.qml:555
+msgctxt "docker: the user is not in the docker group yet"
+msgid "needs re-login"
+msgstr "потрібен повторний вхід"
+
+#: monitor/shared/MonitorData.qml:556
+#, kde-format
+msgctxt "docker: running containers of all containers"
+msgid "%1 of %2"
+msgstr "%1 з %2"
+
+#: monitor/shared/MonitorData.qml:562
+#, kde-format
+msgctxt "ollama: no model loaded; how many are installed"
+msgid "idle, %1 model"
+msgid_plural "idle, %1 models"
+msgstr[0] "простоює, %1 модель"
+msgstr[1] "простоює, %1 моделі"
+msgstr[2] "простоює, %1 моделей"
+
+#: monitor/shared/MonitorData.qml:564
+#, kde-format
+msgctxt "pacman: pending updates"
+msgid "%1 update"
+msgid_plural "%1 updates"
+msgstr[0] "%1 оновлення"
+msgstr[1] "%1 оновлення"
+msgstr[2] "%1 оновлень"
+
+#: monitor/shared/MonitorData.qml:600
+msgctxt "date line: a Qt date pattern, no year"
+msgid "dddd, MMMM d"
+msgstr "dddd, d MMMM"
+
+#: monitor/shared/MonitorData.qml:674
+msgctxt "disks: a configured mount point is absent"
+msgid "not mounted"
+msgstr "не змонтовано"
+
+#: monitor/shared/MonitorData.qml:680
+#, kde-format
+msgctxt "uptime line"
+msgid "uptime %1"
+msgstr "час роботи %1"
+
+#: monitor/window/settings.qml:24
+msgid "plaintop — monitor settings"
+msgstr "plaintop — налаштування монітора"
+
+#: monitor/window/settings.qml:44
+#, kde-format
+msgid "the relay does not answer on port %1"
+msgstr "реле не відповідає на порту %1"
+
+#: monitor/window/settings.qml:54
+msgid "settings read"
+msgstr "налаштування прочитано"
+
+#: monitor/window/settings.qml:89
+msgid "saved"
+msgstr "збережено"
+
+#: monitor/window/settings.qml:89
+#, kde-format
+msgid "not saved: %1"
+msgstr "не збережено: %1"
+
+#: monitor/window/settings.qml:299
+msgctxt "settings page"
+msgid "Appearance"
+msgstr "Вигляд"
+
+#: monitor/window/settings.qml:303
+msgid "loading…"
+msgstr "завантаження…"
+
+#: monitor/window/settings.qml:306 monitor/window/settings.qml:919
+msgid "Reload"
+msgstr "Перечитати"
+
+#: monitor/window/settings.qml:332
+msgctxt "settings section"
+msgid "Text"
+msgstr "Текст"
+
+#: monitor/window/settings.qml:349
+msgid "Update interval, ms:"
+msgstr "Інтервал оновлення, мс:"
+
+#: monitor/window/settings.qml:368
+msgctxt "settings section"
+msgid "Placement"
+msgstr "Розташування"
+
+#: monitor/window/settings.qml:399
+msgid ""
+"The window's size and place are kept by a KWin rule — after a size change\n"
+"rerun: ./install.sh --plaintop-window"
+msgstr ""
+"Розмір і місце вікна тримає правило KWin — після зміни розміру\n"
+"запустіть знову: ./install.sh --plaintop-window"
+
+#: monitor/window/settings.qml:404
+msgctxt "settings section"
+msgid "Palette"
+msgstr "Палітра"
+
+#: monitor/window/settings.qml:439
+msgid "The blocks and their order. Edits reach the monitor within two seconds."
+msgstr "Блоки та їхній порядок. Зміни доходять до монітора за дві секунди."
+
+#: monitor/window/settings.qml:588
+msgctxt "interface menu: automatic choice"
+msgid "— find it —"
+msgstr "— знайти автоматично —"
+
+#: monitor/window/settings.qml:609
+#, kde-format
+msgctxt "interface hint"
+msgid "found: %1"
+msgstr "знайдено: %1"
+
+#: monitor/window/settings.qml:610
+#, kde-format
+msgctxt "interface hint"
+msgid "found: %1 (choosing…)"
+msgstr "знайдено: %1 (вибираю…)"
+
+#: monitor/window/settings.qml:613
+#, kde-format
+msgctxt "interface hint"
+msgid "%1 is not on this machine — %2"
+msgstr "%1 немає на цій машині — %2"
+
+#: monitor/window/settings.qml:627
+msgctxt "placeholder"
+msgid "empty — find it"
+msgstr "порожньо — знайти автоматично"
+
+#: monitor/window/settings.qml:634
+msgid "Choose…"
+msgstr "Вибрати…"
+
+#: monitor/window/settings.qml:642 monitor/window/settings.qml:692
+msgid "Auto"
+msgstr "Авто"
+
+#: monitor/window/settings.qml:676
+msgctxt "placeholder"
+msgid "empty — find them"
+msgstr "порожньо — знайти автоматично"
+
+#: monitor/window/settings.qml:676
+msgid "nothing chosen"
+msgstr "нічого не вибрано"
+
+#: monitor/window/settings.qml:683
+msgid "Add…"
+msgstr "Додати…"
+
+#: monitor/window/settings.qml:749
+#, kde-format
+msgid "live preview · %1x%2 · scale %3 · lines %4"
+msgstr "живий перегляд · %1x%2 · масштаб %3 · рядків %4"
+
+#: monitor/window/settings.qml:767
+msgid "Sensors of this machine"
+msgstr "Датчики цієї машини"
+
+#: monitor/window/settings.qml:815
+msgid "search: part of an id"
+msgstr "пошук: частина ідентифікатора"
+
+#: monitor/window/settings.qml:819
+msgid "matching only"
+msgstr "лише відповідні"
+
+#: monitor/window/settings.qml:827
+#, kde-format
+msgid "shown %1 of %2"
+msgstr "показано %1 з %2"
+
+#: monitor/window/settings.qml:828
+msgid "the tree is still being read"
+msgstr "дерево ще читається"
+
+#: monitor/window/settings.qml:863
+msgid "no data"
+msgstr "немає даних"
+
+#: monitor/window/settings.qml:869
+msgid "or type an id by hand"
+msgstr "або введіть ідентифікатор вручну"
+
+#: monitor/window/settings.qml:876
+msgid "Mount points of this machine"
+msgstr "Точки монтування цієї машини"
+
+#: monitor/window/settings.qml:913
+#, kde-format
+msgid "mounted now: %1"
+msgstr "змонтовано зараз: %1"
+
+#: monitor/window/settings.qml:964
+msgid "or type a path by hand"
+msgstr "або введіть шлях вручну"
+
+#: schema/blocks.json:1
+msgctxt "schema: block name"
+msgid "Header"
+msgstr "Заголовок"
+
+#: schema/blocks.json:2
+msgctxt "schema: block hint"
+msgid ""
+"The top line: your text and the hostname joined by “\\”; with no text, only "
+"the hostname"
+msgstr "Верхній рядок: ваш текст та ім’я хоста через «\\»; без тексту — лише ім’я хоста"
+
+#: schema/blocks.json:3
+msgctxt "schema: parameter name"
+msgid "Text"
+msgstr "Текст"
+
+#: schema/blocks.json:4
+msgctxt "schema: parameter name"
+msgid "Append the hostname"
+msgstr "Додавати ім’я хоста"
+
+#: schema/blocks.json:5
+msgctxt "schema: block name"
+msgid "Clock"
+msgstr "Годинник"
+
+#: schema/blocks.json:6
+msgctxt "schema: parameter name"
+msgid "Seconds in a small size"
+msgstr "Секунди дрібним шрифтом"
+
+#: schema/blocks.json:7
+msgctxt "schema: block name"
+msgid "Date"
+msgstr "Дата"
+
+#: schema/blocks.json:8
+msgctxt "schema: block name"
+msgid "System and kernel"
+msgstr "Система та ядро"
+
+#: schema/blocks.json:9
+msgctxt "schema: block name"
+msgid "Separator"
+msgstr "Роздільник"
+
+#: schema/blocks.json:10
+msgctxt "schema: block name"
+msgid "Processor"
+msgstr "Процесор"
+
+#: schema/blocks.json:11
+msgctxt "schema: parameter name"
+msgid "Lines per NUMA node"
+msgstr "Рядки за вузлами NUMA"
+
+#: schema/blocks.json:12
+msgctxt "schema: parameter name"
+msgid "Model, temperatures, fans"
+msgstr "Модель, температури, вентилятори"
+
+#: schema/blocks.json:13 schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Processes in the top list"
+msgstr "Процесів у топі"
+
+#: schema/blocks.json:14
+msgctxt "schema: parameter name"
+msgid "Fan sensors (empty — find them)"
+msgstr "Датчики вентиляторів (порожньо — знайти автоматично)"
+
+#: schema/blocks.json:15
+msgctxt "schema: block name"
+msgid "Memory"
+msgstr "Пам’ять"
+
+#: schema/blocks.json:16
+msgctxt "schema: parameter name"
+msgid "The “used / total” line"
+msgstr "Рядок «зайнято / всього»"
+
+#: schema/blocks.json:18
+msgctxt "schema: block name"
+msgid "Graphics card"
+msgstr "Відеокарта"
+
+#: schema/blocks.json:19
+msgctxt "schema: parameter name"
+msgid "VRAM, temperature and power line"
+msgstr "Рядок VRAM, температури та споживання"
+
+#: schema/blocks.json:20
+msgctxt "schema: block name"
+msgid "Disks"
+msgstr "Диски"
+
+#: schema/blocks.json:21
+msgctxt "schema: parameter name"
+msgid "Mount points"
+msgstr "Точки монтування"
+
+#: schema/blocks.json:22
+msgctxt "schema: parameter name"
+msgid "NVMe temperature on the root line"
+msgstr "Температура NVMe у рядку кореня"
+
+#: schema/blocks.json:23
+msgctxt "schema: parameter name"
+msgid "NVMe temperature sensor (empty — find it)"
+msgstr "Датчик температури NVMe (порожньо — знайти автоматично)"
+
+#: schema/blocks.json:24
+msgctxt "schema: block name"
+msgid "Uptime"
+msgstr "Час роботи"
+
+#: schema/blocks.json:25
+msgctxt "schema: block name"
+msgid "Network"
+msgstr "Мережа"
+
+#: schema/blocks.json:26
+msgctxt "schema: parameter name"
+msgid "Interface (empty — find it)"
+msgstr "Інтерфейс (порожньо — знайти автоматично)"
+
+#: schema/blocks.json:27
+msgctxt "schema: block name"
+msgid "Services"
+msgstr "Служби"
+
+#: schema/blocks.json:28
+msgctxt "schema: block hint"
+msgid "docker, ollama, pending updates — a script inside the package"
+msgstr "docker, ollama, оновлення, що очікують, — скрипт у пакеті"
+
+#: schema/blocks.json:29
+msgctxt "schema: block name"
+msgid "Hardware spec sheet"
+msgstr "Паспорт обладнання"
+
+#: schema/blocks.json:30
+msgctxt "schema: block hint"
+msgid "Static lines: processor, graphics card, board"
+msgstr "Статичні рядки: процесор, відеокарта, плата"
+
+#: schema/blocks.json:31
+msgctxt "schema: block name"
+msgid "Custom command"
+msgstr "Власна команда"
+
+#: schema/blocks.json:32
+msgctxt "schema: block hint"
+msgid "A line from the output of any command"
+msgstr "Рядок із виводу довільної команди"
+
+#: schema/blocks.json:33 schema/blocks.json:39
+msgctxt "schema: parameter name"
+msgid "Label"
+msgstr "Мітка"
+
+#: schema/blocks.json:34
+msgctxt "schema: parameter name"
+msgid "Command"
+msgstr "Команда"
+
+#: schema/blocks.json:35
+msgctxt "schema: parameter name"
+msgid "Interval, s"
+msgstr "Інтервал, с"
+
+#: schema/blocks.json:36
+msgctxt "schema: parameter name"
+msgid "Lines to show"
+msgstr "Скільки рядків показувати"
+
+#: schema/blocks.json:37
+msgctxt "schema: block name"
+msgid "Custom sensor"
+msgstr "Власний датчик"
+
+#: schema/blocks.json:38
+msgctxt "schema: block hint"
+msgid "Any ksystemstats sensor by its id"
+msgstr "Будь-який датчик ksystemstats за його id"
+
+#: schema/blocks.json:40
+msgctxt "schema: parameter name"
+msgid "Sensor id"
+msgstr "Ідентифікатор датчика"
+
+#: schema/blocks.json:41
+msgctxt "schema: parameter name"
+msgid "Draw a bar"
+msgstr "Малювати смужку"
+
+#: schema/blocks.json:42
+msgctxt "schema: parameter name"
+msgid "Suffix after the value"
+msgstr "Суфікс після значення"
+
+#: schema/blocks.json:43
+msgctxt "schema: parameter name"
+msgid "Decimal places"
+msgstr "Знаків після коми"

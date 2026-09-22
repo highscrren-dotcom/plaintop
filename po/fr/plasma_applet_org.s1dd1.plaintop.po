@@ -1,0 +1,589 @@
+# Machine translation, not yet reviewed by a native speaker. Corrections are welcome as pull requests.
+# French translations for plaintop package.
+# Copyright (C) 2026 THE plaintop'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the plaintop package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plaintop\n"
+"Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
+"POT-Creation-Date: 2026-09-22 13:25+0500\n"
+"PO-Revision-Date: 2026-09-22 13:25+0500\n"
+"Last-Translator: Machine translation\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: monitor/package/contents/config/config.qml:7
+msgctxt "settings page"
+msgid "General"
+msgstr "Général"
+
+#: monitor/package/contents/config/config.qml:13
+#: monitor/window/settings.qml:300
+msgctxt "settings page"
+msgid "Blocks"
+msgstr "Blocs"
+
+#: monitor/package/contents/ui/configBlocks.qml:134
+msgid ""
+"The blocks and their order. The default layout comes from schema/widget.json."
+msgstr ""
+"Les blocs et leur ordre. La disposition par défaut provient de schema/"
+"widget.json."
+
+#: monitor/package/contents/ui/configBlocks.qml:190
+#: monitor/window/settings.qml:491
+msgid "Up"
+msgstr "Monter"
+
+#: monitor/package/contents/ui/configBlocks.qml:197
+#: monitor/window/settings.qml:498
+msgid "Down"
+msgstr "Descendre"
+
+#: monitor/package/contents/ui/configBlocks.qml:204
+#: monitor/window/settings.qml:505
+msgid "Remove"
+msgstr "Supprimer"
+
+#: monitor/package/contents/ui/configBlocks.qml:211
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: monitor/package/contents/ui/configBlocks.qml:229
+#: monitor/window/settings.qml:524
+msgid "Add block"
+msgstr "Ajouter un bloc"
+
+#: monitor/package/contents/ui/configGeneral.qml:33
+#: monitor/window/settings.qml:335
+msgid "Font:"
+msgstr "Police :"
+
+#: monitor/package/contents/ui/configGeneral.qml:39
+#: monitor/window/settings.qml:342
+msgctxt "font size"
+msgid "Size:"
+msgstr "Taille :"
+
+#: monitor/package/contents/ui/configGeneral.qml:46
+#: monitor/window/settings.qml:371
+msgid "Left padding, px:"
+msgstr "Marge gauche, px :"
+
+#: monitor/package/contents/ui/configGeneral.qml:54
+#: monitor/window/settings.qml:378
+msgid "Top padding, px:"
+msgstr "Marge supérieure, px :"
+
+#: monitor/package/contents/ui/configGeneral.qml:62
+#: monitor/window/settings.qml:385
+msgid "Width, px:"
+msgstr "Largeur, px :"
+
+#: monitor/package/contents/ui/configGeneral.qml:70
+#: monitor/window/settings.qml:392
+msgid "Height, px:"
+msgstr "Hauteur, px :"
+
+#: monitor/package/contents/ui/configGeneral.qml:77
+#: monitor/window/settings.qml:407
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "Texte principal :"
+
+#: monitor/package/contents/ui/configGeneral.qml:83
+#: monitor/window/settings.qml:413
+msgctxt "palette: colour of"
+msgid "Header:"
+msgstr "En-tête :"
+
+#: monitor/package/contents/ui/configGeneral.qml:89
+#: monitor/window/settings.qml:419
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "Secondaire :"
+
+#: monitor/package/contents/ui/configGeneral.qml:95
+#: monitor/window/settings.qml:425
+msgctxt "palette: colour of"
+msgid "Values:"
+msgstr "Valeurs :"
+
+#: monitor/package/contents/ui/configGeneral.qml:102
+msgid "Mouse:"
+msgstr "Souris :"
+
+#: monitor/package/contents/ui/configGeneral.qml:103
+msgid "let clicks through to the desktop"
+msgstr "laisser passer les clics vers le bureau"
+
+#: monitor/package/contents/ui/configGeneral.qml:107
+msgid ""
+"While clicks go through, the widget cannot be grabbed with the mouse.\n"
+"To reach the settings: the desktop's edit mode\n"
+"or ./install.sh with the clicks off switch"
+msgstr ""
+"Tant que les clics passent au travers, le widget ne peut pas être saisi à la "
+"souris.\n"
+"Pour accéder aux paramètres : le mode d'édition du bureau\n"
+"ou ./install.sh avec l'option clicks off"
+
+#: monitor/package/contents/ui/configGeneral.qml:114
+msgid "Interval, ms:"
+msgstr "Intervalle, ms :"
+
+#: monitor/package/contents/ui/configGeneral.qml:122
+#: monitor/window/settings.qml:356
+msgid "Top processes, every … s:"
+msgstr "Top des processus, toutes les … s :"
+
+#: monitor/package/contents/ui/configGeneral.qml:128
+#: monitor/window/settings.qml:363
+msgid ""
+"The process list is the most expensive thing collected: every 2 s\n"
+"about 3% of a core, every 10 s about 1.3%"
+msgstr ""
+"La liste des processus est la collecte la plus coûteuse : toutes les 2 s\n"
+"environ 3 % d'un cœur, toutes les 10 s environ 1,3 %"
+
+#: monitor/shared/MonitorData.qml:503
+#, kde-format
+msgctxt "uptime: days, abbreviated"
+msgid "%1d"
+msgstr "%1j"
+
+#: monitor/shared/MonitorData.qml:504
+#, kde-format
+msgctxt "uptime: hours, abbreviated"
+msgid "%1h"
+msgstr "%1h"
+
+#: monitor/shared/MonitorData.qml:505
+#, kde-format
+msgctxt "uptime: minutes, abbreviated"
+msgid "%1m"
+msgstr "%1min"
+
+#: monitor/shared/MonitorData.qml:555
+msgctxt "docker: the user is not in the docker group yet"
+msgid "needs re-login"
+msgstr "reconnexion requise"
+
+#: monitor/shared/MonitorData.qml:556
+#, kde-format
+msgctxt "docker: running containers of all containers"
+msgid "%1 of %2"
+msgstr "%1 sur %2"
+
+#: monitor/shared/MonitorData.qml:562
+#, kde-format
+msgctxt "ollama: no model loaded; how many are installed"
+msgid "idle, %1 model"
+msgid_plural "idle, %1 models"
+msgstr[0] "inactif, %1 modèle"
+msgstr[1] "inactif, %1 modèles"
+
+#: monitor/shared/MonitorData.qml:564
+#, kde-format
+msgctxt "pacman: pending updates"
+msgid "%1 update"
+msgid_plural "%1 updates"
+msgstr[0] "%1 mise à jour"
+msgstr[1] "%1 mises à jour"
+
+#: monitor/shared/MonitorData.qml:600
+msgctxt "date line: a Qt date pattern, no year"
+msgid "dddd, MMMM d"
+msgstr "dddd d MMMM"
+
+#: monitor/shared/MonitorData.qml:674
+msgctxt "disks: a configured mount point is absent"
+msgid "not mounted"
+msgstr "non monté"
+
+#: monitor/shared/MonitorData.qml:680
+#, kde-format
+msgctxt "uptime line"
+msgid "uptime %1"
+msgstr "en marche depuis %1"
+
+#: monitor/window/settings.qml:24
+msgid "plaintop — monitor settings"
+msgstr "plaintop — paramètres du moniteur"
+
+#: monitor/window/settings.qml:44
+#, kde-format
+msgid "the relay does not answer on port %1"
+msgstr "le relais ne répond pas sur le port %1"
+
+#: monitor/window/settings.qml:54
+msgid "settings read"
+msgstr "paramètres lus"
+
+#: monitor/window/settings.qml:89
+msgid "saved"
+msgstr "enregistré"
+
+#: monitor/window/settings.qml:89
+#, kde-format
+msgid "not saved: %1"
+msgstr "non enregistré : %1"
+
+#: monitor/window/settings.qml:299
+msgctxt "settings page"
+msgid "Appearance"
+msgstr "Apparence"
+
+#: monitor/window/settings.qml:303
+msgid "loading…"
+msgstr "chargement…"
+
+#: monitor/window/settings.qml:306 monitor/window/settings.qml:919
+msgid "Reload"
+msgstr "Recharger"
+
+#: monitor/window/settings.qml:332
+msgctxt "settings section"
+msgid "Text"
+msgstr "Texte"
+
+#: monitor/window/settings.qml:349
+msgid "Update interval, ms:"
+msgstr "Intervalle de mise à jour, ms :"
+
+#: monitor/window/settings.qml:368
+msgctxt "settings section"
+msgid "Placement"
+msgstr "Position"
+
+#: monitor/window/settings.qml:399
+msgid ""
+"The window's size and place are kept by a KWin rule — after a size change\n"
+"rerun: ./install.sh --plaintop-window"
+msgstr ""
+"La taille et la position de la fenêtre sont fixées par une règle KWin — "
+"après un changement de taille\n"
+"relancez : ./install.sh --plaintop-window"
+
+#: monitor/window/settings.qml:404
+msgctxt "settings section"
+msgid "Palette"
+msgstr "Palette"
+
+#: monitor/window/settings.qml:439
+msgid "The blocks and their order. Edits reach the monitor within two seconds."
+msgstr ""
+"Les blocs et leur ordre. Les modifications parviennent au moniteur en moins "
+"de deux secondes."
+
+#: monitor/window/settings.qml:588
+msgctxt "interface menu: automatic choice"
+msgid "— find it —"
+msgstr "— détecter automatiquement —"
+
+#: monitor/window/settings.qml:609
+#, kde-format
+msgctxt "interface hint"
+msgid "found: %1"
+msgstr "trouvé : %1"
+
+#: monitor/window/settings.qml:610
+#, kde-format
+msgctxt "interface hint"
+msgid "found: %1 (choosing…)"
+msgstr "trouvé : %1 (choix en cours…)"
+
+#: monitor/window/settings.qml:613
+#, kde-format
+msgctxt "interface hint"
+msgid "%1 is not on this machine — %2"
+msgstr "%1 n'existe pas sur cette machine — %2"
+
+#: monitor/window/settings.qml:627
+msgctxt "placeholder"
+msgid "empty — find it"
+msgstr "vide — détecter automatiquement"
+
+#: monitor/window/settings.qml:634
+msgid "Choose…"
+msgstr "Choisir…"
+
+#: monitor/window/settings.qml:642 monitor/window/settings.qml:692
+msgid "Auto"
+msgstr "Automatique"
+
+#: monitor/window/settings.qml:676
+msgctxt "placeholder"
+msgid "empty — find them"
+msgstr "vide — détecter automatiquement"
+
+#: monitor/window/settings.qml:676
+msgid "nothing chosen"
+msgstr "aucune sélection"
+
+#: monitor/window/settings.qml:683
+msgid "Add…"
+msgstr "Ajouter…"
+
+#: monitor/window/settings.qml:749
+#, kde-format
+msgid "live preview · %1x%2 · scale %3 · lines %4"
+msgstr "aperçu en direct · %1x%2 · échelle %3 · lignes %4"
+
+#: monitor/window/settings.qml:767
+msgid "Sensors of this machine"
+msgstr "Capteurs de cette machine"
+
+#: monitor/window/settings.qml:815
+msgid "search: part of an id"
+msgstr "recherche : partie d'un identifiant"
+
+#: monitor/window/settings.qml:819
+msgid "matching only"
+msgstr "correspondances uniquement"
+
+#: monitor/window/settings.qml:827
+#, kde-format
+msgid "shown %1 of %2"
+msgstr "affichés : %1 sur %2"
+
+#: monitor/window/settings.qml:828
+msgid "the tree is still being read"
+msgstr "l'arborescence est encore en cours de lecture"
+
+#: monitor/window/settings.qml:863
+msgid "no data"
+msgstr "aucune donnée"
+
+#: monitor/window/settings.qml:869
+msgid "or type an id by hand"
+msgstr "ou saisissez un identifiant à la main"
+
+#: monitor/window/settings.qml:876
+msgid "Mount points of this machine"
+msgstr "Points de montage de cette machine"
+
+#: monitor/window/settings.qml:913
+#, kde-format
+msgid "mounted now: %1"
+msgstr "actuellement montés : %1"
+
+#: monitor/window/settings.qml:964
+msgid "or type a path by hand"
+msgstr "ou saisissez un chemin à la main"
+
+#: schema/blocks.json:1
+msgctxt "schema: block name"
+msgid "Header"
+msgstr "En-tête"
+
+#: schema/blocks.json:2
+msgctxt "schema: block hint"
+msgid ""
+"The top line: your text and the hostname joined by “\\”; with no text, only "
+"the hostname"
+msgstr ""
+"La ligne du haut : votre texte et le nom d'hôte reliés par « \\ » ; sans "
+"texte, le nom d'hôte seul"
+
+#: schema/blocks.json:3
+msgctxt "schema: parameter name"
+msgid "Text"
+msgstr "Texte"
+
+#: schema/blocks.json:4
+msgctxt "schema: parameter name"
+msgid "Append the hostname"
+msgstr "Ajouter le nom d'hôte"
+
+#: schema/blocks.json:5
+msgctxt "schema: block name"
+msgid "Clock"
+msgstr "Horloge"
+
+#: schema/blocks.json:6
+msgctxt "schema: parameter name"
+msgid "Seconds in a small size"
+msgstr "Secondes en petit"
+
+#: schema/blocks.json:7
+msgctxt "schema: block name"
+msgid "Date"
+msgstr "Date"
+
+#: schema/blocks.json:8
+msgctxt "schema: block name"
+msgid "System and kernel"
+msgstr "Système et noyau"
+
+#: schema/blocks.json:9
+msgctxt "schema: block name"
+msgid "Separator"
+msgstr "Séparateur"
+
+#: schema/blocks.json:10
+msgctxt "schema: block name"
+msgid "Processor"
+msgstr "Processeur"
+
+#: schema/blocks.json:11
+msgctxt "schema: parameter name"
+msgid "Lines per NUMA node"
+msgstr "Lignes par nœud NUMA"
+
+#: schema/blocks.json:12
+msgctxt "schema: parameter name"
+msgid "Model, temperatures, fans"
+msgstr "Modèle, températures, ventilateurs"
+
+#: schema/blocks.json:13 schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Processes in the top list"
+msgstr "Processus dans le top"
+
+#: schema/blocks.json:14
+msgctxt "schema: parameter name"
+msgid "Fan sensors (empty — find them)"
+msgstr "Capteurs de ventilateur (vide — détecter automatiquement)"
+
+#: schema/blocks.json:15
+msgctxt "schema: block name"
+msgid "Memory"
+msgstr "Mémoire"
+
+#: schema/blocks.json:16
+msgctxt "schema: parameter name"
+msgid "The “used / total” line"
+msgstr "La ligne « utilisé / total »"
+
+#: schema/blocks.json:18
+msgctxt "schema: block name"
+msgid "Graphics card"
+msgstr "Carte graphique"
+
+#: schema/blocks.json:19
+msgctxt "schema: parameter name"
+msgid "VRAM, temperature and power line"
+msgstr "Ligne VRAM, température et puissance"
+
+#: schema/blocks.json:20
+msgctxt "schema: block name"
+msgid "Disks"
+msgstr "Disques"
+
+#: schema/blocks.json:21
+msgctxt "schema: parameter name"
+msgid "Mount points"
+msgstr "Points de montage"
+
+#: schema/blocks.json:22
+msgctxt "schema: parameter name"
+msgid "NVMe temperature on the root line"
+msgstr "Température NVMe sur la ligne de la racine"
+
+#: schema/blocks.json:23
+msgctxt "schema: parameter name"
+msgid "NVMe temperature sensor (empty — find it)"
+msgstr "Capteur de température NVMe (vide — détecter automatiquement)"
+
+#: schema/blocks.json:24
+msgctxt "schema: block name"
+msgid "Uptime"
+msgstr "Temps de fonctionnement"
+
+#: schema/blocks.json:25
+msgctxt "schema: block name"
+msgid "Network"
+msgstr "Réseau"
+
+#: schema/blocks.json:26
+msgctxt "schema: parameter name"
+msgid "Interface (empty — find it)"
+msgstr "Interface (vide — détecter automatiquement)"
+
+#: schema/blocks.json:27
+msgctxt "schema: block name"
+msgid "Services"
+msgstr "Services"
+
+#: schema/blocks.json:28
+msgctxt "schema: block hint"
+msgid "docker, ollama, pending updates — a script inside the package"
+msgstr ""
+"docker, ollama, mises à jour en attente — un script inclus dans le paquet"
+
+#: schema/blocks.json:29
+msgctxt "schema: block name"
+msgid "Hardware spec sheet"
+msgstr "Fiche matérielle"
+
+#: schema/blocks.json:30
+msgctxt "schema: block hint"
+msgid "Static lines: processor, graphics card, board"
+msgstr "Lignes fixes : processeur, carte graphique, carte mère"
+
+#: schema/blocks.json:31
+msgctxt "schema: block name"
+msgid "Custom command"
+msgstr "Commande personnalisée"
+
+#: schema/blocks.json:32
+msgctxt "schema: block hint"
+msgid "A line from the output of any command"
+msgstr "Une ligne de la sortie d'une commande quelconque"
+
+#: schema/blocks.json:33 schema/blocks.json:39
+msgctxt "schema: parameter name"
+msgid "Label"
+msgstr "Libellé"
+
+#: schema/blocks.json:34
+msgctxt "schema: parameter name"
+msgid "Command"
+msgstr "Commande"
+
+#: schema/blocks.json:35
+msgctxt "schema: parameter name"
+msgid "Interval, s"
+msgstr "Intervalle, s"
+
+#: schema/blocks.json:36
+msgctxt "schema: parameter name"
+msgid "Lines to show"
+msgstr "Lignes à afficher"
+
+#: schema/blocks.json:37
+msgctxt "schema: block name"
+msgid "Custom sensor"
+msgstr "Capteur personnalisé"
+
+#: schema/blocks.json:38
+msgctxt "schema: block hint"
+msgid "Any ksystemstats sensor by its id"
+msgstr "N'importe quel capteur ksystemstats, par son identifiant"
+
+#: schema/blocks.json:40
+msgctxt "schema: parameter name"
+msgid "Sensor id"
+msgstr "Identifiant du capteur"
+
+#: schema/blocks.json:41
+msgctxt "schema: parameter name"
+msgid "Draw a bar"
+msgstr "Dessiner une barre"
+
+#: schema/blocks.json:42
+msgctxt "schema: parameter name"
+msgid "Suffix after the value"
+msgstr "Suffixe après la valeur"
+
+#: schema/blocks.json:43
+msgctxt "schema: parameter name"
+msgid "Decimal places"
+msgstr "Décimales"
