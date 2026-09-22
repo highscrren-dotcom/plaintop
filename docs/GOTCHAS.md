@@ -206,7 +206,10 @@ between restarts is needed; `install.sh --plasmoid` does one.
 ## Qt logs go to journald, not to stderr
 
 `console.warn` from QML is not visible in the terminal — the message goes to the journal.
-For debugging `qml6`, `QT_FORCE_STDERR_LOGGING=1` helps; without it the code looks like it
+That is not a plasmashell trait: on this Arch-based system any Qt program logs to journald
+as soon as stderr is not a terminal, so a pipe or a redirect into a file gets nothing at
+all, while `journalctl --user` has the messages. `QT_FORCE_STDERR_LOGGING=1` brings them
+back — for `qml6`, and for `qmltestrunner` in a script; without it the code looks like it
 never runs at all.
 
 ## ksysguard model roles are addressed by name
@@ -237,25 +240,159 @@ The same ring, same data: 3.9% of one core standing still at 30 fps, 12.3% spinn
 60 fps, 26.4% when drawn on a `Canvas` instead of scene items. If motion is not in the
 data, it is not worth its price.
 
-## A desktop plasmoid passes the right button on, never the left
+## The applet's wrapper takes the left button — and can be told to let go
 
-`enabled: false` on the full representation is not useless — it hands the **right** button
-over, so the desktop's own context menu (and an icon's menu) opens through the widget. The
-**left** button never arrives: it is what the applet container watches for press-and-hold
-to enter edit mode (`editModeCondition: Plasmoid.immutable ? Manual : AfterPressAndHold`).
+`enabled: false` on the full representation hands over the **right** button only: the
+desktop's context menu (and an icon's menu) opens through the widget, a left click never
+reaches the desktop. It is not the applet that keeps it. plasmashell wraps every desktop
+applet in an `AppletContainer` — the QML `BasicAppletContainer` over the C++
+`ItemContainer` (`plasma-workspace/components/containmentlayoutmanager/itemcontainer.cpp`);
+the applet is that container's `contentItem` and its direct child. Three calls in the
+constructor decide everything:
 
-Four attempts, all executed, all failed on the left button:
+```cpp
+setFiltersChildMouseEvents(true);         // sees a press before the applet does
+setAcceptedMouseButtons(Qt::LeftButton);  // wants the left button only — that is why the right one passes
+setKeepMouseGrab(true);                   // and does not let it be taken away
+```
 
-| Attempt | Outcome |
-|---|---|
-| `enabled: false` on the full representation | right button passes through, left does not |
-| `locked = true` through plasmashell scripting | the property is read-only in Plasma 6; it stays `false` |
-| `immutability=2` on the containment | applied and survived a restart, left button still caught |
-| `immutability=2` on the containment **and** every applet | the condition above should become `Manual`, and the left button is still caught |
+`ItemContainer::mousePressEvent` ends in `event->accept()` for every `editModeCondition`
+except `Manual`, which returns early — and even that keeps the press, because Qt accepts a
+mouse event *before* delivering it (`qquickdeliveryagent.cpp`,
+`deliverMatchingPointsToItem`: `pointerEvent->accept();` right before
+`QCoreApplication::sendEvent`). One level down, `AppletsLayout::mousePressEvent` does
+`event->setAccepted(false)` unless some container is in edit mode, so a press the container
+does not take goes on to the folder view and the containment. The wrapper is the whole
+problem.
 
-⚠️ The last row is the interesting one: locking the widgets does not free the left button
-even though the QML condition says it should stop waiting for press-and-hold. Whatever
-grabs it sits deeper, in `ItemContainer` itself. Nothing in an applet's QML can decline it.
+Four attempts, all executed, all failed on the left button — with the line that beat each:
+
+| Attempt | Outcome | The line |
+|---|---|---|
+| `enabled: false` on the full representation | right button passes through, left does not | `setAcceptedMouseButtons(Qt::LeftButton)`: the container never wanted the right one, and it filters the left one before the child sees it |
+| `locked = true` through plasmashell scripting | the property is read-only in Plasma 6; it stays `false` | nothing reached the container at all |
+| `immutability=2` on the containment | applied and survived a restart, left button still caught | the desktop containment sets `editModeCondition: Plasmoid.immutable ? Locked : AfterPressAndHold`, and `Locked` still runs down to `event->accept()` |
+| `immutability=2` on the containment **and** every applet | the condition should become `Manual`, and the left button is still caught | `ItemContainer::editModeCondition()` answers `Locked` whenever the layout is locked; and `Manual` would be pre-accepted by Qt anyway |
+
+The way out is in Qt's target list, not in Plasma's flags. `eventTargets` skips a child
+that is `!isVisible() || !isEnabled() || culled` — a disabled item and its whole subtree
+are never mouse targets, for either button. From the applet's QML the container is
+`root.parent`, and `enabled` is a public, writable property of every `QQuickItem`:
+
+```qml
+readonly property bool shellEditMode: (Plasmoid.containment && Plasmoid.containment.corona)
+    ? Plasmoid.containment.corona.editMode : false
+
+Binding {
+    target: root.parent
+    property: "enabled"
+    value: !root.cfg.clickThrough || root.shellEditMode
+    when: root.parent !== null && ("editModeCondition" in root.parent)
+}
+```
+
+`Plasmoid.containment → .corona → .editMode` are public `Q_PROPERTY`s of libplasma
+(`applet.h`, `containment.h`, `corona.h`), so the widget sees the shell's edit mode and
+gives the wrapper back for exactly that time — in edit mode the wrapper is enabled again
+(verified over DBus), so the shell's own move, resize and configure handles apply.
+The `when` guard binds only when the parent has an `editModeCondition`, that is an
+`ItemContainer`, and so stays out of `plasmawindowed` and the previews. The representation
+keeps its own `enabled: !root.cfg.clickThrough`, so that in edit mode the wrapper, not the
+widget, takes the mouse.
+
+⚠️ While clicks go through, the widget cannot be right-clicked either. Its settings are
+reached through the desktop's edit mode, or with `./install.sh --clicks-off`.
+
+Verified in two steps:
+
+- **A stand**, `tests/passthrough.qml`: a QtTest file importing the installed
+  `org.kde.plasma.private.containmentlayoutmanager` — the same compiled classes plasmashell
+  uses — with an `AppletsLayout`, two `ItemContainer`s over counting `MouseArea`s and one
+  more `MouseArea` beneath for the desktop. `./install.sh --check-passthrough` runs it
+  offscreen (`QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen
+  /usr/lib/qt6/bin/qmltestrunner -input tests/passthrough.qml`): 10 of 10 passed in about
+  a second — 11 of 11 since `test_09` for the right button, below. It reproduces the old
+  behaviour (left swallowed, right passes), shows that `Locked` and `Manual` still swallow, that `enabled = false` on the
+  container passes both buttons on to the desktop and to an applet beneath, that
+  re-enabling restores the capture, and that no press-and-hold edit mode starts while
+  disabled.
+- **The real desktop** (Plasma 6.7.5, Qt 6.11.2): a throwaway counting applet, two
+  instances side by side, one plain and one with the binding — the parent printed as
+  `BasicAppletContainer_QMLTYPE_85_QML_105`. Real mouse clicks: the plain one counted 30
+  presses, the pass-through one 0, and the clicks landed on the desktop. Toggling
+  `editMode` of `org.kde.PlasmaShell` over DBus re-enabled the wrapper; leaving edit mode
+  disabled it again.
+
+### The right button needs one thing more: the desktop finds the applet by geometry
+
+With only the wrapper disabled, a right-click over the widget still opened the **widget's**
+menu. The desktop does not deliver that press to the applet, it looks the applet up:
+`ContainmentItem::mousePressEvent` (libplasma,
+`src/plasmaquick/plasmoid/containmentitem.cpp`, under the comment "FIXME: very inefficient
+appletAt() implementation") loops over every `PlasmoidItem` and takes the first with
+
+```cpp
+ai->isVisible() && ai->contains(ai->mapFromItem(this, event->position()))
+```
+
+— `enabled` is never looked at, so a disabled applet is still "there" for the context
+menu. What `QQuickItem::contains()` does look at is the item's `containmentMask`
+(qtdeclarative, `qquickitem.cpp`: with a `QQuickItem` as the mask,
+`return quickMask->contains(point - quickMask->position())`). An empty 0×0 `Item` as the
+mask makes `contains()` answer "no", and the desktop shows its own menu, as if the widget
+were not there. Both `main.qml` files:
+
+```qml
+Binding {
+    target: root
+    property: "containmentMask"
+    value: (root.cfg.clickThrough && !root.shellEditMode) ? noHitMask : null
+}
+Item { id: noHitMask; width: 0; height: 0; visible: false }
+```
+
+In edit mode the mask comes off as the wrapper comes back, so the shell's own handles and
+menu work as usual. ⚠️ Why a `Binding` and not `containmentMask: …` — the next gotcha.
+Verified: the stand's `test_09` sets the mask by name on an `ItemContainer` and
+`contains(Qt.point(50, 50))` flips true → false → true (11 of 11 pass); on the real desktop
+both widgets pass the right button as well as the left, with music playing, and the
+visualizer loaded without QML warnings.
+
+## "PlasmoidItem.containmentMask" is not available in org.kde.plasma.plasmoid 255.255
+
+Writing the mask declaratively on the applet's root — `containmentMask: noHitMask` inside
+`PlasmoidItem { … }` — fails at load, and both applets showed it on the desktop. The
+journal says (shortened):
+
+```
+error when loading applet "org.s1dd1.plaintop" … main.qml:78:5:
+"PlasmoidItem.containmentMask" is not available in org.kde.plasma.plasmoid 255.255
+```
+
+The property exists — it is `QQuickItem::containmentMask` — but it carries QtQuick
+revision 2.11, and the `org.kde.plasma.plasmoid` module does not import that revision for
+its types, so on a `PlasmoidItem` the QML compiler refuses it.
+
+What works is setting it by name:
+
+```qml
+Binding { target: root; property: "containmentMask"; value: … }
+```
+
+A `Binding` by name goes through `QQmlProperty`, which looks the property up at run time
+and does not check revisions. Both `main.qml` files do exactly that, and the stand's
+`test_09` does the same against an `ItemContainer`.
+
+## `/usr/bin/qmltestrunner` is the Qt 5 one
+
+On this Arch-based system `/usr/bin/qmltestrunner` belongs to `qt5-declarative` and
+answers "Library import requires a version" to a Qt 6 file — it cannot read a Qt 6
+`qmldir`. The Qt 6 runner is `/usr/lib/qt6/bin/qmltestrunner` (`qt6-declarative`).
+
+## `left` and `right` are FINAL on every `Item`
+
+They are the anchor lines. A counter named `property int left` in a `MouseArea` does not
+compile: "Cannot override FINAL property". Counters are `nLeft` / `nRight`.
 
 ## A plain window can: `Qt.WindowTransparentForInput` works under KWin Wayland
 
@@ -267,6 +404,9 @@ equivalent of the X Shape trick conky needed.
 ⚠️ The price is placement: under Wayland a window cannot position itself. `x` and `y` are
 ignored and KWin places the window where it likes, so a widget-like window needs a KWin
 rule to force position, size, keep-below and skip-taskbar.
+
+The window hosts that were built on this are retired (decision 9) — the plasmoid lets both
+buttons through by itself; the fact stands.
 
 ## `SensorDataModel` silently drops ids it cannot resolve
 

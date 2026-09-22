@@ -39,15 +39,15 @@ Neither needs a code change — just a row in the description.
 | Path | What lives there |
 |---|---|
 | `monitor/package/` | the text monitor as a Plasma 6 widget: QML, config schema, settings pages, the services script |
-| `monitor/shared/` | the monitor's data side and renderer, copied into both hosts on install |
-| `monitor/window/` | the monitor's click-through window host and its editor |
+| `monitor/shared/` | the monitor's data side and renderer, copied into the package on install |
+| `monitor/window/` | the monitor's former window host and its editor — retired (decision 9), kept for reference |
 | `monitor/generate.py` | description → JS module inside the package; validates before writing |
 | `schema/widget.json` | the default layout: which blocks, in what order, with what parameters |
 | `schema/blocks.json` | the vocabulary of block types and their parameters |
 | `spectrum/package/` | the audio visualizer as a Plasma 6 widget, with its settings page |
-| `spectrum/shared/` | the visualizer's renderer — one for ring, arc and line — copied into both hosts |
-| `spectrum/window/` | the visualizer's click-through window host and its editor |
-| `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service; owns both widgets' window settings |
+| `spectrum/shared/` | the visualizer's renderer — one for ring, arc and line — copied into the package |
+| `spectrum/window/` | the visualizer's former window host and its editor — retired (decision 9), kept for reference |
+| `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service; the visualizer reads it |
 | `po/` | translation catalogs, one domain per widget; `extract.py` refreshes them, `build.py` compiles |
 | `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
 | `install.sh` | install, status, `.plasmoid` builds, conky and clicks on/off — all operations idempotent |
@@ -135,8 +135,7 @@ python3 po/extract.py            # refresh po/*.pot from the sources, merge into
 python3 po/extract.py --init uk  # start a new language
 lokalize po/uk/plasma_applet_org.s1dd1.plaintop.po   # or Poedit, or any .po editor
 ./install.sh --plasmoid          # builds the monitor's .mo files into its package
-./install.sh --plaintop-window   # and into ~/.local/share/locale for its window host
-./install.sh --spectrum          # the same for the visualizer, --spectrum-window for its window
+./install.sh --spectrum          # the same for the visualizer
 ```
 
 Rules for the source strings:
@@ -147,21 +146,18 @@ Rules for the source strings:
 - **Numbers with a noun use the plural call**, `i18np` / `i18ncp`: Russian, Ukrainian and
   Polish have three forms, and the catalog's own rules pick them.
 - **Give context where a word is ambiguous**: `i18nc("palette: colour of", "Header:")`.
-- **Files only the plasmoid loads call `i18n()`**; QML shared by both hosts and the window
-  hosts' own files call `tr.i18n()` through a `KI18nContext`, since the bare `qml6`
-  runner has no `i18n()` of its own.
-- **Do not translate keys**: window titles the KWin rules match (`plaintop`), sensor ids,
-  config keys, block ids.
-- **The menu and autostart entries** the window hosts' `setup.py` writes are marked with
-  `N_(context, text)`; `setup.py` adds a `Name[xx]=` line per language from the built
-  catalogs.
+- **Files only the plasmoid loads call `i18n()`**; the shared QML in `monitor/shared/` and
+  `spectrum/shared/` calls `tr.i18n()` through a `KI18nContext` — a habit from the retired
+  window hosts, whose bare `qml6` runner had no `i18n()` of its own.
+- **Do not translate keys**: sensor ids, config keys, block ids.
+- **The menu and autostart entries** the retired window hosts' `setup.py` wrote are marked
+  with `N_(context, text)`; the strings stay in the catalogs as long as the code does.
 
 `msgfmt --check` runs on every install, so a translation that drops a `%1` fails there
 instead of on screen. To see the widget in another language without changing yours, run
-the editor (`~/.local/share/plaintop/ui/settings.qml`) with `LANGUAGE=de`. For that
-locale's dates and numbers in its live preview too, set `LANG`/`LC_ALL` to it and give it
-an empty `XDG_CONFIG_HOME`, since KDE applies your own Formats over `LANG`; the editor reads
-its settings from the relay, so the empty config directory costs it nothing. ⚠️ The locale
+it in a window: `LANGUAGE=de plasmawindowed org.s1dd1.plaintop`. For that locale's dates
+and numbers too, set `LANG`/`LC_ALL` to it and give it an empty `XDG_CONFIG_HOME`, since
+KDE applies your own Formats over `LANG`. ⚠️ The locale
 must be generated (`locale -a`), or gettext falls back to C and shows English — without
 root, `localedef -i de_DE -f UTF-8 $DIR/de_DE.UTF-8` and `LOCPATH=$DIR` do it (see
 `docs/GOTCHAS.md`).

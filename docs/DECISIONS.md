@@ -32,6 +32,9 @@ hands over the **right** button, so the desktop's menu opens through the widget 
 locked. Details and the table of attempts: `GOTCHAS.md`. Compared with conky this is still
 better, but it is half a click-through, not a free one.
 
+⚠️ **Note, 2026-09-22.** Since decision 8 the left button passes too: outside edit mode
+the plasmoid disables the wrapper, so this is no longer half a click-through.
+
 **And the main argument.** Plasmoids have a **built-in settings window**: Plasma builds
 the dialog itself from `config/main.xml` and stores the values. So the editor the project
 was started for largely comes for free — instead of a separate PySide6 application that
@@ -197,6 +200,13 @@ writers on one file is the mistake this project already paid for with `~/.config
 host, its KWin rule and its autostart all become unnecessary, and the editor stays useful
 anyway.
 
+⚠️ **Note, 2026-09-22.** The condition arrived, though not the way it was written: KDE
+gave nothing, the plasmoid lets the left button through itself — decision 8. The reason
+the window hosts were created is gone, but their placement (a KWin rule) and autostart
+still differed from the plasmoid's, and whether to retire them was the user's call — for
+a few hours an open question in `STATE.md`, not a decision. **Resolved the same day by
+decision 9: the window hosts are retired.**
+
 ## 6. Sensors are discovered, not written down (2026-09-21)
 
 **Decision:** no machine-specific sensor id lives in the code any more. Block parameters
@@ -221,6 +231,12 @@ of the 664 sensors this machine reports — narrowed to the 5 that match a fan p
 the highlighted sensor's live value under the list, plus the mount points from
 `/proc/self/mounts` and the interfaces found in the tree. Nothing about a block type is
 hardcoded in the editor: the vocabulary says what can be chosen.
+
+⚠️ **Note, 2026-09-22.** That editor was the window host's (`window/settings.qml`), retired
+by decision 9. Discovery itself is untouched — it lives in the shared `SensorRegistry` and
+`MonitorData`, and an empty parameter still means "find it" — but the plasmoid's *Blocks*
+page offers a plain field for these parameters, not the lists. Bringing the pick lists into
+Plasma's dialog is open work, not a decision.
 
 **What we pay.** One `Sensors.Sensor` object per non-uniform sensor instead of one shared
 model — the model cannot be trusted with ids it may drop (see `GOTCHAS.md`) — and a poll of
@@ -264,3 +280,127 @@ right for 1, 3 and 5; with `LANGUAGE=en` it fell back to the English source stri
 **Revisit if:** a per-widget language becomes a requirement, or `KI18nContext` turns out to
 be missing where the widgets have to run. Then the dictionary generated from the same `.po`
 files replaces ki18n, and the catalogs stay as they are.
+
+## 8. The left button goes through: the plasmoid disables its own wrapper outside edit mode (2026-09-22)
+
+**Decision:** with `clickThrough` on, each plasmoid disables the container plasmashell
+wraps it in — `root.parent.enabled` set to `false` from the applet's own QML — and
+re-enables it while the shell's edit mode is on. Both mouse buttons then land on the
+desktop; in edit mode the wrapper is enabled again (verified over DBus), so the shell's own
+move, resize and configure handles apply.
+`monitor/package/contents/ui/main.qml` and `spectrum/package/contents/ui/main.qml` carry
+the same `Binding { target: root.parent; property: "enabled" }` driven by
+`!clickThrough || shellEditMode`, where `shellEditMode` reads
+`Plasmoid.containment.corona.editMode`. The representation keeps `enabled: !clickThrough`
+as before, so in edit mode the wrapper takes the mouse, not the widget. The right button
+needs one thing more, an empty `containmentMask` — *The right button* below.
+
+**Why the left button never passed.** plasmashell wraps every desktop applet in an
+`AppletContainer` — the QML `BasicAppletContainer` over the C++ `ItemContainer`
+(`plasma-workspace/components/containmentlayoutmanager/itemcontainer.cpp`). Its
+constructor does `setFiltersChildMouseEvents(true)` (line 27),
+`setAcceptedMouseButtons(Qt::LeftButton)` (line 30) and `setKeepMouseGrab(true)`
+(line 51). `ItemContainer::mousePressEvent` (lines 552–583) ends in `event->accept()`
+(line 582) for every `editModeCondition` except `Manual`, which returns early
+(lines 556–558) — but Qt pre-accepts a mouse event before delivering it
+(`qquickdeliveryagent.cpp`, `deliverMatchingPointsToItem`: `pointerEvent->accept()`
+right before `QCoreApplication::sendEvent`), so `Manual` keeps the press too. `Locked` —
+what locking the widgets gives: the desktop containment sets it when `Plasmoid.immutable`
+(`plasma-desktop/containments/desktop/package/contents/ui/main.qml` lines 321–323), and
+`ItemContainer::editModeCondition()` (lines 149–153) returns it when the layout is locked
+— still reaches `event->accept()`. That is all four failed attempts from `GOTCHAS.md` in
+one place. The right button passes only because the container accepts `Qt::LeftButton`
+alone.
+
+**Why the desktop below is free.** Beneath the container, `AppletsLayout::mousePressEvent`
+(`appletslayout.cpp` lines 606–617) calls `event->setAccepted(false)` unless some
+container is in edit mode, so a press the container does not take continues to the folder
+view and the containment.
+
+**Why disabling works.** Qt's `eventTargets` (`qquickdeliveryagent.cpp`) skips a child
+that is `!isVisible() || !isEnabled() || culled` — a disabled item and its whole subtree
+are never mouse targets. The applet is the container's `contentItem` and a direct child
+(`ItemContainer::setContentItem`: `item->setParentItem(this)`), so from the applet's root
+`parent` *is* the `AppletContainer`, and `QQuickItem`'s `enabled` is a public property
+writable from QML. Edit mode is readable through public properties too:
+`Plasmoid.containment` (`applet.h:219`) → `.corona` (`containment.h:62`) → `.editMode`
+(`corona.h:41`).
+
+**The right button (the same day, later).** With only the wrapper disabled, a right-click
+over the widget still opened the widget's own menu: the desktop builds its context menu
+after a geometric lookup, not from mouse delivery. `ContainmentItem::mousePressEvent`
+(libplasma, `src/plasmaquick/plasmoid/containmentitem.cpp`, under the comment "FIXME: very
+inefficient appletAt() implementation") loops over every `PlasmoidItem` and takes the first
+with `ai->isVisible() && ai->contains(ai->mapFromItem(this, event->position()))` — it never
+looks at `enabled`. What `QQuickItem::contains()` does consult is the item's
+`containmentMask` (qtdeclarative, `qquickitem.cpp`: with a `QQuickItem` as the mask,
+`return quickMask->contains(point - quickMask->position())`). So both `main.qml` files set
+an empty 0×0 `Item` as the `PlasmoidItem`'s `containmentMask` while click-through is on and
+the shell is not in edit mode; `contains()` then answers "no", and the desktop shows its own
+menu, as if the widget were not there. ⚠️ Written declaratively, `containmentMask: …` on a
+`PlasmoidItem` fails to load (a QtQuick 2.11 revision the `org.kde.plasma.plasmoid` module
+does not import), so it is set through a `Binding` by name — the gotcha is in `GOTCHAS.md`.
+Verified: the stand got `test_09` — a `Binding` by name sets `containmentMask` on an
+`ItemContainer` and `contains(Qt.point(50, 50))` flips true → false → true, 11 of 11 pass;
+on the real desktop both widgets pass the right button as well, with music playing, and the
+visualizer loaded without QML warnings.
+
+**What we pay.**
+- While click-through is on, the widget cannot be grabbed, right-clicked or configured
+  from the desktop: the only way in is the shell's edit mode (or
+  `./install.sh --clicks-off`). The hint in the monitor's settings says so.
+- A private detail of plasmashell is relied on: the wrapper type and its property
+  `editModeCondition`, which the `Binding`'s `when` uses as the guard — the same guard
+  keeps `plasmawindowed` and previews untouched. Verified on Plasma 6.7.5 (Frameworks
+  6.30, Qt 6.11.2); a newer Plasma must be re-checked with the stand.
+
+**Verification.**
+- Stand, 10 of 10 passed: a `qmltestrunner` scene that instantiates the installed
+  `org.kde.plasma.private.containmentlayoutmanager` (`AppletsLayout` + `ItemContainer`)
+  over a counting `MouseArea` reproduces today's behaviour (left swallowed, right passes),
+  shows `Locked` and `Manual` still swallow, shows `enabled: false` on the container
+  passing both buttons to the desktop and to an applet beneath, re-enabling restoring
+  capture, and no press-and-hold edit mode while disabled.
+- Real desktop: a throwaway applet, two instances, one with the binding. Clicked by the
+  user with the real mouse, the normal one counted 30 presses, the pass-through one 0, and
+  the clicks reached the desktop. Edit mode toggled over DBus (`org.kde.PlasmaShell`,
+  `editMode`) re-enabled the wrapper; leaving it disabled the wrapper again.
+
+**Revisit if:** KDE changes the wrapper — its type, its place as the applet's parent, or
+`editModeCondition` goes away — or offers an official way for an applet to decline the
+mouse. Then use that and drop the binding.
+
+## 9. The window hosts are retired — the plasmoid is the only host (2026-09-22)
+
+**Decision:** the click-through window hosts of both widgets — `monitor/window/` and
+`spectrum/window/` — are retired. In the user's words: "старые виджеты оконные отключи, к
+ним больше не возвращаемся" — switch the old window widgets off, we are not coming back to
+them. One host, the plasmoid; one editor, Plasma's own settings dialog. Both
+`window/setup.py` got a `retire` action — it stops the window and removes the autostart
+entry, the editor's menu entry, the host's own KWin rule, the deployed files under
+`~/.local/share/<name>/ui` and the window's copies of the catalogs under
+`~/.local/share/locale`; the settings file stays — and `install.sh` got `--windows-off`,
+which runs both. Executed on s1dPC: both windows stopped, everything removed, and
+`./install.sh --status` prints "retired — the plasmoid is the only host" for each.
+
+**Why.** The window hosts existed for one reason, the left button (decision 5). Since
+decision 8 the plasmoid lets both buttons through by itself, so a second host with its KWin
+rule and its autostart adds nothing — and keeps costing: a rule for its place, an editor of
+its own, and a second copy of the shared QML to keep from drifting. This closes the open
+question left under decision 5.
+
+**What we pay.**
+- The window code lingers in the tree like `conky/`: retired, not deleted; deleting it is
+  a later cleanup. `--plaintop-window`, `--plaintop-settings`, `--plaintop-export`,
+  `--spectrum-window` and `--spectrum-settings` still exist in `install.sh` but are not to
+  be used.
+- A KWin rule and an autostart entry are no longer written; the settings files
+  (`~/.config/plaintop/monitor.json`, `~/.config/plainspectrum/ring.json`) stay where they
+  are.
+- The pick lists of the window editor (decision 6) are gone from the installed UI until
+  Plasma's dialog gets them.
+- The relay is **not** retired: the plasmoid needs it for cava (`spectrum/relay.py`,
+  `plainspectrum-relay.service`).
+
+**Revisit if:** a host outside plasmashell is ever needed again — another desktop
+environment, for instance. The code is still there to start from.

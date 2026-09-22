@@ -6,16 +6,17 @@ Draws the spectrum of whatever is playing, in the same plain style as the text m
 one colour, square ends, no gradients, no glow. Ring, arc or line.
 
 Why it is ours rather than an existing widget: `../docs/DECISIONS.md`, decisions 3 and 4.
-Why there are two hosts for it: decision 5 — a desktop plasmoid never hands over the left
-mouse button, and a plain window does.
+For a while it had a second host, a click-through window, born of the left button
+(decision 5 — a desktop plasmoid would not hand it over, a plain window does). Since the
+plasmoid lets both buttons through by itself (decision 8, `../docs/GOTCHAS.md`) that host
+is retired (decision 9): one host, the plasmoid; the code stays in `window/` but is not
+installed.
 
 ## How it is put together
 
 ```
-cava ──► relay.py ──► host ──► Ring.qml
- FFT    local HTTP     plasmoid or window
-                 ▲
-                 └── settings.qml (the editor) writes settings through the same relay
+cava ──► relay.py ──► plasmoid ──► Ring.qml
+ FFT    local HTTP
 ```
 
 | Piece | What it does |
@@ -23,27 +24,30 @@ cava ──► relay.py ──► host ──► Ring.qml
 | `shared/Spectrum.qml` | polls the relay, decides whether anything is playing, hands the bands over by signal |
 | `shared/Ring.qml` | draws them: a tick is a rectangle inside a zero-sized pivot, so ring, arc and line differ only in where the pivot stands |
 | `relay.py` | runs `cava`, serves its bands over `http://127.0.0.1:8788`, and **owns the settings file** |
-| `window/window.qml` | the click-through host: a window with `Qt.WindowTransparentForInput` |
-| `window/settings.qml` | the editor for that host, with a live preview |
+| `window/window.qml` | the retired window host: a window with `Qt.WindowTransparentForInput` (decision 9) |
+| `window/settings.qml` | that host's editor, with a live preview — retired with it |
 | `package/` | the plasmoid host, with Plasma's own settings dialog |
 
-Both hosts load the same two shared files — `install.sh` copies them in. Two edited copies
-of the same QML is how they drift apart.
+The plasmoid loads the two shared files — `install.sh` copies them into the package. An
+edited copy is how it drifts from `shared/`.
 
-⚠️ QML cannot write files, so the editor never touches `ring.json`: it reads
-`GET /config` and posts changes to `POST /config`, and the relay writes the file. One
+⚠️ QML cannot write files, so the retired host's editor never touched `ring.json`: it read
+`GET /config` and posted changes to `POST /config`, and the relay wrote the file. One
 owner beats two writers — the same rule this project already learned about `~/.config/conky`.
+The plasmoid keeps its settings in Plasma's own store instead.
 
 ## Install
 
 ```bash
-./install.sh --spectrum            # the plasmoid host + the relay service
-./install.sh --spectrum-window     # the click-through window + its KWin rule + autostart
-./install.sh --spectrum-settings    # open the editor
-./install.sh --status              # both hosts, the relay port, the KWin rule, the window
+./install.sh --spectrum            # the plasmoid + the relay service
+./install.sh --windows-off         # retire the window host of an earlier setup (decision 9)
+./install.sh --status              # the plasmoid, the relay port, the retired window
 ```
 
-Needs `cava`, `qml6` (`qt6-declarative`) and `msgfmt` (gettext, for the translations).
+`--spectrum-window` and `--spectrum-settings` still exist but belong to the retired host and
+are not to be used.
+
+Needs `cava` and `msgfmt` (gettext, for the translations).
 The relay's own knobs — device, band count, frame rate, noise reduction, frequency range,
 how soon cava sleeps in silence — are environment in the service unit; override them in
 `~/.config/plainspectrum/relay.env`.
@@ -51,17 +55,13 @@ After three seconds of silence cava stops computing and looks at the input once 
 (`PLAINSPECTRUM_SLEEP`, `0` turns it off): 3.9% of a core in silence becomes 0.35%, and
 the ring appears up to a second later when the sound returns.
 
-⚠️ Only one host belongs on the desktop: they draw the same ring. `--spectrum` installs
-the plasmoid but does not place it once the window host is set up.
-
-**Under Wayland a window cannot place itself**, so position, size, keep-below and
-skip-taskbar come from a KWin rule matched on the window title, written by
-`window/setup.py`. To move the ring, edit that rule (System Settings → Window Rules) or
-re-run `--spectrum-window` with `PLAINSPECTRUM_X` / `PLAINSPECTRUM_Y` set.
+`--spectrum` places the plasmoid on the desktop; it holds off only while a not-yet-retired
+window host is still set up — run `--windows-off` first. The ring is moved like any widget,
+in the desktop's edit mode.
 
 ## Settings
 
-The editor groups them as the widget does: shape, appearance, behaviour.
+Right-click → *Configure*; the dialog groups them: shape, appearance, behaviour, silence.
 
 | Setting | What it does |
 |---|---|

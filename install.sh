@@ -54,9 +54,8 @@ PY
 # Make the monitor package complete: install and pack both start here, so what gets
 # installed and what gets published cannot differ.
 monitor_prepare() {
-    # The renderer and the data side are shared with the standalone window host, so they
-    # live in monitor/shared/ and are copied into the package here. Two edited copies of
-    # the same QML is how they drift apart.
+    # The renderer and the data side live in monitor/shared/ (once shared with the window
+    # host, retired by decision 9) and are copied into the package here: one source, one copy.
     cp "$REPO/monitor/shared/"*.qml "$PLASMOID_SRC/contents/ui/" || { red "  ✗ shared files were not copied"; return 1; }
     # Schema -> package. A bad schema aborts the install: better to refuse here than
     # to get an empty widget and hunt for the cause in QML.
@@ -64,7 +63,7 @@ monitor_prepare() {
         red "  ✗ the description in schema/ failed validation — package not updated"; return 1
     fi
     # Catalogs po/*/<domain>.po → contents/locale, where libplasma looks for the applet's
-    # translations. The window host deploys the same .mo files (decision 7).
+    # translations (decision 7).
     python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plaintop "$PLASMOID_SRC/contents/locale" || return 1
 }
 
@@ -72,8 +71,7 @@ spectrum_prepare() {
     # Same as the monitor: the shared QML lives in spectrum/shared/ and is copied in.
     cp "$SPECTRUM_SRC/shared/Ring.qml" "$SPECTRUM_SRC/shared/Spectrum.qml" \
         "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ shared files were not copied"; return 1; }
-    # Catalogs, as for the monitor: contents/locale for the plasmoid, and the window host
-    # deploys the same .mo files (decision 7).
+    # Catalogs, as for the monitor: contents/locale for the plasmoid (decision 7).
     python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainspectrum "$SPECTRUM_SRC/package/contents/locale" || return 1
 }
 
@@ -227,8 +225,8 @@ spectrum_install() {
         dim "  plasmashell is not under systemd — restart the shell yourself"
     fi
 
-    # Two hosts draw the same ring, so only one belongs on the desktop. If the
-    # click-through window is set up, the plasmoid variant is installed but not placed.
+    # A window host not yet retired (decision 9) would draw the same ring: while its
+    # autostart entry exists, the plasmoid is installed but not placed. --windows-off retires it.
     if [ -f "$HOME/.config/autostart/plainspectrum-window.desktop" ]; then
         dim "  click-through window is set up — not placing the plasmoid on the desktop"
         return 0
@@ -247,10 +245,10 @@ spectrum_install() {
     [ -n "$id" ] && grn "  ✓ added to the desktop (id=$id)" || red "  ✗ could not add it to the desktop"
 }
 
-# Standalone (click-through) host for the visualizer. A plasmoid never hands over the
-# left mouse button; a plain window with Qt.WindowTransparentForInput does — see
-# docs/GOTCHAS.md. Place, size and keep-below come from a KWin rule, because under
-# Wayland a window cannot position itself.
+# Standalone (click-through) host for the visualizer — retired (decision 9). It predates the
+# plasmoid's own click-through (decision 8): the plasmoid now lets both buttons through by
+# itself (see check_passthrough), so a second host with its KWin rule and autostart adds
+# nothing. Kept for reference, not to be used; `--windows-off` retires an existing setup.
 spectrum_window() {
     echo "== Spectrum: click-through window"
     if ! command -v qml6 >/dev/null; then
@@ -343,6 +341,39 @@ print(n);" 2>/dev/null | tr -dc '0-9')
     fi
 }
 
+# Left-button click-through on the desktop is not the applet's call: plasmashell wraps every
+# desktop applet in an ItemContainer that accepts the left button before the applet sees it
+# (the right one passes — the container takes only Qt::LeftButton). The widgets get through
+# by disabling that container while clicks pass through, a Binding on root.parent.enabled in
+# each main.qml. The right button needs one thing more: the desktop finds the applet for its
+# context menu geometrically (ContainmentItem::mousePressEvent asks every PlasmoidItem
+# contains(pos) and never looks at enabled), so each main.qml also sets an empty
+# containmentMask — by name, through a Binding — and contains() answers "no".
+# tests/passthrough.qml proves the container trick and the mask's effect on contains()
+# against the compiled containmentlayoutmanager module the running shell uses. The stand
+# tests Plasma's behaviour, not ours, so run it after a Plasma or Qt upgrade.
+check_passthrough() {
+    echo "== Click-through stand"
+    local runner=/usr/lib/qt6/bin/qmltestrunner
+    # ⚠️ /usr/bin/qmltestrunner is the Qt 5 runner: it cannot read a Qt 6 qmldir.
+    if [ ! -x "$runner" ]; then
+        red "  ✗ $runner is missing (package qt6-declarative)"; return 1
+    fi
+    # ⚠️ Qt logs to journald when stderr is not a terminal, so a pipe sees nothing without
+    # QT_FORCE_STDERR_LOGGING=1. Capture first, filter after: in a pipeline the runner's
+    # exit status gets mixed up with grep's (see the pipefail note in deps).
+    local out rc
+    out=$(QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen "$runner" -input "$REPO/tests/passthrough.qml" 2>&1); rc=$?
+    # Every PASS/FAIL/Totals line is shown; only Qt's own chatter is dropped.
+    printf '%s\n' "$out" | grep -vE 'detached root|GC memory statistics|unloaded library|propertyCache' | sed 's/^/  /'
+    if [ $rc -eq 0 ]; then
+        grn "  ✓ disabled, the container hands both buttons over — the widgets' assumption holds"
+    else
+        red "  ✗ the stand failed (exit $rc) — Plasma no longer behaves the way the widgets assume"
+    fi
+    return $rc
+}
+
 # Idempotent: if the widget is already on the desktop, do nothing; otherwise place it.
 plasmoid_place() {
     local n
@@ -353,7 +384,8 @@ plasmoid_place() {
     # hints inside the widget, and the container resets the position to the corner
     # anyway. The widget draws the gap from the screen edge itself (its left/top
     # offset settings).
-    # Two hosts draw the same monitor, so only one belongs on the desktop.
+    # A window host not yet retired (decision 9) would draw the same monitor: while its
+    # autostart entry exists, the plasmoid is not placed. --windows-off retires it.
     if [ -f "$HOME/.config/autostart/plaintop-window.desktop" ]; then
         dim "  click-through window is set up — not placing the plasmoid on the desktop"
         return 0
@@ -366,15 +398,26 @@ plasmoid_place() {
     grn "  ✓ added to the desktop (id=$id)"
 }
 
-# Standalone (click-through) host for the text monitor, same reasoning as the ring:
-# a plasmoid never hands over the left mouse button. Settings come from the plasmoid's own
-# dialog through `--plaintop-export`, so there is still one editor.
+# Standalone (click-through) host for the text monitor — retired (decision 9), same story
+# as the ring: it predates the plasmoid's own click-through (decision 8; the plasmoid now
+# lets both buttons through by itself — see check_passthrough), so it has nothing left to
+# add. Kept for reference, not to be used; `--windows-off` retires an existing setup.
 plaintop_window() {
     echo "== Monitor: click-through window"
     if ! command -v qml6 >/dev/null; then
         red "  ✗ qml6 is missing (package qt6-declarative)"; return 1
     fi
     python3 "$REPO/monitor/window/setup.py" install
+}
+
+# The window hosts are retired (decision 9): the plasmoids let both mouse buttons through by
+# themselves, so a second host with its KWin rule and autostart has nothing left to add.
+# This stops both windows and takes their pieces out; the settings files stay.
+windows_off() {
+    echo "== Monitor: window host retired"
+    python3 "$REPO/monitor/window/setup.py" retire || return 1
+    echo "== Spectrum: window host retired"
+    python3 "$SPECTRUM_SRC/window/setup.py" retire || return 1
 }
 
 plaintop_export() {
@@ -482,6 +525,7 @@ conky_deploy() {
 case "${1:-}" in
   --status)      status; exit 0 ;;
   --check-input) input_shape; exit 0 ;;
+  --check-passthrough) check_passthrough; exit $? ;;
   --deps)        deps; exit $? ;;
   --plasmoid)    plasmoid_install; exit $? ;;
   --pack)        pack; exit $? ;;
@@ -492,11 +536,12 @@ case "${1:-}" in
   --plaintop-window)   plaintop_window; exit $? ;;
   --plaintop-export)   plaintop_export; exit $? ;;
   --plaintop-settings) python3 "$REPO/monitor/window/setup.py" settings; exit $? ;;
+  --windows-off) windows_off; exit $? ;;
   --clicks-off)  clicks_set false "widgets catch clicks (can be configured with the mouse)"; exit $? ;;
   --clicks-on)   clicks_set true "clicks pass through to the desktop"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--deps]"; exit 0 ;;
+  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--windows-off|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Missing dependencies — install them and try again."; exit 1; }

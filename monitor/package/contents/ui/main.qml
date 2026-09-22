@@ -53,10 +53,41 @@ PlasmoidItem {
         servicesScript: Qt.resolvedUrl("../code/services.sh").toString().replace("file://", "")
     }
 
+    // The shell's edit mode: the one moment a click-through widget must take the mouse.
+    readonly property bool shellEditMode: (Plasmoid.containment && Plasmoid.containment.corona)
+        ? Plasmoid.containment.corona.editMode : false
+
+    // Click-through. Input off on the representation alone hands over only the right
+    // button: the wrapper plasmashell puts around every desktop applet (AppletContainer,
+    // our parent item) accepts the left button unconditionally, waiting for press-and-hold.
+    // Disabled, that wrapper and everything inside it drop out of Qt's mouse delivery and
+    // both buttons land on the desktop below. Re-enabled in edit mode, so the widget can
+    // still be moved, resized and configured. Verified on Plasma 6.7.5 — docs/GOTCHAS.md.
+    Binding {
+        target: root.parent
+        property: "enabled"
+        value: !root.cfg.clickThrough || root.shellEditMode
+        when: root.parent !== null && ("editModeCondition" in root.parent)
+    }
+
+    // The right button needs one thing more: the desktop looks for the applet under a
+    // right-click geometrically (ContainmentItem::mousePressEvent asks every PlasmoidItem
+    // contains(pos) and never looks at enabled), so with only the wrapper disabled the
+    // widget's own menu would still open. An empty containment mask makes contains()
+    // answer "no", and the desktop shows its own menu, as if the widget were not there.
+    // ⚠️ Declared with revision 2.11 in QtQuick, and org.kde.plasma.plasmoid does not
+    // pull that revision in, so "containmentMask:" on a PlasmoidItem is a compile error
+    // ("not available in org.kde.plasma.plasmoid 255.255"). Binding by name goes through
+    // QQmlProperty, which does not check revisions.
+    Binding {
+        target: root
+        property: "containmentMask"
+        value: (root.cfg.clickThrough && !root.shellEditMode) ? noHitMask : null
+    }
+    Item { id: noHitMask; width: 0; height: 0; visible: false }
+
     fullRepresentation: Item {
-        // Input off means the click lands on the containment instead of the widget. That
-        // hands over the right button; the left one stays with the applet container no
-        // matter what — see docs/GOTCHAS.md.
+        // Input off on the widget itself: in edit mode the wrapper takes the mouse, not us.
         enabled: !root.cfg.clickThrough
 
         implicitWidth: root.cfg.widgetWidth

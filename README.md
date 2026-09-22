@@ -31,16 +31,19 @@ What is in the repository:
 
 | Directory | What it is | State |
 |---|---|---|
-| **`monitor/`** | the text monitor: a plasmoid host, a click-through window host and the renderer they share | works |
+| **`monitor/`** | the text monitor: a plasmoid, with the renderer and data side in `shared/`; the retired window host stays in `window/` (decision 9) | works |
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
-⚠️ **About the mouse.** A plasmoid hands over the right button and never the left one —
-four ways around it were tried and failed, see [docs/GOTCHAS.md](docs/GOTCHAS.md). So both
-widgets also have a **window host**: a plain window with `Qt.WindowTransparentForInput`,
-which every click passes through. That is what runs on the author's desktop now. It costs
-the stock settings dialog and needs a KWin rule for its place, since under Wayland a window
-cannot position itself.
+⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
+plasmoid disables the wrapper the shell puts around it, so clicks land on the icons and the
+wallpaper as if the widget were not there. The widget takes the mouse only in the desktop's
+edit mode — which is also where its settings are. How the left button was won back, after
+four failed attempts: [docs/GOTCHAS.md](docs/GOTCHAS.md). Before the plasmoid could do
+this, each widget had a **window host** — a plain window with `Qt.WindowTransparentForInput`.
+Those hosts are retired (decision 9): one host now, the plasmoid, with Plasma's own
+settings dialog. Their code stays in the tree but is not installed;
+`./install.sh --windows-off` retires an existing setup.
 
 Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -54,21 +57,20 @@ Widgets*, search for the name:
 - the visualizer, `plainspectrum` — [store.kde.org/p/2372815](https://store.kde.org/p/2372815/);
   it draws nothing until the relay below is installed.
 
-**From the repository** — both widgets, the click-through window hosts and the relay:
+**From the repository** — both widgets and the relay:
 
 ```bash
 git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
-./install.sh --plasmoid          # the monitor as a plasmoid: generate, install, restart the shell
-./install.sh --plaintop-window   # …or as a click-through window, with its own editor
+./install.sh --plasmoid          # the monitor: generate, install, restart the shell
 ./install.sh --spectrum          # the audio visualizer: plasmoid + relay service
-./install.sh --spectrum-window   # …and its click-through window
+./install.sh --windows-off       # retire the window hosts of an earlier setup (decision 9)
 ./install.sh --status            # what is installed and what is running
 ```
 
-One host per widget belongs on the desktop — they draw the same thing. The plasmoid lands
-in `~/.local/share/plasma/plasmoids/org.s1dd1.plaintop/`; the installer places it on the
-desktop unless that widget's window host is set up, and *Add Widgets* works as usual.
+The plasmoid lands in `~/.local/share/plasma/plasmoids/org.s1dd1.plaintop/`; the installer
+places it on the desktop (it holds off only while a not-yet-retired window host is still
+set up — run `--windows-off` first), and *Add Widgets* works as usual.
 `./install.sh --pack` builds the same packages as `.plasmoid` files into `dist/`, for the
 KDE Store or a release.
 
@@ -82,9 +84,9 @@ The conky implementation has its own switches: `./install.sh` deploys and starts
 
 **Requirements:** Plasma 6 with `ksystemstats` (ships with Plasma) and KDE Frameworks
 6.23 or newer (for `KI18nContext`, decision 7), `python3` for the generator, the setup
-scripts and the relay, `msgfmt` from gettext for the translations, `qml6`
-(qt6-declarative) for the window hosts, and a monospace font — `JetBrainsMono Nerd Font
-Mono` by default. The visualizer additionally needs `cava`; the conky implementation needs
+scripts and the relay, `msgfmt` from gettext for the translations, and a monospace font —
+`JetBrainsMono Nerd Font Mono` by default (`qt6-declarative` only for the click-through
+stand, `--check-passthrough`). The visualizer additionally needs `cava`; the conky implementation needs
 `conky`, `python-xlib` and `lm_sensors`.
 
 ## Adapting it to your hardware
@@ -94,10 +96,13 @@ found on the machine the widget runs on:
 
 | What | How it is chosen | Change it in |
 |---|---|---|
-| Network interface | among the connected hardware interfaces: the one with a gateway, then the one that carried the most traffic | editor → *Blocks* → *Network*, a menu of the interfaces found |
-| Fan and NVMe sensors | by pattern among the sensors this machine reports | editor → *Blocks* → *Processor* / *Disks*, a searchable list with live values |
-| Mount points | `/` only — a mount point is a choice, not something to guess | editor → *Blocks* → *Disks*, a list of what is mounted now |
-| Header text | yours to write; empty by default, so only the hostname shows | editor → *Blocks* → *Header* |
+| Network interface | among the connected hardware interfaces: the one with a gateway, then the one that carried the most traffic | settings → *Blocks* → *Network*, the interface parameter; empty means "find it" |
+| Fan and NVMe sensors | by pattern among the sensors this machine reports | settings → *Blocks* → *Processor* / *Disks*, the sensor parameters; empty means "by pattern" |
+| Mount points | `/` only — a mount point is a choice, not something to guess | settings → *Blocks* → *Disks*, the mount list |
+| Header text | yours to write; empty by default, so only the hostname shows | settings → *Blocks* → *Header* |
+
+The retired window editor offered these as pick lists with live values; the plasmoid's
+dialog takes a typed value or an empty one, and discovery does the rest (decision 6).
 
 A value you pick is kept as a preference: while the machine still reports it, it wins; when
 a reboot renames the chip or the interface, the widget falls back to discovery instead of
@@ -113,10 +118,9 @@ in the same flat style. `cava` does the spectrum, a small systemd user service s
 bands over local HTTP, and the widget moves ready-made rectangles: the GPU stays at about
 half a percent because nothing is rasterized per frame.
 
-It comes with **two hosts** for the same renderer. The plasmoid has Plasma's settings
-dialog; the window host (`Qt.WindowTransparentForInput`) is the one you can click straight
-through, and it brings its own editor with a live preview. Details, settings and the
-measured cost: **[spectrum/README.md](spectrum/README.md)**.
+It is a plasmoid with Plasma's settings dialog; its earlier click-through window host is
+retired (decision 9). Details, settings and the measured cost:
+**[spectrum/README.md](spectrum/README.md)**.
 
 ## Three layers
 
@@ -146,16 +150,18 @@ Right-click the widget → *Configure plaintop…*. Two pages:
 - *Blocks* — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, remove one.
 
-The window hosts have no Plasma dialog; each brings an editor with a live preview in the
-real renderer — the menu entries "plaintop — monitor settings" and "plainspectrum —
-settings", or `./install.sh --plaintop-settings` / `--spectrum-settings`.
+That dialog is the only editor. The window hosts' own editors with a live preview
+(`window/settings.qml` in each widget) retired with them (decision 9);
+`./install.sh --plaintop-settings` / `--spectrum-settings` are not to be used.
 
 **About the mouse.** Out of the box the plasmoid takes clicks like any widget, so a
 right-click reaches its settings. The *Mouse* setting — and the
-`./install.sh --clicks-on` / `--clicks-off` switches behind it — turns input off on the
-widget's own representation. That is enough for the right button, which then reaches the
-desktop through the widget, and never enough for the left one, which the applet container
-keeps for itself. `docs/GOTCHAS.md` lists the four attempts and what each one did.
+`./install.sh --clicks-on` / `--clicks-off` switches behind it — lets both buttons through
+to the desktop: input goes off on the widget's own representation, and the applet
+container the shell wraps it in is disabled too, since that container is what kept the
+left button. The widget takes the mouse only in the desktop's edit mode, which is also
+where its settings are (or `--clicks-off`). `docs/GOTCHAS.md` has the whole story: the
+four attempts that failed and the line that let the button go.
 
 Two block types are deliberately open-ended:
 

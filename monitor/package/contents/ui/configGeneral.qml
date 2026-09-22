@@ -104,7 +104,7 @@ KCM.SimpleKCM {
         }
 
         Label {
-            text: i18n("While clicks go through, the widget cannot be grabbed with the mouse.\nTo reach the settings: the desktop's edit mode\nor ./install.sh with the clicks off switch")
+            text: i18n("While clicks go through, both mouse buttons land on the desktop.\nThe widget takes the mouse only in the desktop's edit mode:\nthat is where its settings are, or ./install.sh with the clicks off switch")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }

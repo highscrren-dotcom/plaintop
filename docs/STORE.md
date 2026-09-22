@@ -15,6 +15,11 @@ The files to upload are built by:
 so what it builds is known to install. The version in the file name comes from each
 widget's `metadata.json`; bump it there before building a new upload.
 
+⚠️ The pages published on 2026-09-22 are version 0.1 and still carry the earlier mouse
+paragraph ("lets the right button through", "a plasmoid can never pass the left one"); the
+text below is newer and reaches the store only with the next upload — 0.2, which both
+`metadata.json` already say and which carries the click-through change.
+
 ## Uploading
 
 The store is run by Pling, not by KDE; there is no review before a product goes live.
@@ -64,9 +69,9 @@ The interface follows Plasma's language: English, Russian, Ukrainian, German, Fr
 Spanish, Brazilian Portuguese, Polish, Simplified Chinese, Japanese — all but English and
 Russian machine-translated, corrections welcome. The updates line reads pacman.
 
-Out of the box the widget takes clicks like any other; General → Mouse lets the right
-button through to the desktop. A plasmoid can never pass the left one — for full
-click-through the repository has a window host, plus an editor with a live preview:
+Out of the box the widget takes clicks like any other; General → Mouse lets both buttons
+through to the desktop, and the widget takes the mouse only in the desktop's edit mode —
+which is also where its settings are. Source and details:
 https://github.com/highscrren-dotcom/plaintop
 
 ———
@@ -85,8 +90,8 @@ NVMe, сетевой интерфейс — находятся на самой �
 приветствуются. Строка обновлений читает pacman.
 
 Сразу после установки виджет ловит клики, как любой другой; «Общее → Мышь» пропускает
-на рабочий стол правую кнопку. Левую плазмоид не отдаёт никогда — для настоящих сквозных
-кликов в репозитории есть оконный хост и редактор с живым просмотром:
+на рабочий стол обе кнопки, а мышь виджет берёт только в режиме правки рабочего стола —
+там же и его настройки. Исходники и подробности:
 https://github.com/highscrren-dotcom/plaintop
 ```
 
@@ -123,7 +128,9 @@ What you can set (right-click → Configure):
 
 Light by design: the bars are ready-made rectangles moved by the scene graph and nothing
 is rasterized per frame, so the graphics card stays almost idle. Out of the box the
-widget takes clicks like any other; Behaviour → Mouse lets the right button through.
+widget takes clicks like any other; Behaviour → Mouse lets both buttons through to the
+desktop, and the widget takes the mouse only in the desktop's edit mode — where its
+settings are.
 
 ⚠️ The widget alone draws nothing. The spectrum is computed by cava in a small relay
 service (Python, a systemd user unit) that a widget cannot install by itself:
@@ -136,8 +143,7 @@ Without the relay the widget says so instead of staying blank. The audio device 
 frequency range are set in ~/.config/plainspectrum/relay.env.
 
 The interface follows Plasma's language — ten languages, all but English and Russian
-machine-translated, corrections welcome. The repository also has a click-through window
-host for the ring, with its own editor and a live preview.
+machine-translated, corrections welcome.
 
 Source, issues, details: https://github.com/highscrren-dotcom/plaintop
 
@@ -160,7 +166,8 @@ PlainExt для Rainmeter: один цвет, прямые концы, без г
 
 Лёгкий по устройству: штрихи — готовые прямоугольники, их двигает граф сцены, покадровой
 растеризации нет, и видеокарта почти не нагружается. Сразу после установки виджет ловит
-клики, как любой другой; «Поведение → Мышь» пропускает правую кнопку на рабочий стол.
+клики, как любой другой; «Поведение → Мышь» пропускает на рабочий стол обе кнопки, а
+мышь виджет берёт только в режиме правки рабочего стола — там же и его настройки.
 
 ⚠️ Сам по себе виджет ничего не рисует. Спектр считает cava в маленькой службе-реле
 (Python, пользовательский юнит systemd), которую виджет поставить не может:
@@ -173,8 +180,7 @@ PlainExt для Rainmeter: один цвет, прямые концы, без г
 частот задаются в ~/.config/plainspectrum/relay.env.
 
 Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и русского,
-переведено машинно, исправления приветствуются. В репозитории есть и оконный хост кольца
-со сквозными кликами, своим редактором и живым просмотром.
+переведено машинно, исправления приветствуются.
 
 Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
 ```

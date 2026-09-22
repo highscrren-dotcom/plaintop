@@ -2,9 +2,10 @@
 
 English · [Русский](README.ru.md)
 
-A text system monitor for the Plasma 6 desktop, in QML. It runs in two hosts — a plasmoid
-and a click-through window — and both draw the same thing from the same code. Why a
-plasmoid at all — `../docs/DECISIONS.md`, decision 1; where the data comes from — decision 2.
+A text system monitor for the Plasma 6 desktop, in QML. It runs as a plasmoid; the
+click-through window host it had for a while is retired (decision 9) and stays in
+`window/` for reference. Why a plasmoid at all — `../docs/DECISIONS.md`, decision 1;
+where the data comes from — decision 2.
 
 | Path | What it is |
 |---|---|
@@ -12,14 +13,14 @@ plasmoid at all — `../docs/DECISIONS.md`, decision 1; where the data comes fro
 | `shared/MonitorView.qml` | draws those lines; the palette lives here, and every part of a line carries a role rather than a colour |
 | `shared/SensorRegistry.qml` | what sensors this machine has; finds the machine-specific ids and ranks the network interfaces |
 | `package/` | the plasmoid host, with Plasma's own settings dialog |
-| `window/window.qml` | the click-through host: a window with `Qt.WindowTransparentForInput` |
-| `window/settings.qml` | the window host's editor, with a live preview in the real renderer |
-| `window/setup.py` | deploys the window, writes the KWin rule and the autostart entry, and exports settings from the plasmoid |
+| `window/window.qml` | the retired window host: a window with `Qt.WindowTransparentForInput` (decision 9) |
+| `window/settings.qml` | that host's editor, with a live preview in the real renderer — retired with it |
+| `window/setup.py` | deployed the window, its KWin rule and autostart; what matters now is `retire`, behind `./install.sh --windows-off` |
 | `generate.py` | `../schema/*.json` → `package/contents/code/description.js`; validates before writing |
 
-`install.sh` copies the shared files into whichever host it is setting up. Two edited
-copies of the same QML is how they drift apart; `./install.sh --status` compares each host
-with `shared/` itself.
+`install.sh` copies the shared files into the plasmoid package. An edited copy is how it
+drifts from `shared/`; `./install.sh --status` compares the installed files with `shared/`
+itself.
 
 ## What it shows
 
@@ -31,30 +32,35 @@ showed.
 
 **Which blocks and in what order comes from the description** (`../schema/widget.json`):
 enable, disable, reorder, change parameters, add a block of your own — from an arbitrary
-command or from any ksystemstats sensor. Both hosts edit it: the plasmoid on the *Blocks*
-page of its dialog, the window in its editor.
+command or from any ksystemstats sensor. It is edited on the *Blocks* page of the
+plasmoid's dialog.
 
-## Why two hosts
+## Why there was a second host, and why it is retired
 
-A desktop plasmoid never hands over the left mouse button — four ways were tried, see
-`../docs/GOTCHAS.md`; the *Mouse* setting only frees the right one. A plain window
-with `Qt.WindowTransparentForInput` hands over both, so the monitor can sit over the
-desktop without stealing clicks from the icons under it.
-
-What the window host pays for that: no Plasma settings dialog, no session handling, and no
-self-placement — under Wayland a window cannot position itself, so position, size,
-keep-below and skip-taskbar come from a KWin rule matched on the window title.
+The window host was born of the mouse: a desktop plasmoid would not hand over the left
+button, four ways were tried (`../docs/GOTCHAS.md`), and a plain window with
+`Qt.WindowTransparentForInput` hands over both, so the monitor could sit over the desktop
+without stealing clicks from the icons under it. Since then the plasmoid has learned it
+too: the *Mouse* setting disables the applet container the shell wraps it in and masks the
+widget out of the desktop's context-menu lookup, both buttons reach the desktop, and the
+widget takes the mouse only in the desktop's edit mode — which is also where its settings
+are. That left the window host with nothing to add and its price still to pay: no Plasma
+settings dialog, no session handling, and no self-placement (under Wayland a window cannot
+position itself, so position, size, keep-below and skip-taskbar came from a KWin rule
+matched on the window title). So it is retired (decision 9): one host, the plasmoid. The
+code stays in `window/` but is not installed; `./install.sh --windows-off` retires an
+existing setup.
 
 ## Install
 
 ```bash
-./install.sh --plaintop-window     # deploy, write the KWin rule and autostart, start it
-./install.sh --plaintop-export     # push the plasmoid's current settings into the window's config
-./install.sh --plasmoid            # the plasmoid host (not placed on the desktop once the window exists)
-./install.sh --status              # both hosts
+./install.sh --plasmoid            # generate, install, restart the shell, place it on the desktop
+./install.sh --windows-off         # retire the window host of an earlier setup (decision 9)
+./install.sh --status              # what is installed and running
 ```
 
-Only one host belongs on the desktop: they draw the same monitor.
+`--plaintop-window`, `--plaintop-export` and `--plaintop-settings` still exist but belong to
+the retired host and are not to be used.
 
 ⚠️ `--plasmoid` restarts the shell, and not for looks: plasmashell keeps the package's QML
 in a cache, and without the restart the widget stays on the old layout —
@@ -73,34 +79,23 @@ is the schema, and the dialog has two pages — *General* (font, sizes, padding,
 palette colours, mouse, intervals) and *Blocks*, where the header
 text lives too — empty by default, so a fresh install shows only the hostname.
 
-**The window** reads `~/.config/plaintop/monitor.json` — appearance and the block
-description in one file: font, size, padding, widget size, update interval, the four
-palette colours, and `blocks`. It re-reads the file every two seconds, so an edit shows up
-without a restart. `processInterval` is how often, in seconds, the process list behind the
-top lists is read: it is the most expensive thing collected — about 3% of a core at the
-default 2 s, about 1.3% at 10 s, measured with ~900 processes.
+The process-list interval is the setting worth knowing about: the process list behind the
+top lists is the most expensive thing collected — about 3% of a core at the default 2 s,
+about 1.3% at 10 s, measured with ~900 processes.
 
-**The window's editor is `window/settings.qml`**, started from the menu entry
-"plaintop — monitor settings" or with `./install.sh --plaintop-settings`. It shows the layout in the
-**real renderer** side by side with the settings — the same `MonitorView` the desktop
-draws, fed by a second `MonitorData`, so an edit is visible before it is saved. QML cannot
-write files, so the editor reads `GET /config?widget=monitor` from the relay and posts
-changes back; the relay stays the only writer. `--plaintop-export` still imports what the
-plasmoid's dialog stored.
+**Machine-specific ids need not be typed in.** A parameter that holds one — a fan or NVMe
+sensor, the network interface — may be left empty: it then means "find it yourself", and a
+stored value is only a preference that discovery replaces when the machine no longer
+reports it — see decision 6 in `../docs/DECISIONS.md`. The vocabulary marks such
+parameters with `pick`; the retired window editor turned that into searchable lists with
+live values, interfaces and mount points, while the plasmoid's dialog offers a plain
+field. The gap from the screen edge is drawn inside the widget (`padLeft`, `padTop`).
 
-**Nothing has to be typed in by hand.** A parameter that holds a machine-specific id is
-offered as a list of what this machine reports: sensors from the sensor tree with the
-highlighted one's live value, network interfaces, mount points from `/proc/self/mounts`.
-The editor learns which parameters those are from `pick` in the vocabulary, so a new block
-type needs no editor change. An empty value means "find it yourself", and a stored one is
-only a preference — see decision 6 in `../docs/DECISIONS.md`. Under the interface menu the
-editor says which interface discovery landed on, and says so as well when the saved one is
-no longer on the machine.
-
-To move the window, edit the KWin rule (System Settings → Window Rules) or re-run
-`--plaintop-window` with `PLAINTOP_X` / `PLAINTOP_Y` set. The gap from the screen edge is
-drawn inside the widget instead (`padLeft`, `padTop`), which is why the rule pins the
-window at `0,0`.
+**The retired window host** read `~/.config/plaintop/monitor.json` — appearance and the
+block description in one file, re-read every two seconds — and had an editor of its own,
+`window/settings.qml`: the layout in the **real renderer** side by side with the settings,
+writing through the relay (`GET`/`POST /config`) because QML cannot write files. Both stay
+in the tree for reference (decision 9); the settings file is left where it is.
 
 ## Data sources
 

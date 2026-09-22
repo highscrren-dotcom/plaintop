@@ -6,13 +6,11 @@
   <kcfgfile name=""/>
 
   <group name="General">
-    <!-- Click-through: with input disabled the clicks reach the containment, so the
-         desktop behaves as if the widget were not there. The way back is Plasma's edit
-         mode, or the installer's "clicks off" switch. XML comments forbid a double
-         hyphen, so the flag is spelled out rather than quoted.
-         Off by default: a plasmoid frees only the right button this way, never the left,
-         and a first install that cannot be right-clicked hides its own settings. Real
-         click-through is the window host's job. -->
+    <!-- Click-through: the applet's wrapper in the shell is disabled, so both mouse
+         buttons reach the desktop as if the widget were not there; only the shell's edit
+         mode gives the widget the mouse back. Off by default: a first install that cannot
+         be clicked would hide its own settings. XML comments forbid a double hyphen, so
+         the installer's "clicks off" switch is spelled out rather than quoted. -->
     <entry name="clickThrough" type="Bool">
       <default>false</default>
     </entry>

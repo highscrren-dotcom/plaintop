@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:51+0500\n"
+"POT-Creation-Date: 2026-09-22 18:04+0500\n"
 "PO-Revision-Date: 2026-09-22 13:39+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -286,7 +286,7 @@ msgstr ""
 "спектр считает cava в службе plainspectrum-relay;\n"
 "частоты и устройство задаются в ~/.config/plainspectrum/relay.env"
 
-#: spectrum/package/contents/ui/main.qml:93
+#: spectrum/package/contents/ui/main.qml:108
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"

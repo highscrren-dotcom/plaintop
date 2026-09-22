@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Deploy, start and stop the standalone (click-through) visualizer window.
 
-Why a separate host at all: a desktop plasmoid never hands over the left mouse button —
-four ways were tried, see docs/GOTCHAS.md. A plain window with
-Qt.WindowTransparentForInput does.
+⚠️ This host is retired (decision 9, docs/DECISIONS.md): the plasmoid lets both mouse
+buttons through by itself, so a second host has nothing left to add. `retire` takes an
+installed setup out — `./install.sh --windows-off` runs it for both widgets. The file
+stays for reference; the settings file ~/.config/plainspectrum/ring.json is left alone.
 
 ⚠️ Under Wayland a window cannot place itself, so position and size come from a KWin
 rule matched on the window title. The rule is written here, idempotently, next to whatever
@@ -308,7 +309,67 @@ def start():
     print(f"  ✓ window started (pid {proc.pid})")
 
 
+def remove_rule():
+    """Take our own KWin rule out of kwinrulesrc; every other rule stays as it was."""
+    order, data = read_kwinrules()
+    mine = [s for s, v in data.items() if v.get("Description") == RULE_NAME]
+    if not mine:
+        print("  • no KWin rule of ours")
+        return
+    for section in mine:
+        order.remove(section)
+        del data[section]
+    general = data.setdefault("General", {})
+    rules = [r for r in general.get("rules", "").split(",") if r and r not in mine]
+    general["rules"] = ",".join(rules)
+    general["count"] = str(len(rules))
+    out = []
+    for section in order:
+        out.append(f"[{section}]")
+        out.extend(f"{k}={v}" for k, v in data[section].items())
+        out.append("")
+    KWINRULES.write_text("\n".join(out), encoding="utf-8")
+    subprocess.run(["qdbus6", "org.kde.KWin", "/KWin", "reconfigure"],
+                   capture_output=True, check=False)
+    print(f'  ✓ KWin rule "{RULE_NAME}" removed')
+
+
+def retire():
+    """The window host is over: the plasmoid lets both mouse buttons through by itself
+    (decision 9). Stop the window and take out everything install put in place — autostart,
+    editor launcher, KWin rule, deployed files, the catalogs — except the settings file,
+    which is the user's."""
+    stop()
+    for path, what in ((AUTOSTART, "autostart entry"), (LAUNCHER, "editor launcher")):
+        if path.exists():
+            path.unlink()
+            print(f"  ✓ {what} removed")
+        else:
+            print(f"  • no {what}")
+    remove_rule()
+    if UI_DEST.exists():
+        shutil.rmtree(UI_DEST)
+        print(f"  ✓ deployed files removed ({UI_DEST})")
+    else:
+        print("  • no deployed files")
+    n = 0
+    for mo in LOCALE_DEST.glob(f"*/LC_MESSAGES/{DOMAIN}.mo"):
+        mo.unlink()
+        n += 1
+    if n:
+        print(f"  ✓ window catalogs removed ({n} languages)")
+    PIDFILE.unlink(missing_ok=True)
+    print(f"  • settings kept: {CONFIG}")
+
+
+def retired():
+    return not UI_DEST.exists() and not AUTOSTART.exists()
+
+
 def status():
+    if retired():
+        print("  retired — the plasmoid is the only host (./install.sh --windows-off)")
+        return
     print(f"  files:      {files_status()}")
     print(f"  settings:   {'present' if CONFIG.exists() else 'missing'} ({CONFIG})")
     print(f"  autostart:  {'present' if AUTOSTART.exists() else 'missing'}")
@@ -340,7 +401,7 @@ def main():
                     int(os.environ.get("PLAINSPECTRUM_Y", 170)),
                     side, side)
         start()
-    elif action in ("start", "stop", "status", "settings"):
+    elif action in ("start", "stop", "status", "settings", "retire"):
         globals()[action]()
     else:
         sys.exit(f"unknown action: {action}")

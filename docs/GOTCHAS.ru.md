@@ -203,8 +203,12 @@ systemd отвечает «start request repeated too quickly» — рабочи
 
 ## Логи Qt уходят в journald, а не в stderr
 
-`console.warn` из QML не виден в терминале — сообщение уходит в журнал. Для отладки
-`qml6` помогает `QT_FORCE_STDERR_LOGGING=1`, иначе кажется, что код вообще не выполняется.
+`console.warn` из QML не виден в терминале — сообщение уходит в журнал. Это не особенность
+plasmashell: на этой системе (на базе Arch) любая программа на Qt пишет в journald,
+как только stderr — не терминал, так что конвейер или перенаправление в файл не получают
+ничего, а `journalctl --user` сообщения показывает. `QT_FORCE_STDERR_LOGGING=1`
+возвращает их — и для `qml6`, и для `qmltestrunner` в скрипте; иначе кажется, что код
+вообще не выполняется.
 
 ## Роли моделей ksysguard берутся по имени
 
@@ -233,25 +237,160 @@ systemd отвечает «start request repeated too quickly» — рабочи
 26,4 % если рисовать на `Canvas` вместо элементов сцены. Если движения нет в данных, оно
 не стоит своей цены.
 
-## Плазмоид отдаёт правую кнопку, но никогда левую
+## Левую кнопку держит обёртка апплета — и её можно отключить
 
-`enabled: false` у полного представления не бесполезен — он отдаёт **правую** кнопку, и
-контекстное меню стола (и меню ярлыка) открывается сквозь виджет. **Левая** не доходит
-никогда: именно её обёртка апплета ждёт для долгого нажатия, которым включается режим
-правки (`editModeCondition: Plasmoid.immutable ? Manual : AfterPressAndHold`).
+`enabled: false` у полного представления отдаёт только **правую** кнопку: контекстное
+меню стола (и меню ярлыка) открывается сквозь виджет, а левый клик до стола не доходит.
+Держит его не апплет. plasmashell заворачивает каждый апплет на столе в
+`AppletContainer` — QML-`BasicAppletContainer` поверх C++-`ItemContainer`
+(`plasma-workspace/components/containmentlayoutmanager/itemcontainer.cpp`); апплет — его
+`contentItem` и прямой потомок. Всё решают три вызова в конструкторе:
 
-Четыре попытки, все исполнены, все мимо по левой кнопке:
+```cpp
+setFiltersChildMouseEvents(true);         // видит нажатие раньше апплета
+setAcceptedMouseButtons(Qt::LeftButton);  // хочет только левую — потому правая и проходит
+setKeepMouseGrab(true);                   // и не даёт её отобрать
+```
 
-| Попытка | Итог |
-|---|---|
-| `enabled: false` у полного представления | правая кнопка проходит, левая нет |
-| `locked = true` через скриптинг plasmashell | в Plasma 6 свойство только читается, остаётся `false` |
-| `immutability=2` у контейнера | применилось и пережило перезапуск, левая по-прежнему перехвачена |
-| `immutability=2` у контейнера **и** у каждого апплета | условие выше должно стать `Manual`, а левая всё равно перехвачена |
+`ItemContainer::mousePressEvent` заканчивается `event->accept()` при любом
+`editModeCondition`, кроме `Manual`, который выходит раньше, — но и он оставляет нажатие
+себе, потому что Qt принимает событие мыши *до* доставки (`qquickdeliveryagent.cpp`,
+`deliverMatchingPointsToItem`: `pointerEvent->accept();` прямо перед
+`QCoreApplication::sendEvent`). Уровнем ниже `AppletsLayout::mousePressEvent` делает
+`event->setAccepted(false)`, если ни один контейнер не в режиме правки, так что нажатие,
+которое контейнер не взял, идёт дальше — к папке на столе и к containment. Вся проблема —
+в обёртке.
 
-⚠️ Последняя строка самая любопытная: блокировка виджетов не освобождает левую кнопку,
-хотя по условию в QML ожидание долгого нажатия должно отключиться. Значит забирает её
-что-то глубже, в самом `ItemContainer`. Из QML апплета отказаться от этого нечем.
+Четыре попытки, все исполнены, все мимо по левой кнопке — и строка, о которую разбилась
+каждая:
+
+| Попытка | Итог | Строка |
+|---|---|---|
+| `enabled: false` у полного представления | правая кнопка проходит, левая нет | `setAcceptedMouseButtons(Qt::LeftButton)`: правую контейнер и не хотел, а левую фильтрует раньше, чем её увидит потомок |
+| `locked = true` через скриптинг plasmashell | в Plasma 6 свойство только читается, остаётся `false` | до контейнера ничего не дошло |
+| `immutability=2` у containment | применилось и пережило перезапуск, левая по-прежнему перехвачена | containment стола ставит `editModeCondition: Plasmoid.immutable ? Locked : AfterPressAndHold`, а `Locked` всё равно доходит до `event->accept()` |
+| `immutability=2` у containment **и** у каждого апплета | условие должно стать `Manual`, а левая всё равно перехвачена | `ItemContainer::editModeCondition()` отвечает `Locked`, пока заблокирована раскладка; а `Manual` Qt и так принял бы заранее |
+
+Выход — в списке целей Qt, а не во флагах Plasma. `eventTargets` пропускает потомка, у
+которого `!isVisible() || !isEnabled() || culled`, — отключённый элемент со всем своим
+поддеревом никогда не становится целью мыши, ни для одной кнопки. Из QML апплета
+контейнер — это `root.parent`, а `enabled` — публичное записываемое свойство любого
+`QQuickItem`:
+
+```qml
+readonly property bool shellEditMode: (Plasmoid.containment && Plasmoid.containment.corona)
+    ? Plasmoid.containment.corona.editMode : false
+
+Binding {
+    target: root.parent
+    property: "enabled"
+    value: !root.cfg.clickThrough || root.shellEditMode
+    when: root.parent !== null && ("editModeCondition" in root.parent)
+}
+```
+
+`Plasmoid.containment → .corona → .editMode` — публичные `Q_PROPERTY` libplasma
+(`applet.h`, `containment.h`, `corona.h`), так что виджет видит режим правки оболочки и
+возвращает обёртку ровно на это время — в режиме правки обёртка снова включена (проверено
+через DBus), так что работают штатные ручки оболочки: двигать, растягивать, настраивать.
+Условие `when` привязывает только когда у родителя есть `editModeCondition`, то есть это
+`ItemContainer`, — и потому не трогает `plasmawindowed` и превью. Представление сохраняет
+свой `enabled: !root.cfg.clickThrough`, чтобы в режиме правки мышь брала обёртка, а не
+виджет.
+
+⚠️ Пока клики проходят насквозь, по виджету нельзя щёлкнуть и правой кнопкой. К
+настройкам ведут режим правки рабочего стола или `./install.sh --clicks-off`.
+
+Проверено в два шага:
+
+- **Стенд**, `tests/passthrough.qml`: файл QtTest, импортирующий установленный
+  `org.kde.plasma.private.containmentlayoutmanager` — те же скомпилированные классы, что
+  у plasmashell, — с `AppletsLayout`, двумя `ItemContainer` над считающими `MouseArea` и
+  ещё одной `MouseArea` снизу вместо стола. `./install.sh --check-passthrough` запускает
+  его без экрана (`QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen
+  /usr/lib/qt6/bin/qmltestrunner -input tests/passthrough.qml`) — 10 из 10 прошли примерно
+  за секунду; с `test_09` про правую кнопку (ниже) — 11 из 11. Он воспроизводит прежнее
+  поведение (левая проглочена, правая проходит), показывает, что `Locked` и `Manual` глотают по-прежнему,
+  что `enabled = false` у контейнера отдаёт обе кнопки столу и апплету снизу, что
+  включение обратно возвращает перехват и что при отключённом контейнере долгое нажатие
+  режим правки не включает.
+- **Настоящий стол** (Plasma 6.7.5, Qt 6.11.2): одноразовый считающий апплет, два
+  экземпляра рядом, обычный и с привязкой, — родитель печатался как
+  `BasicAppletContainer_QMLTYPE_85_QML_105`. Настоящей мышью: обычный насчитал 30
+  нажатий, сквозной — 0, и клики попадали на стол. Переключение `editMode` у
+  `org.kde.PlasmaShell` по DBus включало обёртку обратно; выход из режима правки —
+  отключал снова.
+
+### Правой кнопке нужно ещё одно: стол ищет апплет геометрически
+
+С одной только выключенной обёрткой правый клик по виджету всё ещё открывал меню
+**самого виджета**. Стол не доставляет это нажатие апплету — он апплет ищет:
+`ContainmentItem::mousePressEvent` (libplasma,
+`src/plasmaquick/plasmoid/containmentitem.cpp`, под комментарием «FIXME: very inefficient
+appletAt() implementation») перебирает все `PlasmoidItem` и берёт первый, у которого
+
+```cpp
+ai->isVisible() && ai->contains(ai->mapFromItem(this, event->position()))
+```
+
+— на `enabled` он не смотрит вовсе, так что выключенный апплет для контекстного меню
+по-прежнему «на месте». Зато `QQuickItem::contains()` смотрит на `containmentMask`
+элемента (qtdeclarative, `qquickitem.cpp`: если маской стоит `QQuickItem`,
+`return quickMask->contains(point - quickMask->position())`). Пустой `Item` 0×0 в роли
+маски заставляет `contains()` ответить «нет», и стол показывает своё меню, как будто
+виджета нет. В обоих `main.qml`:
+
+```qml
+Binding {
+    target: root
+    property: "containmentMask"
+    value: (root.cfg.clickThrough && !root.shellEditMode) ? noHitMask : null
+}
+Item { id: noHitMask; width: 0; height: 0; visible: false }
+```
+
+В режиме правки маска снимается вместе с возвращением обёртки, так что штатные ручки и
+меню оболочки работают как обычно. ⚠️ Почему `Binding`, а не `containmentMask: …` —
+следующие грабли. Проверено: `test_09` стенда ставит маску по имени у `ItemContainer`, и
+`contains(Qt.point(50, 50))` переключается true → false → true (11 из 11 проходят); на
+настоящем столе оба виджета пропускают и правую кнопку, и левую, под играющую музыку, а
+визуализатор загрузился без предупреждений QML.
+
+## «PlasmoidItem.containmentMask» is not available in org.kde.plasma.plasmoid 255.255
+
+Записанная декларативно маска на корне апплета — `containmentMask: noHitMask` внутри
+`PlasmoidItem { … }` — не загружается, и оба апплета показали это на столе. В журнале
+(сокращённо):
+
+```
+error when loading applet "org.s1dd1.plaintop" … main.qml:78:5:
+"PlasmoidItem.containmentMask" is not available in org.kde.plasma.plasmoid 255.255
+```
+
+Свойство существует — это `QQuickItem::containmentMask`, — но несёт ревизию QtQuick 2.11,
+а модуль `org.kde.plasma.plasmoid` эту ревизию для своих типов не подключает, поэтому у
+`PlasmoidItem` компилятор QML его отвергает.
+
+Работает присваивание по имени:
+
+```qml
+Binding { target: root; property: "containmentMask"; value: … }
+```
+
+`Binding` по имени идёт через `QQmlProperty`, который ищет свойство во время выполнения и
+ревизий не проверяет. Оба `main.qml` делают именно так, а `test_09` стенда — то же самое
+с `ItemContainer`.
+
+## `/usr/bin/qmltestrunner` — от Qt 5
+
+На этой системе (на базе Arch) `/usr/bin/qmltestrunner` принадлежит `qt5-declarative` и
+на файл для Qt 6 отвечает «Library import requires a version» — `qmldir` от Qt 6 он
+прочесть не может. Раннер Qt 6 — `/usr/lib/qt6/bin/qmltestrunner` (`qt6-declarative`).
+
+## `left` и `right` у любого `Item` — FINAL
+
+Это линии привязки (anchors). Счётчик `property int left` в `MouseArea` не
+компилируется: «Cannot override FINAL property». Счётчики — `nLeft` / `nRight`.
 
 ## Обычное окно умеет: `Qt.WindowTransparentForInput` работает под KWin Wayland
 
@@ -264,6 +403,9 @@ systemd отвечает «start request repeated too quickly» — рабочи
 игнорируются, KWin ставит окно как считает нужным, поэтому окну-виджету нужно правило
 KWin, которое принудительно задаёт место, размер, «держать снизу» и «не показывать в
 панели задач».
+
+Оконные хосты, построенные на этом факте, погашены (решение 9) — плазмоид пропускает обе
+кнопки сам; сам факт остаётся в силе.
 
 ## `SensorDataModel` молча выбрасывает идентификаторы, которых не понял
 

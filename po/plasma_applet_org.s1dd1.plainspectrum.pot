@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 13:51+0500\n"
+"POT-Creation-Date: 2026-09-22 18:04+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -281,7 +281,7 @@ msgid ""
 "the frequencies and the device are set in ~/.config/plainspectrum/relay.env"
 msgstr ""
 
-#: spectrum/package/contents/ui/main.qml:93
+#: spectrum/package/contents/ui/main.qml:108
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"
