@@ -16,6 +16,8 @@ monitor/package/contents/code/description.js
 # Собираются po/build.py из po/*/*.po
 monitor/package/contents/locale/
 spectrum/package/contents/locale/
+player/package/contents/locale/
+weather/package/contents/locale/
 
 # Рабочие инструкции сессии — только локально, в публичный репозиторий не идут
 CLAUDE.md

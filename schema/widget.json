@@ -39,6 +39,14 @@
       }
     },
     {
+      "id": "pressure",
+      "type": "pressure",
+      "enabled": true,
+      "params": {
+        "full": false
+      }
+    },
+    {
       "id": "sep2",
       "type": "separator",
       "enabled": true
@@ -101,6 +109,11 @@
       }
     },
     {
+      "id": "battery",
+      "type": "battery",
+      "enabled": true
+    },
+    {
       "id": "sep6",
       "type": "separator",
       "enabled": true
@@ -109,6 +122,16 @@
       "id": "services",
       "type": "services",
       "enabled": true
+    },
+    {
+      "id": "health",
+      "type": "health",
+      "enabled": true,
+      "params": {
+        "units": true,
+        "errors": true,
+        "lines": 3
+      }
     },
     {
       "id": "sep7",

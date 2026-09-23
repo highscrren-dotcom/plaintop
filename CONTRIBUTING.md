@@ -28,7 +28,7 @@ reproduction beats a paragraph of reasoning.
 | **A generator for another engine** | the description layer is engine-agnostic on purpose — waybar, eww, AGS, or back to conky |
 | **Hardware and distro portability** | the defaults describe one machine; every hardcoded sensor id you replace with discovery is a win |
 | **A trap you hit** | a PR to `docs/GOTCHAS.md` with a reproduction is worth as much as code |
-| **Translation** | both widgets speak through gettext catalogs in `po/`: a new language is one command and a `.po` file — see [Translations](#translations) |
+| **Translation** | all four widgets speak through gettext catalogs in `po/`: a new language is one command and a `.po` file — see [Translations](#translations) |
 
 Before adding a block type, check whether the open-ended ones already cover you: `command`
 runs any shell command on its own interval, `sensor` shows any `ksystemstats` sensor by id.
@@ -48,7 +48,9 @@ Neither needs a code change — just a row in the description.
 | `spectrum/shared/` | the visualizer's renderer — one for ring, arc and line — copied into the package |
 | `spectrum/window/` | the visualizer's former window host and its editor — retired (decision 9), kept for reference |
 | `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service; the visualizer reads it |
-| `po/` | translation catalogs, one domain per widget; `extract.py` refreshes them, `build.py` compiles |
+| `player/package/` | the "now playing" widget: a Plasma 6 widget over Plasma's own MPRIS model — no shared files, no service |
+| `weather/package/` | the weather widget: a Plasma 6 widget that asks Open-Meteo itself over https — no shared files, no service |
+| `po/` | translation catalogs, one domain per widget, four in all; `extract.py` refreshes them and starts a missing one, `build.py` compiles |
 | `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
 | `install.sh` | install, status, `.plasmoid` builds, conky and clicks on/off — all operations idempotent |
 | `docs/` | traps, decisions, the working method, the session journal, the KDE Store texts |
@@ -59,15 +61,17 @@ Generated and not in git: `monitor/package/contents/code/description.js` (edit
 ## The development cycle
 
 ```bash
-qmllint -I /usr/lib/qt6/qml monitor/package/contents/ui/main.qml    # before installing
+/usr/lib/qt6/bin/qmllint -I /usr/lib/qt6/qml monitor/package/contents/ui/main.qml   # before installing — the Qt 6 one
 ./install.sh --plasmoid                                             # generate + install + restart the shell
 ./install.sh --spectrum                                             # the visualizer: widget + relay service
+./install.sh --player                                               # the player
+./install.sh --weather                                              # the weather
 journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors land here
 ./install.sh --status                                               # what is installed and running
 ./install.sh --pack                                                 # .plasmoid files for a release → dist/
 ```
 
-Three things that will otherwise waste your afternoon — all three are in
+Four things that will otherwise waste your afternoon — all four are in
 [docs/GOTCHAS.md](docs/GOTCHAS.md) with the evidence:
 
 - **`plasmashell` caches a package's QML.** Reinstalling is not enough, and neither is
@@ -77,6 +81,9 @@ Three things that will otherwise waste your afternoon — all three are in
 - **systemd rate-limits restarts.** After several in a row you get "start request repeated
   too quickly" and a desktop without a panel. Recover with
   `systemctl --user reset-failed plasma-plasmashell.service`, then `start`.
+- **`/usr/bin/qmllint` is the Qt 5 one** — as are `/usr/bin/qml` and `qmltestrunner`. On
+  Qt 6 syntax it prints nothing and exits 255, so a check that ignores the exit code
+  passes. The Qt 6 tools are in `/usr/lib/qt6/bin/`.
 
 ## Adding a block type, start to finish
 
@@ -120,11 +127,32 @@ Three things that will otherwise waste your afternoon — all three are in
 
 The generator needs no changes: validation is driven by the vocabulary.
 
+## Adding a widget
+
+The player and the weather were added this way; copy whichever is closer to yours.
+
+1. **Package** — `<name>/package/`: `metadata.json` (id `org.s1dd1.plain<name>`, category,
+   version), `contents/config/main.xml` and `config.qml` (the settings schema and its
+   pages), `contents/ui/main.qml` — the host: the size from `Layout.*` on the root, constant
+   for the given settings, and the two click-through `Binding`s copied as they are
+   (decision 8) — and the view next to it, with the lines and the drawing. Strings go
+   through `i18n()`.
+2. **`install.sh`** — the `<NAME>_ID` / `_SRC` / `_DEST` variables, `<name>_prepare` (the
+   catalogs), `<name>_install` and `<name>_status`, the source in the list in `pack()`, the
+   call in `status`, the `--<name>` key in the `case` and in the usage line.
+3. **`po/extract.py`** — an entry in `DOMAINS`; `python3 po/extract.py` then writes the
+   template and a catalog for every language the project has.
+4. **README** — a row in the directory table, an install line, a paragraph; the same in
+   `README.ru.md`.
+5. **Run it** — `./install.sh --<name>`, look at the desktop, read the journal, say in the
+   PR what you saw.
+
 ## Translations
 
 The widgets use KDE's own ki18n with gettext catalogs, one domain per widget —
 `plasma_applet_org.s1dd1.plaintop` for the monitor, `plasma_applet_org.s1dd1.plainspectrum`
-for the visualizer. The language is Plasma's
+for the visualizer, `plasma_applet_org.s1dd1.plainplayer` for the player,
+`plasma_applet_org.s1dd1.plainweather` for the weather. The language is Plasma's
 (System Settings → Region & Language); dates and decimal separators follow its Formats.
 Why this design and what it costs — `docs/DECISIONS.md`, decision 7. There are ten
 languages in `po/`; all but English (the source) and Russian are machine translations
@@ -136,7 +164,17 @@ python3 po/extract.py --init uk  # start a new language
 lokalize po/uk/plasma_applet_org.s1dd1.plaintop.po   # or Poedit, or any .po editor
 ./install.sh --plasmoid          # builds the monitor's .mo files into its package
 ./install.sh --spectrum          # the same for the visualizer
+./install.sh --player            # … the player
+./install.sh --weather           # … the weather
 ```
+
+`extract.py` also starts what is missing: a new domain gets a catalog in every language the
+project already has, through `msginit`. ⚠️ Two things to do before translating a merged
+catalog. `msgmerge` fills it with fuzzy guesses — old translations attached to new strings —
+which are skipped at run time and mislead the translator; clear them first:
+`msgattrib --clear-fuzzy --empty -o file.po file.po`. And a catalog `msginit` wrote for
+Chinese carries `Plural-Forms: nplurals=INTEGER`, which `msgfmt --check` refuses — fix the
+header by hand (`docs/GOTCHAS.md`).
 
 Rules for the source strings:
 

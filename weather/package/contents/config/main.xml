@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <!-- Click-through: the applet's wrapper in the shell is disabled, so both mouse
+         buttons reach the desktop as if the widget were not there; only the shell's edit
+         mode gives the widget the mouse back. Off by default, as in the player. XML
+         comments forbid a double hyphen, so the installer's "clicks off" switch is
+         spelled out rather than quoted. -->
+    <entry name="clickThrough" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Palette and font, the monitor's defaults: the widgets are meant to sit on one
+         wallpaper as one text. The temperature takes the accent, the place, the details
+         and the attribution the dim colour, everything else the main one. -->
+    <entry name="colorFg" type="String">
+      <default>#C8CCD4</default>
+    </entry>
+    <entry name="colorAccent" type="String">
+      <default>#E05561</default>
+    </entry>
+    <entry name="colorDim" type="String">
+      <default>#6B7280</default>
+    </entry>
+    <entry name="fontFamily" type="String">
+      <default>JetBrainsMono Nerd Font Mono</default>
+    </entry>
+    <entry name="fontSize" type="Int">
+      <default>10</default>
+    </entry>
+    <!-- Width in characters. The applet size comes from it, the font metrics and the
+         number of lines, so the size hint stays constant for the given settings (see
+         docs/GOTCHAS.md on Layout.*); a longer line is cut with an ellipsis. -->
+    <entry name="columns" type="Int">
+      <default>52</default>
+    </entry>
+    <!-- The location, as text: empty means "not set", which 0,0 could not say. Written
+         by the Location page, from a geocoding result or two typed numbers. -->
+    <entry name="latitude" type="String">
+      <default></default>
+    </entry>
+    <entry name="longitude" type="String">
+      <default></default>
+    </entry>
+    <entry name="placeName" type="String">
+      <default></default>
+    </entry>
+    <entry name="timezone" type="String">
+      <default></default>
+    </entry>
+    <!-- The guess made from the time zone on a first run with no location: kept apart
+         from the user's fields, so those stay empty and the header can say "time zone". -->
+    <entry name="guessedLat" type="String">
+      <default></default>
+    </entry>
+    <entry name="guessedLon" type="String">
+      <default></default>
+    </entry>
+    <entry name="guessedName" type="String">
+      <default></default>
+    </entry>
+    <!-- 0: by the locale's measurement system (US: °F mph, otherwise °C km/h);
+         1: °C km/h; 2: °C m/s; 3: °F mph. -->
+    <entry name="units" type="Int">
+      <default>0</default>
+    </entry>
+    <!-- Forecast rows, today first; 0 shows the current conditions alone. -->
+    <entry name="days" type="Int">
+      <default>3</default>
+    </entry>
+    <!-- Open-Meteo's terms ask for attribution: the last line names them. -->
+    <entry name="attribution" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- The last good response and when it came: drawn at start, before the first
+         request of the session completes, and kept when a request fails. -->
+    <entry name="lastWeather" type="String">
+      <default></default>
+    </entry>
+    <entry name="lastFetched" type="String">
+      <default></default>
+    </entry>
+  </group>
+
+</kcfg>

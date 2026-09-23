@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <!-- Click-through: the applet's wrapper in the shell is disabled, so both mouse
+         buttons reach the desktop as if the widget were not there; only the shell's edit
+         mode gives the widget the mouse back. Off by default, and more so here than in
+         the other two widgets: with the mouse passing through, the controls cannot be
+         clicked. XML comments forbid a double hyphen, so the installer's "clicks off"
+         switch is spelled out rather than quoted. -->
+    <entry name="clickThrough" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Palette and font, the monitor's defaults: the two widgets are meant to sit on
+         one wallpaper as one text. The title takes the accent, the player's name, the
+         album and the disabled controls the dim colour, everything else the main one. -->
+    <entry name="colorFg" type="String">
+      <default>#C8CCD4</default>
+    </entry>
+    <entry name="colorAccent" type="String">
+      <default>#E05561</default>
+    </entry>
+    <entry name="colorDim" type="String">
+      <default>#6B7280</default>
+    </entry>
+    <entry name="fontFamily" type="String">
+      <default>JetBrainsMono Nerd Font Mono</default>
+    </entry>
+    <entry name="fontSize" type="Int">
+      <default>10</default>
+    </entry>
+    <!-- Width in characters. The applet size comes from it and the font metrics, so
+         the size hint stays constant for the given settings (see docs/GOTCHAS.md on
+         Layout.*); a title longer than this is cut with an ellipsis. -->
+    <entry name="columns" type="Int">
+      <default>44</default>
+    </entry>
+    <!-- Which player to show. Empty: whoever is playing (the multiplexer row of Plasma's
+         own MPRIS model). Otherwise a part of the player's name or desktop entry,
+         matched case-insensitively: "vlc", "spotify", "strawberry". -->
+    <entry name="player" type="String">
+      <default></default>
+    </entry>
+    <entry name="album" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="controls" type="Bool">
+      <default>true</default>
+    </entry>
+  </group>
+
+</kcfg>

@@ -1,0 +1,25 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "s1dd1"
+            }
+        ],
+        "Category": "Multimedia",
+        "Description": "Now playing as plain text: track, position bar and controls, in the plaintop style",
+        "Description[ru]": "Что играет — простым текстом: трек, полоса позиции и кнопки, в стиле plaintop",
+        "EnabledByDefault": true,
+        "FormFactors": [
+            "desktop"
+        ],
+        "Icon": "media-playback-start",
+        "Id": "org.s1dd1.plainplayer",
+        "License": "GPL-2.0+",
+        "Name": "plainplayer",
+        "Version": "0.1",
+        "Website": "https://github.com/highscrren-dotcom/plaintop",
+        "BugReportUrl": "https://github.com/highscrren-dotcom/plaintop/issues"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

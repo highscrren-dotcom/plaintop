@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 18:04+0500\n"
+"POT-Creation-Date: 2026-09-23 18:18+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: French\n"
@@ -152,36 +152,70 @@ msgstr ""
 "La liste des processus est la collecte la plus coûteuse : toutes les 2 s\n"
 "environ 3 % d'un cœur, toutes les 10 s environ 1,3 %"
 
-#: monitor/shared/MonitorData.qml:503
+#: monitor/shared/MonitorData.qml:583
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1j"
 
-#: monitor/shared/MonitorData.qml:504
+#: monitor/shared/MonitorData.qml:584
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1h"
 
-#: monitor/shared/MonitorData.qml:505
+#: monitor/shared/MonitorData.qml:585
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1min"
 
-#: monitor/shared/MonitorData.qml:555
+#: monitor/shared/MonitorData.qml:592
+#, kde-format
+msgctxt "battery: hours and minutes of an estimate"
+msgid "%1h %2m"
+msgstr "%1h %2min"
+
+#: monitor/shared/MonitorData.qml:608
+msgctxt "battery: no current flowing, charged"
+msgid "full"
+msgstr "chargée"
+
+#: monitor/shared/MonitorData.qml:609
+msgctxt "battery: no current flowing"
+msgid "idle"
+msgstr "inactive"
+
+#: monitor/shared/MonitorData.qml:612
+#, kde-format
+msgctxt "battery: charging; the power and the time to full"
+msgid "charging  %1 W  %2 to full"
+msgstr "en charge  %1 W  pleine dans %2"
+
+#: monitor/shared/MonitorData.qml:616
+#, kde-format
+msgctxt "battery: discharging; the power and the time left"
+msgid "discharging  %1 W  %2 left"
+msgstr "en décharge  %1 W  reste %2"
+
+#: monitor/shared/MonitorData.qml:619
+#, kde-format
+msgctxt "battery: wear, a percentage"
+msgid "health %1"
+msgstr "santé %1"
+
+#: monitor/shared/MonitorData.qml:670
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "reconnexion requise"
 
-#: monitor/shared/MonitorData.qml:556
+#: monitor/shared/MonitorData.qml:671
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1 sur %2"
 
-#: monitor/shared/MonitorData.qml:562
+#: monitor/shared/MonitorData.qml:677
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
@@ -189,7 +223,7 @@ msgid_plural "idle, %1 models"
 msgstr[0] "inactif, %1 modèle"
 msgstr[1] "inactif, %1 modèles"
 
-#: monitor/shared/MonitorData.qml:564
+#: monitor/shared/MonitorData.qml:679
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
@@ -197,21 +231,48 @@ msgid_plural "%1 updates"
 msgstr[0] "%1 mise à jour"
 msgstr[1] "%1 mises à jour"
 
-#: monitor/shared/MonitorData.qml:600
+#: monitor/shared/MonitorData.qml:715
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "dddd d MMMM"
 
-#: monitor/shared/MonitorData.qml:674
+#: monitor/shared/MonitorData.qml:766
+#, kde-format
+msgctxt "pressure: time every task stalled, memory and I/O"
+msgid "full  mem %1  io %2"
+msgstr "full  mem %1  io %2"
+
+#: monitor/shared/MonitorData.qml:810
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "non monté"
 
-#: monitor/shared/MonitorData.qml:680
+#: monitor/shared/MonitorData.qml:816
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "en marche depuis %1"
+
+#: monitor/shared/MonitorData.qml:852
+msgctxt "health: failed systemd units"
+msgid "failed units"
+msgstr "unités en échec"
+
+#: monitor/shared/MonitorData.qml:854 monitor/shared/MonitorData.qml:861
+#, kde-format
+msgctxt "health: a count for the system and one for the user session"
+msgid "%1 system, %2 user"
+msgstr "%1 système, %2 utilisateur"
+
+#: monitor/shared/MonitorData.qml:857
+msgctxt "health: journal entries of priority error or worse"
+msgid "errors since boot"
+msgstr "erreurs depuis boot"
+
+#: monitor/shared/MonitorData.qml:859
+msgctxt "health: the system journal cannot be read by this user"
+msgid "no access"
+msgstr "pas d'accès"
 
 #: monitor/window/settings.qml:24
 msgid "plaintop — monitor settings"
@@ -378,22 +439,22 @@ msgstr "actuellement montés : %1"
 msgid "or type a path by hand"
 msgstr "ou saisissez un chemin à la main"
 
-#: monitor/window/setup.py:174
+#: monitor/window/setup.py:175
 msgctxt "autostart entry: name"
 msgid "plaintop — text monitor"
 msgstr "plaintop — moniteur texte"
 
-#: monitor/window/setup.py:176
+#: monitor/window/setup.py:177
 msgctxt "autostart entry: comment"
 msgid "The monitor in its own window, clicks pass through"
 msgstr "Le moniteur dans sa propre fenêtre, les clics passent au travers"
 
-#: monitor/window/setup.py:177
+#: monitor/window/setup.py:178
 msgctxt "menu entry: name"
 msgid "plaintop — monitor settings"
 msgstr "plaintop — paramètres du moniteur"
 
-#: monitor/window/setup.py:178
+#: monitor/window/setup.py:179
 msgctxt "menu entry: comment"
 msgid "Appearance, palette and blocks of the text monitor"
 msgstr "Apparence, palette et blocs du moniteur texte"
@@ -462,7 +523,7 @@ msgctxt "schema: parameter name"
 msgid "Model, temperatures, fans"
 msgstr "Modèle, températures, ventilateurs"
 
-#: schema/blocks.json:13 schema/blocks.json:17
+#: schema/blocks.json:13 schema/blocks.json:20
 msgctxt "schema: parameter name"
 msgid "Processes in the top list"
 msgstr "Processus dans le top"
@@ -474,136 +535,196 @@ msgstr "Capteurs de ventilateur (vide — détecter automatiquement)"
 
 #: schema/blocks.json:15
 msgctxt "schema: block name"
+msgid "Pressure (PSI)"
+msgstr "Pression (PSI)"
+
+#: schema/blocks.json:16
+msgctxt "schema: block hint"
+msgid ""
+"Kernel pressure stall information: share of time tasks waited for CPU, "
+"memory or I/O (10-second average)"
+msgstr ""
+"Pressure Stall Information du noyau : part du temps où les tâches ont "
+"attendu le CPU, la mémoire ou les E/S (moyenne sur 10 secondes)"
+
+#: schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Full stalls for memory and I/O"
+msgstr "Blocages complets pour la mémoire et les E/S"
+
+#: schema/blocks.json:18
+msgctxt "schema: block name"
 msgid "Memory"
 msgstr "Mémoire"
 
-#: schema/blocks.json:16
+#: schema/blocks.json:19
 msgctxt "schema: parameter name"
 msgid "The “used / total” line"
 msgstr "La ligne « utilisé / total »"
 
-#: schema/blocks.json:18
+#: schema/blocks.json:21
 msgctxt "schema: block name"
 msgid "Graphics card"
 msgstr "Carte graphique"
 
-#: schema/blocks.json:19
+#: schema/blocks.json:22
 msgctxt "schema: parameter name"
 msgid "VRAM, temperature and power line"
 msgstr "Ligne VRAM, température et puissance"
 
-#: schema/blocks.json:20
+#: schema/blocks.json:23
 msgctxt "schema: block name"
 msgid "Disks"
 msgstr "Disques"
 
-#: schema/blocks.json:21
+#: schema/blocks.json:24
 msgctxt "schema: parameter name"
 msgid "Mount points"
 msgstr "Points de montage"
 
-#: schema/blocks.json:22
+#: schema/blocks.json:25
 msgctxt "schema: parameter name"
 msgid "NVMe temperature on the root line"
 msgstr "Température NVMe sur la ligne de la racine"
 
-#: schema/blocks.json:23
+#: schema/blocks.json:26
 msgctxt "schema: parameter name"
 msgid "NVMe temperature sensor (empty — find it)"
 msgstr "Capteur de température NVMe (vide — détecter automatiquement)"
 
-#: schema/blocks.json:24
+#: schema/blocks.json:27
 msgctxt "schema: block name"
 msgid "Uptime"
 msgstr "Temps de fonctionnement"
 
-#: schema/blocks.json:25
+#: schema/blocks.json:28
 msgctxt "schema: block name"
 msgid "Network"
 msgstr "Réseau"
 
-#: schema/blocks.json:26
+#: schema/blocks.json:29
 msgctxt "schema: parameter name"
 msgid "Interface (empty — find it)"
 msgstr "Interface (vide — détecter automatiquement)"
 
-#: schema/blocks.json:27
+#: schema/blocks.json:30
+msgctxt "schema: block name"
+msgid "Battery"
+msgstr "Batterie"
+
+#: schema/blocks.json:31
+msgctxt "schema: block hint"
+msgid "Charge, rate and estimated time; shown only when a battery is found"
+msgstr ""
+"Charge, puissance et temps estimé ; affiché seulement si une batterie est "
+"détectée"
+
+#: schema/blocks.json:32
 msgctxt "schema: block name"
 msgid "Services"
 msgstr "Services"
 
-#: schema/blocks.json:28
+#: schema/blocks.json:33
 msgctxt "schema: block hint"
 msgid "docker, ollama, pending updates — a script inside the package"
 msgstr ""
 "docker, ollama, mises à jour en attente — un script inclus dans le paquet"
 
-#: schema/blocks.json:29
+#: schema/blocks.json:34
+msgctxt "schema: block name"
+msgid "System health"
+msgstr "État du système"
+
+#: schema/blocks.json:35
+msgctxt "schema: block hint"
+msgid ""
+"Failed systemd units, error count since boot and the last error lines from "
+"the journal"
+msgstr ""
+"Unités systemd en échec, nombre d'erreurs depuis le démarrage et les "
+"dernières lignes d'erreur du journal"
+
+#: schema/blocks.json:36
+msgctxt "schema: parameter name"
+msgid "Failed units"
+msgstr "Unités en échec"
+
+#: schema/blocks.json:37
+msgctxt "schema: parameter name"
+msgid "Error count since boot"
+msgstr "Nombre d'erreurs depuis le démarrage"
+
+#: schema/blocks.json:38
+msgctxt "schema: parameter name"
+msgid "Last error lines"
+msgstr "Dernières lignes d'erreur"
+
+#: schema/blocks.json:39
 msgctxt "schema: block name"
 msgid "Hardware spec sheet"
 msgstr "Fiche matérielle"
 
-#: schema/blocks.json:30
+#: schema/blocks.json:40
 msgctxt "schema: block hint"
 msgid "Static lines: processor, graphics card, board"
 msgstr "Lignes fixes : processeur, carte graphique, carte mère"
 
-#: schema/blocks.json:31
+#: schema/blocks.json:41
 msgctxt "schema: block name"
 msgid "Custom command"
 msgstr "Commande personnalisée"
 
-#: schema/blocks.json:32
+#: schema/blocks.json:42
 msgctxt "schema: block hint"
 msgid "A line from the output of any command"
 msgstr "Une ligne de la sortie d'une commande quelconque"
 
-#: schema/blocks.json:33 schema/blocks.json:39
+#: schema/blocks.json:43 schema/blocks.json:49
 msgctxt "schema: parameter name"
 msgid "Label"
 msgstr "Libellé"
 
-#: schema/blocks.json:34
+#: schema/blocks.json:44
 msgctxt "schema: parameter name"
 msgid "Command"
 msgstr "Commande"
 
-#: schema/blocks.json:35
+#: schema/blocks.json:45
 msgctxt "schema: parameter name"
 msgid "Interval, s"
 msgstr "Intervalle, s"
 
-#: schema/blocks.json:36
+#: schema/blocks.json:46
 msgctxt "schema: parameter name"
 msgid "Lines to show"
 msgstr "Lignes à afficher"
 
-#: schema/blocks.json:37
+#: schema/blocks.json:47
 msgctxt "schema: block name"
 msgid "Custom sensor"
 msgstr "Capteur personnalisé"
 
-#: schema/blocks.json:38
+#: schema/blocks.json:48
 msgctxt "schema: block hint"
 msgid "Any ksystemstats sensor by its id"
 msgstr "N'importe quel capteur ksystemstats, par son identifiant"
 
-#: schema/blocks.json:40
+#: schema/blocks.json:50
 msgctxt "schema: parameter name"
 msgid "Sensor id"
 msgstr "Identifiant du capteur"
 
-#: schema/blocks.json:41
+#: schema/blocks.json:51
 msgctxt "schema: parameter name"
 msgid "Draw a bar"
 msgstr "Dessiner une barre"
 
-#: schema/blocks.json:42
+#: schema/blocks.json:52
 msgctxt "schema: parameter name"
 msgid "Suffix after the value"
 msgstr "Suffixe après la valeur"
 
-#: schema/blocks.json:43
+#: schema/blocks.json:53
 msgctxt "schema: parameter name"
 msgid "Decimal places"
 msgstr "Décimales"

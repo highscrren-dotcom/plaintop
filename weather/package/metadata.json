@@ -1,0 +1,25 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "s1dd1"
+            }
+        ],
+        "Category": "Online Services",
+        "Description": "Weather as plain text: now and the next days, from Open-Meteo, in the plaintop style. Weather data by Open-Meteo.com",
+        "Description[ru]": "Погода простым текстом: сейчас и на ближайшие дни, из Open-Meteo, в стиле plaintop. Данные о погоде: Open-Meteo.com",
+        "EnabledByDefault": true,
+        "FormFactors": [
+            "desktop"
+        ],
+        "Icon": "weather-clear",
+        "Id": "org.s1dd1.plainweather",
+        "License": "GPL-2.0+",
+        "Name": "plainweather",
+        "Version": "0.1",
+        "Website": "https://github.com/highscrren-dotcom/plaintop",
+        "BugReportUrl": "https://github.com/highscrren-dotcom/plaintop/issues"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

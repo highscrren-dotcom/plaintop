@@ -594,3 +594,92 @@ hit this independently. Without root, build the locale into a scratch directory 
 glibc at it: `localedef -i de_DE -f UTF-8 $DIR/de_DE.UTF-8`, then add `LOCPATH=$DIR`.
 Leaving `LC_ALL` alone also works — `LANGUAGE` is honoured under any generated locale —
 but then the date stays in yours.
+
+## `/usr/bin/qmllint` is the Qt 5 one too — as are `qml` and `qmltestrunner`
+
+The same trap as the runner above, one tool over: `/usr/bin/qmllint` belongs to
+`qt5-declarative`. Given a Qt 6 file it prints nothing and exits 255 — no unknown import,
+no line number — so a check that reads the output and not the exit code passes as "nothing
+to report". The Qt 6 linter is `/usr/lib/qt6/bin/qmllint` (`qt6-declarative`), with
+`-I /usr/lib/qt6/qml` for the Plasma imports; `CONTRIBUTING.md` spells it out in full. Rule
+for this system: for a Qt 6 tool look in `/usr/lib/qt6/bin/` first.
+
+## `plasmawindowed` runs one instance: a second launch exits 0 and says nothing
+
+With one `plasmawindowed` already open, `plasmawindowed org.s1dd1.plainweather` returned at
+once with exit code 0, printed nothing, and the log it was pointed at stayed empty — no
+window, no error. It looked like the applet had failed to load without a trace. The running
+instance is what matters: end it (or check `pgrep -x plasmawindowed`) before launching the
+next applet — one at a time.
+
+## The ksystemstats power plugin lists every `Solid::Battery` — mice and headsets included
+
+A desktop with no battery still gets entries under `power/` in the sensor tree as soon as a
+wireless mouse, a keyboard or a headset is connected: the plugin registers every
+`Solid::Battery` it finds, under the device's serial rather than a name, and each has a real
+`chargePercentage`. What tells a battery from a peripheral is `capacity` in Wh: 0 for the
+peripherals. So the battery block subscribes to every entry — the capacity is readable only
+once subscribed — and shows the ones with `capacity` > 0; on this desktop that is none, and
+the block hides. ⚠️ A real battery has not been under it yet: verified are the hide path
+and a stub with made-up values.
+
+## The sensor tree lists a childless `power` group, and does not list `pressure`
+
+`registry.has("power")` is true on s1dPC — the group is in the tree with nothing under it —
+and `registry.has("pressure")` is false while `pressure/cpu/some10Sec` is there and
+answers. Whether a group node appears is up to the plugin, so a group is not evidence of
+anything either way. Test a leaf pattern instead: `^pressure/cpu/some10Sec$` for the
+pressure block, `^power/[^/]+/chargePercentage$` for the batteries.
+
+## The QML `font` has no `families` in Qt 6.11
+
+A fallback list — the configured family first, `monospace` after it — cannot be written on
+a QML `font`: the value type has no `families` property in Qt 6.11, and the assignment
+fails. With just `font.family` a family that is not installed goes to fontconfig's
+substitution, which need not pick a monospace face, and the columns fall apart. The player
+asks `Qt.fontFamilies()` whether the configured family exists and uses `"monospace"` when
+it does not.
+
+## Qt's `XMLHttpRequest` has no timeout
+
+`req.timeout` is ignored and `ontimeout` never fires: a request to a host that does not
+answer sits open. The weather widget keeps a `Timer` of 10 s next to the request and calls
+`abort()` from it; an aborted request comes to `readyState` DONE with `status` 0, the same
+as any failed one, so one handler serves both. ⚠️ Reading `status` before DONE throws
+"Invalid state" — check `readyState` first, then look at the status. The search on the
+location page does the same.
+
+## `new Date("YYYY-MM-DD")` is UTC midnight
+
+An ISO date with no time is parsed as UTC: `new Date("2026-09-24")` is 2026-09-24T00:00Z.
+West of Greenwich that instant is still the 23rd in local time, and the weekday taken from
+it is yesterday's — the forecast rows would be off by a day for half the world. Build the
+date from its parts, `new Date(y, m - 1, d)`: that is local midnight, and the weekday is
+right everywhere.
+
+## `msginit` for zh_CN leaves `Plural-Forms: nplurals=INTEGER`
+
+`msginit -l zh_CN` writes the header placeholder `Plural-Forms: nplurals=INTEGER;
+plural=EXPRESSION;` instead of a rule, and `msgfmt --check` — the install's gate — refuses
+the catalog until it is fixed by hand: `Plural-Forms: nplurals=1; plural=0;` for Chinese and
+Japanese. It matters now that `po/extract.py` starts a missing catalog through msginit
+itself: look at the header of a fresh catalog before the first install.
+
+## The `services` source runs whether its block is shown or not — the new sources are gated
+
+`services.sh` has run every 15 s since the block was written, block enabled or not: its
+`DataSource` has a constant `connectedSources`. The `health` source is gated — with no
+enabled `health` block `connectedSources` is empty, and the number of error lines is the
+script's argument, so it never reads more than is shown. ⚠️ One property, not two: with
+"enabled" and "lines" read as separate properties, the command was rebuilt twice per change
+of `blocks`, and the first script was killed while still running — reproduced in the
+standalone harness. Gate every new source the same way; the old one stays as it is until
+somebody touches it.
+
+## `FontMetrics.height` is not the height of a `NativeRendering` line
+
+At 10 pt JetBrains Mono `FontMetrics.height` says 17.14 px, and a `Text` with
+`renderType: Text.NativeRendering` comes out 18 px tall — hinting rounds the line to whole
+pixels. An applet sized to five lines from the metric is four pixels short, and the last
+line is clipped. Measure a hidden `Text` in the same font and take its `implicitHeight`;
+both new widgets size their board that way. Measured in the offscreen host, 2026-09-23.

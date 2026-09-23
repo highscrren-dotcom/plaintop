@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 18:04+0500\n"
+"POT-Creation-Date: 2026-09-23 18:18+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -149,64 +149,125 @@ msgstr ""
 "进程列表是采集开销最大的一项：每 2 秒\n"
 "约占一个核心的 3%，每 10 秒约 1.3%"
 
-#: monitor/shared/MonitorData.qml:503
+#: monitor/shared/MonitorData.qml:583
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1天"
 
-#: monitor/shared/MonitorData.qml:504
+#: monitor/shared/MonitorData.qml:584
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1小时"
 
-#: monitor/shared/MonitorData.qml:505
+#: monitor/shared/MonitorData.qml:585
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1分"
 
-#: monitor/shared/MonitorData.qml:555
+#: monitor/shared/MonitorData.qml:592
+#, kde-format
+msgctxt "battery: hours and minutes of an estimate"
+msgid "%1h %2m"
+msgstr "%1小时%2分"
+
+#: monitor/shared/MonitorData.qml:608
+msgctxt "battery: no current flowing, charged"
+msgid "full"
+msgstr "已充满"
+
+#: monitor/shared/MonitorData.qml:609
+msgctxt "battery: no current flowing"
+msgid "idle"
+msgstr "空闲"
+
+#: monitor/shared/MonitorData.qml:612
+#, kde-format
+msgctxt "battery: charging; the power and the time to full"
+msgid "charging  %1 W  %2 to full"
+msgstr "充电中  %1 W  %2 后充满"
+
+#: monitor/shared/MonitorData.qml:616
+#, kde-format
+msgctxt "battery: discharging; the power and the time left"
+msgid "discharging  %1 W  %2 left"
+msgstr "放电中  %1 W  剩余 %2"
+
+#: monitor/shared/MonitorData.qml:619
+#, kde-format
+msgctxt "battery: wear, a percentage"
+msgid "health %1"
+msgstr "健康度 %1"
+
+#: monitor/shared/MonitorData.qml:670
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "需重新登录"
 
-#: monitor/shared/MonitorData.qml:556
+#: monitor/shared/MonitorData.qml:671
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1（共 %2）"
 
-#: monitor/shared/MonitorData.qml:562
+#: monitor/shared/MonitorData.qml:677
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
 msgid_plural "idle, %1 models"
 msgstr[0] "空闲，%1 个模型"
 
-#: monitor/shared/MonitorData.qml:564
+#: monitor/shared/MonitorData.qml:679
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
 msgid_plural "%1 updates"
 msgstr[0] "%1 个更新"
 
-#: monitor/shared/MonitorData.qml:600
+#: monitor/shared/MonitorData.qml:715
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "M'月'd'日' dddd"
 
-#: monitor/shared/MonitorData.qml:674
+#: monitor/shared/MonitorData.qml:766
+#, kde-format
+msgctxt "pressure: time every task stalled, memory and I/O"
+msgid "full  mem %1  io %2"
+msgstr "full  mem %1  io %2"
+
+#: monitor/shared/MonitorData.qml:810
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "未挂载"
 
-#: monitor/shared/MonitorData.qml:680
+#: monitor/shared/MonitorData.qml:816
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "运行时间 %1"
+
+#: monitor/shared/MonitorData.qml:852
+msgctxt "health: failed systemd units"
+msgid "failed units"
+msgstr "失败的单元"
+
+#: monitor/shared/MonitorData.qml:854 monitor/shared/MonitorData.qml:861
+#, kde-format
+msgctxt "health: a count for the system and one for the user session"
+msgid "%1 system, %2 user"
+msgstr "系统 %1，用户 %2"
+
+#: monitor/shared/MonitorData.qml:857
+msgctxt "health: journal entries of priority error or worse"
+msgid "errors since boot"
+msgstr "启动以来的错误"
+
+#: monitor/shared/MonitorData.qml:859
+msgctxt "health: the system journal cannot be read by this user"
+msgid "no access"
+msgstr "无权访问"
 
 #: monitor/window/settings.qml:24
 msgid "plaintop — monitor settings"
@@ -370,22 +431,22 @@ msgstr "当前已挂载：%1"
 msgid "or type a path by hand"
 msgstr "或手动输入路径"
 
-#: monitor/window/setup.py:174
+#: monitor/window/setup.py:175
 msgctxt "autostart entry: name"
 msgid "plaintop — text monitor"
 msgstr "plaintop — 文本监视器"
 
-#: monitor/window/setup.py:176
+#: monitor/window/setup.py:177
 msgctxt "autostart entry: comment"
 msgid "The monitor in its own window, clicks pass through"
 msgstr "在独立窗口中显示监视器，点击可穿透"
 
-#: monitor/window/setup.py:177
+#: monitor/window/setup.py:178
 msgctxt "menu entry: name"
 msgid "plaintop — monitor settings"
 msgstr "plaintop — 监视器设置"
 
-#: monitor/window/setup.py:178
+#: monitor/window/setup.py:179
 msgctxt "menu entry: comment"
 msgid "Appearance, palette and blocks of the text monitor"
 msgstr "文本监视器的外观、调色板和区块"
@@ -452,7 +513,7 @@ msgctxt "schema: parameter name"
 msgid "Model, temperatures, fans"
 msgstr "型号、温度、风扇"
 
-#: schema/blocks.json:13 schema/blocks.json:17
+#: schema/blocks.json:13 schema/blocks.json:20
 msgctxt "schema: parameter name"
 msgid "Processes in the top list"
 msgstr "排行中的进程数"
@@ -464,135 +525,190 @@ msgstr "风扇传感器（留空则自动查找）"
 
 #: schema/blocks.json:15
 msgctxt "schema: block name"
+msgid "Pressure (PSI)"
+msgstr "资源压力 (PSI)"
+
+#: schema/blocks.json:16
+msgctxt "schema: block hint"
+msgid ""
+"Kernel pressure stall information: share of time tasks waited for CPU, "
+"memory or I/O (10-second average)"
+msgstr ""
+"内核压力停滞信息 (PSI)：任务等待 CPU、内存或 I/O 的时间占比（10 秒平均）"
+
+#: schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Full stalls for memory and I/O"
+msgstr "内存和 I/O 的完全停滞 (full)"
+
+#: schema/blocks.json:18
+msgctxt "schema: block name"
 msgid "Memory"
 msgstr "内存"
 
-#: schema/blocks.json:16
+#: schema/blocks.json:19
 msgctxt "schema: parameter name"
 msgid "The “used / total” line"
 msgstr "“已用 / 总计”行"
 
-#: schema/blocks.json:18
+#: schema/blocks.json:21
 msgctxt "schema: block name"
 msgid "Graphics card"
 msgstr "显卡"
 
-#: schema/blocks.json:19
+#: schema/blocks.json:22
 msgctxt "schema: parameter name"
 msgid "VRAM, temperature and power line"
 msgstr "VRAM、温度和功耗行"
 
-#: schema/blocks.json:20
+#: schema/blocks.json:23
 msgctxt "schema: block name"
 msgid "Disks"
 msgstr "磁盘"
 
-#: schema/blocks.json:21
+#: schema/blocks.json:24
 msgctxt "schema: parameter name"
 msgid "Mount points"
 msgstr "挂载点"
 
-#: schema/blocks.json:22
+#: schema/blocks.json:25
 msgctxt "schema: parameter name"
 msgid "NVMe temperature on the root line"
 msgstr "在根分区行显示 NVMe 温度"
 
-#: schema/blocks.json:23
+#: schema/blocks.json:26
 msgctxt "schema: parameter name"
 msgid "NVMe temperature sensor (empty — find it)"
 msgstr "NVMe 温度传感器（留空则自动查找）"
 
-#: schema/blocks.json:24
+#: schema/blocks.json:27
 msgctxt "schema: block name"
 msgid "Uptime"
 msgstr "运行时间"
 
-#: schema/blocks.json:25
+#: schema/blocks.json:28
 msgctxt "schema: block name"
 msgid "Network"
 msgstr "网络"
 
-#: schema/blocks.json:26
+#: schema/blocks.json:29
 msgctxt "schema: parameter name"
 msgid "Interface (empty — find it)"
 msgstr "网络接口（留空则自动查找）"
 
-#: schema/blocks.json:27
+#: schema/blocks.json:30
+msgctxt "schema: block name"
+msgid "Battery"
+msgstr "电池"
+
+#: schema/blocks.json:31
+msgctxt "schema: block hint"
+msgid "Charge, rate and estimated time; shown only when a battery is found"
+msgstr "电量、功率和预计时间；仅在检测到电池时显示"
+
+#: schema/blocks.json:32
 msgctxt "schema: block name"
 msgid "Services"
 msgstr "服务"
 
-#: schema/blocks.json:28
+#: schema/blocks.json:33
 msgctxt "schema: block hint"
 msgid "docker, ollama, pending updates — a script inside the package"
 msgstr "docker、ollama、待安装更新——由包内的脚本提供"
 
-#: schema/blocks.json:29
+#: schema/blocks.json:34
+msgctxt "schema: block name"
+msgid "System health"
+msgstr "系统健康"
+
+#: schema/blocks.json:35
+msgctxt "schema: block hint"
+msgid ""
+"Failed systemd units, error count since boot and the last error lines from "
+"the journal"
+msgstr "失败的 systemd 单元、启动以来的错误数和日志中最近的错误行"
+
+#: schema/blocks.json:36
+msgctxt "schema: parameter name"
+msgid "Failed units"
+msgstr "失败的单元"
+
+#: schema/blocks.json:37
+msgctxt "schema: parameter name"
+msgid "Error count since boot"
+msgstr "启动以来的错误数"
+
+#: schema/blocks.json:38
+msgctxt "schema: parameter name"
+msgid "Last error lines"
+msgstr "最近的错误行"
+
+#: schema/blocks.json:39
 msgctxt "schema: block name"
 msgid "Hardware spec sheet"
 msgstr "硬件规格"
 
-#: schema/blocks.json:30
+#: schema/blocks.json:40
 msgctxt "schema: block hint"
 msgid "Static lines: processor, graphics card, board"
 msgstr "静态行：处理器、显卡、主板"
 
-#: schema/blocks.json:31
+#: schema/blocks.json:41
 msgctxt "schema: block name"
 msgid "Custom command"
 msgstr "自定义命令"
 
-#: schema/blocks.json:32
+#: schema/blocks.json:42
 msgctxt "schema: block hint"
 msgid "A line from the output of any command"
 msgstr "任意命令输出中的一行"
 
-#: schema/blocks.json:33 schema/blocks.json:39
+#: schema/blocks.json:43 schema/blocks.json:49
 msgctxt "schema: parameter name"
 msgid "Label"
 msgstr "标签"
 
-#: schema/blocks.json:34
+#: schema/blocks.json:44
 msgctxt "schema: parameter name"
 msgid "Command"
 msgstr "命令"
 
-#: schema/blocks.json:35
+#: schema/blocks.json:45
 msgctxt "schema: parameter name"
 msgid "Interval, s"
 msgstr "间隔 (秒)"
 
-#: schema/blocks.json:36
+#: schema/blocks.json:46
 msgctxt "schema: parameter name"
 msgid "Lines to show"
 msgstr "显示行数"
 
-#: schema/blocks.json:37
+#: schema/blocks.json:47
 msgctxt "schema: block name"
 msgid "Custom sensor"
 msgstr "自定义传感器"
 
-#: schema/blocks.json:38
+#: schema/blocks.json:48
 msgctxt "schema: block hint"
 msgid "Any ksystemstats sensor by its id"
 msgstr "按 ID 指定的任意 ksystemstats 传感器"
 
-#: schema/blocks.json:40
+#: schema/blocks.json:50
 msgctxt "schema: parameter name"
 msgid "Sensor id"
 msgstr "传感器 ID"
 
-#: schema/blocks.json:41
+#: schema/blocks.json:51
 msgctxt "schema: parameter name"
 msgid "Draw a bar"
 msgstr "绘制进度条"
 
-#: schema/blocks.json:42
+#: schema/blocks.json:52
 msgctxt "schema: parameter name"
 msgid "Suffix after the value"
 msgstr "数值后缀"
 
-#: schema/blocks.json:43
+#: schema/blocks.json:53
 msgctxt "schema: parameter name"
 msgid "Decimal places"
 msgstr "小数位数"

@@ -407,3 +407,63 @@ question left under decision 5.
 
 **Revisit if:** a host outside plasmashell is ever needed again — another desktop
 environment, for instance. The code is still there to start from.
+
+## 10. The weather comes straight from QML — no relay (2026-09-23)
+
+**Decision:** the weather widget asks Open-Meteo itself, with `XMLHttpRequest` from its
+own QML: one request for the current conditions and the daily forecast every 15 minutes, a
+10 s watchdog (`Timer` + `abort()`, since Qt's XHR has no timeout), backoff
+1 → 2 → 4 → 8 → 15 minutes after a failure, and the last answer cached in
+`Plasmoid.configuration` (`lastWeather`, `lastFetched`) so the widget draws at once after a
+shell restart. No service of its own: the package is the whole install.
+
+**What was verified first.** An https request to a public host works inside a plasmoid —
+run in an isolated Plasma host on 2026-09-23. Only `file://` is refused (`GOTCHAS.md`), and
+`http://127.0.0.1` was already known to work from the visualizer.
+
+**Alternatives, and why not.**
+
+| Approach | Why not |
+|---|---|
+| A relay like the visualizer's | The visualizer has one because cava is a process that has to run somewhere. The weather is an https GET that QML can make itself; a relay would add a systemd unit, a second install step and a second place to break, for nothing |
+| Plasma's own weather | The applet in kdeplasma-addons compiles its QML into a C++ plugin, so nothing of it is importable; the `weather` DataEngine lives in plasma5support — the Plasma 5 compatibility layer — is bound to stations rather than coordinates, and returns pipe-separated strings |
+| IP geolocation for the place | Rejected on purpose: a request to a third party that says where the machine is, and behind a tunnel it names the tunnel's exit. The place comes from a city search through Open-Meteo's geocoder (results by population, a click stores lat/lon/name), typed coordinates, or — until one is set — a one-time guess from the Plasma time engine's "Timezone City", kept apart and marked in the header |
+
+**What we pay.**
+- Qt's XHR quirks are handled in the widget: no timeout, `status` unreadable before DONE,
+  an aborted request indistinguishable from a failed one — each is an entry in
+  `GOTCHAS.md`.
+- Every widget instance fetches on its own: two instances, two requests. One instance
+  makes 96 requests a day against Open-Meteo's 10 000 free ones.
+- Open-Meteo's terms: non-commercial use, and CC BY 4.0 asks for attribution — the
+  "Weather data by Open-Meteo.com" line, on by default.
+
+**Revisit if:** Plasma ever sandboxes network access for plasmoids, or several widgets need
+the same data — then a relay like the visualizer's, and the widget's fetch layer becomes its
+client.
+
+## 11. The player ships clickable; a partial mask is the follow-up (2026-09-23)
+
+**Decision:** the player's *Mouse* setting is off by default, as in the other widgets, and
+the widget ships that way on purpose: its controls `<<  >  >>` are `MouseArea`s under text,
+and the click-through of decision 8 disables the wrapper and everything inside it, so with
+the setting on the controls are dead. The hint on the Mouse page says so. A click-through
+player that still takes clicks on its controls row is the follow-up, not this release.
+
+**Why not build the refinement now.** The mechanism exists in outline only. From the
+research of 2026-09-22 (decision 8, "revisit if"): a `containmentMask` on the wrapper itself
+instead of `enabled: false` keeps the applet subtree enabled — 7 of 7 on the stand, not on
+the desktop. The player's version would be:
+
+- a mask rectangle in the wrapper's coordinates covering only the controls row, set on the
+  wrapper through a `Binding` by name — the rest of the widget passes both buttons;
+- the same rectangle as the `PlasmoidItem`'s `containmentMask`, so the desktop's
+  right-click lookup (`contains()`) finds the widget only there;
+- `null` in edit mode, as the current bindings already do;
+- the stand extended with a sub-rectangle mask before the desktop sees it.
+
+**What we pay.** A player with clicks passing through has no controls; the user chooses
+between the two.
+
+**Revisit when:** the passthrough stand covers a sub-rectangle mask — then the follow-up is
+built and the choice goes away.

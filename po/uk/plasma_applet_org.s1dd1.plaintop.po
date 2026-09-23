@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 18:04+0500\n"
+"POT-Creation-Date: 2026-09-23 18:18+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Ukrainian\n"
@@ -152,36 +152,70 @@ msgstr ""
 "Список процесів — найдорожче з того, що збирається: кожні 2 с\n"
 "близько 3 % ядра, кожні 10 с — близько 1,3 %"
 
-#: monitor/shared/MonitorData.qml:503
+#: monitor/shared/MonitorData.qml:583
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1д"
 
-#: monitor/shared/MonitorData.qml:504
+#: monitor/shared/MonitorData.qml:584
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1год"
 
-#: monitor/shared/MonitorData.qml:505
+#: monitor/shared/MonitorData.qml:585
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1хв"
 
-#: monitor/shared/MonitorData.qml:555
+#: monitor/shared/MonitorData.qml:592
+#, kde-format
+msgctxt "battery: hours and minutes of an estimate"
+msgid "%1h %2m"
+msgstr "%1год %2хв"
+
+#: monitor/shared/MonitorData.qml:608
+msgctxt "battery: no current flowing, charged"
+msgid "full"
+msgstr "заряджена"
+
+#: monitor/shared/MonitorData.qml:609
+msgctxt "battery: no current flowing"
+msgid "idle"
+msgstr "спокій"
+
+#: monitor/shared/MonitorData.qml:612
+#, kde-format
+msgctxt "battery: charging; the power and the time to full"
+msgid "charging  %1 W  %2 to full"
+msgstr "заряджається  %1 Вт  %2 до повної"
+
+#: monitor/shared/MonitorData.qml:616
+#, kde-format
+msgctxt "battery: discharging; the power and the time left"
+msgid "discharging  %1 W  %2 left"
+msgstr "розряджається  %1 Вт  залишилось %2"
+
+#: monitor/shared/MonitorData.qml:619
+#, kde-format
+msgctxt "battery: wear, a percentage"
+msgid "health %1"
+msgstr "здоров’я %1"
+
+#: monitor/shared/MonitorData.qml:670
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "потрібен повторний вхід"
 
-#: monitor/shared/MonitorData.qml:556
+#: monitor/shared/MonitorData.qml:671
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1 з %2"
 
-#: monitor/shared/MonitorData.qml:562
+#: monitor/shared/MonitorData.qml:677
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
@@ -190,7 +224,7 @@ msgstr[0] "простоює, %1 модель"
 msgstr[1] "простоює, %1 моделі"
 msgstr[2] "простоює, %1 моделей"
 
-#: monitor/shared/MonitorData.qml:564
+#: monitor/shared/MonitorData.qml:679
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
@@ -199,21 +233,48 @@ msgstr[0] "%1 оновлення"
 msgstr[1] "%1 оновлення"
 msgstr[2] "%1 оновлень"
 
-#: monitor/shared/MonitorData.qml:600
+#: monitor/shared/MonitorData.qml:715
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "dddd, d MMMM"
 
-#: monitor/shared/MonitorData.qml:674
+#: monitor/shared/MonitorData.qml:766
+#, kde-format
+msgctxt "pressure: time every task stalled, memory and I/O"
+msgid "full  mem %1  io %2"
+msgstr "full  mem %1  io %2"
+
+#: monitor/shared/MonitorData.qml:810
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "не змонтовано"
 
-#: monitor/shared/MonitorData.qml:680
+#: monitor/shared/MonitorData.qml:816
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "час роботи %1"
+
+#: monitor/shared/MonitorData.qml:852
+msgctxt "health: failed systemd units"
+msgid "failed units"
+msgstr "збійні юніти"
+
+#: monitor/shared/MonitorData.qml:854 monitor/shared/MonitorData.qml:861
+#, kde-format
+msgctxt "health: a count for the system and one for the user session"
+msgid "%1 system, %2 user"
+msgstr "система %1, сесія %2"
+
+#: monitor/shared/MonitorData.qml:857
+msgctxt "health: journal entries of priority error or worse"
+msgid "errors since boot"
+msgstr "помилок з запуску"
+
+#: monitor/shared/MonitorData.qml:859
+msgctxt "health: the system journal cannot be read by this user"
+msgid "no access"
+msgstr "немає доступу"
 
 #: monitor/window/settings.qml:24
 msgid "plaintop — monitor settings"
@@ -377,22 +438,22 @@ msgstr "змонтовано зараз: %1"
 msgid "or type a path by hand"
 msgstr "або введіть шлях вручну"
 
-#: monitor/window/setup.py:174
+#: monitor/window/setup.py:175
 msgctxt "autostart entry: name"
 msgid "plaintop — text monitor"
 msgstr "plaintop — текстовий монітор"
 
-#: monitor/window/setup.py:176
+#: monitor/window/setup.py:177
 msgctxt "autostart entry: comment"
 msgid "The monitor in its own window, clicks pass through"
 msgstr "Монітор в окремому вікні, клацання проходять наскрізь"
 
-#: monitor/window/setup.py:177
+#: monitor/window/setup.py:178
 msgctxt "menu entry: name"
 msgid "plaintop — monitor settings"
 msgstr "plaintop — налаштування монітора"
 
-#: monitor/window/setup.py:178
+#: monitor/window/setup.py:179
 msgctxt "menu entry: comment"
 msgid "Appearance, palette and blocks of the text monitor"
 msgstr "Вигляд, палітра і блоки текстового монітора"
@@ -461,7 +522,7 @@ msgctxt "schema: parameter name"
 msgid "Model, temperatures, fans"
 msgstr "Модель, температури, вентилятори"
 
-#: schema/blocks.json:13 schema/blocks.json:17
+#: schema/blocks.json:13 schema/blocks.json:20
 msgctxt "schema: parameter name"
 msgid "Processes in the top list"
 msgstr "Процесів у топі"
@@ -473,135 +534,194 @@ msgstr "Датчики вентиляторів (порожньо — знайт
 
 #: schema/blocks.json:15
 msgctxt "schema: block name"
+msgid "Pressure (PSI)"
+msgstr "Тиск (PSI)"
+
+#: schema/blocks.json:16
+msgctxt "schema: block hint"
+msgid ""
+"Kernel pressure stall information: share of time tasks waited for CPU, "
+"memory or I/O (10-second average)"
+msgstr ""
+"Pressure stall information ядра: частка часу, коли задачі чекали на "
+"процесор, пам’ять чи ввід-вивід (середнє за 10 секунд)"
+
+#: schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Full stalls for memory and I/O"
+msgstr "Повний застій за пам’яттю та вводом-виводом"
+
+#: schema/blocks.json:18
+msgctxt "schema: block name"
 msgid "Memory"
 msgstr "Пам’ять"
 
-#: schema/blocks.json:16
+#: schema/blocks.json:19
 msgctxt "schema: parameter name"
 msgid "The “used / total” line"
 msgstr "Рядок «зайнято / всього»"
 
-#: schema/blocks.json:18
+#: schema/blocks.json:21
 msgctxt "schema: block name"
 msgid "Graphics card"
 msgstr "Відеокарта"
 
-#: schema/blocks.json:19
+#: schema/blocks.json:22
 msgctxt "schema: parameter name"
 msgid "VRAM, temperature and power line"
 msgstr "Рядок VRAM, температури та споживання"
 
-#: schema/blocks.json:20
+#: schema/blocks.json:23
 msgctxt "schema: block name"
 msgid "Disks"
 msgstr "Диски"
 
-#: schema/blocks.json:21
+#: schema/blocks.json:24
 msgctxt "schema: parameter name"
 msgid "Mount points"
 msgstr "Точки монтування"
 
-#: schema/blocks.json:22
+#: schema/blocks.json:25
 msgctxt "schema: parameter name"
 msgid "NVMe temperature on the root line"
 msgstr "Температура NVMe у рядку кореня"
 
-#: schema/blocks.json:23
+#: schema/blocks.json:26
 msgctxt "schema: parameter name"
 msgid "NVMe temperature sensor (empty — find it)"
 msgstr "Датчик температури NVMe (порожньо — знайти автоматично)"
 
-#: schema/blocks.json:24
+#: schema/blocks.json:27
 msgctxt "schema: block name"
 msgid "Uptime"
 msgstr "Час роботи"
 
-#: schema/blocks.json:25
+#: schema/blocks.json:28
 msgctxt "schema: block name"
 msgid "Network"
 msgstr "Мережа"
 
-#: schema/blocks.json:26
+#: schema/blocks.json:29
 msgctxt "schema: parameter name"
 msgid "Interface (empty — find it)"
 msgstr "Інтерфейс (порожньо — знайти автоматично)"
 
-#: schema/blocks.json:27
+#: schema/blocks.json:30
+msgctxt "schema: block name"
+msgid "Battery"
+msgstr "Батарея"
+
+#: schema/blocks.json:31
+msgctxt "schema: block hint"
+msgid "Charge, rate and estimated time; shown only when a battery is found"
+msgstr ""
+"Заряд, потужність і оцінка часу; показується, лише якщо знайдено батарею"
+
+#: schema/blocks.json:32
 msgctxt "schema: block name"
 msgid "Services"
 msgstr "Служби"
 
-#: schema/blocks.json:28
+#: schema/blocks.json:33
 msgctxt "schema: block hint"
 msgid "docker, ollama, pending updates — a script inside the package"
 msgstr "docker, ollama, оновлення, що очікують, — скрипт у пакеті"
 
-#: schema/blocks.json:29
+#: schema/blocks.json:34
+msgctxt "schema: block name"
+msgid "System health"
+msgstr "Здоров’я системи"
+
+#: schema/blocks.json:35
+msgctxt "schema: block hint"
+msgid ""
+"Failed systemd units, error count since boot and the last error lines from "
+"the journal"
+msgstr ""
+"Збійні юніти systemd, кількість помилок з запуску та останні рядки помилок "
+"із журналу"
+
+#: schema/blocks.json:36
+msgctxt "schema: parameter name"
+msgid "Failed units"
+msgstr "Збійні юніти"
+
+#: schema/blocks.json:37
+msgctxt "schema: parameter name"
+msgid "Error count since boot"
+msgstr "Кількість помилок з запуску"
+
+#: schema/blocks.json:38
+msgctxt "schema: parameter name"
+msgid "Last error lines"
+msgstr "Останні рядки помилок"
+
+#: schema/blocks.json:39
 msgctxt "schema: block name"
 msgid "Hardware spec sheet"
 msgstr "Паспорт обладнання"
 
-#: schema/blocks.json:30
+#: schema/blocks.json:40
 msgctxt "schema: block hint"
 msgid "Static lines: processor, graphics card, board"
 msgstr "Статичні рядки: процесор, відеокарта, плата"
 
-#: schema/blocks.json:31
+#: schema/blocks.json:41
 msgctxt "schema: block name"
 msgid "Custom command"
 msgstr "Власна команда"
 
-#: schema/blocks.json:32
+#: schema/blocks.json:42
 msgctxt "schema: block hint"
 msgid "A line from the output of any command"
 msgstr "Рядок із виводу довільної команди"
 
-#: schema/blocks.json:33 schema/blocks.json:39
+#: schema/blocks.json:43 schema/blocks.json:49
 msgctxt "schema: parameter name"
 msgid "Label"
 msgstr "Мітка"
 
-#: schema/blocks.json:34
+#: schema/blocks.json:44
 msgctxt "schema: parameter name"
 msgid "Command"
 msgstr "Команда"
 
-#: schema/blocks.json:35
+#: schema/blocks.json:45
 msgctxt "schema: parameter name"
 msgid "Interval, s"
 msgstr "Інтервал, с"
 
-#: schema/blocks.json:36
+#: schema/blocks.json:46
 msgctxt "schema: parameter name"
 msgid "Lines to show"
 msgstr "Скільки рядків показувати"
 
-#: schema/blocks.json:37
+#: schema/blocks.json:47
 msgctxt "schema: block name"
 msgid "Custom sensor"
 msgstr "Власний датчик"
 
-#: schema/blocks.json:38
+#: schema/blocks.json:48
 msgctxt "schema: block hint"
 msgid "Any ksystemstats sensor by its id"
 msgstr "Будь-який датчик ksystemstats за його id"
 
-#: schema/blocks.json:40
+#: schema/blocks.json:50
 msgctxt "schema: parameter name"
 msgid "Sensor id"
 msgstr "Ідентифікатор датчика"
 
-#: schema/blocks.json:41
+#: schema/blocks.json:51
 msgctxt "schema: parameter name"
 msgid "Draw a bar"
 msgstr "Малювати смужку"
 
-#: schema/blocks.json:42
+#: schema/blocks.json:52
 msgctxt "schema: parameter name"
 msgid "Suffix after the value"
 msgstr "Суфікс після значення"
 
-#: schema/blocks.json:43
+#: schema/blocks.json:53
 msgctxt "schema: parameter name"
 msgid "Decimal places"
 msgstr "Знаків після коми"

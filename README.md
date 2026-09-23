@@ -14,10 +14,12 @@ The look comes from the Rainmeter skin
 ## What it shows
 
 Clock, date, distro and kernel, total CPU load and load per NUMA node, CPU model with
-per-node temperatures and fan speeds, top processes by CPU and by memory, RAM, GPU with
-VRAM, temperature and power draw, filesystems with NVMe temperature, uptime, network
-throughput, the state of docker / ollama / pending updates, and a static hardware
-passport.
+per-node temperatures and fan speeds, the kernel's pressure stall information for CPU,
+memory and I/O, top processes by CPU and by memory, RAM, GPU with VRAM, temperature and
+power draw, filesystems with NVMe temperature, uptime, network throughput, the battery
+when the machine has one, the state of docker / ollama / pending updates, system health —
+failed systemd units, errors since boot, the last error lines of the journal — and a
+static hardware passport.
 
 Which of those appear, in what order, and with what parameters is **data, not code** —
 see [Three layers](#three-layers) below.
@@ -33,6 +35,8 @@ What is in the repository:
 |---|---|---|
 | **`monitor/`** | the text monitor: a plasmoid, with the renderer and data side in `shared/`; the retired window host stays in `window/` (decision 9) | works |
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
+| **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module | works |
+| **`weather/`** | the weather widget: now and the next days as text, from Open-Meteo over https, no service of its own | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
@@ -55,15 +59,19 @@ Widgets*, search for the name:
 - the monitor, `plaintop` — [store.kde.org/p/2372814](https://store.kde.org/p/2372814/), no
   repository needed;
 - the visualizer, `plainspectrum` — [store.kde.org/p/2372815](https://store.kde.org/p/2372815/);
-  it draws nothing until the relay below is installed.
+  it draws nothing until the relay below is installed;
+- the player and the weather are not in the store yet — for now the repository is the
+  only way.
 
-**From the repository** — both widgets and the relay:
+**From the repository** — all four widgets and the relay:
 
 ```bash
 git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
 ./install.sh --plasmoid          # the monitor: generate, install, restart the shell
 ./install.sh --spectrum          # the audio visualizer: plasmoid + relay service
+./install.sh --player            # the "now playing" widget: plasmoid only
+./install.sh --weather           # the weather widget: plasmoid only
 ./install.sh --windows-off       # retire the window hosts of an earlier setup (decision 9)
 ./install.sh --status            # what is installed and what is running
 ```
@@ -86,8 +94,10 @@ The conky implementation has its own switches: `./install.sh` deploys and starts
 6.23 or newer (for `KI18nContext`, decision 7), `python3` for the generator, the setup
 scripts and the relay, `msgfmt` from gettext for the translations, and a monospace font —
 `JetBrainsMono Nerd Font Mono` by default (`qt6-declarative` only for the click-through
-stand, `--check-passthrough`). The visualizer additionally needs `cava`; the conky implementation needs
-`conky`, `python-xlib` and `lm_sensors`.
+stand, `--check-passthrough`). The visualizer additionally needs `cava`; the player nothing
+extra — the MPRIS module it reads ships with plasma-workspace; the weather needs network
+access to `api.open-meteo.com`; the conky implementation needs `conky`, `python-xlib` and
+`lm_sensors`.
 
 ## Adapting it to your hardware
 
@@ -121,6 +131,32 @@ half a percent because nothing is rasterized per frame.
 It is a plasmoid with Plasma's settings dialog; its earlier click-through window host is
 retired (decision 9). Details, settings and the measured cost:
 **[spectrum/README.md](spectrum/README.md)**.
+
+## The player
+
+`player/` shows what is playing, in the same monospace lines as the monitor: the player's
+name, artist and title, the album, a slash bar with the position and time, and `<<  >  >>`
+controls — plain text with a mouse area under each glyph, no buttons. It reads MPRIS through
+the module behind Plasma's own media controller, so whatever Plasma sees, it sees: VLC,
+Spotify, a browser. The *Player* setting pins it to one player by name; empty means whoever
+is playing. Its *Mouse* setting works as in the other two, with one consequence: while
+clicks pass through, the controls cannot be clicked — so it ships with the setting off
+(decision 11). `./install.sh --player` installs it.
+
+## The weather
+
+`weather/` shows the weather in the same lines: a header with the place, the current
+conditions — temperature, a word for the sky, what it feels like, wind and humidity — and
+one row per forecast day with the low, the high, the sky and the chance of rain. The data is
+[Open-Meteo](https://open-meteo.com)'s, fetched by the widget itself over https every
+15 minutes and kept in the config, so the last answer is drawn before the next one arrives
+and stays through an outage — marked as offline, and after an hour with its age. The place
+comes from a search on the *Location* page, or two typed coordinates; until one is set the
+widget guesses the city from the time zone and says so in the header. It never asks a
+geolocation service where you are: behind a tunnel that would be the tunnel's exit
+(decision 10). Units follow the locale, or are chosen by hand. Open-Meteo is free for
+non-commercial use and asks for attribution — the last line, on by default.
+`./install.sh --weather` installs it.
 
 ## Three layers
 
@@ -172,8 +208,8 @@ So a new reading usually means a new row in the description, not a patch to the 
 
 ## Languages
 
-Both widgets, their editors and their menu entries follow Plasma's language (System
-Settings → Region & Language); dates and decimal separators follow its Formats. There are
+All four widgets and their settings pages follow Plasma's language (System Settings →
+Region & Language); dates and decimal separators follow its Formats. There are
 ten: English, Russian, Ukrainian, German, French, Spanish, Brazilian Portuguese, Polish,
 Simplified Chinese and Japanese. Everything but English and Russian is a machine
 translation — corrections are welcome as pull requests, and a new language is one command:

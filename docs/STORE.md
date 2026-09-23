@@ -1,6 +1,6 @@
 # KDE Store listings
 
-The text for the two widget pages on [store.kde.org](https://store.kde.org), kept here so
+The text for the widget pages on [store.kde.org](https://store.kde.org), kept here so
 the pages can be updated along with the code. A store page has one description field,
 so each description carries both languages — English first, Russian below — and this file
 is not split into an `.ru.md` pair.
@@ -8,7 +8,7 @@ is not split into an `.ru.md` pair.
 The files to upload are built by:
 
 ```bash
-./install.sh --pack     # → dist/plaintop-<version>.plasmoid, dist/plainspectrum-<version>.plasmoid
+./install.sh --pack     # → dist/{plaintop,plainspectrum,plainplayer,plainweather}-<version>.plasmoid
 ```
 
 `--pack` installs each archive into a throwaway package root before reporting success,
@@ -18,6 +18,10 @@ widget's `metadata.json`; bump it there before building a new upload.
 ⚠️ Updated to 0.2 on 2026-09-22 (13:54 and 13:55 UTC in the store's API): the pages carry the
 text below, `plaintop-0.2.plasmoid` and `plainspectrum-0.2.plasmoid` (MD5 equal to the
 built files); the 0.1 files are still listed beside them.
+
+⚠️ Not yet uploaded, 2026-09-23: plaintop 0.3 (`metadata.json` is bumped) and the two new
+products, plainplayer and plainweather — `--pack` builds all four, the texts below are
+ready. Each new product goes through *Add Product* as described under Uploading.
 
 ## Uploading
 
@@ -40,11 +44,16 @@ The store is run by Pling, not by KDE; there is no review before a product goes 
 
 Published 2026-09-22: https://store.kde.org/p/2372814/
 
+**0.3 — not yet uploaded.** What's new: three block types — pressure stall information
+(PSI) for CPU, memory and I/O; the battery, shown only where one exists; system health —
+failed systemd units, errors since boot and the last error lines of the journal. Separators
+collapse where a block hides, so no double rules. The description below already says so.
+
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
 - **License:** GPL-2.0-or-later
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
-- **Tags:** system monitor, conky, rainmeter, text, sensors, cpu, gpu, numa
+- **Tags:** system monitor, conky, rainmeter, text, sensors, cpu, gpu, numa, battery, systemd, psi
 - **Images:** a square logo of the clock and a landscape gallery picture of the whole
   monitor, both rendered offscreen by the real renderer in an English session
 
@@ -55,9 +64,10 @@ Published 2026-09-22: https://store.kde.org/p/2372814/
 ```
 A monospace, text-only system monitor for the Plasma 6 desktop, in the spirit of the
 PlainExt skin for Rainmeter: clock and date, system, CPU load overall and per NUMA node,
-the processor with temperatures and fan speeds, top processes by CPU and by memory, RAM,
-GPU with VRAM, disks with NVMe temperature, uptime, network, docker/ollama/updates and a
-hardware spec sheet.
+the processor with temperatures and fan speeds, pressure stall information (PSI), top
+processes by CPU and by memory, RAM, GPU with VRAM, disks with NVMe temperature, uptime,
+network, the battery where there is one, docker/ollama/updates, system health — failed
+systemd units, errors since boot, the last journal errors — and a hardware spec sheet.
 
 The blocks, their order and their parameters are set on the Blocks page of the
 settings; a block can also be any ksystemstats sensor or any command. Sensors specific to
@@ -77,8 +87,10 @@ https://github.com/highscrren-dotcom/plaintop
 
 Текстовый монитор системы для рабочего стола Plasma 6 в духе скина PlainExt для
 Rainmeter: часы и дата, система, загрузка CPU общая и по узлам NUMA, процессор с
-температурами и оборотами, топ процессов по CPU и памяти, ОЗУ, GPU с VRAM, диски с
-температурой NVMe, аптайм, сеть, docker/ollama/обновления и паспорт железа.
+температурами и оборотами, данные о простоях (PSI), топ процессов по CPU и памяти, ОЗУ,
+GPU с VRAM, диски с температурой NVMe, аптайм, сеть, батарея, если она есть,
+docker/ollama/обновления, здоровье системы — упавшие юниты systemd, ошибки с загрузки,
+последние ошибки журнала — и паспорт железа.
 
 Набор блоков, порядок и параметры — на странице «Блоки» в настройках; блоком может быть
 любой датчик ksystemstats или любая команда. Привязанные к машине датчики — вентиляторы,
@@ -180,6 +192,139 @@ PlainExt для Rainmeter: один цвет, прямые концы, без г
 
 Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и русского,
 переведено машинно, исправления приветствуются.
+
+Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
+```
+
+## plainplayer — now playing
+
+(not yet uploaded)
+
+- **File:** `dist/plainplayer-<version>.plasmoid`
+- **Category:** Plasma 6 Extensions → Multimedia
+- **License:** GPL-2.0-or-later
+- **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
+- **Tags:** mpris, now playing, music, player, media, text
+- **Images:** the five lines while a track plays — without a player it says "no player",
+  so a picture needs music
+
+**Summary:** What is playing, as plain text: track, a slash position bar and text controls, in the plaintop style.
+
+**Description:**
+
+```
+plainplayer — "now playing" for the Plasma 6 desktop as plain monospace text, in the
+style of the plaintop monitor: no frames, no cover art. Five lines: a header with the
+player's name, artist — title, the album, a slash bar with the position and the time,
+and the controls <<  >  >> — text with a mouse area under each glyph. Previous,
+play/pause and next work with a click; a control the player cannot do is dimmed.
+
+It reads MPRIS through the module behind Plasma's own media controller, so whatever
+Plasma's controller sees, it sees: VLC, Spotify, a browser. Nothing to install beyond
+the widget. The Player setting pins it to one player by name (vlc, spotify,
+strawberry); empty means whoever is playing.
+
+Settings (right-click → Configure): font, size, width in characters, three colours,
+the album line and the controls row on or off, the player filter. The Mouse page lets
+both buttons through to the desktop like the other plaintop widgets — with one
+consequence: while clicks pass through, the controls cannot be clicked, so it ships
+with the setting off.
+
+The interface follows Plasma's language — ten languages, all but English and Russian
+machine-translated, corrections welcome.
+
+Source, issues, details: https://github.com/highscrren-dotcom/plaintop
+
+———
+
+plainplayer — «сейчас играет» для рабочего стола Plasma 6 простым моноширинным текстом,
+в стиле монитора plaintop: без рамок и обложек. Пять строк: заголовок с именем плеера,
+исполнитель — название, альбом, полоса из косых с позицией и временем и кнопки
+<<  >  >> — текст с областью мыши под каждым знаком. Назад, пуск/пауза и вперёд
+работают по клику; то, чего плеер не умеет, показано приглушённо.
+
+MPRIS он читает через модуль штатного медиаконтроллера Plasma, так что видит всё, что
+видит контроллер Plasma: VLC, Spotify, браузер. Ставить сверх виджета ничего не нужно.
+Настройка «Плеер» привязывает его к одному плееру по имени (vlc, spotify, strawberry);
+пустая — показан тот, кто играет.
+
+Настройки (правый клик → Настроить): шрифт, кегль, ширина в знаках, три цвета, строка
+альбома и строка кнопок вкл/выкл, фильтр плеера. Страница «Мышь» пропускает на стол обе
+кнопки, как у других виджетов plaintop, — с одним следствием: пока клики проходят
+насквозь, кнопки нажать нельзя, поэтому по умолчанию она выключена.
+
+Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и русского,
+переведено машинно, исправления приветствуются.
+
+Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
+```
+
+## plainweather — weather
+
+(not yet uploaded)
+
+- **File:** `dist/plainweather-<version>.plasmoid`
+- **Category:** Plasma 6 Extensions → Online Services
+- **License:** GPL-2.0-or-later
+- **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
+- **Tags:** weather, forecast, open-meteo, text
+- **Images:** the header, the current line and three forecast rows — needs a location set
+  or guessed, and a network
+
+**Summary:** The weather as plain text — now and the next days — from Open-Meteo, in the plaintop style. Weather data by Open-Meteo.com.
+
+**Description:**
+
+```
+plainweather — the weather for the Plasma 6 desktop as plain monospace text, in the
+style of the plaintop monitor: no icons, no frames. A header with the place, the
+current conditions — temperature, a word for the sky, what it feels like, wind and
+humidity — and one row per forecast day, 0 to 7, with the low, the high, the sky and
+the chance of rain.
+
+The data is Open-Meteo's: the widget asks api.open-meteo.com itself over https, every
+15 minutes, one request — no service of its own, nothing to install beyond the widget,
+and it needs network access to that host. The last answer is kept, so the widget draws
+at once after a shell restart and stays through an outage, marked "offline". The
+place: search a city on the Location page (a click stores it) or type "latitude,
+longitude"; until one is set, the widget guesses the city from the time zone and says
+so in the header. It never asks a geolocation service where you are. Units follow the
+locale (°F and mph in the US) or are chosen by hand.
+
+Weather data by Open-Meteo.com. Open-Meteo is free for non-commercial use under
+CC BY 4.0 and asks for attribution — the last line of the widget, on by default.
+
+Right-click → Configure: font, size, width, three colours; location, units, days, the
+attribution line; the Mouse page lets both buttons through to the desktop like the
+other plaintop widgets. The interface follows Plasma's language — ten languages, all
+but English and Russian machine-translated, corrections welcome.
+
+Source, issues, details: https://github.com/highscrren-dotcom/plaintop
+
+———
+
+plainweather — погода для рабочего стола Plasma 6 простым моноширинным текстом, в стиле
+монитора plaintop: без значков и рамок. Заголовок с местом, текущие условия —
+температура, слово про небо, «ощущается», ветер и влажность — и по строке на день
+прогноза, от 0 до 7: минимум, максимум, небо и вероятность осадков.
+
+Данные — Open-Meteo: виджет сам запрашивает api.open-meteo.com по https раз в 15 минут,
+одним запросом — своей службы нет, ставить сверх виджета ничего не нужно, нужен лишь
+доступ по сети к этому хосту. Последний ответ хранится, так что после перезапуска
+оболочки виджет рисуется сразу и переживает обрыв сети с пометкой об этом. Место: поиск
+города на странице «Место» (клик сохраняет) или введённые «широта, долгота»; пока оно
+не задано, виджет угадывает город по часовому поясу и говорит об этом в заголовке. Где
+вы находитесь, у служб геолокации он не спрашивает. Единицы — по локали (в США °F и
+mph) или вручную.
+
+Данные о погоде: Open-Meteo.com. Open-Meteo бесплатен для некоммерческого использования
+по лицензии CC BY 4.0 и просит указывать источник — последняя строка виджета, включена
+по умолчанию.
+
+Правый клик → Настроить: шрифт, кегль, ширина, три цвета; место, единицы, дни, строка
+источника; страница «Мышь» пропускает на стол обе кнопки, как у других виджетов
+plaintop. Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и
+русского, переведено машинно, исправления приветствуются.
 
 Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
 ```

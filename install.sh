@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Deploy plaintop into the system and start it.
 #
-# Source of truth: the conky/, monitor/ and spectrum/ directories of this repo. Files
-# flow from here into ~/.config/conky, ~/.local/share/plasma/plasmoids and the rest,
-# never the other way around: edit in the repo, then run ./install.sh.
+# Source of truth: the conky/, monitor/, spectrum/, player/ and weather/ directories of
+# this repo. Files flow from here into ~/.config/conky, ~/.local/share/plasma/plasmoids
+# and the rest, never the other way around: edit in the repo, then run ./install.sh.
 set -uo pipefail
 cd "$(dirname "$0")"
 REPO=$PWD
@@ -16,6 +16,12 @@ PLASMOID_DEST="$HOME/.local/share/plasma/plasmoids/$PLASMOID_ID"
 SPECTRUM_ID="org.s1dd1.plainspectrum"
 SPECTRUM_SRC="$REPO/spectrum"
 SPECTRUM_DEST="$HOME/.local/share/plasma/plasmoids/$SPECTRUM_ID"
+PLAYER_ID="org.s1dd1.plainplayer"
+PLAYER_SRC="$REPO/player/package"
+PLAYER_DEST="$HOME/.local/share/plasma/plasmoids/$PLAYER_ID"
+WEATHER_ID="org.s1dd1.plainweather"
+WEATHER_SRC="$REPO/weather/package"
+WEATHER_DEST="$HOME/.local/share/plasma/plasmoids/$WEATHER_ID"
 RELAY_DEST="$HOME/.local/share/plainspectrum"
 UNIT_DEST="$HOME/.config/systemd/user"
 
@@ -75,6 +81,17 @@ spectrum_prepare() {
     python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainspectrum "$SPECTRUM_SRC/package/contents/locale" || return 1
 }
 
+player_prepare() {
+    # Nothing to copy in: the player has no shared QML and never had a window host. Only
+    # the catalogs, as for the other two (decision 7).
+    python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainplayer "$PLAYER_SRC/contents/locale" || return 1
+}
+
+weather_prepare() {
+    # As for the player: no shared QML, only the catalogs (decision 7).
+    python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainweather "$WEATHER_SRC/contents/locale" || return 1
+}
+
 # The plasmoid installs idempotently: kpackagetool6 decides by itself whether this is
 # an install or an upgrade, and the state is applied either way.
 plasmoid_install() {
@@ -112,9 +129,11 @@ pack() {
     command -v kpackagetool6 >/dev/null || { red "  ✗ kpackagetool6 not found — cannot check the archives"; return 1; }
     monitor_prepare || return 1
     spectrum_prepare || return 1
+    player_prepare || return 1
+    weather_prepare || return 1
     mkdir -p "$REPO/dist"
     local src name out root
-    for src in "$PLASMOID_SRC" "$SPECTRUM_SRC/package"; do
+    for src in "$PLASMOID_SRC" "$SPECTRUM_SRC/package" "$PLAYER_SRC" "$WEATHER_SRC"; do
         name=$(python3 -c 'import json, sys
 k = json.load(open(sys.argv[1]))["KPlugin"]
 print(k["Name"] + "-" + k["Version"])' "$src/metadata.json") \
@@ -313,6 +332,107 @@ spectrum_status() {
     else dim "  not added to the desktop"; fi
 }
 
+# The player: a package and nothing else — its data is Plasma's own MPRIS module, so
+# there is no service to deploy. Placed on the desktop like the visualizer, unless it
+# already is there.
+player_install() {
+    echo "== Player"
+    if ! command -v kpackagetool6 >/dev/null; then
+        red "  ✗ kpackagetool6 not found — cannot install the widget"; return 1
+    fi
+    player_prepare || return 1
+    local mode=--install
+    [ -d "$PLAYER_DEST" ] && mode=--upgrade
+    if kpackagetool6 --type Plasma/Applet $mode "$PLAYER_SRC" >/dev/null 2>&1; then
+        grn "  ✓ $PLAYER_ID ($mode)"
+    else
+        red "  ✗ $PLAYER_ID — $mode failed"; return 1
+    fi
+    # ⚠️ Same reason as for the other two: plasmashell caches a package's QML, so
+    # without a restart the edit silently does not arrive.
+    if systemctl --user --quiet is-active plasma-plasmashell.service; then
+        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell restarted"
+    else
+        dim "  plasmashell is not under systemd — restart the shell yourself"
+    fi
+    local n
+    n=$(grep -c "^plugin=$PLAYER_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then
+        dim "  already on the desktop — leaving its place alone"
+        return 0
+    fi
+    plasmashell_ready || { red "  ✗ plasmashell does not respond — add the widget by hand"; return 1; }
+    local id
+    id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+        "print(desktops()[0].addWidget(\"$PLAYER_ID\").id)" 2>/dev/null | tr -dc '0-9')
+    [ -n "$id" ] && grn "  ✓ added to the desktop (id=$id)" || red "  ✗ could not add it to the desktop"
+}
+
+player_status() {
+    echo "== Player"
+    if [ ! -d "$PLAYER_DEST" ]; then dim "  widget not installed"; return 0; fi
+    local diff=0 f rel
+    while IFS= read -r f; do
+        rel=${f#"$PLAYER_SRC"/}
+        cmp -s "$f" "$PLAYER_DEST/$rel" || { red "  ≠ $rel — DIFFERS from the repo"; diff=1; }
+    done < <(find "$PLAYER_SRC" -type f)
+    [ $diff -eq 0 ] && grn "  ✓ widget installed, files match the repo"
+    local n
+    n=$(grep -c "^plugin=$PLAYER_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ added to the desktop (instances: $n)"
+    else dim "  not added to the desktop"; fi
+}
+
+# The weather: a package and nothing else — it asks Open-Meteo itself over https, so there
+# is no service to deploy. Placed on the desktop like the player, unless it already is there.
+weather_install() {
+    echo "== Weather"
+    if ! command -v kpackagetool6 >/dev/null; then
+        red "  ✗ kpackagetool6 not found — cannot install the widget"; return 1
+    fi
+    weather_prepare || return 1
+    local mode=--install
+    [ -d "$WEATHER_DEST" ] && mode=--upgrade
+    if kpackagetool6 --type Plasma/Applet $mode "$WEATHER_SRC" >/dev/null 2>&1; then
+        grn "  ✓ $WEATHER_ID ($mode)"
+    else
+        red "  ✗ $WEATHER_ID — $mode failed"; return 1
+    fi
+    # ⚠️ Same reason as for the other three: plasmashell caches a package's QML, so
+    # without a restart the edit silently does not arrive.
+    if systemctl --user --quiet is-active plasma-plasmashell.service; then
+        systemctl --user restart plasma-plasmashell.service && grn "  ✓ plasmashell restarted"
+    else
+        dim "  plasmashell is not under systemd — restart the shell yourself"
+    fi
+    local n
+    n=$(grep -c "^plugin=$WEATHER_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then
+        dim "  already on the desktop — leaving its place alone"
+        return 0
+    fi
+    plasmashell_ready || { red "  ✗ plasmashell does not respond — add the widget by hand"; return 1; }
+    local id
+    id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
+        "print(desktops()[0].addWidget(\"$WEATHER_ID\").id)" 2>/dev/null | tr -dc '0-9')
+    [ -n "$id" ] && grn "  ✓ added to the desktop (id=$id)" || red "  ✗ could not add it to the desktop"
+}
+
+weather_status() {
+    echo "== Weather"
+    if [ ! -d "$WEATHER_DEST" ]; then dim "  widget not installed"; return 0; fi
+    local diff=0 f rel
+    while IFS= read -r f; do
+        rel=${f#"$WEATHER_SRC"/}
+        cmp -s "$f" "$WEATHER_DEST/$rel" || { red "  ≠ $rel — DIFFERS from the repo"; diff=1; }
+    done < <(find "$WEATHER_SRC" -type f)
+    [ $diff -eq 0 ] && grn "  ✓ widget installed, files match the repo"
+    local n
+    n=$(grep -c "^plugin=$WEATHER_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
+    if [ "${n:-0}" -gt 0 ]; then grn "  ✓ added to the desktop (instances: $n)"
+    else dim "  not added to the desktop"; fi
+}
+
 # Click-through for both widgets at once. This is the way back: with clicks passing
 # through, the widget cannot be grabbed with the mouse, so its own settings dialog is
 # out of reach — the switch has to work without it.
@@ -474,6 +594,8 @@ status() {
     echo; plaintop_window_status
     echo; spectrum_status
     echo; spectrum_window_status
+    echo; player_status
+    echo; weather_status
 }
 
 deps() {
@@ -531,6 +653,8 @@ case "${1:-}" in
   --pack)        pack; exit $? ;;
   --conky-files) conky_deploy; echo; status; exit 0 ;;
   --spectrum)    spectrum_install; exit $? ;;
+  --player)      player_install; exit $? ;;
+  --weather)     weather_install; exit $? ;;
   --spectrum-window)   spectrum_window; exit $? ;;
   --spectrum-settings) spectrum_settings; exit $? ;;
   --plaintop-window)   plaintop_window; exit $? ;;
@@ -541,7 +665,7 @@ case "${1:-}" in
   --clicks-on)   clicks_set true "clicks pass through to the desktop"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--windows-off|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--deps]"; exit 0 ;;
+  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--windows-off|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Missing dependencies — install them and try again."; exit 1; }

@@ -1,0 +1,156 @@
+# Polish translations for plaintop package.
+# Copyright (C) 2026 THE plaintop'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the plaintop package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plaintop\n"
+"Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
+"POT-Creation-Date: 2026-09-23 18:34+0500\n"
+"PO-Revision-Date: 2026-09-23 17:52+0500\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
+
+#: player/package/contents/config/config.qml:7
+msgctxt "settings page"
+msgid "General"
+msgstr "Ogólne"
+
+#: player/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Mouse"
+msgstr "Mysz"
+
+#: player/package/contents/ui/PlayerView.qml:171
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr "TERAZ GRA"
+
+#: player/package/contents/ui/PlayerView.qml:174
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr "brak odtwarzacza"
+
+#: player/package/contents/ui/PlayerView.qml:190
+msgctxt "playback status"
+msgid "stopped"
+msgstr "zatrzymano"
+
+#: player/package/contents/ui/PlayerView.qml:194
+#: player/package/contents/ui/PlayerView.qml:296
+msgctxt "playback status"
+msgid "paused"
+msgstr "pauza"
+
+#: player/package/contents/ui/configGeneral.qml:28
+msgctxt "settings section"
+msgid "Text"
+msgstr "Tekst"
+
+#: player/package/contents/ui/configGeneral.qml:32
+msgid "Font:"
+msgstr "Czcionka:"
+
+#: player/package/contents/ui/configGeneral.qml:38
+msgctxt "font size"
+msgid "Size:"
+msgstr "Rozmiar:"
+
+#: player/package/contents/ui/configGeneral.qml:45
+msgid "Width, characters:"
+msgstr "Szerokość, znaków:"
+
+#: player/package/contents/ui/configGeneral.qml:51
+msgid ""
+"The widget is this many characters wide and five lines tall;\n"
+"a longer title is cut with an ellipsis."
+msgstr ""
+"Widżet ma tyle znaków szerokości i pięć wierszy wysokości;\n"
+"dłuższy tytuł jest ucinany wielokropkiem."
+
+#: player/package/contents/ui/configGeneral.qml:56
+msgctxt "settings section"
+msgid "Palette"
+msgstr "Paleta"
+
+#: player/package/contents/ui/configGeneral.qml:59
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "Tekst główny:"
+
+#: player/package/contents/ui/configGeneral.qml:65
+msgctxt "palette: colour of"
+msgid "Title:"
+msgstr "Tytuł:"
+
+#: player/package/contents/ui/configGeneral.qml:71
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "Drugorzędny:"
+
+#: player/package/contents/ui/configGeneral.qml:76
+msgctxt "settings section"
+msgid "Player"
+msgstr "Odtwarzacz"
+
+#: player/package/contents/ui/configGeneral.qml:80
+msgid "Player:"
+msgstr "Odtwarzacz:"
+
+#: player/package/contents/ui/configGeneral.qml:82
+msgctxt "player field placeholder"
+msgid "whoever is playing"
+msgstr "ten, który gra"
+
+#: player/package/contents/ui/configGeneral.qml:86
+msgid ""
+"Empty: whoever is playing. Otherwise a part of the player's name\n"
+"or desktop entry — vlc, spotify, strawberry; when no player matches,\n"
+"back to whoever is playing."
+msgstr ""
+"Puste: ten, który gra. Inaczej fragment nazwy odtwarzacza\n"
+"lub jego pliku desktop — vlc, spotify, strawberry; gdy żaden nie pasuje,\n"
+"znów ten, który gra."
+
+#: player/package/contents/ui/configGeneral.qml:93
+msgid "Album:"
+msgstr "Album:"
+
+#: player/package/contents/ui/configGeneral.qml:94
+msgid "show the album line"
+msgstr "pokazuj wiersz albumu"
+
+#: player/package/contents/ui/configGeneral.qml:99
+msgid "Controls:"
+msgstr "Sterowanie:"
+
+#: player/package/contents/ui/configGeneral.qml:100
+msgid "show the previous, play/pause and next row"
+msgstr "pokazuj wiersz przycisków: wstecz, odtwarzaj/pauza, dalej"
+
+#: player/package/contents/ui/configMouse.qml:19
+msgid "Mouse:"
+msgstr "Mysz:"
+
+#: player/package/contents/ui/configMouse.qml:20
+msgid "let clicks through to the desktop"
+msgstr "przepuszczaj kliknięcia na pulpit"
+
+#: player/package/contents/ui/configMouse.qml:24
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The widget takes the mouse only in the desktop's edit mode:\n"
+"that is where its settings are, or ./install.sh with the clicks off switch.\n"
+"With the mouse passing through, the controls cannot be clicked."
+msgstr ""
+"Gdy kliknięcia przechodzą na wylot, oba przyciski myszy trafiają na pulpit.\n"
+"Widżet przejmuje mysz tylko w trybie edycji pulpitu:\n"
+"tam są jego ustawienia, albo ./install.sh z przełącznikiem clicks off.\n"
+"Gdy mysz przechodzi na wylot, w sterowanie nie da się kliknąć."

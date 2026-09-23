@@ -27,6 +27,11 @@ Item {
     // package and next to the QML in the standalone host, so a relative guess here left
     // the services block silently empty in one of the two.
     property string servicesScript: Qt.resolvedUrl("services.sh").toString().replace("file://", "")
+    property string healthScript: Qt.resolvedUrl("health.sh").toString().replace("file://", "")
+
+    // Width of the text area in characters, set by the host from its width and font: the
+    // one place free text (journal messages) is cut. The tabular lines are built to fit.
+    property int columns: 57
 
     readonly property int barWidth: 18          // bar width in characters, as in the lua
 
@@ -48,6 +53,13 @@ Item {
             }
         }
         return fallback
+    }
+
+    // Whether an enabled block of this type exists: what no block shows is not collected.
+    function hasBlock(type) {
+        for (const b of blocks)
+            if (b.type === type && b.enabled !== false) return true
+        return false
     }
 
     // "Custom sensor" blocks add their ids to the same subscription.
@@ -117,6 +129,33 @@ Item {
     readonly property string nvmeSensor:
         registry.resolve(blockParam("disks", "nvmeSensor", ""), "^lmsensors/nvme-[^/]+/temp1$")
 
+    // Pressure stall information: a kernel feature, so the ids are the same on every
+    // machine, but the plugin may be missing — then the block hides. ⚠️ Not
+    // registry.has("pressure"): a group node may or may not be listed, a leaf is a fact.
+    // pressure/cpu/full* is always zero by kernel semantics and is never subscribed; the
+    // memory and I/O full stalls only when the block shows them.
+    readonly property bool hasPressure: hasBlock("pressure")
+        && registry.match("^pressure/cpu/some10Sec$").length > 0
+    readonly property var pressureIds: !hasPressure ? []
+        : ["pressure/cpu/some10Sec", "pressure/memory/some10Sec", "pressure/io/some10Sec"]
+            .concat(blockParam("pressure", "full", false) === true
+                    ? ["pressure/memory/full10Sec", "pressure/io/full10Sec"] : [])
+
+    // Batteries: whatever the power plugin reports, sorted by id so the order holds. A bare
+    // "power" group with no children sits in the tree of a desktop machine; the leaf
+    // pattern never matches it. The registry keeps polling, so a battery that appears
+    // later brings the block with it — verified in a standalone run, 2026-09-23.
+    readonly property var batteries: hasBlock("battery")
+        ? registry.match("^power/[^/]+/chargePercentage$").map(id => id.split("/")[1]).sort()
+        : []
+    readonly property var batteryIds: {
+        const out = []
+        for (const b of batteries)
+            for (const k of ["chargePercentage", "chargeRate", "charge", "capacity", "health"])
+                out.push("power/" + b + "/" + k)
+        return out
+    }
+
     // ── Data ──────────────────────────────────────────────────────────────────
     // One SensorDataModel for all values: a single subscription instead of a hundred
     // objects. Roles are taken by name (Sensors.SensorDataModel.Value), not by number —
@@ -185,7 +224,7 @@ Item {
         "network/" + netIface + "/download", "network/" + netIface + "/upload",
         "os/system/uptime"
     ].concat(customSensorIds).concat(fanSensors).concat(
-        nvmeSensor.length > 0 ? [nvmeSensor] : [])
+        nvmeSensor.length > 0 ? [nvmeSensor] : []).concat(pressureIds).concat(batteryIds)
 
     // ⚠️ Columns are found by asking the model for each column's SensorId, never by the
     // position in the requested list. SensorDataModel silently drops ids it cannot
@@ -429,6 +468,47 @@ Item {
         }
     }
 
+    // System health: failed units, error counts and the last error lines, from a script in
+    // the package like the services. Gated on the block: nothing runs for a block nobody
+    // shows. The line count is the script's argument, so it never reads more than shown.
+    property var healthData: ({})
+    // −1 without an enabled health block, else its line count (0–5). One property read
+    // from `blocks` directly: split in two (enabled, lines) the command was rebuilt twice
+    // per change of `blocks` and the first script killed while still running — reproduced
+    // in the standalone harness, 2026-09-23.
+    readonly property int healthSpec: {
+        for (const b of blocks) {
+            if (b.type !== "health" || b.enabled === false) continue
+            const v = (b.params || {}).lines
+            return Math.max(0, Math.min(5, Number(v === undefined ? 3 : v) || 0))
+        }
+        return -1
+    }
+
+    P5Support.DataSource {
+        id: healthSource
+        engine: "executable"
+        interval: 15000
+        connectedSources: monitor.healthSpec < 0 ? []
+            : ["bash " + monitor.healthScript + " " + monitor.healthSpec]
+
+        onNewData: function(source, data) {
+            // "failed|s|u", "err|s|u" or "err|noaccess", "errline|ident|message".
+            const h = { failed: null, err: null, lines: [] }
+            for (const row of String(data.stdout).trim().split("\n")) {
+                const f = row.split("|")
+                if (f[0] === "failed" && f.length >= 3) h.failed = [f[1], f[2]]
+                else if (f[0] === "err" && f.length >= 2) h.err = f.slice(1)
+                else if (f[0] === "errline" && f.length >= 2) {
+                    // The message may carry "|" itself: everything after the ident is text.
+                    const named = f.length >= 3
+                    h.lines.push({ ident: named ? f[1] : "", text: f.slice(named ? 2 : 1).join("|") })
+                }
+            }
+            monitor.healthData = h
+        }
+    }
+
     // The tick every computed line depends on: reading from the model does not create a
     // binding by itself, so the dependency is made explicit.
     property int tick: 0
@@ -503,6 +583,41 @@ Item {
         return (d > 0 ? tr.i18nc("uptime: days, abbreviated", "%1d", d) + " " : "")
             + tr.i18nc("uptime: hours, abbreviated", "%1h", h) + " "
             + tr.i18nc("uptime: minutes, abbreviated", "%1m", m)
+    }
+
+    // Hours and minutes of an estimate, the minutes always two digits so the text does
+    // not shift as they pass. Days fold into hours: a battery past a day is "26h 10m".
+    function hoursMinutes(secs) {
+        const s = isFinite(secs) ? Math.max(0, secs) : 0
+        return tr.i18nc("battery: hours and minutes of an estimate", "%1h %2m",
+                        Math.floor(s / 3600), String(Math.floor(s % 3600 / 60)).padStart(2, "0"))
+    }
+
+    // Free text is cut at the widget's width with an ellipsis.
+    function clip(text) {
+        return text.length > columns ? text.slice(0, Math.max(0, columns - 1)) + "…" : text
+    }
+
+    // The battery's second line, from numbers alone so it can be tested on a machine
+    // without one: the charge in %, the rate in W (positive charging, negative
+    // discharging), charge and capacity in Wh, the health in % (negative when absent).
+    function batteryText(percent, rate, charge, capacity, health) {
+        const w = Math.abs(rate)
+        let s
+        if (w < 0.05)
+            s = percent >= 99 ? tr.i18nc("battery: no current flowing, charged", "full")
+                              : tr.i18nc("battery: no current flowing", "idle")
+        else if (rate > 0)
+            s = tr.i18nc("battery: charging; the power and the time to full",
+                         "charging  %1 W  %2 to full",
+                         comma(w, 1), hoursMinutes((capacity - charge) / w * 3600))
+        else
+            s = tr.i18nc("battery: discharging; the power and the time left",
+                         "discharging  %1 W  %2 left",
+                         comma(w, 1), hoursMinutes(charge / w * 3600))
+        if (health >= 0)
+            s += "  " + tr.i18nc("battery: wear, a percentage", "health %1", Math.round(health) + "%")
+        return s
     }
 
     // ── Values ────────────────────────────────────────────────────────────────
@@ -605,9 +720,16 @@ Item {
                 out.push(line((sval("os/system/name") || "") + "  " + (sval("os/kernel/version") || ""), "dim"))
                 break
 
-            case "separator":
-                out.push(line("-".repeat(35), "dim"))
+            case "separator": {
+                // Blocks that hide themselves would leave two of these in a row, or one at
+                // the top: only between two neighbours that show something. The trailing
+                // one goes after the loop.
+                if (out.length === 0 || out[out.length - 1].separator) break
+                const s = line("-".repeat(35), "dim")
+                s.separator = true
+                out.push(s)
                 break
+            }
 
             case "cpu": {
                 const usage = num("cpu/all/usage", 0)
@@ -630,6 +752,20 @@ Item {
                 }
                 for (const r of topRows(byCpu, 1, p.top_processes || 0, v => comma(v, 1) + "%"))
                     out.push(line(r))
+                break
+            }
+
+            case "pressure": {
+                if (!hasPressure) break
+                out.push(line(barRow("PSI", num("pressure/cpu/some10Sec", 0))))
+                out.push(line(barRow("mem", num("pressure/memory/some10Sec", 0))))
+                out.push(line(barRow("io ", num("pressure/io/some10Sec", 0))))
+                // Full stalls are usually well under 1%, hence one decimal.
+                if (p.full === true)
+                    out.push(line(tr.i18nc("pressure: time every task stalled, memory and I/O",
+                                           "full  mem %1  io %2",
+                                           comma(num("pressure/memory/full10Sec", 0), 1) + "%",
+                                           comma(num("pressure/io/full10Sec", 0), 1) + "%"), "dim"))
                 break
             }
 
@@ -689,9 +825,46 @@ Item {
                 break
             }
 
+            case "battery": {
+                // No battery, no lines. Mice, headsets and UPSes register here too, under
+                // serials rather than names: only one with a capacity in Wh is shown, and
+                // all are subscribed, because the capacity is readable only when subscribed.
+                const real = batteries.filter(b => num("power/" + b + "/capacity", 0) > 0)
+                for (let i = 0; i < real.length; i++) {
+                    const id = "power/" + real[i] + "/"
+                    const percent = num(id + "chargePercentage", 0)
+                    out.push(line(barRow(real.length > 1 ? "BT" + i : "BAT", percent)))
+                    out.push(line(batteryText(percent, num(id + "chargeRate", 0),
+                                              num(id + "charge", 0), num(id + "capacity", 0),
+                                              num(id + "health", -1)), "dim"))
+                }
+                break
+            }
+
             case "services":
                 for (const s of serviceRows) out.push(kvLine(s.label, serviceText(s)))
                 break
+
+            case "health": {
+                const h = healthData
+                if (p.units !== false && h.failed) {
+                    const zero = h.failed[0] === "0" && h.failed[1] === "0"
+                    out.push(kvLine(tr.i18nc("health: failed systemd units", "failed units"),
+                                    zero ? "0" : tr.i18nc("health: a count for the system and one for the user session",
+                                                          "%1 system, %2 user", h.failed[0], h.failed[1])))
+                }
+                if (p.errors !== false && h.err) {
+                    out.push(kvLine(tr.i18nc("health: journal entries of priority error or worse", "errors since boot"),
+                                    h.err[0] === "noaccess"
+                                        ? tr.i18nc("health: the system journal cannot be read by this user", "no access")
+                                        : tr.i18nc("health: a count for the system and one for the user session",
+                                                   "%1 system, %2 user", h.err[0], h.err[1] || "0")))
+                }
+                const n = p.lines === undefined ? 3 : Math.max(0, Number(p.lines) || 0)
+                for (const l of (h.lines || []).slice(0, n))
+                    out.push(line(clip((l.ident ? l.ident + "  " : "") + l.text), "dim"))
+                break
+            }
 
             case "command": {
                 const text = cmdOut[b.id]
@@ -717,6 +890,7 @@ Item {
             }
             }
         }
+        if (out.length > 0 && out[out.length - 1].separator) out.pop()
         return out
     }
 }

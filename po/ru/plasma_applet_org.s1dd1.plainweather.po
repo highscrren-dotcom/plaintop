@@ -1,0 +1,448 @@
+# Russian translations for plaintop package.
+# Copyright (C) 2026 THE plaintop'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the plaintop package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plaintop\n"
+"Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
+"POT-Creation-Date: 2026-09-23 18:45+0500\n"
+"PO-Revision-Date: 2026-09-23 18:13+0500\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: weather/package/contents/config/config.qml:7
+msgctxt "settings page"
+msgid "General"
+msgstr "Общее"
+
+#: weather/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Location"
+msgstr "Место"
+
+#: weather/package/contents/config/config.qml:19
+msgctxt "settings page"
+msgid "Mouse"
+msgstr "Мышь"
+
+#: weather/package/contents/ui/WeatherView.qml:292
+msgctxt "wind speed unit"
+msgid "m/s"
+msgstr "м/с"
+
+#: weather/package/contents/ui/WeatherView.qml:294
+msgctxt "wind speed unit"
+msgid "mph"
+msgstr "миль/ч"
+
+#: weather/package/contents/ui/WeatherView.qml:295
+msgctxt "wind speed unit"
+msgid "km/h"
+msgstr "км/ч"
+
+#: weather/package/contents/ui/WeatherView.qml:299
+msgctxt "compass point"
+msgid "N"
+msgstr "С"
+
+#: weather/package/contents/ui/WeatherView.qml:299
+msgctxt "compass point"
+msgid "NE"
+msgstr "СВ"
+
+#: weather/package/contents/ui/WeatherView.qml:300
+msgctxt "compass point"
+msgid "E"
+msgstr "В"
+
+#: weather/package/contents/ui/WeatherView.qml:300
+msgctxt "compass point"
+msgid "SE"
+msgstr "ЮВ"
+
+#: weather/package/contents/ui/WeatherView.qml:301
+msgctxt "compass point"
+msgid "S"
+msgstr "Ю"
+
+#: weather/package/contents/ui/WeatherView.qml:301
+msgctxt "compass point"
+msgid "SW"
+msgstr "ЮЗ"
+
+#: weather/package/contents/ui/WeatherView.qml:302
+msgctxt "compass point"
+msgid "W"
+msgstr "З"
+
+#: weather/package/contents/ui/WeatherView.qml:302
+msgctxt "compass point"
+msgid "NW"
+msgstr "СЗ"
+
+#: weather/package/contents/ui/WeatherView.qml:312
+msgctxt "weather condition"
+msgid "clear"
+msgstr "ясно"
+
+#: weather/package/contents/ui/WeatherView.qml:313
+msgctxt "weather condition"
+msgid "mostly clear"
+msgstr "малооблачно"
+
+#: weather/package/contents/ui/WeatherView.qml:314
+msgctxt "weather condition"
+msgid "partly cloudy"
+msgstr "облачно"
+
+#: weather/package/contents/ui/WeatherView.qml:315
+msgctxt "weather condition"
+msgid "overcast"
+msgstr "пасмурно"
+
+#: weather/package/contents/ui/WeatherView.qml:316
+msgctxt "weather condition"
+msgid "fog"
+msgstr "туман"
+
+#: weather/package/contents/ui/WeatherView.qml:317
+msgctxt "weather condition"
+msgid "rime fog"
+msgstr "изморозь"
+
+#: weather/package/contents/ui/WeatherView.qml:318
+msgctxt "weather condition"
+msgid "light drizzle"
+msgstr "слабая морось"
+
+#: weather/package/contents/ui/WeatherView.qml:319
+msgctxt "weather condition"
+msgid "drizzle"
+msgstr "морось"
+
+#: weather/package/contents/ui/WeatherView.qml:320
+msgctxt "weather condition"
+msgid "heavy drizzle"
+msgstr "сильная морось"
+
+#: weather/package/contents/ui/WeatherView.qml:321
+msgctxt "weather condition"
+msgid "freezing drizzle"
+msgstr "ледяная морось"
+
+#: weather/package/contents/ui/WeatherView.qml:322
+msgctxt "weather condition"
+msgid "heavy freezing drizzle"
+msgstr "сильная ледяная морось"
+
+#: weather/package/contents/ui/WeatherView.qml:323
+msgctxt "weather condition"
+msgid "light rain"
+msgstr "небольшой дождь"
+
+#: weather/package/contents/ui/WeatherView.qml:324
+msgctxt "weather condition"
+msgid "rain"
+msgstr "дождь"
+
+#: weather/package/contents/ui/WeatherView.qml:325
+msgctxt "weather condition"
+msgid "heavy rain"
+msgstr "сильный дождь"
+
+#: weather/package/contents/ui/WeatherView.qml:326
+msgctxt "weather condition"
+msgid "freezing rain"
+msgstr "ледяной дождь"
+
+#: weather/package/contents/ui/WeatherView.qml:327
+msgctxt "weather condition"
+msgid "heavy freezing rain"
+msgstr "сильный ледяной дождь"
+
+#: weather/package/contents/ui/WeatherView.qml:328
+msgctxt "weather condition"
+msgid "light snow"
+msgstr "небольшой снег"
+
+#: weather/package/contents/ui/WeatherView.qml:329
+msgctxt "weather condition"
+msgid "snow"
+msgstr "снег"
+
+#: weather/package/contents/ui/WeatherView.qml:330
+msgctxt "weather condition"
+msgid "heavy snow"
+msgstr "сильный снег"
+
+#: weather/package/contents/ui/WeatherView.qml:331
+msgctxt "weather condition"
+msgid "snow grains"
+msgstr "снежные зёрна"
+
+#: weather/package/contents/ui/WeatherView.qml:332
+msgctxt "weather condition"
+msgid "light showers"
+msgstr "небольшой ливень"
+
+#: weather/package/contents/ui/WeatherView.qml:333
+msgctxt "weather condition"
+msgid "showers"
+msgstr "ливень"
+
+#: weather/package/contents/ui/WeatherView.qml:334
+msgctxt "weather condition"
+msgid "heavy showers"
+msgstr "сильный ливень"
+
+#: weather/package/contents/ui/WeatherView.qml:335
+msgctxt "weather condition"
+msgid "snow showers"
+msgstr "ливневый снег"
+
+#: weather/package/contents/ui/WeatherView.qml:336
+msgctxt "weather condition"
+msgid "heavy snow showers"
+msgstr "сильный снегопад"
+
+#: weather/package/contents/ui/WeatherView.qml:337
+msgctxt "weather condition"
+msgid "thunderstorm"
+msgstr "гроза"
+
+#: weather/package/contents/ui/WeatherView.qml:338
+msgctxt "weather condition"
+msgid "thunderstorm with hail"
+msgstr "гроза с градом"
+
+#: weather/package/contents/ui/WeatherView.qml:339
+msgctxt "weather condition"
+msgid "thunderstorm with heavy hail"
+msgstr "гроза, сильный град"
+
+#: weather/package/contents/ui/WeatherView.qml:347
+#, kde-format
+msgctxt "how old the shown weather is"
+msgid "%1 min ago"
+msgid_plural "%1 min ago"
+msgstr[0] "%1 минуту назад"
+msgstr[1] "%1 минуты назад"
+msgstr[2] "%1 минут назад"
+
+#: weather/package/contents/ui/WeatherView.qml:348
+#, kde-format
+msgctxt "how old the shown weather is"
+msgid "%1 h ago"
+msgid_plural "%1 h ago"
+msgstr[0] "%1 час назад"
+msgstr[1] "%1 часа назад"
+msgstr[2] "%1 часов назад"
+
+#: weather/package/contents/ui/WeatherView.qml:386
+msgctxt "no location, no guess"
+msgid "set a location in the widget settings"
+msgstr "укажите место в настройках виджета"
+
+#: weather/package/contents/ui/WeatherView.qml:391
+msgctxt "header: the place was guessed from the time zone"
+msgid "time zone"
+msgstr "часовой пояс"
+
+#: weather/package/contents/ui/WeatherView.qml:395
+msgctxt "header: the last request failed"
+msgid "offline"
+msgstr "офлайн"
+
+#: weather/package/contents/ui/WeatherView.qml:396
+msgctxt "the widget's header line"
+msgid "WEATHER"
+msgstr "ПОГОДА"
+
+#: weather/package/contents/ui/WeatherView.qml:399
+msgctxt "nothing fetched yet"
+msgid "no data yet"
+msgstr "данных пока нет"
+
+#: weather/package/contents/ui/WeatherView.qml:406
+#, kde-format
+msgctxt "apparent temperature"
+msgid "feels %1"
+msgstr "ощущается %1"
+
+#: weather/package/contents/ui/WeatherView.qml:407
+#, kde-format
+msgctxt "wind: speed, its unit, compass direction"
+msgid "wind %1 %2 %3"
+msgstr "ветер %1 %2 %3"
+
+#: weather/package/contents/ui/WeatherView.qml:435
+msgctxt "Open-Meteo's terms ask for this line"
+msgid "Weather data by Open-Meteo.com"
+msgstr "Данные о погоде: Open-Meteo.com"
+
+#: weather/package/contents/ui/configGeneral.qml:25
+msgctxt "settings section"
+msgid "Text"
+msgstr "Текст"
+
+#: weather/package/contents/ui/configGeneral.qml:29
+msgid "Font:"
+msgstr "Шрифт:"
+
+#: weather/package/contents/ui/configGeneral.qml:35
+msgctxt "font size"
+msgid "Size:"
+msgstr "Кегль:"
+
+#: weather/package/contents/ui/configGeneral.qml:42
+msgid "Width, characters:"
+msgstr "Ширина, символов:"
+
+#: weather/package/contents/ui/configGeneral.qml:48
+msgid ""
+"The widget is this many characters wide; its height follows the number of\n"
+"forecast days and the attribution line. A longer line is cut with an "
+"ellipsis."
+msgstr ""
+"Виджет столько символов в ширину; высота зависит от числа дней\n"
+"прогноза и строки с источником. Более длинная строка обрезается многоточием."
+
+#: weather/package/contents/ui/configGeneral.qml:53
+msgctxt "settings section"
+msgid "Palette"
+msgstr "Палитра"
+
+#: weather/package/contents/ui/configGeneral.qml:56
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "Основной текст:"
+
+#: weather/package/contents/ui/configGeneral.qml:62
+msgctxt "palette: colour of"
+msgid "Temperature:"
+msgstr "Температура:"
+
+#: weather/package/contents/ui/configGeneral.qml:68
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "Второстепенное:"
+
+#: weather/package/contents/ui/configLocation.qml:44
+msgctxt "typed coordinates out of range"
+msgid "latitude is −90…90, longitude −180…180"
+msgstr "широта −90…90, долгота −180…180"
+
+#: weather/package/contents/ui/configLocation.qml:60
+msgctxt "geocoding in progress"
+msgid "searching…"
+msgstr "поиск…"
+
+#: weather/package/contents/ui/configLocation.qml:79
+msgctxt "geocoding: no match"
+msgid "nothing found"
+msgstr "ничего не найдено"
+
+#: weather/package/contents/ui/configLocation.qml:81
+msgctxt "geocoding: the request failed"
+msgid "the lookup failed — no network?"
+msgstr "поиск не удался — нет сети?"
+
+#: weather/package/contents/ui/configLocation.qml:122
+msgctxt "settings section"
+msgid "Location"
+msgstr "Место"
+
+#: weather/package/contents/ui/configLocation.qml:125
+msgid "Place:"
+msgstr "Место:"
+
+#: weather/package/contents/ui/configLocation.qml:131
+msgctxt "search field placeholder"
+msgid "a city, or latitude, longitude"
+msgstr "город или широта, долгота"
+
+#: weather/package/contents/ui/configLocation.qml:137
+msgctxt "look the place up"
+msgid "Search"
+msgstr "Найти"
+
+#: weather/package/contents/ui/configLocation.qml:144
+msgid "Current:"
+msgstr "Сейчас:"
+
+#: weather/package/contents/ui/configLocation.qml:147
+#, kde-format
+msgctxt "stored place: name (latitude, longitude)"
+msgid "%1 (%2, %3)"
+msgstr "%1 (%2, %3)"
+
+#: weather/package/contents/ui/configLocation.qml:149
+msgctxt "no place stored"
+msgid "not set — guessed from the time zone"
+msgstr "не задано — угадано по часовому поясу"
+
+#: weather/package/contents/ui/configLocation.qml:154
+msgctxt "forget the stored place"
+msgid "Clear"
+msgstr "Очистить"
+
+#: weather/package/contents/ui/configLocation.qml:195
+msgctxt "settings section"
+msgid "Forecast"
+msgstr "Прогноз"
+
+#: weather/package/contents/ui/configLocation.qml:199
+msgid "Units:"
+msgstr "Единицы:"
+
+#: weather/package/contents/ui/configLocation.qml:200
+msgctxt "units: follow the locale's measurement system"
+msgid "by locale"
+msgstr "по локали"
+
+#: weather/package/contents/ui/configLocation.qml:205
+msgid "Days:"
+msgstr "Дней:"
+
+#: weather/package/contents/ui/configLocation.qml:212
+msgid "Attribution:"
+msgstr "Источник:"
+
+#: weather/package/contents/ui/configLocation.qml:213
+msgid "show the Open-Meteo line"
+msgstr "показывать строку Open-Meteo"
+
+#: weather/package/contents/ui/configLocation.qml:217
+msgid ""
+"The data is Open-Meteo's, free for non-commercial use;\n"
+"its terms ask for the attribution line."
+msgstr ""
+"Данные принадлежат Open-Meteo и бесплатны для некоммерческого "
+"использования;\n"
+"их условия просят указывать источник."
+
+#: weather/package/contents/ui/configMouse.qml:19
+msgid "Mouse:"
+msgstr "Мышь:"
+
+#: weather/package/contents/ui/configMouse.qml:20
+msgid "let clicks through to the desktop"
+msgstr "пропускать клики на рабочий стол"
+
+#: weather/package/contents/ui/configMouse.qml:24
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The widget takes the mouse only in the desktop's edit mode:\n"
+"that is where its settings are, or ./install.sh with the clicks off switch."
+msgstr ""
+"Пока клики проходят насквозь, обе кнопки мыши попадают на рабочий стол.\n"
+"Виджет берёт мышь только в режиме правки рабочего стола:\n"
+"там же его настройки, либо ./install.sh с ключом clicks off."

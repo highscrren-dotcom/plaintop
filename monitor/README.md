@@ -28,12 +28,36 @@ A header with the hostname, clock, date, system, CPU load overall and per NUMA n
 processor model with temperatures and fan speeds, top processes by CPU and by memory, RAM,
 GPU with VRAM, disks with NVMe temperature, uptime, network, the state of
 docker/ollama/updates and the hardware spec sheet — everything the conky implementation
-showed.
+showed — and, since 0.3, three blocks it never had:
+
+- **`pressure`** — the kernel's pressure stall information as three bars, `PSI` (CPU),
+  `mem` and `io`: the share of the last 10 seconds in which some task waited for that
+  resource (`pressure/*/some10Sec`). Parameter `full` (off) adds a line with the full
+  stalls for memory and I/O — the time every task waited, usually well under 1%. Hidden
+  when the machine reports no pressure sensors.
+- **`battery`** — a bar with the charge and a line with the state: charging with the power
+  and the time to full, discharging with the time left, or full / idle, plus the health
+  when reported — `power/<id>/{chargePercentage,chargeRate,charge,capacity,health}`, the
+  state and the time derived from the sign of `chargeRate`. No parameters. Shown only
+  when a battery with a capacity above 0 Wh is found: the plugin lists mice, keyboards
+  and headsets as batteries too, and those have none. ⚠️ Not yet run on a machine with a
+  real battery — verified are the hide path and a stub.
+- **`health`** — failed systemd units of the system and the user manager, the count of
+  journal entries of priority error or worse since boot, and the last distinct system
+  errors, newest first. `package/contents/code/health.sh` runs every 15 s, only while an
+  enabled health block exists, 34–43 ms per run; without access to the system journal the
+  count line says so. Parameters: `units` (on) and `errors` (on), the two count lines, and
+  `lines` (3, 0–5), how many error lines to show.
+
+Default order: pressure after the processor, the battery after the network, health after
+the services.
 
 **Which blocks and in what order comes from the description** (`../schema/widget.json`):
 enable, disable, reorder, change parameters, add a block of your own — from an arbitrary
 command or from any ksystemstats sensor. It is edited on the *Blocks* page of the
-plasmoid's dialog.
+plasmoid's dialog. Separators collapse: a block that hides itself — the battery on a
+desktop, the pressure block on a kernel without PSI — leaves no double rule, and none
+stays at the top or the bottom.
 
 ## Why there was a second host, and why it is retired
 
@@ -103,8 +127,10 @@ The data comes from **ksystemstats** via `org.kde.ksysguard.sensors` — hundred
 ready-made sensors — and the process lists from `org.kde.ksysguard.process`. Commands fill
 in only what the sensors lack: the NUMA layout, CPU model and board are read once at start
 (`/sys`, `lscpu`), usage by mount point comes from `df` every 10 s, docker/ollama/pending
-updates from `package/contents/code/services.sh`, plus whatever custom command blocks you
-add. The rejected approaches and what each one costs — `../docs/DECISIONS.md`, decision 2.
+updates from `package/contents/code/services.sh`, system health from
+`package/contents/code/health.sh` (`systemctl` and `journalctl`, only while the block is
+enabled), plus whatever custom command blocks you add; pressure and battery readings are
+sensors like the rest. The rejected approaches and what each one costs — `../docs/DECISIONS.md`, decision 2.
 
 ## What is still ahead
 

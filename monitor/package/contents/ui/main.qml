@@ -45,12 +45,25 @@ PlasmoidItem {
         return Description.BLOCKS
     }
 
+    // One character of the widget's font. The text area's width in characters comes from
+    // it and the settings, so free-text lines are cut where the widget ends rather than
+    // at a guessed count: 57 here at 500 px wide, 48 px of padding, 10 pt JetBrains Mono.
+    TextMetrics {
+        id: cell
+        font.family: root.cfg.fontFamily
+        font.pointSize: root.cfg.fontSize
+        text: "0"
+    }
+
     MonitorData {
         id: monitorData
         blocks: root.blocks
         rate: root.cfg.updateInterval
         processInterval: root.cfg.processInterval
         servicesScript: Qt.resolvedUrl("../code/services.sh").toString().replace("file://", "")
+        healthScript: Qt.resolvedUrl("../code/health.sh").toString().replace("file://", "")
+        columns: Math.max(20, Math.floor((root.cfg.widgetWidth - root.cfg.padLeft)
+                                         / Math.max(1, cell.advanceWidth)))
     }
 
     // The shell's edit mode: the one moment a click-through widget must take the mouse.

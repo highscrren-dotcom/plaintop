@@ -36,6 +36,14 @@ DOMAINS = {
         "python": ["spectrum/window/setup.py"],
         "schema": False,
     },
+    "plasma_applet_org.s1dd1.plainplayer": {
+        "sources": ["player/package/contents"],
+        "schema": False,
+    },
+    "plasma_applet_org.s1dd1.plainweather": {
+        "sources": ["weather/package/contents"],
+        "schema": False,
+    },
 }
 
 # Must match the contexts the editors pass when they translate vocabulary text.
@@ -144,6 +152,14 @@ def main():
             po.parent.mkdir(exist_ok=True)
             subprocess.run(["msginit", "--no-translator", "-l", init, "-i", str(pot),
                             "-o", str(po)], check=True)
+        # A new domain starts with an empty catalog in every language the project already
+        # has: the languages are the project's, not one widget's, and msgmerge below only
+        # updates what exists.
+        for lang in sorted(p.name for p in PO.iterdir() if p.is_dir() and any(p.glob("*.po"))):
+            po = PO / lang / f"{domain}.po"
+            if not po.exists():
+                subprocess.run(["msginit", "--no-translator", "-l", lang, "-i", str(pot),
+                                "-o", str(po)], check=True)
         for po in sorted(PO.glob(f"*/{domain}.po")):
             subprocess.run(["msgmerge", "--quiet", "--update", "--backup=none",
                             str(po), str(pot)], check=True)

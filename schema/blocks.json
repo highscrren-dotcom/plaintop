@@ -67,6 +67,17 @@
       }
     }
   },
+  "pressure": {
+    "name": "Pressure (PSI)",
+    "hint": "Kernel pressure stall information: share of time tasks waited for CPU, memory or I/O (10-second average)",
+    "params": {
+      "full": {
+        "type": "bool",
+        "name": "Full stalls for memory and I/O",
+        "default": false
+      }
+    }
+  },
   "memory": {
     "name": "Memory",
     "params": {
@@ -134,10 +145,38 @@
       }
     }
   },
+  "battery": {
+    "name": "Battery",
+    "hint": "Charge, rate and estimated time; shown only when a battery is found",
+    "params": {}
+  },
   "services": {
     "name": "Services",
     "hint": "docker, ollama, pending updates — a script inside the package",
     "params": {}
+  },
+  "health": {
+    "name": "System health",
+    "hint": "Failed systemd units, error count since boot and the last error lines from the journal",
+    "params": {
+      "units": {
+        "type": "bool",
+        "name": "Failed units",
+        "default": true
+      },
+      "errors": {
+        "type": "bool",
+        "name": "Error count since boot",
+        "default": true
+      },
+      "lines": {
+        "type": "int",
+        "name": "Last error lines",
+        "default": 3,
+        "min": 0,
+        "max": 5
+      }
+    }
   },
   "passport": {
     "name": "Hardware spec sheet",

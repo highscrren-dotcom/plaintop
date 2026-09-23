@@ -36,6 +36,8 @@ Item {
         font.family: view.fontFamily
         font.pointSize: view.fontSize
         renderType: Text.NativeRendering
+        // Journal messages are free text: "<b>" or "<a …>" in one must not become markup.
+        textFormat: Text.PlainText
     }
 
     // ⚠️ The padding is drawn INSIDE the widget rather than set through its coordinates:
