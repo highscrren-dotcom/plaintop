@@ -288,7 +288,7 @@ MPRIS он читает через модуль штатного медиако�
 - **Category:** Plasma 6 Extensions → Online Services
 - **License:** GPL-2.0-or-later
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
-- **Tags:** weather, forecast, open-meteo, text
+- **Tags:** weather, forecast, open-meteo, met.no, weatherapi, text
 - **Images:** the header, the current line and three forecast rows — needs a location set
   or guessed, and a network
 
@@ -303,22 +303,28 @@ current conditions — temperature, a word for the sky, what it feels like, wind
 humidity — and one row per forecast day, 0 to 7, with the low, the high, the sky and
 the chance of rain.
 
-The data is Open-Meteo's: the widget asks api.open-meteo.com itself over https, every
-15 minutes, one request — no service of its own, nothing to install beyond the widget,
-and it needs network access to that host. The last answer is kept, so the widget draws
-at once after a shell restart and stays through an outage, marked "offline". The
-place: search a city on the Location page (a click stores it) or type "latitude,
-longitude"; until one is set, the widget guesses the city from the time zone and says
-so in the header. It never asks a geolocation service where you are. Units follow the
-locale (°F and mph in the US) or are chosen by hand.
+The data comes from one of four sources, chosen in the settings: Open-Meteo (the
+default) and MET Norway need no key; WeatherAPI.com and Visual Crossing take a free key
+from your own account, pasted into the widget. The widget asks the source itself over
+https, every 15 minutes (30 for Visual Crossing), one request — no service of its own,
+nothing to install beyond the widget, and it needs network access to that source's host;
+if one host is unreachable from your network, switch the source. The last answer is kept,
+so the widget draws at once after a shell restart and stays through an outage, marked
+"offline"; a key the source refuses is marked "bad key". The place: search a city on the
+Location page (a click stores it) or type "latitude, longitude"; until one is set, the
+widget guesses the city from the time zone and says so in the header. It never asks a
+geolocation service where you are. Units follow the locale (°F and mph in the US) or are
+chosen by hand.
 
-Weather data by Open-Meteo.com. Open-Meteo is free for non-commercial use under
-CC BY 4.0 and asks for attribution — the last line of the widget, on by default.
+Every source's terms ask for attribution — the last line of the widget names the source
+in use, on by default: Weather data by Open-Meteo.com (free for non-commercial use, CC BY
+4.0); Weather data from MET Norway (CC BY 4.0); Powered by WeatherAPI.com; Weather data
+provided by Visual Crossing.
 
-Right-click → Configure: font, size, width, three colours; location, units, days, the
-attribution line; the Mouse page lets both buttons through to the desktop like the
-other plaintop widgets. The interface follows Plasma's language — ten languages, all
-but English and Russian machine-translated, corrections welcome.
+Right-click → Configure: font, size, width, three colours; source and key, location,
+units, days, the attribution line; the Mouse page lets both buttons through to the
+desktop like the other plaintop widgets. The interface follows Plasma's language — ten
+languages, all but English and Russian machine-translated, corrections welcome.
 
 Source, issues, details: https://github.com/highscrren-dotcom/plaintop
 
@@ -329,23 +335,28 @@ plainweather — погода для рабочего стола Plasma 6 про
 температура, слово про небо, «ощущается», ветер и влажность — и по строке на день
 прогноза, от 0 до 7: минимум, максимум, небо и вероятность осадков.
 
-Данные — Open-Meteo: виджет сам запрашивает api.open-meteo.com по https раз в 15 минут,
-одним запросом — своей службы нет, ставить сверх виджета ничего не нужно, нужен лишь
-доступ по сети к этому хосту. Последний ответ хранится, так что после перезапуска
-оболочки виджет рисуется сразу и переживает обрыв сети с пометкой об этом. Место: поиск
-города на странице «Место» (клик сохраняет) или введённые «широта, долгота»; пока оно
-не задано, виджет угадывает город по часовому поясу и говорит об этом в заголовке. Где
-вы находитесь, у служб геолокации он не спрашивает. Единицы — по локали (в США °F и
-mph) или вручную.
+Данные — из одного из четырёх источников, выбранного в настройках: Open-Meteo (по
+умолчанию) и MET Norway без ключа; WeatherAPI.com и Visual Crossing — с бесплатным ключом
+из вашей учётной записи, вписанным в виджет. Виджет сам запрашивает источник по https раз
+в 15 минут (у Visual Crossing — раз в 30), одним запросом — своей службы нет, ставить
+сверх виджета ничего не нужно, нужен лишь доступ по сети к хосту этого источника; если
+один хост из вашей сети недостижим, переключите источник. Последний ответ хранится, так
+что после перезапуска оболочки виджет рисуется сразу и переживает обрыв сети с пометкой
+«офлайн»; ключ, который источник отверг, помечается «неверный ключ». Место: поиск города
+на странице «Место» (клик сохраняет) или введённые «широта, долгота»; пока оно не задано,
+виджет угадывает город по часовому поясу и говорит об этом в заголовке. Где вы
+находитесь, у служб геолокации он не спрашивает. Единицы — по локали (в США °F и mph)
+или вручную.
 
-Данные о погоде: Open-Meteo.com. Open-Meteo бесплатен для некоммерческого использования
-по лицензии CC BY 4.0 и просит указывать источник — последняя строка виджета, включена
-по умолчанию.
+Условия каждого источника просят указывать его — последняя строка виджета называет тот,
+что используется, включена по умолчанию: «Данные о погоде: Open-Meteo.com» (бесплатно
+для некоммерческого использования, CC BY 4.0); «Данные о погоде: MET Norway» (CC BY 4.0);
+«При поддержке WeatherAPI.com»; «Данные о погоде: Visual Crossing».
 
-Правый клик → Настроить: шрифт, кегль, ширина, три цвета; место, единицы, дни, строка
-источника; страница «Мышь» пропускает на стол обе кнопки, как у других виджетов
-plaintop. Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и
-русского, переведено машинно, исправления приветствуются.
+Правый клик → Настроить: шрифт, кегль, ширина, три цвета; источник и ключ, место,
+единицы, дни, строка источника; страница «Мышь» пропускает на стол обе кнопки, как у
+других виджетов plaintop. Интерфейс говорит на языке Plasma — десять языков, всё, кроме
+английского и русского, переведено машинно, исправления приветствуются.
 
 Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
 ```

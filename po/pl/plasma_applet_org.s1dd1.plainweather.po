@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 18:45+0500\n"
+"POT-Creation-Date: 2026-09-23 22:24+0500\n"
 "PO-Revision-Date: 2026-09-23 18:13+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -33,202 +33,222 @@ msgctxt "settings page"
 msgid "Mouse"
 msgstr "Mysz"
 
-#: weather/package/contents/ui/WeatherView.qml:292
+#: weather/package/contents/ui/WeatherView.qml:398
 msgctxt "wind speed unit"
 msgid "m/s"
 msgstr "m/s"
 
-#: weather/package/contents/ui/WeatherView.qml:294
+#: weather/package/contents/ui/WeatherView.qml:400
 msgctxt "wind speed unit"
 msgid "mph"
 msgstr "mil/h"
 
-#: weather/package/contents/ui/WeatherView.qml:295
+#: weather/package/contents/ui/WeatherView.qml:401
 msgctxt "wind speed unit"
 msgid "km/h"
 msgstr "km/h"
 
-#: weather/package/contents/ui/WeatherView.qml:299
+#: weather/package/contents/ui/WeatherView.qml:405
 msgctxt "compass point"
 msgid "N"
 msgstr "N"
 
-#: weather/package/contents/ui/WeatherView.qml:299
+#: weather/package/contents/ui/WeatherView.qml:405
 msgctxt "compass point"
 msgid "NE"
 msgstr "NE"
 
-#: weather/package/contents/ui/WeatherView.qml:300
+#: weather/package/contents/ui/WeatherView.qml:406
 msgctxt "compass point"
 msgid "E"
 msgstr "E"
 
-#: weather/package/contents/ui/WeatherView.qml:300
+#: weather/package/contents/ui/WeatherView.qml:406
 msgctxt "compass point"
 msgid "SE"
 msgstr "SE"
 
-#: weather/package/contents/ui/WeatherView.qml:301
+#: weather/package/contents/ui/WeatherView.qml:407
 msgctxt "compass point"
 msgid "S"
 msgstr "S"
 
-#: weather/package/contents/ui/WeatherView.qml:301
+#: weather/package/contents/ui/WeatherView.qml:407
 msgctxt "compass point"
 msgid "SW"
 msgstr "SW"
 
-#: weather/package/contents/ui/WeatherView.qml:302
+#: weather/package/contents/ui/WeatherView.qml:408
 msgctxt "compass point"
 msgid "W"
 msgstr "W"
 
-#: weather/package/contents/ui/WeatherView.qml:302
+#: weather/package/contents/ui/WeatherView.qml:408
 msgctxt "compass point"
 msgid "NW"
 msgstr "NW"
 
-#: weather/package/contents/ui/WeatherView.qml:312
+#: weather/package/contents/ui/WeatherView.qml:418
 msgctxt "weather condition"
 msgid "clear"
 msgstr "bezchmurnie"
 
-#: weather/package/contents/ui/WeatherView.qml:313
+#: weather/package/contents/ui/WeatherView.qml:419
 msgctxt "weather condition"
 msgid "mostly clear"
 msgstr "pogodnie"
 
-#: weather/package/contents/ui/WeatherView.qml:314
+#: weather/package/contents/ui/WeatherView.qml:420
 msgctxt "weather condition"
 msgid "partly cloudy"
 msgstr "częściowo pochmurno"
 
-#: weather/package/contents/ui/WeatherView.qml:315
+#: weather/package/contents/ui/WeatherView.qml:421
 msgctxt "weather condition"
 msgid "overcast"
 msgstr "pochmurno"
 
-#: weather/package/contents/ui/WeatherView.qml:316
+#: weather/package/contents/ui/WeatherView.qml:422
 msgctxt "weather condition"
 msgid "fog"
 msgstr "mgła"
 
-#: weather/package/contents/ui/WeatherView.qml:317
+#: weather/package/contents/ui/WeatherView.qml:423
 msgctxt "weather condition"
 msgid "rime fog"
 msgstr "mgła z szadzią"
 
-#: weather/package/contents/ui/WeatherView.qml:318
+#: weather/package/contents/ui/WeatherView.qml:424
 msgctxt "weather condition"
 msgid "light drizzle"
 msgstr "słaba mżawka"
 
-#: weather/package/contents/ui/WeatherView.qml:319
+#: weather/package/contents/ui/WeatherView.qml:425
 msgctxt "weather condition"
 msgid "drizzle"
 msgstr "mżawka"
 
-#: weather/package/contents/ui/WeatherView.qml:320
+#: weather/package/contents/ui/WeatherView.qml:426
 msgctxt "weather condition"
 msgid "heavy drizzle"
 msgstr "silna mżawka"
 
-#: weather/package/contents/ui/WeatherView.qml:321
+#: weather/package/contents/ui/WeatherView.qml:427
 msgctxt "weather condition"
 msgid "freezing drizzle"
 msgstr "marznąca mżawka"
 
-#: weather/package/contents/ui/WeatherView.qml:322
+#: weather/package/contents/ui/WeatherView.qml:428
 msgctxt "weather condition"
 msgid "heavy freezing drizzle"
 msgstr "silna marznąca mżawka"
 
-#: weather/package/contents/ui/WeatherView.qml:323
+#: weather/package/contents/ui/WeatherView.qml:429
 msgctxt "weather condition"
 msgid "light rain"
 msgstr "słaby deszcz"
 
-#: weather/package/contents/ui/WeatherView.qml:324
+#: weather/package/contents/ui/WeatherView.qml:430
 msgctxt "weather condition"
 msgid "rain"
 msgstr "deszcz"
 
-#: weather/package/contents/ui/WeatherView.qml:325
+#: weather/package/contents/ui/WeatherView.qml:431
 msgctxt "weather condition"
 msgid "heavy rain"
 msgstr "silny deszcz"
 
-#: weather/package/contents/ui/WeatherView.qml:326
+#: weather/package/contents/ui/WeatherView.qml:432
 msgctxt "weather condition"
 msgid "freezing rain"
 msgstr "marznący deszcz"
 
-#: weather/package/contents/ui/WeatherView.qml:327
+#: weather/package/contents/ui/WeatherView.qml:433
 msgctxt "weather condition"
 msgid "heavy freezing rain"
 msgstr "silny marznący deszcz"
 
-#: weather/package/contents/ui/WeatherView.qml:328
+#: weather/package/contents/ui/WeatherView.qml:434
 msgctxt "weather condition"
 msgid "light snow"
 msgstr "słaby śnieg"
 
-#: weather/package/contents/ui/WeatherView.qml:329
+#: weather/package/contents/ui/WeatherView.qml:435
 msgctxt "weather condition"
 msgid "snow"
 msgstr "śnieg"
 
-#: weather/package/contents/ui/WeatherView.qml:330
+#: weather/package/contents/ui/WeatherView.qml:436
 msgctxt "weather condition"
 msgid "heavy snow"
 msgstr "silny śnieg"
 
-#: weather/package/contents/ui/WeatherView.qml:331
+#: weather/package/contents/ui/WeatherView.qml:437
 msgctxt "weather condition"
 msgid "snow grains"
 msgstr "śnieg ziarnisty"
 
-#: weather/package/contents/ui/WeatherView.qml:332
+#: weather/package/contents/ui/WeatherView.qml:438
 msgctxt "weather condition"
 msgid "light showers"
 msgstr "słabe przelotne opady"
 
-#: weather/package/contents/ui/WeatherView.qml:333
+#: weather/package/contents/ui/WeatherView.qml:439
 msgctxt "weather condition"
 msgid "showers"
 msgstr "przelotne opady"
 
-#: weather/package/contents/ui/WeatherView.qml:334
+#: weather/package/contents/ui/WeatherView.qml:440
 msgctxt "weather condition"
 msgid "heavy showers"
 msgstr "ulewa"
 
-#: weather/package/contents/ui/WeatherView.qml:335
+#: weather/package/contents/ui/WeatherView.qml:441
 msgctxt "weather condition"
 msgid "snow showers"
 msgstr "przelotny śnieg"
 
-#: weather/package/contents/ui/WeatherView.qml:336
+#: weather/package/contents/ui/WeatherView.qml:442
 msgctxt "weather condition"
 msgid "heavy snow showers"
 msgstr "śnieżyca"
 
-#: weather/package/contents/ui/WeatherView.qml:337
+#: weather/package/contents/ui/WeatherView.qml:443
 msgctxt "weather condition"
 msgid "thunderstorm"
 msgstr "burza"
 
-#: weather/package/contents/ui/WeatherView.qml:338
+#: weather/package/contents/ui/WeatherView.qml:444
 msgctxt "weather condition"
 msgid "thunderstorm with hail"
 msgstr "burza z gradem"
 
-#: weather/package/contents/ui/WeatherView.qml:339
+#: weather/package/contents/ui/WeatherView.qml:445
 msgctxt "weather condition"
 msgid "thunderstorm with heavy hail"
 msgstr "burza, silny grad"
 
-#: weather/package/contents/ui/WeatherView.qml:347
+#: weather/package/contents/ui/WeatherView.qml:453
+msgctxt "MET Norway's licence (CC BY 4.0) asks for this line"
+msgid "Weather data from MET Norway"
+msgstr "Dane pogodowe: MET Norway"
+
+#: weather/package/contents/ui/WeatherView.qml:454
+msgctxt "WeatherAPI.com's terms ask for this line"
+msgid "Powered by WeatherAPI.com"
+msgstr "Powered by WeatherAPI.com"
+
+#: weather/package/contents/ui/WeatherView.qml:455
+msgctxt "Visual Crossing's terms ask for this line"
+msgid "Weather data provided by Visual Crossing"
+msgstr "Weather data provided by Visual Crossing"
+
+#: weather/package/contents/ui/WeatherView.qml:456
+msgctxt "Open-Meteo's terms ask for this line"
+msgid "Weather data by Open-Meteo.com"
+msgstr "Dane pogodowe: Open-Meteo.com"
+
+#: weather/package/contents/ui/WeatherView.qml:463
 #, kde-format
 msgctxt "how old the shown weather is"
 msgid "%1 min ago"
@@ -237,7 +257,7 @@ msgstr[0] "%1 minutę temu"
 msgstr[1] "%1 minuty temu"
 msgstr[2] "%1 minut temu"
 
-#: weather/package/contents/ui/WeatherView.qml:348
+#: weather/package/contents/ui/WeatherView.qml:464
 #, kde-format
 msgctxt "how old the shown weather is"
 msgid "%1 h ago"
@@ -246,47 +266,52 @@ msgstr[0] "%1 godzinę temu"
 msgstr[1] "%1 godziny temu"
 msgstr[2] "%1 godzin temu"
 
-#: weather/package/contents/ui/WeatherView.qml:386
+#: weather/package/contents/ui/WeatherView.qml:502
 msgctxt "no location, no guess"
 msgid "set a location in the widget settings"
 msgstr "ustaw miejsce w ustawieniach widżetu"
 
-#: weather/package/contents/ui/WeatherView.qml:391
+#: weather/package/contents/ui/WeatherView.qml:506
+msgctxt "the source needs a key and none is set"
+msgid "set the API key in the widget settings"
+msgstr "ustaw klucz API w ustawieniach widżetu"
+
+#: weather/package/contents/ui/WeatherView.qml:511
 msgctxt "header: the place was guessed from the time zone"
 msgid "time zone"
 msgstr "strefa czasowa"
 
-#: weather/package/contents/ui/WeatherView.qml:395
+#: weather/package/contents/ui/WeatherView.qml:515
 msgctxt "header: the last request failed"
 msgid "offline"
 msgstr "offline"
 
-#: weather/package/contents/ui/WeatherView.qml:396
+#: weather/package/contents/ui/WeatherView.qml:517
+msgctxt "header: the source refused the API key"
+msgid "bad key"
+msgstr "błędny klucz"
+
+#: weather/package/contents/ui/WeatherView.qml:518
 msgctxt "the widget's header line"
 msgid "WEATHER"
 msgstr "POGODA"
 
-#: weather/package/contents/ui/WeatherView.qml:399
+#: weather/package/contents/ui/WeatherView.qml:521
 msgctxt "nothing fetched yet"
 msgid "no data yet"
 msgstr "jeszcze brak danych"
 
-#: weather/package/contents/ui/WeatherView.qml:406
+#: weather/package/contents/ui/WeatherView.qml:531
 #, kde-format
 msgctxt "apparent temperature"
 msgid "feels %1"
 msgstr "odczuwalna %1"
 
-#: weather/package/contents/ui/WeatherView.qml:407
+#: weather/package/contents/ui/WeatherView.qml:533
 #, kde-format
 msgctxt "wind: speed, its unit, compass direction"
 msgid "wind %1 %2 %3"
 msgstr "wiatr %1 %2 %3"
-
-#: weather/package/contents/ui/WeatherView.qml:435
-msgctxt "Open-Meteo's terms ask for this line"
-msgid "Weather data by Open-Meteo.com"
-msgstr "Dane pogodowe: Open-Meteo.com"
 
 #: weather/package/contents/ui/configGeneral.qml:25
 msgctxt "settings section"
@@ -336,98 +361,170 @@ msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Drugorzędny:"
 
-#: weather/package/contents/ui/configLocation.qml:44
+#: weather/package/contents/ui/configLocation.qml:55
 msgctxt "typed coordinates out of range"
 msgid "latitude is −90…90, longitude −180…180"
 msgstr "szerokość −90…90, długość −180…180"
 
-#: weather/package/contents/ui/configLocation.qml:60
+#: weather/package/contents/ui/configLocation.qml:71
 msgctxt "geocoding in progress"
 msgid "searching…"
 msgstr "szukanie…"
 
-#: weather/package/contents/ui/configLocation.qml:79
+#: weather/package/contents/ui/configLocation.qml:90
 msgctxt "geocoding: no match"
 msgid "nothing found"
 msgstr "nic nie znaleziono"
 
-#: weather/package/contents/ui/configLocation.qml:81
+#: weather/package/contents/ui/configLocation.qml:92
 msgctxt "geocoding: the request failed"
 msgid "the lookup failed — no network?"
 msgstr "wyszukiwanie nie powiodło się — brak sieci?"
 
-#: weather/package/contents/ui/configLocation.qml:122
-msgctxt "settings section"
-msgid "Location"
-msgstr "Lokalizacja"
+#: weather/package/contents/ui/configLocation.qml:127
+msgid ""
+"The data is MET Norway's, under CC BY 4.0;\n"
+"its terms ask for the attribution line."
+msgstr ""
+"Dane należą do MET Norway, na licencji CC BY 4.0;\n"
+"jej warunki proszą o wiersz ze źródłem."
 
-#: weather/package/contents/ui/configLocation.qml:125
-msgid "Place:"
-msgstr "Miejsce:"
+#: weather/package/contents/ui/configLocation.qml:129
+msgid ""
+"The data is WeatherAPI.com's; the free plan gives three forecast days\n"
+"and asks for the attribution line."
+msgstr ""
+"Dane należą do WeatherAPI.com; darmowy plan daje trzy dni prognozy\n"
+"i prosi o wiersz ze źródłem."
 
 #: weather/package/contents/ui/configLocation.qml:131
-msgctxt "search field placeholder"
-msgid "a city, or latitude, longitude"
-msgstr "miasto albo szerokość, długość"
+msgid ""
+"The data is Visual Crossing's; the free plan is a thousand records a day,\n"
+"one per forecast day, and its terms ask for the attribution line."
+msgstr ""
+"Dane należą do Visual Crossing; darmowy plan to tysiąc rekordów dziennie,\n"
+"po jednym na dzień prognozy, a warunki usługi proszą o wiersz ze źródłem."
 
-#: weather/package/contents/ui/configLocation.qml:137
-msgctxt "look the place up"
-msgid "Search"
-msgstr "Szukaj"
-
-#: weather/package/contents/ui/configLocation.qml:144
-msgid "Current:"
-msgstr "Obecnie:"
-
-#: weather/package/contents/ui/configLocation.qml:147
-#, kde-format
-msgctxt "stored place: name (latitude, longitude)"
-msgid "%1 (%2, %3)"
-msgstr "%1 (%2, %3)"
-
-#: weather/package/contents/ui/configLocation.qml:149
-msgctxt "no place stored"
-msgid "not set — guessed from the time zone"
-msgstr "nie ustawiono — odgadnięte ze strefy czasowej"
-
-#: weather/package/contents/ui/configLocation.qml:154
-msgctxt "forget the stored place"
-msgid "Clear"
-msgstr "Wyczyść"
-
-#: weather/package/contents/ui/configLocation.qml:195
-msgctxt "settings section"
-msgid "Forecast"
-msgstr "Prognoza"
-
-#: weather/package/contents/ui/configLocation.qml:199
-msgid "Units:"
-msgstr "Jednostki:"
-
-#: weather/package/contents/ui/configLocation.qml:200
-msgctxt "units: follow the locale's measurement system"
-msgid "by locale"
-msgstr "wg ustawień regionalnych"
-
-#: weather/package/contents/ui/configLocation.qml:205
-msgid "Days:"
-msgstr "Dni:"
-
-#: weather/package/contents/ui/configLocation.qml:212
-msgid "Attribution:"
-msgstr "Źródło:"
-
-#: weather/package/contents/ui/configLocation.qml:213
-msgid "show the Open-Meteo line"
-msgstr "pokazuj wiersz Open-Meteo"
-
-#: weather/package/contents/ui/configLocation.qml:217
+#: weather/package/contents/ui/configLocation.qml:133
 msgid ""
 "The data is Open-Meteo's, free for non-commercial use;\n"
 "its terms ask for the attribution line."
 msgstr ""
 "Dane należą do Open-Meteo i są darmowe do użytku niekomercyjnego;\n"
 "ich warunki proszą o wiersz ze źródłem."
+
+#: weather/package/contents/ui/configLocation.qml:147
+msgctxt "settings section"
+msgid "Source"
+msgstr "Źródło"
+
+#: weather/package/contents/ui/configLocation.qml:151
+msgid "Source:"
+msgstr "Źródło:"
+
+#: weather/package/contents/ui/configLocation.qml:152
+msgctxt "weather source"
+msgid "Open-Meteo"
+msgstr "Open-Meteo"
+
+#: weather/package/contents/ui/configLocation.qml:152
+msgctxt "weather source"
+msgid "MET Norway"
+msgstr "MET Norway"
+
+#: weather/package/contents/ui/configLocation.qml:153
+msgctxt "weather source"
+msgid "WeatherAPI.com"
+msgstr "WeatherAPI.com"
+
+#: weather/package/contents/ui/configLocation.qml:153
+msgctxt "weather source"
+msgid "Visual Crossing"
+msgstr "Visual Crossing"
+
+#: weather/package/contents/ui/configLocation.qml:160
+msgid "API key:"
+msgstr "Klucz API:"
+
+#: weather/package/contents/ui/configLocation.qml:163
+msgctxt "API key field placeholder"
+msgid "paste the key here"
+msgstr "wklej klucz tutaj"
+
+#: weather/package/contents/ui/configLocation.qml:169
+msgctxt "where the key comes from"
+msgid "A free key: weatherapi.com/signup"
+msgstr "Darmowy klucz: weatherapi.com/signup"
+
+#: weather/package/contents/ui/configLocation.qml:170
+msgctxt "where the key comes from"
+msgid "A free key: visualcrossing.com/sign-up"
+msgstr "Darmowy klucz: visualcrossing.com/sign-up"
+
+#: weather/package/contents/ui/configLocation.qml:181
+msgctxt "settings section"
+msgid "Location"
+msgstr "Lokalizacja"
+
+#: weather/package/contents/ui/configLocation.qml:184
+msgid "Place:"
+msgstr "Miejsce:"
+
+#: weather/package/contents/ui/configLocation.qml:190
+msgctxt "search field placeholder"
+msgid "a city, or latitude, longitude"
+msgstr "miasto albo szerokość, długość"
+
+#: weather/package/contents/ui/configLocation.qml:196
+msgctxt "look the place up"
+msgid "Search"
+msgstr "Szukaj"
+
+#: weather/package/contents/ui/configLocation.qml:203
+msgid "Current:"
+msgstr "Obecnie:"
+
+#: weather/package/contents/ui/configLocation.qml:206
+#, kde-format
+msgctxt "stored place: name (latitude, longitude)"
+msgid "%1 (%2, %3)"
+msgstr "%1 (%2, %3)"
+
+#: weather/package/contents/ui/configLocation.qml:208
+msgctxt "no place stored"
+msgid "not set — guessed from the time zone"
+msgstr "nie ustawiono — odgadnięte ze strefy czasowej"
+
+#: weather/package/contents/ui/configLocation.qml:213
+msgctxt "forget the stored place"
+msgid "Clear"
+msgstr "Wyczyść"
+
+#: weather/package/contents/ui/configLocation.qml:254
+msgctxt "settings section"
+msgid "Forecast"
+msgstr "Prognoza"
+
+#: weather/package/contents/ui/configLocation.qml:258
+msgid "Units:"
+msgstr "Jednostki:"
+
+#: weather/package/contents/ui/configLocation.qml:259
+msgctxt "units: follow the locale's measurement system"
+msgid "by locale"
+msgstr "wg ustawień regionalnych"
+
+#: weather/package/contents/ui/configLocation.qml:264
+msgid "Days:"
+msgstr "Dni:"
+
+#: weather/package/contents/ui/configLocation.qml:271
+msgid "Attribution:"
+msgstr "Źródło:"
+
+#: weather/package/contents/ui/configLocation.qml:272
+msgid "show the source's line"
+msgstr "pokazuj wiersz ze źródłem"
 
 #: weather/package/contents/ui/configMouse.qml:19
 msgid "Mouse:"

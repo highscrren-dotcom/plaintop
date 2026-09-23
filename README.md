@@ -36,7 +36,7 @@ What is in the repository:
 | **`monitor/`** | the text monitor: a plasmoid, with the renderer and data side in `shared/`; the retired window host stays in `window/` (decision 9) | works |
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
 | **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module; its view lives in `shared/`, since the visualizer draws it too | works |
-| **`weather/`** | the weather widget: now and the next days as text, from Open-Meteo over https, no service of its own | works |
+| **`weather/`** | the weather widget: now and the next days as text, from one of four sources over https — Open-Meteo by default — no service of its own | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
@@ -99,8 +99,9 @@ scripts and the relay, `msgfmt` from gettext for the translations, and a monospa
 `JetBrainsMono Nerd Font Mono` by default (`qt6-declarative` only for the click-through
 stand, `--check-passthrough`). The visualizer additionally needs `cava`; the player nothing
 extra — the MPRIS module it reads ships with plasma-workspace; the weather needs network
-access to `api.open-meteo.com`; the conky implementation needs `conky`, `python-xlib` and
-`lm_sensors`.
+access to the chosen source's host (`api.open-meteo.com` by default) and to
+`geocoding-api.open-meteo.com` for the place search; the conky implementation needs
+`conky`, `python-xlib` and `lm_sensors`.
 
 ## Adapting it to your hardware
 
@@ -161,16 +162,23 @@ visualizer's ring, as an option there; the widget stays a product of its own
 
 `weather/` shows the weather in the same lines: a header with the place, the current
 conditions — temperature, a word for the sky, what it feels like, wind and humidity — and
-one row per forecast day with the low, the high, the sky and the chance of rain. The data is
-[Open-Meteo](https://open-meteo.com)'s, fetched by the widget itself over https every
-15 minutes and kept in the config, so the last answer is drawn before the next one arrives
-and stays through an outage: the header says `· offline`, after an hour with the age of
-what is shown, and the rows under it are the last forecast that arrived, not blanks. The
-place comes from a search on the *Location* page, or two typed coordinates; until one is
-set the widget guesses the city from the time zone and says so in the header. It never
-asks a geolocation service where you are: behind a tunnel that would be the tunnel's exit
-(decision 10). Units follow the locale, or are chosen by hand. Open-Meteo is free for
-non-commercial use and asks for attribution — the last line, on by default.
+one row per forecast day with the low, the high, the sky and the chance of rain where the
+source gives it. The data comes from one of four sources, chosen on the *Location* page:
+[Open-Meteo](https://open-meteo.com) (the default) and [MET Norway](https://api.met.no)
+need no key; [WeatherAPI.com](https://www.weatherapi.com) and
+[Visual Crossing](https://www.visualcrossing.com) take a free key from your own account,
+pasted into the settings. Four rather than one because a single host can be unreachable
+from some networks while another answers (decision 13). Whatever the source, the widget
+fetches it itself over https every 15 minutes (30 for Visual Crossing), maps its condition
+codes to one table of words and keeps the last answer in the config, so it is drawn before
+the next one arrives and stays through an outage: the header says `· offline`, after an
+hour with the age of what is shown, and the rows under it are the last forecast that
+arrived, not blanks; a key the source refuses says `· bad key`. The place comes from a
+search on the *Location* page, or two typed coordinates; until one is set the widget
+guesses the city from the time zone and says so in the header. It never asks a
+geolocation service where you are: behind a tunnel that would be the tunnel's exit
+(decision 10). Units follow the locale, or are chosen by hand. Every source's terms ask
+for attribution — the last line names the source in use, on by default.
 `./install.sh --weather` installs it.
 
 ## Three layers

@@ -5,12 +5,17 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 
-// Where, in what units, how many days. The place is looked up through Open-Meteo's
-// geocoder from here — the same permission the widget itself relies on — and stored as
-// coordinates; two typed numbers skip the lookup.
+import "Sources.js" as Sources
+
+// Which source, where, in what units, how many days. The place is looked up through
+// Open-Meteo's geocoder from here whatever the source — the same permission the widget
+// itself relies on — and stored as coordinates; two typed numbers skip the lookup.
 KCM.SimpleKCM {
     id: page
 
+    // The source's id (Sources.js) and, for the two that need one, the key.
+    property string cfg_source: "open-meteo"
+    property alias cfg_apiKey: keyField.text
     // Text, not numbers, so "not set" is an empty string rather than 0,0 — the widget
     // then falls back to the place it guessed from the time zone.
     property string cfg_latitude: ""
@@ -20,6 +25,14 @@ KCM.SimpleKCM {
     property alias cfg_units: unitsBox.currentIndex
     property alias cfg_days: daysField.value
     property alias cfg_attribution: attributionBox.checked
+
+    // The combo's rows, in Sources.js order; the names are shown, the ids stored.
+    readonly property var sourceIds: Sources.ids
+    readonly property bool needsKey: Sources.get(cfg_source).needsKey
+
+    // The dialog writes cfg_source after the page is built: the combo follows it.
+    onCfg_sourceChanged: sourceBox.currentIndex = Math.max(0, sourceIds.indexOf(cfg_source))
+    Component.onCompleted: sourceBox.currentIndex = Math.max(0, sourceIds.indexOf(cfg_source))
 
     property var results: []
     property string note: ""
@@ -109,15 +122,63 @@ KCM.SimpleKCM {
         return where + " (" + r.latitude + ", " + r.longitude + ")"
     }
 
+    // What each source's terms say, under the forecast settings.
+    function terms() {
+        switch (page.cfg_source) {
+        case "met-no":
+            return i18n("The data is MET Norway's, under CC BY 4.0;\nits terms ask for the attribution line.")
+        case "weatherapi":
+            return i18n("The data is WeatherAPI.com's; the free plan gives three forecast days\nand asks for the attribution line.")
+        case "visual-crossing":
+            return i18n("The data is Visual Crossing's; the free plan is a thousand records a day,\none per forecast day, and its terms ask for the attribution line.")
+        default:
+            return i18n("The data is Open-Meteo's, free for non-commercial use;\nits terms ask for the attribution line.")
+        }
+    }
+
     ColumnLayout {
         anchors.left: parent.left
         anchors.right: parent.right
         spacing: Kirigami.Units.smallSpacing
 
         Kirigami.FormLayout {
+            id: sourceForm
+            Layout.fillWidth: true
+            twinFormLayouts: [placeForm, forecastForm]
+
+            Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Source") }
+
+            ComboBox {
+                id: sourceBox
+                Kirigami.FormData.label: i18n("Source:")
+                model: [i18nc("weather source", "Open-Meteo"), i18nc("weather source", "MET Norway"),
+                        i18nc("weather source", "WeatherAPI.com"), i18nc("weather source", "Visual Crossing")]
+                // On a click, not on every index change: the index also follows cfg_source.
+                onActivated: function(index) { page.cfg_source = page.sourceIds[index] }
+            }
+
+            TextField {
+                id: keyField
+                Kirigami.FormData.label: i18n("API key:")
+                Layout.fillWidth: true
+                visible: page.needsKey
+                placeholderText: i18nc("API key field placeholder", "paste the key here")
+            }
+
+            Label {
+                visible: page.needsKey
+                text: page.cfg_source === "weatherapi"
+                    ? i18nc("where the key comes from", "A free key: weatherapi.com/signup")
+                    : i18nc("where the key comes from", "A free key: visualcrossing.com/sign-up")
+                opacity: 0.7
+                font: Kirigami.Theme.smallFont
+            }
+        }
+
+        Kirigami.FormLayout {
             id: placeForm
             Layout.fillWidth: true
-            twinFormLayouts: [forecastForm]
+            twinFormLayouts: [sourceForm, forecastForm]
 
             Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Location") }
 
@@ -190,7 +251,7 @@ KCM.SimpleKCM {
         Kirigami.FormLayout {
             id: forecastForm
             Layout.fillWidth: true
-            twinFormLayouts: [placeForm]
+            twinFormLayouts: [sourceForm, placeForm]
 
             Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Forecast") }
 
@@ -210,11 +271,11 @@ KCM.SimpleKCM {
             CheckBox {
                 id: attributionBox
                 Kirigami.FormData.label: i18n("Attribution:")
-                text: i18n("show the Open-Meteo line")
+                text: i18n("show the source's line")
             }
 
             Label {
-                text: i18n("The data is Open-Meteo's, free for non-commercial use;\nits terms ask for the attribution line.")
+                text: page.terms()
                 opacity: 0.7
                 font: Kirigami.Theme.smallFont
             }

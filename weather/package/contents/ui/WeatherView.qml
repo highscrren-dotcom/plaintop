@@ -2,12 +2,15 @@ import QtQuick
 
 import org.kde.plasma.plasma5support as P5Support
 
+import "Sources.js" as Sources
+
 // The weather as text: one line for now, one per forecast day, drawn the way the monitor
-// draws its lines — monospace, no frames. The data is Open-Meteo's forecast API, read with
-// XMLHttpRequest straight from the widget: an https request to a public host works inside
-// plasmashell (verified 2026-09-23; only file:// is blocked, docs/GOTCHAS.md), so there is
-// no relay. Open-Meteo is free for non-commercial use and asks for attribution — hence the
-// last line, on by default.
+// draws its lines — monospace, no frames. The data comes from one of the sources in
+// Sources.js — Open-Meteo by default, MET Norway, WeatherAPI.com or Visual Crossing — read
+// with XMLHttpRequest straight from the widget: an https request to a public host works
+// inside plasmashell (verified 2026-09-23; only file:// is blocked, docs/GOTCHAS.md), so
+// there is no relay. Every answer is turned into one shape (metric, WMO codes) before it
+// is drawn; the sources' terms all ask for attribution — hence the last line, on by default.
 Item {
     id: view
 
@@ -19,15 +22,21 @@ Item {
     property string latitude: ""
     property string longitude: ""
     property string placeName: ""
+    // The place's IANA time zone from the geocoder, empty when typed or guessed. MET
+    // Norway's series is in UTC and is cut into days here, at the place's midnight.
+    property string timezone: ""
     property string guessedLat: ""
     property string guessedLon: ""
     property string guessedName: ""
+    // Which source (an id from Sources.js) and, for the two that need one, the key.
+    property string source: "open-meteo"
+    property string apiKey: ""
     // 0: by the locale (US → °F mph, otherwise °C km/h); 1 °C km/h; 2 °C m/s; 3 °F mph.
     property int units: 0
     property int days: 3
     property bool attribution: true
     property int columns: 52
-    // The last good response and when it came, from the config: drawn at start, before
+    // The last good answer and when it came, from the config: drawn at start, before
     // the first request of this run completes.
     property string cachedJson: ""
     property string cachedTime: ""
@@ -38,8 +47,7 @@ Item {
     property color colorAccent: "#E05561"
     property color colorDim: "#6B7280"
 
-    // Where the data comes from. Open-Meteo can be self-hosted with the same paths.
-    property string forecastUrl: "https://api.open-meteo.com/v1/forecast"
+    // The geocoder for the guess. The forecast hosts are the sources' own (Sources.js).
     property string geocodingUrl: "https://geocoding-api.open-meteo.com/v1/search"
 
     // ── Outputs ───────────────────────────────────────────────────────────────
@@ -66,13 +74,26 @@ Item {
     readonly property int unitMode: units > 0 ? units
         : (Qt.locale().measurementSystem === Locale.ImperialUSSystem ? 3 : 1)
 
+    // ── Source ────────────────────────────────────────────────────────────────
+    readonly property var src: Sources.get(source)
+    readonly property bool needsKey: src.needsKey
+    readonly property bool hasKey: apiKey.trim().length > 0
+    // Days asked for: at least one, and no more than the source gives.
+    readonly property int dayCount: Math.max(1, Math.min(src.maxDays, days))
+
     // ── State ─────────────────────────────────────────────────────────────────
-    property var weather: null          // the last good response, parsed
+    property var weather: null          // the last good answer, in the common shape
+    // The body that answer was parsed from, as the last 200 gave it; null when the
+    // weather is the config's cache. A 304 is parsed from it again — the clock moved,
+    // and the day count may have — so it is what makes If-Modified-Since worth sending.
+    property var lastBody: null
     property string fetchedAt: ""       // when it came, ISO
     property bool offline: false        // the last request failed
+    property bool badKey: false         // the source refused the key
     property int failures: 0
     property var xhr: null              // the request in flight, if any
     property string tzCity: ""          // "Yekaterinburg" for Asia/Yekaterinburg
+    property var tzOffsetMin: null      // the place's UTC offset, from the time engine
     property bool guessFailed: false    // the lookup answered, and found nothing
     property bool ready: false          // Component.onCompleted has run
 
@@ -89,7 +110,8 @@ Item {
         onTriggered: view.now = Date.now()
     }
 
-    // One request every 15 minutes; after a failure 1, 2, 4, 8 and then 15 minutes.
+    // One request every 15 minutes (30 for Visual Crossing); after a failure 1, 2, 4, 8
+    // and then the usual interval; never before the answer's Expires.
     Timer {
         id: refresh
         onTriggered: view.fetch()
@@ -122,6 +144,24 @@ Item {
         }
     }
 
+    // The place's UTC offset, from the same engine: any IANA name is a source there, and
+    // its "Offset" is the current one, daylight time included (a name it does not know
+    // gets the machine's — verified 2026-09-23). Without a zone the machine's own is used.
+    // Read once a minute, so a daylight-time change under a running shell is picked up.
+    P5Support.DataSource {
+        engine: "time"
+        interval: 60000
+        connectedSources: view.timezone.length > 0 ? [view.timezone] : []
+        onNewData: function(source, data) {
+            if (source === view.timezone && isFinite(data["Offset"]))
+                view.tzOffsetMin = Math.round(Number(data["Offset"]) / 60)
+        }
+    }
+
+    function offsetMin() {
+        return (timezone.length > 0 && tzOffsetMin !== null) ? tzOffsetMin : -new Date().getTimezoneOffset()
+    }
+
     Component.onCompleted: {
         const g = { lat: num(guessedLat), lon: num(guessedLon), name: guessedName }
         if (isFinite(g.lat) && isFinite(g.lon))
@@ -129,7 +169,8 @@ Item {
         if (cachedJson.length > 0) {
             try {
                 const d = JSON.parse(cachedJson)
-                if (d && d.current && d.daily && d.daily.time) {
+                // Another source's answer is not this source's cache.
+                if (Sources.valid(d) && d.source === source) {
                     weather = d
                     fetchedAt = cachedTime
                 }
@@ -138,7 +179,11 @@ Item {
             }
         }
         ready = true
-        fetch()
+        // An answer that still stands (its Expires ahead) is not asked for again yet.
+        if (weather !== null && weather.expires && Date.parse(weather.expires) > Date.now())
+            schedule()
+        else
+            fetch()
     }
 
     // Settings changed under a running widget: ask again with the new values. Deferred, so
@@ -147,30 +192,47 @@ Item {
         if (ready)
             Qt.callLater(fetch)
     }
-    // Another place: what is shown is that other place's weather, so it goes, and until
-    // the answer comes the widget says "no data yet" rather than showing the wrong rows.
-    function moved() {
+    // Another place, source or key: what is shown is the old one's weather, so it goes,
+    // and until the answer comes the widget says "no data yet" rather than the wrong rows.
+    function reset() {
         if (!ready)
             return
+        // A request in flight is the old one's too: aborted, and its handler — no
+        // longer view.xhr's — does nothing, so its answer never lands in the new one's
+        // place (a keyed source with no key yet sends no request to supersede it).
+        if (xhr !== null) {
+            const old = xhr
+            xhr = null
+            old.abort()
+        }
         weather = null
+        lastBody = null
         fetchedAt = ""
-        // The cache in the config is that other place's too: the host writes it empty.
+        offline = false
+        badKey = false
+        failures = 0
+        // The cache in the config is the old one's too: the host writes it empty.
         fetched("", "")
         refetch()
     }
-    onLatChanged: moved()
-    onLonChanged: moved()
-    onUnitModeChanged: refetch()
+    onLatChanged: reset()
+    onLonChanged: reset()
+    onSourceChanged: reset()
+    onApiKeyChanged: reset()
+    // The units are converted here, so a change redraws and asks for nothing.
+    // ⚠️ Not dayCount: this handler runs before that binding is re-evaluated, and would
+    // see the old count. The same arithmetic on the new value instead.
     onDaysChanged: {
-        if (weather === null || days > weather.daily.time.length)
+        if (weather === null || Math.min(src.maxDays, days) > weather.daily.length)
             refetch()
     }
 
     // ── Requests ──────────────────────────────────────────────────────────────
     // One request in flight at a time; a new one supersedes it — the old handler finds it
     // is no longer view.xhr and does nothing — so a burst of changes ends with the final
-    // values. The handler gets the parsed body, or null, with the status and the raw text.
-    function begin(url, handler) {
+    // values. The handler gets the parsed body, or null, with the status, the raw text and
+    // the request itself, for its response headers.
+    function begin(url, headers, handler) {
         if (xhr !== null) {
             const old = xhr
             xhr = null
@@ -192,29 +254,50 @@ Item {
                     data = null
                 }
             }
-            handler(data, req.status, req.responseText)
+            handler(data, req.status, req.responseText, req)
         }
         req.open("GET", url)
+        for (const name in headers)
+            req.setRequestHeader(name, headers[name])
         req.send()
         watchdog.restart()
     }
 
     function schedule() {
-        const backoff = [1, 2, 4, 8, 15]
-        refresh.interval = (failures === 0 ? 15 : backoff[Math.min(failures, backoff.length) - 1]) * 60000
+        const usual = src.refreshMin
+        const steps = [1, 2, 4, 8, usual]
+        let ms = (failures === 0 ? usual : steps[Math.min(failures, steps.length) - 1]) * 60000
+        // A source that says how long its answer stands is not asked before then — with a
+        // few seconds' slack, and within the hour, whatever the header claims.
+        if (failures === 0 && weather !== null && weather.expires) {
+            const wait = Date.parse(weather.expires) - Date.now() + 5000
+            if (wait > ms)
+                ms = Math.min(wait, 3600000)
+        }
+        refresh.interval = ms
         refresh.restart()
     }
 
-    function forecastQuery() {
-        let q = forecastUrl + "?latitude=" + lat + "&longitude=" + lon
-            + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m"
-            + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max"
-            + "&forecast_days=" + Math.max(1, Math.min(7, days)) + "&timezone=auto"
-        if (unitMode === 3)
-            q += "&temperature_unit=fahrenheit&wind_speed_unit=mph"
-        else if (unitMode === 2)
-            q += "&wind_speed_unit=ms"
-        return q
+    // When the answer stops standing, on our clock: the header's Expires against the
+    // server's own Date, so a wrong clock here does not stretch the wait. "" when unsaid.
+    function expiresOf(req, nowMs) {
+        const exp = Date.parse(req.getResponseHeader("Expires") || "")
+        if (!isFinite(exp))
+            return ""
+        const srv = Date.parse(req.getResponseHeader("Date") || "")
+        const inMs = exp - (isFinite(srv) ? srv : nowMs)
+        return inMs > 0 ? new Date(nowMs + inMs).toISOString() : ""
+    }
+
+    // A good answer, or a 304 on the one we have: shown, remembered, and the failure
+    // count starts over.
+    function arrived(iso) {
+        fetchedAt = iso
+        now = Date.now()
+        offline = false
+        badKey = false
+        failures = 0
+        fetched(JSON.stringify(weather), iso)
     }
 
     function fetch() {
@@ -223,14 +306,46 @@ Item {
                 locate()
             return
         }
-        begin(forecastQuery(), function(data, status, text) {
-            if (data && data.current && data.daily && data.daily.time) {
-                view.weather = data
-                view.fetchedAt = new Date().toISOString()
-                view.now = Date.now()
+        // Nothing to ask with: the widget says so instead (the lines below).
+        if (needsKey && !hasKey)
+            return
+        const s = src
+        const opts = { utcOffsetMin: offsetMin() }
+        const r = s.build(lat, lon, dayCount, apiKey.trim(), opts)
+        const headers = r.headers || {}
+        // A source that dates its answers (MET Norway) is asked for news since that
+        // date; "nothing new" is a 304 with no body, and the body we kept is parsed
+        // again. Only with that body in hand: after a restart the cache has the date
+        // but not the body, and the honest request is a plain one.
+        if (lastBody !== null && weather.lastModified)
+            headers["If-Modified-Since"] = weather.lastModified
+        begin(r.url, headers, function(data, status, text, req) {
+            const nowMs = Date.now()
+            const body = status === 304 ? view.lastBody : data
+            let parsed = null
+            if (body !== null) {
+                try {
+                    parsed = s.parse(body, view.dayCount, opts)
+                } catch (e) {
+                    parsed = null
+                }
+            }
+            if (Sources.valid(parsed)) {
+                parsed.source = s.id
+                parsed.fetchedAt = new Date(nowMs).toISOString()
+                // A 304 confirms the date we sent, whatever it repeats in its headers.
+                parsed.lastModified = status === 304 ? headers["If-Modified-Since"]
+                    : (req.getResponseHeader("Last-Modified") || "")
+                parsed.expires = view.expiresOf(req, nowMs)
+                view.lastBody = body
+                view.weather = parsed
+                view.arrived(parsed.fetchedAt)
+            } else if ((status === 401 || status === 403) && s.needsKey) {
+                // The source refused the key: not the network's doing, so no backoff —
+                // the header says so, and the next try is at the usual interval.
+                view.badKey = true
                 view.offline = false
                 view.failures = 0
-                view.fetched(text, view.fetchedAt)
             } else {
                 view.offline = true
                 view.failures++
@@ -256,7 +371,7 @@ Item {
     }
 
     function locate() {
-        begin(geocodingUrl + "?name=" + encodeURIComponent(tzCity) + "&count=5&language=" + language(),
+        begin(geocodingUrl + "?name=" + encodeURIComponent(tzCity) + "&count=5&language=" + language(), {},
               function(data, status, text) {
             if (data !== null) {
                 const hit = view.best(data.results)
@@ -278,19 +393,28 @@ Item {
     // ── Formatting ────────────────────────────────────────────────────────────
     // Written here, not through a Formatter: the ready-made ones insert invisible
     // U+2009/U+200B characters and the monospace columns drift (docs/GOTCHAS.md). The
-    // unit labels are ours too — the response carries its own ("mp/h"), never shown.
+    // data is metric whatever the source; the user's units are applied right here.
 
-    function deg(x) {
-        return Math.round(x) + "°"
+    function temp(c) {
+        return unitMode === 3 ? c * 9 / 5 + 32 : c
     }
 
-    // The wind unit, mapped from what the response says it used, so a cached response in
-    // the old units is labelled right until the new one arrives.
-    function windUnit(d) {
-        const u = (d && d.current_units) ? String(d.current_units.wind_speed_10m) : ""
-        if (u === "m/s" || (u === "" && unitMode === 2))
+    function wind(kmh) {
+        if (unitMode === 2)
+            return kmh / 3.6
+        if (unitMode === 3)
+            return kmh / 1.609344
+        return kmh
+    }
+
+    function deg(x) {
+        return (x === null || x === undefined) ? "—" : Math.round(temp(x)) + "°"
+    }
+
+    function windUnit() {
+        if (unitMode === 2)
             return i18nc("wind speed unit", "m/s")
-        if (u === "mp/h" || u === "mph" || (u === "" && unitMode === 3))
+        if (unitMode === 3)
             return i18nc("wind speed unit", "mph")
         return i18nc("wind speed unit", "km/h")
     }
@@ -341,6 +465,16 @@ Item {
         }
     }
 
+    // The line each source's terms ask for.
+    function attributionText() {
+        switch (source) {
+        case "met-no": return i18nc("MET Norway's licence (CC BY 4.0) asks for this line", "Weather data from MET Norway")
+        case "weatherapi": return i18nc("WeatherAPI.com's terms ask for this line", "Powered by WeatherAPI.com")
+        case "visual-crossing": return i18nc("Visual Crossing's terms ask for this line", "Weather data provided by Visual Crossing")
+        default: return i18nc("Open-Meteo's terms ask for this line", "Weather data by Open-Meteo.com")
+        }
+    }
+
     // Minutes up to two hours, hours after that.
     function ageText(minutes) {
         if (minutes < 120)
@@ -386,6 +520,10 @@ Item {
             out.push(fit([{ text: i18nc("no location, no guess", "set a location in the widget settings"), role: "dim" }]))
             return out
         }
+        if (needsKey && !hasKey) {
+            out.push(fit([{ text: i18nc("the source needs a key and none is set", "set the API key in the widget settings"), role: "dim" }]))
+            return out
+        }
         let tail = "  " + place
         if (!hasOwn)
             tail += " · " + i18nc("header: the place was guessed from the time zone", "time zone")
@@ -393,6 +531,8 @@ Item {
             tail += " · " + ageText(ageMinutes)
         if (offline)
             tail += " · " + i18nc("header: the last request failed", "offline")
+        if (badKey)
+            tail += " · " + i18nc("header: the source refused the API key", "bad key")
         out.push(fit([{ text: i18nc("the widget's header line", "WEATHER"), role: "fg" },
                       { text: tail, role: "dim" }]))
         if (weather === null) {
@@ -400,31 +540,38 @@ Item {
             return out
         }
 
+        // Now: the temperature and the word, then what the source gave of the rest.
         const c = weather.current
-        out.push(fit([{ text: deg(c.temperature_2m), role: "accent" },
-                      { text: " " + condition(c.weather_code), role: "fg" },
-                      { text: "  " + i18nc("apparent temperature", "feels %1", deg(c.apparent_temperature))
-                              + "  " + i18nc("wind: speed, its unit, compass direction", "wind %1 %2 %3",
-                                             Math.round(c.wind_speed_10m), windUnit(weather), compass(c.wind_direction_10m))
-                              + "  " + Math.round(c.relative_humidity_2m) + "%", role: "dim" }]))
+        const parts = [{ text: deg(c.temp), role: "accent" },
+                       { text: " " + condition(c.code), role: "fg" }]
+        const details = []
+        if (c.feels !== null && c.feels !== undefined)
+            details.push(i18nc("apparent temperature", "feels %1", deg(c.feels)))
+        if (c.wind !== null && c.wind !== undefined)
+            details.push(i18nc("wind: speed, its unit, compass direction", "wind %1 %2 %3",
+                               Math.round(wind(c.wind)), windUnit(), compass(c.windDir)))
+        if (c.humidity !== null && c.humidity !== undefined)
+            details.push(Math.round(c.humidity) + "%")
+        if (details.length > 0)
+            parts.push({ text: "  " + details.join("  "), role: "dim" })
+        out.push(fit(parts))
 
         // One row per day, today first; the columns line up across the rows.
-        const d = weather.daily
         const rows = []
-        for (let i = 0; i < Math.min(days, d.time.length); i++) {
-            const prob = d.precipitation_probability_max[i]
-            rows.push({ day: weekday(d.time[i]),
-                        lo: String(Math.round(d.temperature_2m_min[i])),
-                        hi: String(Math.round(d.temperature_2m_max[i])),
-                        cond: condition(d.weather_code[i]),
-                        prob: (prob === null || prob === undefined) ? "" : Math.round(prob) + "%" })
+        for (let i = 0; i < Math.min(days, weather.daily.length); i++) {
+            const d = weather.daily[i]
+            rows.push({ day: weekday(d.date),
+                        lo: deg(d.min),
+                        hi: deg(d.max),
+                        cond: condition(d.code),
+                        prob: (d.pop === null || d.pop === undefined) ? "" : Math.round(d.pop) + "%" })
         }
         const dayW = Math.max(...rows.map(r => Array.from(r.day).length), 0)
         const loW = Math.max(...rows.map(r => r.lo.length), 0)
         const hiW = Math.max(...rows.map(r => r.hi.length), 0)
         for (const r of rows) {
             const parts = [{ text: r.day.padEnd(dayW) + "  ", role: "dim" },
-                           { text: r.lo.padStart(loW) + "° / " + r.hi.padStart(hiW) + "°  ", role: "fg" },
+                           { text: r.lo.padStart(loW) + " / " + r.hi.padStart(hiW) + "  ", role: "fg" },
                            { text: r.cond, role: "fg" }]
             if (r.prob.length > 0)
                 parts.push({ text: "  " + r.prob, role: "dim" })
@@ -432,7 +579,7 @@ Item {
         }
 
         if (attribution)
-            out.push(fit([{ text: i18nc("Open-Meteo's terms ask for this line", "Weather data by Open-Meteo.com"), role: "dim" }]))
+            out.push(fit([{ text: attributionText(), role: "dim" }]))
         return out
     }
 

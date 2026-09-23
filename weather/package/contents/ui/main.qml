@@ -4,6 +4,8 @@ import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 
+import "Sources.js" as Sources
+
 // Plasmoid host for the weather. The requests, the lines and the drawing live in
 // WeatherView.qml next to this file; this one is the shell-facing part — size, settings,
 // click-through, the cache — and has the same shape as the player's host.
@@ -43,7 +45,9 @@ PlasmoidItem {
     // must be constant for the given settings: a hint that followed the lines shown would
     // make the containment relayout on every change and drop the widget into the 0,0
     // corner. See docs/GOTCHAS.md.
-    readonly property int rows: 2 + Math.max(0, Math.min(7, cfg.days)) + (cfg.attribution ? 1 : 0)
+    // Day rows: as many as asked for, and no more than the source gives (an unknown source
+    // id is Open-Meteo, as in the view).
+    readonly property int rows: 2 + Math.max(0, Math.min(Sources.get(cfg.source).maxDays, cfg.days)) + (cfg.attribution ? 1 : 0)
     readonly property real boardWidth: Math.ceil(cell.advanceWidth * Math.max(10, cfg.columns))
     readonly property real boardHeight: Math.ceil(lineProbe.implicitHeight * rows)
 
@@ -98,9 +102,12 @@ PlasmoidItem {
             latitude: root.cfg.latitude
             longitude: root.cfg.longitude
             placeName: root.cfg.placeName
+            timezone: root.cfg.timezone
             guessedLat: root.cfg.guessedLat
             guessedLon: root.cfg.guessedLon
             guessedName: root.cfg.guessedName
+            source: root.cfg.source
+            apiKey: root.cfg.apiKey
             units: root.cfg.units
             days: root.cfg.days
             attribution: root.cfg.attribution
@@ -114,9 +121,10 @@ PlasmoidItem {
             colorAccent: root.cfg.colorAccent
             colorDim: root.cfg.colorDim
 
-            // The cache and the guess live in the config, so they survive a shell restart
-            // (verified in the offscreen host, 2026-09-23) and the widget has something to
-            // draw before its first request completes.
+            // The cache (the answer in the common shape, with its source) and the guess live
+            // in the config, so they survive a shell restart (verified in the offscreen host,
+            // 2026-09-23) and the widget has something to draw before its first request
+            // completes.
             onFetched: (json, iso) => {
                 root.cfg.lastWeather = json
                 root.cfg.lastFetched = iso

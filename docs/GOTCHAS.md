@@ -787,11 +787,77 @@ so the column does not move. Four fits `root`, `home`, `data`, `boot`; a longer 
 element is cut. The root mount is `root` rather than `/` on purpose: the bar beside it is
 made of slashes too, and `/   //` read as one thing.
 
-## "offline" in the weather header may be the network, not the widget
+## QML's JavaScript has no time zones: `toLocaleString` ignores `timeZone`
+
+Qt's JS engine has no `Intl` — `typeof Intl` is `undefined` — and the `timeZone` option
+is silently dropped: `d.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })` prints the
+machine's own 17:00 for an instant that is 21:00 in Tokyo, no error. Verified 2026-09-23
+with `/usr/lib/qt6/bin/qml`, Qt 6.11. MET Norway's series is in UTC, and cutting it into
+the place's days needs the place's offset — the machine may sit in another zone. What
+has it is Plasma's `time` engine (`org.kde.plasma.plasma5support`): any IANA name is a
+source there, and its `Offset` is that zone's current offset from UTC in seconds, daylight
+time included; a name it does not know gets the machine's offset (verified the same day).
+The weather widget connects a second `DataSource` to the `timezone` the geocoder stored
+and shifts the UTC instants by that offset before taking the date (`localDate` in
+`Sources.js`). A typed or guessed place has no zone, and the machine's is used.
+
+## MET Norway answers 403 to the default `User-Agent`
+
+Qt's `XMLHttpRequest` sends `Mozilla/5.0` unless told otherwise, and `api.met.no` answers
+403 to that: their terms require a User-Agent that names the application. Qt lets
+`setRequestHeader("User-Agent", …)` set it, so the source sends
+`plainweather/0.1 github.com/highscrren-dotcom/plaintop` and gets 200 — verified
+2026-09-23 in the widget for Berlin and Yekaterinburg, and again with `curl -A`: 403 with
+`Mozilla/5.0`, 200 with the widget's string. Their terms also cap the coordinates at four
+decimals; `build()` rounds.
+
+## A 304 has no body — never `JSON.parse` it
+
+With `If-Modified-Since` set to the last `Last-Modified`, `api.met.no` answers 304 when
+nothing changed: `status` 304, `responseText` empty (`body=0` with curl). `JSON.parse("")`
+throws, so a handler that parses first and looks at the status after counts "nothing new"
+as a failure and starts backing off. The widget parses on 200 only; on 304 it keeps what is
+shown, takes the new `Expires` and reports the answer as fresh. `Expires` is read against
+the server's own `Date` header, not the machine's clock, and the next request waits for it
+— plus 5 s, and at most an hour whatever the header says. Verified 2026-09-23: the second
+request for the same place answered 304, and the server's `Expires` was about 30 minutes
+out.
+
+## Visual Crossing answers fifteen days when no dates are named — and bills them
+
+The Timeline API without a date range in the path returns fifteen forecast days, and the
+free plan counts every day in an answer as a record, of a thousand a day: three rows
+shown, fifteen billed, per request. So `build()` names its dates — today to today plus
+`days − 1`, in the place's local date — and the source refreshes every 30 minutes instead
+of 15. ⚠️ This one is from Visual Crossing's documentation, not from a run: no real key
+was available, and what was verified is a bogus key (401 → `· bad key`) and the parser on
+a sample response. Recorded because it changes the request's shape.
+
+## "offline" in the weather header may be the network, not the widget — and the source is a setting
 
 On the author's machine the header showed `· offline` for a while although the search on
-the *Location* page still worked: the tunnel had dropped TCP to `api.open-meteo.com`, and
-`geocoding-api.open-meteo.com` — a different host — was still reachable. The widget kept
-the cached forecast and went on retrying on its backoff, as decision 10 says it should. A
-network fact, not a widget one; recorded so the next "the weather is broken" starts with
-the network. 2026-09-23.
+the *Location* page still worked: the tunnel's exit was in Russia, and from there TCP to
+`api.open-meteo.com` did not connect at all, while `geocoding-api.open-meteo.com` — a
+different host, at a different hosting company — and `api.met.no` answered (measured
+2026-09-23, and again while writing this: a connection timeout on the one, 200 on the
+others). The widget kept the cached forecast and went on retrying on its backoff, as
+decision 10 says it should. A network fact, not a widget one; recorded so the next "the
+weather is broken" starts with the network — and it is why the widget has four sources
+(decision 13): when the one in use is cut, *Source* on the *Location* page switches to
+another, MET Norway without a key.
+
+## A change handler sees derived bindings before they update
+
+`onDaysChanged` compared the derived `dayCount` (a binding on `days`) with the rows it
+had — and always saw the old value: a handler connected before a binding runs before that
+binding re-evaluates. Raising the day count never refetched. Compare the source value the
+handler is about, or defer with `Qt.callLater`.
+
+## A 304 is not "nothing changed" for a forecast cut at the request hour
+
+met.no answers 304 to `If-Modified-Since` for as long as its model did not run (35 min
+to an hour and a half), but every 200 body starts at the hour of the request. Keeping the
+last parse on a 304 froze "now" and the day rows at the hour of the last 200, and bumping
+the age hid it. The widget keeps the raw body of the last 200, re-parses it on a 304 from
+the entry covering the current hour, and sends `If-Modified-Since` only while that body is
+in memory.

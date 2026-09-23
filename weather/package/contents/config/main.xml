@@ -38,6 +38,15 @@
     <entry name="columns" type="Int">
       <default>52</default>
     </entry>
+    <!-- Which source the forecast comes from — an id from Sources.js: open-meteo (the
+         default, no key), met-no (no key), weatherapi and visual-crossing (a key each,
+         from the user's own account). An unknown id falls back to Open-Meteo. -->
+    <entry name="source" type="String">
+      <default>open-meteo</default>
+    </entry>
+    <entry name="apiKey" type="String">
+      <default></default>
+    </entry>
     <!-- The location, as text: empty means "not set", which 0,0 could not say. Written
          by the Location page, from a geocoding result or two typed numbers. -->
     <entry name="latitude" type="String">
@@ -72,12 +81,14 @@
     <entry name="days" type="Int">
       <default>3</default>
     </entry>
-    <!-- Open-Meteo's terms ask for attribution: the last line names them. -->
+    <!-- Every source's terms ask for attribution: the last line names the one in use. -->
     <entry name="attribution" type="Bool">
       <default>true</default>
     </entry>
-    <!-- The last good response and when it came: drawn at start, before the first
-         request of the session completes, and kept when a request fails. -->
+    <!-- The last good answer, in the widget's common shape (metric, WMO codes, with the
+         source's id, Last-Modified and Expires), and when it came: drawn at start, before
+         the first request of the session completes, and kept when a request fails. A
+         cache from another source is ignored. -->
     <entry name="lastWeather" type="String">
       <default></default>
     </entry>

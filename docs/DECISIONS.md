@@ -451,6 +451,12 @@ run in an isolated Plasma host on 2026-09-23. Only `file://` is refused (`GOTCHA
 the same data — then a relay like the visualizer's, and the widget's fetch layer becomes its
 client.
 
+⚠️ **Note, 2026-09-23.** The choice stands and now covers four hosts: the widget asks
+whichever of Open-Meteo, MET Norway, WeatherAPI.com or Visual Crossing is chosen in the
+settings, still straight from QML, every 15 minutes (30 for Visual Crossing) — decision 13.
+Two figures above are Open-Meteo's alone, the 10 000 free requests and the CC BY 4.0
+line; each source has its own terms and its own attribution line.
+
 ## 11. The player ships clickable; a partial mask is the follow-up (2026-09-23)
 
 **Decision:** the player's *Mouse* setting is off by default, as in the other widgets, and
@@ -538,3 +544,73 @@ visualizer's wrapper takes only the controls row.
 player widget could simply be placed over the ring and the option goes. Or if the two
 hosts drift in behaviour: then the view becomes a QML module of its own rather than a
 copied file.
+
+## 13. Several weather sources behind one abstraction (2026-09-23)
+
+**Decision:** the weather widget reads one of four sources, chosen on the *Location* page
+(`source`, default `open-meteo`): Open-Meteo and MET Norway without a key, WeatherAPI.com
+and Visual Crossing with a free key from the user's own account (`apiKey`; the field shows
+only for those two). Every source is an object of one shape in
+`weather/package/contents/ui/Sources.js` — `build(lat, lon, days, key, opts)` returns the
+URL and headers, `parse(body, days, opts)` returns `{ current, daily }` in metric units
+with WMO condition codes — and the view knows nothing else about them: one table of
+condition words and one set of translations, one conversion to the user's units (the
+Open-Meteo request no longer asks for units either), one cache in the config carrying the
+source's id, ignored when the source differs and cleared when the source, the key or the
+place changes. The attribution line follows the source — "Weather data by Open-Meteo.com",
+"Weather data from MET Norway" (CC BY 4.0), "Powered by WeatherAPI.com", "Weather data
+provided by Visual Crossing" — on by default, the checkbox is "show the source's line".
+The geocoder stays Open-Meteo's.
+
+Per source. **Open-Meteo:** up to 7 days, as before. **MET Norway:** Locationforecast 2.0
+`complete`, an identifying `User-Agent` (`plainweather/0.1 github.com/…`, which Qt's XHR
+can set), coordinates rounded to four decimals, `If-Modified-Since` → 304 keeps what is
+shown, the server's `Expires` honoured (+5 s, at most an hour); the daily rows are
+aggregated from the hourly and six-hourly entries by the place's local date — min and max
+of the day, the day's code the worst WMO code of the day — with precipitation probability
+only where MET gives it, the Nordic countries, and no "feels like". **WeatherAPI.com:**
+the free plan answers three forecast days, so `days` is clamped to 3. **Visual Crossing:**
+the free plan is a thousand records a day and every forecast day is one, so the request
+names its dates and the source refreshes every 30 minutes instead of 15.
+
+**Why.** Measured 2026-09-23: with the author's tunnel exiting in Russia, TCP to
+`api.open-meteo.com` did not connect, while `api.met.no` and Open-Meteo's geocoding host
+answered. One source is a single point of failure the user cannot route around; a second
+one without a key is the way around it, and once the seam exists, the two keyed ones cost a
+parser each.
+
+**States.** A keyed source without a key: one line, "set the API key in the widget
+settings". 401 or 403 from a keyed source: `· bad key` in the header and the next try at
+the usual interval — the key is wrong, not the network, so no backoff spiral. 429 and
+network failures: `· offline` with the backoff of decision 10.
+
+**Alternatives considered, and why not.**
+
+| Source | Why not |
+|---|---|
+| Yandex Weather | No free API: the test tariff lasts 7 days, then 54 000 ₽ a month; the "smart home" tier gives today and tomorrow only, with unpublished limits; and the agreement forbids caching, requires the Yandex logo and excludes services whose main content is the weather — the cached answer, the plain-text look and a weather widget are each ruled out |
+| Gismeteo | Keys only by e-mail, to partners |
+| AccuWeather, Foreca | No permanent free tier |
+| Tomorrow.io | Blocks the exit IP |
+| wttr.in | One person's server, and on Hetzner like Open-Meteo |
+| Bright Sky | Germany only |
+| NWS | The United States only |
+| OpenWeatherMap | The free plan has no daily forecast; One Call needs a card |
+
+**What we pay.**
+- Four parsers to keep in step with four APIs. A change on a source's side shows up as
+  `· offline` — `parse()` returns nothing the view can draw — not as "the shape changed";
+  a field that went missing draws a dash.
+- The two keyed sources are untested with real keys: verified are a bogus key (401 →
+  `· bad key`) and the parsers on sample responses from the sources' documentation. MET
+  Norway is verified live — 200, then 304 on the second request, `Expires` honoured — for
+  Berlin and Yekaterinburg.
+- Three sets of terms besides Open-Meteo's, each with its attribution line and its hint
+  under the forecast settings.
+- The place's UTC offset matters now (MET's series is UTC), and QML's JavaScript has no
+  time zones: the offset comes from Plasma's `time` engine by IANA name — `GOTCHAS.md`.
+
+**Revisit if:** a source changes its terms or its response shape, or a user reports a
+broken parser — then that source is fixed or dropped, and the others keep working: the
+abstraction is there so that dropping one is deleting an object. And what decision 10 says:
+if Plasma sandboxes network access, a relay, and the sources move into it as they are.

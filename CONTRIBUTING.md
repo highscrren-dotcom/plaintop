@@ -50,7 +50,7 @@ Neither needs a code change — just a row in the description.
 | `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service; the visualizer reads it |
 | `player/package/` | the "now playing" widget as a Plasma 6 widget: host, settings pages, catalogs — no service |
 | `player/shared/` | the player's view — the MPRIS model, the lines, the controls — copied into `player/package/` and into `spectrum/package/` on install: the visualizer draws it in the centre of its ring |
-| `weather/package/` | the weather widget: a Plasma 6 widget that asks Open-Meteo itself over https — no shared files, no service |
+| `weather/package/` | the weather widget: a Plasma 6 widget that asks one of four sources itself over https — the sources are objects in `contents/ui/Sources.js` — no shared files, no service |
 | `po/` | translation catalogs, one domain per widget, four in all; `extract.py` refreshes them and starts a missing one, `build.py` compiles |
 | `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
 | `install.sh` | install, status, `.plasmoid` builds, conky and clicks on/off — all operations idempotent |
@@ -156,6 +156,39 @@ The player and the weather were added this way; copy whichever is closer to your
    `README.ru.md`.
 5. **Run it** — `./install.sh --<name>`, look at the desktop, read the journal, say in the
    PR what you saw.
+
+## Adding a weather source
+
+The four sources — Open-Meteo, MET Norway, WeatherAPI.com, Visual Crossing — are objects of
+one shape in `weather/package/contents/ui/Sources.js`, and the view knows nothing else
+about them (decision 13). A fifth is:
+
+1. **The object** — `id`, `needsKey`, `maxDays`, `refreshMin`, `build(lat, lon, days, key,
+   opts)` returning `{ url, headers }`, and `parse(body, days, opts)` returning the common
+   shape: `{ current: { temp, feels, code, wind, windDir, humidity }, daily: [ { date, min,
+   max, code, pop }, … ] }`. Add it to `all` and `ids`. Rules: **codes map to WMO weather
+   codes**, so the one table of condition words (and its translations) serves it; **values
+   are metric** — °C, km/h, % — the view converts to the user's units; a field the source
+   does not have is `null`, never 0, and the view leaves it out. `opts.utcOffsetMin` is
+   the place's UTC offset, for a source whose series is in UTC (MET Norway) or that names
+   dates (Visual Crossing).
+2. **The settings page**, `configLocation.qml` — the id in `sourceIds`, the item in the
+   *Source* `ComboBox` at the same index, the id in `needsKey` if a key is required, the
+   hint saying where a free key comes from, and the `terms()` string: what the source's
+   terms ask for, in one or two lines under the forecast settings.
+3. **The attribution line** — a case in `attributionText()` in `WeatherView.qml`, with the
+   wording the source's terms ask for. Every source so far asks for one.
+4. **Terms first.** Read them before the parser: attribution, a required `User-Agent`
+   (MET Norway), rate limits and what counts as a request (Visual Crossing bills a record
+   per forecast day, so the request names its dates), coordinate precision.
+5. **A key only through the settings field.** `apiKey` is the user's own, from their own
+   account; never a key in the code, in a default or in a test file — the repository is
+   public.
+6. **Strings and catalogs** — `python3 po/extract.py`, then the new strings in ten
+   languages.
+7. **Run it** — `./install.sh --weather`, read the journal, and say in the PR what was
+   verified live and what only on a sample response from the source's documentation: for
+   a keyed source without a key that is the honest state (decision 13).
 
 ## Translations
 
