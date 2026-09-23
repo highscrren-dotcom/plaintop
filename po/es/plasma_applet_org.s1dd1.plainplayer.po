@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 18:34+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: 2026-09-23 17:52+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -26,27 +26,6 @@ msgstr "General"
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "Ratón"
-
-#: player/package/contents/ui/PlayerView.qml:171
-msgctxt "the widget's header line"
-msgid "NOW PLAYING"
-msgstr "REPRODUCIENDO"
-
-#: player/package/contents/ui/PlayerView.qml:174
-msgctxt "no MPRIS player on the bus"
-msgid "no player"
-msgstr "sin reproductor"
-
-#: player/package/contents/ui/PlayerView.qml:190
-msgctxt "playback status"
-msgid "stopped"
-msgstr "detenido"
-
-#: player/package/contents/ui/PlayerView.qml:194
-#: player/package/contents/ui/PlayerView.qml:296
-msgctxt "playback status"
-msgid "paused"
-msgstr "en pausa"
 
 #: player/package/contents/ui/configGeneral.qml:28
 msgctxt "settings section"
@@ -147,10 +126,32 @@ msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
 "that is where its settings are, or ./install.sh with the clicks off switch.\n"
-"With the mouse passing through, the controls cannot be clicked."
+"The controls take the mouse even then; the rest of the widget lets it "
+"through."
 msgstr ""
 "Mientras los clics pasan de largo, ambos botones del ratón llegan al "
 "escritorio.\n"
 "El widget solo toma el ratón en el modo de edición del escritorio:\n"
 "ahí está su configuración, o ./install.sh con la opción clicks off.\n"
-"Mientras el ratón pasa de largo, los controles no se pueden pulsar."
+"Los controles toman el ratón incluso entonces; el resto del widget lo deja "
+"pasar."
+
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr "REPRODUCIENDO"
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr "sin reproductor"
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr "detenido"
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
+msgstr "en pausa"

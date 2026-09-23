@@ -6,7 +6,8 @@ import org.kde.plasma.plasmoid
 
 // Plasmoid host. The data and the drawing live in shared/Spectrum.qml and shared/Ring.qml,
 // which install.sh copies in next to this file — the standalone window host uses the same
-// two files, so the logic has one home.
+// two files, so the logic has one home. The player in the centre of the ring is the
+// player widget's own view, player/shared/PlayerView.qml, copied in the same way.
 PlasmoidItem {
     id: root
 
@@ -33,6 +34,30 @@ PlasmoidItem {
     Layout.preferredWidth: boardWidth
     Layout.preferredHeight: boardHeight
 
+    // The player's board, measured as the player widget measures its own: `playerColumns`
+    // characters wide and five lines tall — header, title, album, position, controls.
+    // Not part of the size hint above: the board lives inside the ring, whatever its size.
+    readonly property string playerFace: Qt.fontFamilies().includes(cfg.playerFontFamily)
+        ? cfg.playerFontFamily : "monospace"
+    TextMetrics {
+        id: playerCell
+        font.family: root.playerFace
+        font.pointSize: root.cfg.playerFontSize
+        text: "0"
+    }
+    // ⚠️ A real Text, not FontMetrics: with NativeRendering a line comes out at the
+    // hinted height, and FontMetrics.height is short by a few pixels (docs/GOTCHAS.md).
+    Text {
+        id: playerLineProbe
+        visible: false
+        text: "0"
+        font.family: root.playerFace
+        font.pointSize: root.cfg.playerFontSize
+        renderType: Text.NativeRendering
+    }
+    readonly property real playerWidth: Math.ceil(playerCell.advanceWidth * Math.max(22, cfg.playerColumns))
+    readonly property real playerHeight: Math.ceil(playerLineProbe.implicitHeight * 5)
+
     Spectrum {
         id: spectrum
         relayPort: root.cfg.relayPort
@@ -50,24 +75,38 @@ PlasmoidItem {
     readonly property bool shellEditMode: (Plasmoid.containment && Plasmoid.containment.corona)
         ? Plasmoid.containment.corona.editMode : false
 
-    // Click-through. Input off on the representation alone hands over only the right
-    // button: the wrapper plasmashell puts around every desktop applet (AppletContainer,
-    // our parent item) accepts the left button unconditionally, waiting for press-and-hold.
-    // Disabled, that wrapper and everything inside it drop out of Qt's mouse delivery and
-    // both buttons land on the desktop below. Re-enabled in edit mode, so the widget can
-    // still be moved, resized and configured. Verified on Plasma 6.7.5 — docs/GOTCHAS.md.
+    // Click-through, everywhere but the player's controls row. The wrapper plasmashell
+    // puts around every desktop applet (AppletContainer, our parent item) accepts the left
+    // button unconditionally, waiting for press-and-hold, so the applet cannot let clicks
+    // through from the inside. It is left enabled and given a containmentMask instead: an
+    // Item whose x/y/width/height is the controls row's rectangle in the wrapper's own
+    // coordinates — or 0×0, and nothing takes the mouse, while the player is off, has no
+    // player on the bus or hides its controls. Qt's target search then skips the wrapper
+    // wherever its contains() says no but still visits its children — a click inside the
+    // rectangle reaches the glyph's MouseArea, one outside lands on the desktop or the
+    // widget beneath, and so does the hover; press-and-hold inside the rectangle enters
+    // edit mode as for any applet. Only the mask's x/y and size matter, not its parent or
+    // visibility. Off in edit mode, so the shell's own move, resize and configure handles
+    // apply to the whole widget. Proven on the stand, tests/passthrough.qml, tests 10–17
+    // — docs/GOTCHAS.md.
+    // ⚠️ The one trap (test_10): any child that accepts the left button outside the
+    // rectangle arms the wrapper's press-and-hold timer, and a plain click on it would
+    // enter edit mode 800 ms later. A Text with the default textFormat is such a child, so
+    // every Text here and in PlayerView.qml is textFormat: PlainText; the ring's bars are
+    // Rectangles and take no input, and nothing else in the widget takes the mouse but the
+    // player's three control MouseAreas.
+    readonly property bool passing: cfg.clickThrough && !shellEditMode
     Binding {
         target: root.parent
-        property: "enabled"
-        value: !root.cfg.clickThrough || root.shellEditMode
+        property: "containmentMask"
+        value: root.passing ? root.fullRepresentationItem?.wrapperMask ?? null : null
         when: root.parent !== null && ("editModeCondition" in root.parent)
     }
 
-    // The right button needs one thing more: the desktop looks for the applet under a
-    // right-click geometrically (ContainmentItem::mousePressEvent asks every PlasmoidItem
-    // contains(pos) and never looks at enabled), so with only the wrapper disabled the
-    // widget's own menu would still open. An empty containment mask makes contains()
-    // answer "no", and the desktop shows its own menu, as if the widget were not there.
+    // The right button needs the same rectangle once more, on the PlasmoidItem: the
+    // desktop looks for the applet under a right-click geometrically
+    // (ContainmentItem::mousePressEvent asks every PlasmoidItem contains(pos)), so the
+    // widget's own menu opens over the controls only, and the desktop's elsewhere.
     // ⚠️ Declared with revision 2.11 in QtQuick, and org.kde.plasma.plasmoid does not
     // pull that revision in, so "containmentMask:" on a PlasmoidItem is a compile error
     // ("not available in org.kde.plasma.plasmoid 255.255"). Binding by name goes through
@@ -75,18 +114,49 @@ PlasmoidItem {
     Binding {
         target: root
         property: "containmentMask"
-        value: (root.cfg.clickThrough && !root.shellEditMode) ? noHitMask : null
+        value: root.passing ? root.fullRepresentationItem?.rootMask ?? null : null
     }
-    Item { id: noHitMask; width: 0; height: 0; visible: false }
 
     fullRepresentation: Item {
-        // Input off on the widget itself: in edit mode the wrapper takes the mouse, not us.
-        enabled: !root.cfg.clickThrough
+        id: rep
 
         implicitWidth: root.boardWidth
         implicitHeight: root.boardHeight
 
+        // The two masks for the bindings above, reached through fullRepresentationItem.
+        readonly property Item wrapperMask: wrapperMaskItem
+        readonly property Item rootMask: rootMaskItem
+
+        // The embedded player's controls row mapped through the loader's item into the
+        // wrapper's and into the PlasmoidItem's coordinates; an empty rectangle without
+        // the player. With NoBackground the wrapper's padding is 0 and the two are the same
+        // rectangle; mapped anyway, so a background put back through the dialog does not
+        // shift the mask off the glyphs. mapToItem() is a function, so the positions along
+        // the chain are read first: a binding follows what it reads, and this one then
+        // follows a move of any link — the board moves with the ring's geometry.
+        function maskRect(into) {
+            const view = playerLoader.item
+            const chain = [root.x, root.y, rep.x, rep.y, playerLoader.x, playerLoader.y]
+            if (!into || !view || !chain)
+                return Qt.rect(0, 0, 0, 0)
+            const c = view.controlsRect
+            return view.mapToItem(into, c.x, c.y, c.width, c.height)
+        }
+        Item {
+            id: wrapperMaskItem
+            visible: false
+            readonly property rect r: rep.maskRect(root.parent)
+            x: r.x; y: r.y; width: r.width; height: r.height
+        }
+        Item {
+            id: rootMaskItem
+            visible: false
+            readonly property rect r: rep.maskRect(root)
+            x: r.x; y: r.y; width: r.width; height: r.height
+        }
+
         Ring {
+            id: ring
             anchors.centerIn: parent
             source: spectrum
 
@@ -113,17 +183,62 @@ PlasmoidItem {
             hideWhenQuiet: root.cfg.hideWhenQuiet
         }
 
+        // The player, in the centre of the ring. A Loader, so nothing — not even the MPRIS
+        // model — exists while it is off. The bars grow outward from the ring's radius, so
+        // the disc inside is free; on a line every pixel belongs to the bars at full
+        // level, and the board goes along the edge they reach last — above bars that grow
+        // up, below bars that hang down — or, if the applet was made taller than the
+        // board, entirely outside their reach. Its controls row is the one place the
+        // widget takes the mouse while clicks pass through — the masks above.
+        Loader {
+            id: playerLoader
+            active: root.cfg.playerShow
+            width: root.playerWidth
+            height: root.playerHeight
+            x: Math.round(ring.x + ring.width / 2 - width / 2)
+            y: Math.round(ring.isRing
+                ? ring.y + ring.height / 2 - height / 2
+                : (root.cfg.growth === 1
+                    ? Math.min(parent.height - height, ring.y + ring.height)
+                    : Math.max(0, ring.y - height)))
+
+            sourceComponent: PlayerView {
+                quietWhenNoPlayer: true
+
+                playerFilter: root.cfg.playerFilter
+                showAlbum: root.cfg.playerAlbum
+                showControls: root.cfg.playerControls
+                columns: Math.max(22, root.cfg.playerColumns)
+
+                fontFamily: root.playerFace
+                fontSize: root.cfg.playerFontSize
+                colorFg: root.cfg.playerColorFg
+                colorAccent: root.cfg.playerColorAccent
+                colorDim: root.cfg.playerColorDim
+            }
+        }
+
         // Without the relay there is nothing to draw, and silence would look the same as
-        // a missing service — so say which it is.
+        // a missing service — so say which it is. With the player on, the notice steps
+        // aside — below the board, or above it when the board sits in the lower half —
+        // rather than print itself over the track.
         Text {
+            id: relayNotice
             visible: !spectrum.relayUp
-            anchors.centerIn: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: !playerLoader.active
+                ? Math.round((parent.height - height) / 2)
+                : (playerLoader.y + playerLoader.height / 2 > parent.height / 2
+                    ? playerLoader.y - height - 4
+                    : playerLoader.y + playerLoader.height + 4)
             color: root.cfg.color
             opacity: 0.7
             font.family: "monospace"
             text: i18n("no data: the plainspectrum-relay service does not answer\nport %1",
                        root.cfg.relayPort)
             horizontalAlignment: Text.AlignHCenter
+            // Not a mouse target under the partial mask (the trap above, test_10).
+            textFormat: Text.PlainText
         }
     }
 }

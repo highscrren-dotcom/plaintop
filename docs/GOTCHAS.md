@@ -303,6 +303,11 @@ widget, takes the mouse.
 ⚠️ While clicks go through, the widget cannot be right-clicked either. Its settings are
 reached through the desktop's edit mode, or with `./install.sh --clicks-off`.
 
+⚠️ Disabling the wrapper is the way only for a widget with nothing to click — the monitor
+and the weather. Where buttons must keep working — the player, and the visualizer with the
+player in its ring — the wrapper stays enabled and gets a `containmentMask` over the
+buttons instead: *A partial `containmentMask` on the wrapper* below (decision 11).
+
 Verified in two steps:
 
 - **A stand**, `tests/passthrough.qml`: a QtTest file importing the installed
@@ -311,7 +316,9 @@ Verified in two steps:
   more `MouseArea` beneath for the desktop. `./install.sh --check-passthrough` runs it
   offscreen (`QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen
   /usr/lib/qt6/bin/qmltestrunner -input tests/passthrough.qml`): 10 of 10 passed in about
-  a second — 11 of 11 since `test_09` for the right button, below. It reproduces the old
+  a second — 11 of 11 since `test_09` for the right button, below, and 17 tests since the
+  partial mask of decision 11 (`test_10`–`test_17`; 19 of 19 with init and cleanup,
+  2026-09-23). It reproduces the old
   behaviour (left swallowed, right passes), shows that `Locked` and `Manual` still swallow, that `enabled = false` on the
   container passes both buttons on to the desktop and to an applet beneath, that
   re-enabling restores the capture, and that no press-and-hold edit mode starts while
@@ -340,7 +347,7 @@ menu. What `QQuickItem::contains()` does look at is the item's `containmentMask`
 (qtdeclarative, `qquickitem.cpp`: with a `QQuickItem` as the mask,
 `return quickMask->contains(point - quickMask->position())`). An empty 0×0 `Item` as the
 mask makes `contains()` answer "no", and the desktop shows its own menu, as if the widget
-were not there. Both `main.qml` files:
+were not there. The monitor's and the weather's `main.qml`:
 
 ```qml
 Binding {
@@ -352,7 +359,9 @@ Item { id: noHitMask; width: 0; height: 0; visible: false }
 ```
 
 In edit mode the mask comes off as the wrapper comes back, so the shell's own handles and
-menu work as usual. ⚠️ Why a `Binding` and not `containmentMask: …` — the next gotcha.
+menu work as usual. The player and the visualizer put the controls row's rectangle there
+instead of an empty item, so their own menu opens over the buttons only — the partial
+mask, below. ⚠️ Why a `Binding` and not `containmentMask: …` — the next gotcha.
 Verified: the stand's `test_09` sets the mask by name on an `ItemContainer` and
 `contains(Qt.point(50, 50))` flips true → false → true (11 of 11 pass); on the real desktop
 both widgets pass the right button as well as the left, with music playing, and the
@@ -380,8 +389,11 @@ Binding { target: root; property: "containmentMask"; value: … }
 ```
 
 A `Binding` by name goes through `QQmlProperty`, which looks the property up at run time
-and does not check revisions. Both `main.qml` files do exactly that, and the stand's
-`test_09` does the same against an `ItemContainer`.
+and does not check revisions. All four `main.qml` files do exactly that, and the stand's
+`test_09` does the same against an `ItemContainer`. ⚠️ It is the `PlasmoidItem` that
+refuses, not the property: on an `ItemContainer` — the wrapper — `containmentMask: …`
+written declaratively loads and works (`test_17`, 2026-09-23). The widgets reach the
+wrapper only as `root.parent`, so there it is a `Binding` by name in any case.
 
 ## `/usr/bin/qmltestrunner` is the Qt 5 one
 
@@ -683,3 +695,103 @@ At 10 pt JetBrains Mono `FontMetrics.height` says 17.14 px, and a `Text` with
 pixels. An applet sized to five lines from the metric is four pixels short, and the last
 line is clipped. Measure a hidden `Text` in the same font and take its `implicitHeight`;
 both new widgets size their board that way. Measured in the offscreen host, 2026-09-23.
+
+## A partial `containmentMask` on the wrapper: the buttons take the mouse, the rest lets it through
+
+Decision 8 disables the wrapper, and with it every `MouseArea` inside — a click-through
+player had no buttons (decision 11). The way round is Qt's own target search:
+`QQuickDeliveryAgentPrivate::eventTargets` skips an item whose `contains()` says no but
+still walks into its children. So the wrapper stays enabled and gets a `containmentMask`
+that is only the controls row's rectangle, in the wrapper's coordinates: inside it the
+wrapper is a target as for any applet — a click reaches the glyph's `MouseArea`,
+press-and-hold enters edit mode — and outside it the wrapper is skipped, the press lands
+on the desktop or the applet beneath, and so does the hover. The same rectangle goes on
+the `PlasmoidItem` for the right button (the desktop's geometric lookup, above), both
+through a `Binding` by name, both `null` in edit mode. While the row is hidden — no
+player on the bus, or the controls switched off — the rectangle is 0×0 and everything
+passes. `player/package/contents/ui/main.qml` and `spectrum/package/contents/ui/main.qml`
+do it; the rectangle comes from `PlayerView.controlsRect`, mapped through `mapToItem()`.
+
+Verified on the stand, `tests/passthrough.qml`, tests 11–15: a masked container with a
+text and a 120×24 row of buttons over another applet — inside the rectangle the buttons
+count the click, outside it the desktop or the applet beneath does; the right button
+reaches the desktop either side; hover follows the same line (`test_13`: hover delivery
+walks into every visible child whatever the parent says, so a `hoverEnabled` area over the
+whole applet would take hover everywhere — the buttons' area takes it only over itself);
+press-and-hold inside enters edit mode, outside does not; the mask back to `null` restores
+full capture. A second, throwaway stand put the real `PlayerView.qml` inside the compiled
+`ItemContainer`: 11 of 11. ⚠️ The stand is offscreen; real clicks on the live desktop are
+still the user's check. Verified 2026-09-23, plasma-workspace 6.7.5, Qt 6.11.2.
+
+## A `Text` with the default `textFormat` accepts the left button
+
+Under a partial mask this is the trap. A `Text` built with the default `textFormat`
+(`AutoText`) keeps the constructor's `acceptedMouseButtons = LeftButton`
+(`qquicktext.cpp`: `init()`; only `setTextFormat()` lowers it to `NoButton`), so it is a
+pointer target, and the wrapper's `childMouseEventFilter` runs for it without asking
+`contains()`: the press-and-hold timer starts. The press itself goes on to the desktop,
+and so does the release — to the desktop's grabber, never through the filter — so nothing
+stops the timer, and a plain click on the text puts the wrapper into edit mode 800 ms
+later. Without a mask the wrapper is a target too, takes the grab and stops the timer in
+its own `mouseReleaseEvent`; outside the mask it is not. `test_10` shows both halves:
+edit mode after 1.2 s with the default text, none with `Text.PlainText`.
+
+So under a partial mask nothing but the buttons may accept the mouse: `textFormat:
+Text.PlainText` on every `Text` (`PlayerView.qml`'s `Line` component, the visualizer's
+relay notice), or `enabled: false` on a subtree that has nothing to click. The ring's
+bars are `Rectangle`s and take no input.
+
+## `containmentMask` coordinates: only the mask's x/y count
+
+`QQuickItem::contains()` does `quickMask->contains(point - quickMask->position())`: the
+point is in the masked item's coordinates, only the mask's `x`/`y` are subtracted, and the
+mask's parent — or its visibility — is never consulted (`qquickitem.cpp`, Qt 6.11.2). So
+the mask `Item` may live anywhere in the tree, invisible, as long as its `x`/`y`/size are
+the rectangle in the wrapper's coordinates; and the mask gates the wrapper only, not its
+subtree — a `MouseArea` is hit by its own geometry. `test_16` shows both with a padding of
+20 on the container: the content and the buttons move to 60..180, both masks stay at
+40..160, a click at 50 is taken by the wrapper and one at 170 by the buttons. Hence
+`maskRect()` in the two hosts: the row's rectangle mapped into `root.parent` for the
+wrapper and into `root` for the `PlasmoidItem`, the positions along the chain read first
+so the binding follows a move. Declaratively, `containmentMask: …` loads on an
+`ItemContainer` (`test_17`) — it is the `PlasmoidItem` that refuses it, the gotcha above.
+
+## On the stand, edit mode reorders the containers
+
+A release in edit mode changes the stacking: `ItemContainer::mouseReleaseEvent` calls
+`AppletsLayout::positionItem`, and the grid manager then stacks the container before a
+sibling to its right or below (`GridLayoutManager::assignSpaceImpl`, "Reorder items tab
+order") — on the stand the masked "row" ended up under the "beneath" applet, whose
+`MouseArea` then took everything, and later clicks went there for a reason that had
+nothing to do with the mask. `resetRow()` re-parents the container (`parent = null`, then
+back to the layout), which appends it last, on top again, and restores its geometry.
+Worth knowing for any test that lets an `ItemContainer` enter edit mode.
+
+## A bare `i18n()` in a shared file follows the host's domain
+
+`player/shared/PlayerView.qml` is copied into two packages, and its strings go through a
+bare `i18n()`. That call resolves through the translation domain of the plasmoid that
+loaded the copy: the same file shows the player's catalog inside plainplayer and the
+visualizer's inside plainspectrum. Verified 2026-09-23. So `po/extract.py` lists
+`player/shared` under both domains, and a string added there lands in two catalogs —
+forget one and the visualizer shows English where the player is translated. This is the
+opposite of `monitor/shared/`, whose `KI18nContext` carries a hard-wired domain: the
+pattern for a file with two hosts is the bare call.
+
+## `barRow` labels are three characters
+
+`barRow(label, value)` pads and cuts the label to three characters so the percentage column
+stays put — the disks block asked for `root` and got `roo`. The row now takes an optional
+label width: the disks pass four, and the bar gives up one character (`bar(value, width)`)
+so the column does not move. Four fits `root`, `home`, `data`, `boot`; a longer last path
+element is cut. The root mount is `root` rather than `/` on purpose: the bar beside it is
+made of slashes too, and `/   //` read as one thing.
+
+## "offline" in the weather header may be the network, not the widget
+
+On the author's machine the header showed `· offline` for a while although the search on
+the *Location* page still worked: the tunnel had dropped TCP to `api.open-meteo.com`, and
+`geocoding-api.open-meteo.com` — a different host — was still reachable. The widget kept
+the cached forecast and went on retrying on its backoff, as decision 10 says it should. A
+network fact, not a widget one; recorded so the next "the weather is broken" starts with
+the network. 2026-09-23.

@@ -31,13 +31,16 @@ DOMAINS = {
         "python": ["monitor/window/setup.py"],
         "schema": True,
     },
+    # player/shared is listed under two domains on purpose: the visualizer draws the
+    # player's view inside its own package, where i18n() resolves to the visualizer's
+    # domain — so its strings must exist in both catalogs.
     "plasma_applet_org.s1dd1.plainspectrum": {
-        "sources": ["spectrum/shared", "spectrum/window", "spectrum/package/contents"],
+        "sources": ["spectrum/shared", "spectrum/window", "spectrum/package/contents", "player/shared"],
         "python": ["spectrum/window/setup.py"],
         "schema": False,
     },
     "plasma_applet_org.s1dd1.plainplayer": {
-        "sources": ["player/package/contents"],
+        "sources": ["player/shared", "player/package/contents"],
         "schema": False,
     },
     "plasma_applet_org.s1dd1.plainweather": {

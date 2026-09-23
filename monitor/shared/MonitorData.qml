@@ -546,9 +546,10 @@ Item {
     // ── Formatting ────────────────────────────────────────────────────────────
     // ⚠️ Our own, not formattedValue: that one inserts U+200B before "%" and U+2009
     // before "°C", and in monospace text the columns drift apart.
-    function bar(pct) {
-        const k = Math.max(0, Math.min(barWidth, Math.round(pct * barWidth / 100)))
-        return "/".repeat(k) + " ".repeat(barWidth - k)
+    function bar(pct, width) {
+        const w = width || barWidth
+        const k = Math.max(0, Math.min(w, Math.round(pct * w / 100)))
+        return "/".repeat(k) + " ".repeat(w - k)
     }
 
     function pct(v) {
@@ -557,8 +558,11 @@ Item {
 
     // The label is exactly three characters — otherwise the percent column wanders
     // with the label length.
-    function barRow(label, value) {
-        return String(label).padEnd(3).slice(0, 3) + " " + bar(value) + " " + pct(value)
+    // The label is three characters; a wider label (the disks use four: "root", "home")
+    // takes its extra characters from the bar, so the percentage column stays aligned.
+    function barRow(label, value, labelWidth) {
+        const lw = labelWidth || 3
+        return String(label).padEnd(lw).slice(0, lw) + " " + bar(value, barWidth - (lw - 3)) + " " + pct(value)
     }
 
     // The decimal separator is the locale's: a comma under ru_RU, a point under en_US.
@@ -594,7 +598,7 @@ Item {
     }
 
     // Free text is cut at the widget's width with an ellipsis.
-    function clip(text) {
+    function clipText(text) {
         return text.length > columns ? text.slice(0, Math.max(0, columns - 1)) + "…" : text
     }
 
@@ -793,8 +797,10 @@ Item {
 
             case "disks": {
                 for (const d of diskRows) {
-                    const name = d.target === "/" ? "/" : d.target.split("/").pop()
-                    out.push(line(barRow(name, d.pct)))
+                    // The root mount is labelled "root", not "/": the bar beside it is made of slashes too,
+                    // and "/   //" read as one thing. Other mounts keep their last path element.
+                    const name = d.target === "/" ? "root" : d.target.split("/").pop()
+                    out.push(line(barRow(name, d.pct, 4)))
                     let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
                     if (d.target === "/" && p.nvme_temp !== false) {
                         const t = nvmeSensor.length > 0 ? Math.round(num(nvmeSensor, 0)) : 0
@@ -805,7 +811,7 @@ Item {
                 // Configured but not mounted: say so instead of staying silent.
                 for (const m of (p.mounts || [])) {
                     if (!diskRows.some(d => d.target === m))
-                        out.push(line(m.split("/").pop() + " | "
+                        out.push(line((m === "/" ? "root" : m.split("/").pop()) + " | "
                                       + tr.i18nc("disks: a configured mount point is absent",
                                                  "not mounted"), "dim"))
                 }
@@ -862,7 +868,7 @@ Item {
                 }
                 const n = p.lines === undefined ? 3 : Math.max(0, Number(p.lines) || 0)
                 for (const l of (h.lines || []).slice(0, n))
-                    out.push(line(clip((l.ident ? l.ident + "  " : "") + l.text), "dim"))
+                    out.push(line(clipText((l.ident ? l.ident + "  " : "") + l.text), "dim"))
                 break
             }
 

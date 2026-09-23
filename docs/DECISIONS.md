@@ -281,6 +281,12 @@ right for 1, 3 and 5; with `LANGUAGE=en` it fell back to the English source stri
 be missing where the widgets have to run. Then the dictionary generated from the same `.po`
 files replaces ki18n, and the catalogs stay as they are.
 
+⚠️ **Note, 2026-09-23.** One shared file now has two plasmoid hosts rather than a plasmoid
+and a window: `player/shared/PlayerView.qml`, drawn by the player and by the visualizer.
+It calls bare `i18n()`, which resolves through the domain of whichever plasmoid loaded the
+copy, so `po/extract.py` lists `player/shared` under both domains — decision 12 and
+`GOTCHAS.md`.
+
 ## 8. The left button goes through: the plasmoid disables its own wrapper outside edit mode (2026-09-22)
 
 **Decision:** with `clickThrough` on, each plasmoid disables the container plasmashell
@@ -372,6 +378,9 @@ mouse. Then use that and drop the binding. If hover or keyboard input inside a
 click-through widget is ever needed: an empty `containmentMask` on the wrapper itself
 instead of `enabled: false` keeps the applet subtree enabled (research of 2026-09-22,
 7 of 7 on a stand, not yet on the desktop).
+
+⚠️ **Note, 2026-09-23.** Built: the player and the visualizer do exactly that, with a mask
+over the controls row — decision 11, implemented.
 
 ## 9. The window hosts are retired — the plasmoid is the only host (2026-09-22)
 
@@ -467,3 +476,65 @@ between the two.
 
 **Revisit when:** the passthrough stand covers a sub-rectangle mask — then the follow-up is
 built and the choice goes away.
+
+**Implemented 2026-09-23.** The stand covers the sub-rectangle mask, and the follow-up is
+built in both hosts — the player widget and the visualizer with the player in its ring
+(decision 12). The recipe, as sketched above: with *Mouse* on, the wrapper stays enabled
+and gets a `containmentMask` that is an `Item` over the controls row `<<  >  >>`, in the
+wrapper's coordinates — Qt evaluates `mask.contains(point − mask.position())`, so only the
+mask's x/y and size matter, not its parent or visibility; the same rectangle is the
+`PlasmoidItem`'s `containmentMask` for the right button; both `null` in edit mode; both set
+through a `Binding` by name, as before. A left click inside the rectangle reaches the
+button, outside it lands on the desktop or the widget beneath; hover outside goes to what
+is beneath; press-and-hold on a button starts edit mode like any applet; when the row is
+hidden — no player, or the controls off — the mask is 0×0 and everything passes. Proven
+on `tests/passthrough.qml`, now 17 tests (19 of 19 with init and cleanup,
+`./install.sh --check-passthrough`), and on a second, throwaway stand with the real
+`PlayerView` inside the compiled `ItemContainer`, 11 of 11. ⚠️ The one trap the stand
+found: any item that accepts the left button outside the rectangle — an ordinary `Text`
+with the default `textFormat` does — becomes a pointer target, and the wrapper's child
+filter arms its press-and-hold timer without checking `contains()`, so a plain click on
+the text would enter edit mode after 800 ms; the cure is `textFormat: Text.PlainText` on
+every `Text` (or `enabled: false`), and nothing but the buttons may accept the mouse —
+`GOTCHAS.md`. Real clicks on the live desktop are still the user's check. **The *Mouse*
+setting now means: everything passes except the buttons** — the choice above is gone, and
+the hint on the Mouse page says so.
+
+## 12. The player also lives inside the visualizer, as an option — and stays a separate widget (2026-09-23)
+
+**Decision:** the visualizer gets a *Player* page with one switch, "show the player in the
+centre of the ring" (`playerShow`, off by default), and under it the player widget's own
+settings — filter, album, controls, font, size, width in characters (22 at least), the
+three colours — with the same defaults. A `Loader` creates the view only while the switch
+is on, so nothing of it, not even the MPRIS model, exists otherwise. The board, `columns`
+characters by five lines, is centred on the ring's centre; in the line layout it sits along
+the edge the bars reach last — above bars that grow up, below bars that hang down; the ring
+keeps its size; with no player on the bus the centre stays empty. The standalone widget
+`plainplayer` stays as its own product.
+
+**Why inside the visualizer.** The user wanted the player in the centre of the ring. Two
+applets cannot overlap on the desktop: the containment's layout manager hands each one a
+free rectangle (`isRectAvailable`), so a player widget dropped on the ring would be pushed
+aside. So the view had to be drawn by the visualizer itself.
+
+**How, without a second copy.** The view moved to `player/shared/PlayerView.qml`, the one
+source; `install.sh` copies it into `player/package/contents/ui/` (`player_prepare`) and
+into `spectrum/package/contents/ui/` (`spectrum_prepare`), the copies are gitignored, and
+`--status` compares both with the source — the same arrangement as `monitor/shared/`. The
+strings go through a bare `i18n()`, which resolves through the domain of the plasmoid that
+loaded the copy, so `po/extract.py` lists `player/shared` under both domains (the note
+under decision 7). The mouse is decision 11 in both hosts: with *Mouse* on, the
+visualizer's wrapper takes only the controls row.
+
+**What we pay.**
+- Two hosts to keep in step: a change to the view is tested in the player and in the ring,
+  and the visualizer's `main.qml` carries the player's measuring code (`TextMetrics`, the
+  hidden line probe) a second time.
+- The strings live in two catalogs: a new string in the view means translating it in
+  `plainplayer` and in `plainspectrum`, ten languages each.
+- The view's file sits in the visualizer's package whether or not the switch is on.
+
+**Revisit if:** Plasma ever lets applets overlap, or share a containment cell — then the
+player widget could simply be placed over the ring and the option goes. Or if the two
+hosts drift in behaviour: then the view becomes a QML module of its own rather than a
+copied file.

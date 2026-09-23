@@ -21,7 +21,7 @@ KCM.SimpleKCM {
         }
 
         Label {
-            text: i18n("While clicks go through, both mouse buttons land on the desktop.\nThe widget takes the mouse only in the desktop's edit mode:\nthat is where its settings are, or ./install.sh with the clicks off switch.\nWith the mouse passing through, the controls cannot be clicked.")
+            text: i18n("While clicks go through, both mouse buttons land on the desktop.\nThe widget takes the mouse only in the desktop's edit mode:\nthat is where its settings are, or ./install.sh with the clicks off switch.\nThe controls take the mouse even then; the rest of the widget lets it through.")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }

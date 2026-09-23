@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 18:48+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,9 +17,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr ""
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr ""
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr ""
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
+msgstr ""
+
 #: spectrum/package/contents/config/config.qml:7
 msgctxt "settings page"
 msgid "Ring"
+msgstr ""
+
+#: spectrum/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Player"
 msgstr ""
 
 #: spectrum/package/contents/ui/configGeneral.qml:50
@@ -281,7 +306,110 @@ msgid ""
 "the frequencies and the device are set in ~/.config/plainspectrum/relay.env"
 msgstr ""
 
-#: spectrum/package/contents/ui/main.qml:124
+#: spectrum/package/contents/ui/configPlayer.qml:34
+msgctxt "the player drawn inside the visualizer"
+msgid "In the ring:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:35
+msgid "show the player in the centre of the ring"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:39
+msgid ""
+"The track, the position bar and the controls of the player widget,\n"
+"drawn over the free disc inside the bars. On a line they go along\n"
+"the edge the bars reach last. The ring keeps its size."
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:44
+msgctxt "settings section"
+msgid "Text"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:48
+msgid "Font:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:55
+msgctxt "font size"
+msgid "Size:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:63
+msgid "Width, characters:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:70
+msgid ""
+"The player is this many characters wide and five lines tall;\n"
+"a longer title is cut with an ellipsis."
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:75
+msgctxt "settings section"
+msgid "Palette"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:78
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:85
+msgctxt "palette: colour of"
+msgid "Title:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:92
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:98
+msgctxt "settings section"
+msgid "Player"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:102
+msgid "Player:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:105
+msgctxt "player field placeholder"
+msgid "whoever is playing"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:109
+msgid ""
+"Empty: whoever is playing. Otherwise a part of the player's name\n"
+"or desktop entry — vlc, spotify, strawberry; when no player matches,\n"
+"back to whoever is playing."
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:116
+msgid "Album:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:118
+msgid "show the album line"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:123
+msgid "Controls:"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:125
+msgid "show the previous, play/pause and next row"
+msgstr ""
+
+#: spectrum/package/contents/ui/configPlayer.qml:129
+msgid ""
+"With no player on the bus the centre of the ring stays empty.\n"
+"The controls take the mouse even while the rest passes clicks through."
+msgstr ""
+
+#: spectrum/package/contents/ui/main.qml:237
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"

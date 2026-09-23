@@ -6,6 +6,11 @@ import org.kde.plasma.private.mpris as Mpris
 // it the way the monitor draws its lines: monospace, no frames, a slash bar for the
 // position. The controls are text too — three glyphs with a mouse area under each.
 //
+// Shared by two hosts — the player widget and the visualizer, which draws it in the
+// centre of its ring — so install.sh copies this file into both packages from
+// player/shared/. Strings go through the bare i18n() of whichever plasmoid loads the
+// copy: the domain follows the host, and both catalogs carry these strings.
+//
 // The data is org.kde.plasma.private.mpris, the module behind Plasma's media controller:
 // its Mpris2Model lists every player on the session bus, row 0 being a multiplexer that
 // follows whoever is playing. Should that private module ever break, the same properties
@@ -21,6 +26,9 @@ Item {
     property bool showAlbum: true
     property bool showControls: true
     property int columns: 44
+    // With no player on the bus the widget says so; inside the visualizer's ring the same
+    // moment should draw nothing at all, so the host sets this and the lines come out empty.
+    property bool quietWhenNoPlayer: false
 
     property string fontFamily: "JetBrainsMono Nerd Font Mono"
     property int fontSize: 10
@@ -170,6 +178,8 @@ Item {
         const out = []
         const header = i18nc("the widget's header line", "NOW PLAYING")
         if (!player) {
+            if (quietWhenNoPlayer)
+                return out
             out.push([{ text: header, role: "fg" },
                       { text: "  " + i18nc("no MPRIS player on the bus", "no player"), role: "dim" }])
             return out
@@ -221,12 +231,30 @@ Item {
         }
     }
 
+    // The controls row's rectangle in the view's coordinates: from the first glyph to the end
+    // of the last, the row's height. Empty while the row is hidden — no player, or the
+    // controls switched off — so that nothing in the widget takes the mouse then. The hosts
+    // put this rectangle on the applet's wrapper as its containmentMask (decision 11), and
+    // only this area takes clicks while the rest passes them through. Summed by hand rather
+    // than through mapToItem(): a binding follows only the properties it reads, and the
+    // column, the row and the glyphs are each the direct child of the previous one.
+    readonly property rect controlsRect: controlsRow.visible
+        ? Qt.rect(board.x + controlsRow.x + prevControl.x, board.y + controlsRow.y,
+                  nextControl.x + nextControl.width - prevControl.x, controlsRow.height)
+        : Qt.rect(0, 0, 0, 0)
+
     // A widget line: monospace text, colour and size set in place.
+    // ⚠️ textFormat: PlainText is what keeps the widget out of the mouse's way: a Text with
+    // the default AutoText accepts the left button (qquicktext.cpp), and under the partial
+    // mask any child that accepts the button arms the wrapper's press-and-hold timer, so an
+    // ordinary click on the text would enter the desktop's edit mode 800 ms later —
+    // tests/passthrough.qml, test_10. Every Text here derives from this one.
     component Line: Text {
         color: view.colorFg
         font.family: view.fontFamily
         font.pointSize: view.fontSize
         renderType: Text.NativeRendering
+        textFormat: Text.PlainText
     }
 
     // A control: a glyph and a mouse area, nothing drawn around it. Dim when the player
@@ -243,6 +271,7 @@ Item {
     }
 
     Column {
+        id: board
         spacing: 0
 
         // The model is a count, not the array: with a count the delegates stay when the
@@ -270,11 +299,16 @@ Item {
             }
         }
 
+        // The only part of the widget that takes the mouse — see controlsRect above. The
+        // three MouseAreas are the widget's only input items; a hover area over the whole
+        // board would take hover everywhere (tests/passthrough.qml, test_13).
         Row {
+            id: controlsRow
             visible: view.showControls && view.player !== null
             spacing: 0
 
             Control {
+                id: prevControl
                 text: "<<"
                 can: view.canGoPrevious
                 onPressed: view.player?.Previous()
@@ -287,6 +321,7 @@ Item {
             }
             Line { text: "   " }
             Control {
+                id: nextControl
                 text: ">>"
                 can: view.canGoNext
                 onPressed: view.player?.Next()

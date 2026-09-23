@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 18:34+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: 2026-09-23 17:52+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -27,27 +27,6 @@ msgstr "Загальне"
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "Миша"
-
-#: player/package/contents/ui/PlayerView.qml:171
-msgctxt "the widget's header line"
-msgid "NOW PLAYING"
-msgstr "ЗАРАЗ ГРАЄ"
-
-#: player/package/contents/ui/PlayerView.qml:174
-msgctxt "no MPRIS player on the bus"
-msgid "no player"
-msgstr "немає плеєра"
-
-#: player/package/contents/ui/PlayerView.qml:190
-msgctxt "playback status"
-msgid "stopped"
-msgstr "зупинено"
-
-#: player/package/contents/ui/PlayerView.qml:194
-#: player/package/contents/ui/PlayerView.qml:296
-msgctxt "playback status"
-msgid "paused"
-msgstr "пауза"
 
 #: player/package/contents/ui/configGeneral.qml:28
 msgctxt "settings section"
@@ -148,10 +127,31 @@ msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
 "that is where its settings are, or ./install.sh with the clicks off switch.\n"
-"With the mouse passing through, the controls cannot be clicked."
+"The controls take the mouse even then; the rest of the widget lets it "
+"through."
 msgstr ""
 "Поки клацання проходять наскрізь, обидві кнопки миші потрапляють на "
 "стільницю.\n"
 "Віджет бере мишу лише в режимі редагування стільниці:\n"
 "там же його налаштування, або ./install.sh з перемикачем clicks off.\n"
-"Поки миша проходить наскрізь, кнопки керування не натиснути."
+"Кнопки керування ловлять мишу й тоді; решта віджета її пропускає."
+
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr "ЗАРАЗ ГРАЄ"
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr "немає плеєра"
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr "зупинено"
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
+msgstr "пауза"

@@ -35,15 +35,18 @@ What is in the repository:
 |---|---|---|
 | **`monitor/`** | the text monitor: a plasmoid, with the renderer and data side in `shared/`; the retired window host stays in `window/` (decision 9) | works |
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
-| **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module | works |
+| **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module; its view lives in `shared/`, since the visualizer draws it too | works |
 | **`weather/`** | the weather widget: now and the next days as text, from Open-Meteo over https, no service of its own | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
 plasmoid disables the wrapper the shell puts around it, so clicks land on the icons and the
 wallpaper as if the widget were not there. The widget takes the mouse only in the desktop's
-edit mode — which is also where its settings are. How the left button was won back, after
-four failed attempts: [docs/GOTCHAS.md](docs/GOTCHAS.md). Before the plasmoid could do
+edit mode — which is also where its settings are. One exception, where there is something
+to click: the player's controls row `<<  >  >>` — in the player widget and in the
+visualizer with the player in its ring — keeps taking clicks while everything around it
+lets them through (decision 11). How the left button was won back, after four failed
+attempts: [docs/GOTCHAS.md](docs/GOTCHAS.md). Before the plasmoid could do
 this, each widget had a **window host** — a plain window with `Qt.WindowTransparentForInput`.
 Those hosts are retired (decision 9): one host now, the plasmoid, with Plasma's own
 settings dialog. Their code stays in the tree but is not installed;
@@ -128,6 +131,13 @@ in the same flat style. `cava` does the spectrum, a small systemd user service s
 bands over local HTTP, and the widget moves ready-made rectangles: the GPU stays at about
 half a percent because nothing is rasterized per frame.
 
+Since 0.3 it can also carry the player: the *Player* page puts the "now playing" view —
+the same file the player widget draws, `player/shared/PlayerView.qml` — in the centre of
+the ring, or along the edge the bars reach last on a line; the ring keeps its size, and
+with no player on the bus the centre stays empty. Off by default (decision 12). With the
+*Mouse* setting on, only that player's controls row `<<  >  >>` takes clicks; the rest of
+the widget lets them through.
+
 It is a plasmoid with Plasma's settings dialog; its earlier click-through window host is
 retired (decision 9). Details, settings and the measured cost:
 **[spectrum/README.md](spectrum/README.md)**.
@@ -139,9 +149,13 @@ name, artist and title, the album, a slash bar with the position and time, and `
 controls — plain text with a mouse area under each glyph, no buttons. It reads MPRIS through
 the module behind Plasma's own media controller, so whatever Plasma sees, it sees: VLC,
 Spotify, a browser. The *Player* setting pins it to one player by name; empty means whoever
-is playing. Its *Mouse* setting works as in the other two, with one consequence: while
-clicks pass through, the controls cannot be clicked — so it ships with the setting off
-(decision 11). `./install.sh --player` installs it.
+is playing. Its *Mouse* setting lets everything through except the controls row: a click
+on `<<`, `>` or `>>` reaches the button, a click anywhere else on the widget lands on the
+desktop or the widget beneath, and so does the hover (decision 11 — proven on the
+click-through stand against the shell's compiled applet wrapper; a real mouse on a live
+desktop is still the check to make). The same view can sit in the centre of the
+visualizer's ring, as an option there; the widget stays a product of its own
+(decision 12). `./install.sh --player` installs it.
 
 ## The weather
 
@@ -150,10 +164,11 @@ conditions — temperature, a word for the sky, what it feels like, wind and hum
 one row per forecast day with the low, the high, the sky and the chance of rain. The data is
 [Open-Meteo](https://open-meteo.com)'s, fetched by the widget itself over https every
 15 minutes and kept in the config, so the last answer is drawn before the next one arrives
-and stays through an outage — marked as offline, and after an hour with its age. The place
-comes from a search on the *Location* page, or two typed coordinates; until one is set the
-widget guesses the city from the time zone and says so in the header. It never asks a
-geolocation service where you are: behind a tunnel that would be the tunnel's exit
+and stays through an outage: the header says `· offline`, after an hour with the age of
+what is shown, and the rows under it are the last forecast that arrived, not blanks. The
+place comes from a search on the *Location* page, or two typed coordinates; until one is
+set the widget guesses the city from the time zone and says so in the header. It never
+asks a geolocation service where you are: behind a tunnel that would be the tunnel's exit
 (decision 10). Units follow the locale, or are chosen by hand. Open-Meteo is free for
 non-commercial use and asks for attribution — the last line, on by default.
 `./install.sh --weather` installs it.
@@ -196,8 +211,11 @@ right-click reaches its settings. The *Mouse* setting — and the
 to the desktop: input goes off on the widget's own representation, and the applet
 container the shell wraps it in is disabled too, since that container is what kept the
 left button. The widget takes the mouse only in the desktop's edit mode, which is also
-where its settings are (or `--clicks-off`). `docs/GOTCHAS.md` has the whole story: the
-four attempts that failed and the line that let the button go.
+where its settings are (or `--clicks-off`). The player, and the visualizer with the player
+in its ring, do it differently: the container stays enabled and gets a mask over the
+controls row, so those buttons keep working and everything else passes (decision 11).
+`docs/GOTCHAS.md` has the whole story: the four attempts that failed, the line that let
+the button go, and the mask.
 
 Two block types are deliberately open-ended:
 

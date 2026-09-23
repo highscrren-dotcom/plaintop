@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 18:48+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: 2026-09-22 13:49+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: French\n"
@@ -18,10 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr "EN LECTURE"
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr "aucun lecteur"
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr "arrêté"
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
+msgstr "en pause"
+
 #: spectrum/package/contents/config/config.qml:7
 msgctxt "settings page"
 msgid "Ring"
 msgstr "Anneau"
+
+#: spectrum/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Player"
+msgstr "Lecteur"
 
 #: spectrum/package/contents/ui/configGeneral.qml:50
 #: spectrum/window/settings.qml:122
@@ -287,7 +312,122 @@ msgstr ""
 "les fréquences et le périphérique se règlent dans ~/.config/plainspectrum/"
 "relay.env"
 
-#: spectrum/package/contents/ui/main.qml:124
+#: spectrum/package/contents/ui/configPlayer.qml:34
+msgctxt "the player drawn inside the visualizer"
+msgid "In the ring:"
+msgstr "Dans l'anneau :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:35
+msgid "show the player in the centre of the ring"
+msgstr "afficher le lecteur au centre de l'anneau"
+
+#: spectrum/package/contents/ui/configPlayer.qml:39
+msgid ""
+"The track, the position bar and the controls of the player widget,\n"
+"drawn over the free disc inside the bars. On a line they go along\n"
+"the edge the bars reach last. The ring keeps its size."
+msgstr ""
+"La piste, la barre de position et les commandes du widget lecteur,\n"
+"dessinées sur le disque libre à l'intérieur des barres. Sur une ligne, "
+"elles\n"
+"longent le bord que les barres atteignent en dernier. L'anneau garde sa "
+"taille."
+
+#: spectrum/package/contents/ui/configPlayer.qml:44
+msgctxt "settings section"
+msgid "Text"
+msgstr "Texte"
+
+#: spectrum/package/contents/ui/configPlayer.qml:48
+msgid "Font:"
+msgstr "Police :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:55
+msgctxt "font size"
+msgid "Size:"
+msgstr "Taille :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:63
+msgid "Width, characters:"
+msgstr "Largeur, caractères :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:70
+msgid ""
+"The player is this many characters wide and five lines tall;\n"
+"a longer title is cut with an ellipsis."
+msgstr ""
+"Le lecteur fait ce nombre de caractères de large et cinq lignes de haut ;\n"
+"un titre plus long est coupé par des points de suspension."
+
+#: spectrum/package/contents/ui/configPlayer.qml:75
+msgctxt "settings section"
+msgid "Palette"
+msgstr "Palette"
+
+#: spectrum/package/contents/ui/configPlayer.qml:78
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "Texte principal :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:85
+msgctxt "palette: colour of"
+msgid "Title:"
+msgstr "Titre :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:92
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "Secondaire :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:98
+msgctxt "settings section"
+msgid "Player"
+msgstr "Lecteur"
+
+#: spectrum/package/contents/ui/configPlayer.qml:102
+msgid "Player:"
+msgstr "Lecteur :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:105
+msgctxt "player field placeholder"
+msgid "whoever is playing"
+msgstr "celui qui joue"
+
+#: spectrum/package/contents/ui/configPlayer.qml:109
+msgid ""
+"Empty: whoever is playing. Otherwise a part of the player's name\n"
+"or desktop entry — vlc, spotify, strawberry; when no player matches,\n"
+"back to whoever is playing."
+msgstr ""
+"Vide : celui qui joue. Sinon une partie du nom du lecteur\n"
+"ou de son entrée desktop — vlc, spotify, strawberry ; si aucun lecteur\n"
+"ne correspond, retour à celui qui joue."
+
+#: spectrum/package/contents/ui/configPlayer.qml:116
+msgid "Album:"
+msgstr "Album :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:118
+msgid "show the album line"
+msgstr "afficher la ligne de l'album"
+
+#: spectrum/package/contents/ui/configPlayer.qml:123
+msgid "Controls:"
+msgstr "Commandes :"
+
+#: spectrum/package/contents/ui/configPlayer.qml:125
+msgid "show the previous, play/pause and next row"
+msgstr "afficher la ligne précédent, lecture/pause et suivant"
+
+#: spectrum/package/contents/ui/configPlayer.qml:129
+msgid ""
+"With no player on the bus the centre of the ring stays empty.\n"
+"The controls take the mouse even while the rest passes clicks through."
+msgstr ""
+"Sans lecteur sur le bus, le centre de l'anneau reste vide.\n"
+"Les commandes prennent la souris même quand le reste laisse passer les clics."
+
+#: spectrum/package/contents/ui/main.qml:237
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"

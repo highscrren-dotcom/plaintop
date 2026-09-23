@@ -60,24 +60,35 @@ PlasmoidItem {
     readonly property bool shellEditMode: (Plasmoid.containment && Plasmoid.containment.corona)
         ? Plasmoid.containment.corona.editMode : false
 
-    // Click-through. Input off on the representation alone hands over only the right
-    // button: the wrapper plasmashell puts around every desktop applet (AppletContainer,
-    // our parent item) accepts the left button unconditionally, waiting for press-and-hold.
-    // Disabled, that wrapper and everything inside it drop out of Qt's mouse delivery and
-    // both buttons land on the desktop below. Re-enabled in edit mode, so the widget can
-    // still be moved, resized and configured. Verified on Plasma 6.7.5 — docs/GOTCHAS.md.
+    // Click-through, everywhere but the controls row. The wrapper plasmashell puts around
+    // every desktop applet (AppletContainer, our parent item) accepts the left button
+    // unconditionally, waiting for press-and-hold, so the applet cannot let clicks through
+    // from the inside. It is left enabled and given a containmentMask instead: an Item
+    // whose x/y/width/height is the controls row's rectangle in the wrapper's own
+    // coordinates. Qt's target search then skips the wrapper wherever its contains() says
+    // no but still visits its children — a click inside the rectangle reaches the glyph's
+    // MouseArea, one outside lands on the desktop or the widget beneath, and so does the
+    // hover; press-and-hold inside the rectangle enters edit mode as for any applet.
+    // Only the mask's x/y and size matter, not its parent or visibility. Off in edit mode,
+    // so the shell's own move, resize and configure handles apply to the whole widget.
+    // Proven on the stand, tests/passthrough.qml, tests 10–17 — docs/GOTCHAS.md.
+    // ⚠️ The one trap (test_10): any child that accepts the left button outside the
+    // rectangle arms the wrapper's press-and-hold timer, and a plain click on it would
+    // enter edit mode 800 ms later. A Text with the default textFormat is such a child, so
+    // every Text in PlayerView.qml is textFormat: PlainText, and nothing else in the
+    // widget takes the mouse but the three control MouseAreas.
+    readonly property bool passing: cfg.clickThrough && !shellEditMode
     Binding {
         target: root.parent
-        property: "enabled"
-        value: !root.cfg.clickThrough || root.shellEditMode
+        property: "containmentMask"
+        value: root.passing ? root.fullRepresentationItem?.wrapperMask ?? null : null
         when: root.parent !== null && ("editModeCondition" in root.parent)
     }
 
-    // The right button needs one thing more: the desktop looks for the applet under a
-    // right-click geometrically (ContainmentItem::mousePressEvent asks every PlasmoidItem
-    // contains(pos) and never looks at enabled), so with only the wrapper disabled the
-    // widget's own menu would still open. An empty containment mask makes contains()
-    // answer "no", and the desktop shows its own menu, as if the widget were not there.
+    // The right button needs the same rectangle once more, on the PlasmoidItem: the
+    // desktop looks for the applet under a right-click geometrically
+    // (ContainmentItem::mousePressEvent asks every PlasmoidItem contains(pos)), so the
+    // widget's own menu opens over the controls only, and the desktop's elsewhere.
     // ⚠️ Declared with revision 2.11 in QtQuick, and org.kde.plasma.plasmoid does not
     // pull that revision in, so "containmentMask:" on a PlasmoidItem is a compile error
     // ("not available in org.kde.plasma.plasmoid 255.255"). Binding by name goes through
@@ -85,19 +96,45 @@ PlasmoidItem {
     Binding {
         target: root
         property: "containmentMask"
-        value: (root.cfg.clickThrough && !root.shellEditMode) ? noHitMask : null
+        value: root.passing ? root.fullRepresentationItem?.rootMask ?? null : null
     }
-    Item { id: noHitMask; width: 0; height: 0; visible: false }
 
     fullRepresentation: Item {
-        // Input off on the widget itself: in edit mode the wrapper takes the mouse, not us.
-        // ⚠️ With clicks passing through, the controls cannot be clicked either.
-        enabled: !root.cfg.clickThrough
+        id: rep
 
         implicitWidth: root.boardWidth
         implicitHeight: root.boardHeight
 
+        // The two masks for the bindings above, reached through fullRepresentationItem.
+        readonly property Item wrapperMask: wrapperMaskItem
+        readonly property Item rootMask: rootMaskItem
+
+        // The controls row mapped into the wrapper's and into the PlasmoidItem's
+        // coordinates. With NoBackground the wrapper's padding is 0 and the two are the
+        // same rectangle; mapped anyway, so a background put back through the dialog does
+        // not shift the mask off the glyphs. mapToItem() is a function, so the positions
+        // along the chain are read first: a binding follows what it reads, and this one
+        // then follows a move of any link as well as the row itself.
+        function maskRect(into) {
+            const chain = [root.x, root.y, rep.x, rep.y, view.x, view.y]
+            const c = view.controlsRect
+            return (into && chain) ? view.mapToItem(into, c.x, c.y, c.width, c.height) : Qt.rect(0, 0, 0, 0)
+        }
+        Item {
+            id: wrapperMaskItem
+            visible: false
+            readonly property rect r: rep.maskRect(root.parent)
+            x: r.x; y: r.y; width: r.width; height: r.height
+        }
+        Item {
+            id: rootMaskItem
+            visible: false
+            readonly property rect r: rep.maskRect(root)
+            x: r.x; y: r.y; width: r.width; height: r.height
+        }
+
         PlayerView {
+            id: view
             anchors.fill: parent
 
             playerFilter: root.cfg.player

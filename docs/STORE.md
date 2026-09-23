@@ -19,9 +19,10 @@ widget's `metadata.json`; bump it there before building a new upload.
 text below, `plaintop-0.2.plasmoid` and `plainspectrum-0.2.plasmoid` (MD5 equal to the
 built files); the 0.1 files are still listed beside them.
 
-⚠️ Not yet uploaded, 2026-09-23: plaintop 0.3 (`metadata.json` is bumped) and the two new
-products, plainplayer and plainweather — `--pack` builds all four, the texts below are
-ready. Each new product goes through *Add Product* as described under Uploading.
+⚠️ Not yet uploaded, 2026-09-23: plaintop 0.3 and plainspectrum 0.3 (both `metadata.json`
+bumped) and the two new products, plainplayer 0.1 and plainweather 0.1 — `--pack` has built
+all four into `dist/`, the texts below are ready; publication is paused for now. Each new
+product goes through *Add Product* as described under Uploading.
 
 ## Uploading
 
@@ -48,6 +49,8 @@ Published 2026-09-22: https://store.kde.org/p/2372814/
 (PSI) for CPU, memory and I/O; the battery, shown only where one exists; system health —
 failed systemd units, errors since boot and the last error lines of the journal. Separators
 collapse where a block hides, so no double rules. The description below already says so.
+And a small one: in the disks block the root mount is labelled `root` instead of `/` —
+beside a bar made of slashes, `/` read as part of the bar.
 
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
@@ -110,6 +113,12 @@ https://github.com/highscrren-dotcom/plaintop
 
 Published 2026-09-22: https://store.kde.org/p/2372815/
 
+**0.3 — not yet uploaded.** What's new: the player in the centre of the ring — the
+plainplayer view on a new *Player* page, off by default, with the player's own font, width
+and colours; on a line it goes along the edge the bars reach last. With *Mouse* on, only
+the player's controls row takes clicks, the rest of the widget lets them through. The
+description below already says so.
+
 - **File:** `dist/plainspectrum-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Multimedia
 - **License:** GPL-2.0-or-later
@@ -136,11 +145,16 @@ What you can set (right-click → Configure):
 • Behaviour — data frames per second and smoothing. In silence the ring dissolves and
   grows back out of itself when the sound returns; while hidden it polls four times a
   second instead of thirty.
+• Player — the "now playing" lines of plainplayer in the centre of the ring (along the
+  edge on a line): player, artist — title, album, a slash bar with the position, and the
+  <<  >  >> controls, in their own font and colours. Off by default; the ring keeps its
+  size, and with no player on the bus the centre stays empty.
 
 Light by design: the bars are ready-made rectangles moved by the scene graph and nothing
 is rasterized per frame, so the graphics card stays almost idle. Out of the box the
 widget takes clicks like any other; Behaviour → Mouse lets both buttons through to the
-desktop, and the widget takes the mouse only in the desktop's edit mode — where its
+desktop — except on the player's controls, when the player is shown: those stay
+clickable — and the widget takes the mouse only in the desktop's edit mode — where its
 settings are.
 
 ⚠️ The widget alone draws nothing. The spectrum is computed by cava in a small relay
@@ -174,11 +188,16 @@ PlainExt для Rainmeter: один цвет, прямые концы, без г
 • Поведение — кадров данных в секунду и сглаживание. В тишине кольцо растворяется и
   вырастает из самого себя, когда звук возвращается; пока оно скрыто, опрос идёт четыре
   раза в секунду вместо тридцати.
+• Плеер — строки «сейчас играет» из plainplayer в центре кольца (у линии — вдоль края):
+  плеер, исполнитель — название, альбом, полоса из косых с позицией и кнопки <<  >  >>,
+  своим шрифтом и цветами. По умолчанию выключен; кольцо размера не меняет, а без плеера
+  на шине центр остаётся пустым.
 
 Лёгкий по устройству: штрихи — готовые прямоугольники, их двигает граф сцены, покадровой
 растеризации нет, и видеокарта почти не нагружается. Сразу после установки виджет ловит
-клики, как любой другой; «Поведение → Мышь» пропускает на рабочий стол обе кнопки, а
-мышь виджет берёт только в режиме правки рабочего стола — там же и его настройки.
+клики, как любой другой; «Поведение → Мышь» пропускает на рабочий стол обе кнопки — кроме
+кнопок плеера, когда он показан: они остаются нажимаемыми, — а мышь виджет берёт только в
+режиме правки рабочего стола — там же и его настройки.
 
 ⚠️ Сам по себе виджет ничего не рисует. Спектр считает cava в маленькой службе-реле
 (Python, пользовательский юнит systemd), которую виджет поставить не может:
@@ -226,9 +245,10 @@ strawberry); empty means whoever is playing.
 
 Settings (right-click → Configure): font, size, width in characters, three colours,
 the album line and the controls row on or off, the player filter. The Mouse page lets
-both buttons through to the desktop like the other plaintop widgets — with one
-consequence: while clicks pass through, the controls cannot be clicked, so it ships
-with the setting off.
+both buttons through to the desktop like the other plaintop widgets — except on the
+controls row: <<  >  >> stay clickable, and a click anywhere else on the widget lands
+on the desktop. The same lines can be shown in the centre of the plainspectrum ring,
+as an option there.
 
 The interface follows Plasma's language — ten languages, all but English and Russian
 machine-translated, corrections welcome.
@@ -250,8 +270,9 @@ MPRIS он читает через модуль штатного медиако�
 
 Настройки (правый клик → Настроить): шрифт, кегль, ширина в знаках, три цвета, строка
 альбома и строка кнопок вкл/выкл, фильтр плеера. Страница «Мышь» пропускает на стол обе
-кнопки, как у других виджетов plaintop, — с одним следствием: пока клики проходят
-насквозь, кнопки нажать нельзя, поэтому по умолчанию она выключена.
+кнопки, как у других виджетов plaintop, — кроме строки кнопок: <<  >  >> остаются
+нажимаемыми, а клик в любом другом месте виджета попадает на стол. Те же строки можно
+показать в центре кольца plainspectrum — там это настройка.
 
 Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и русского,
 переведено машинно, исправления приветствуются.

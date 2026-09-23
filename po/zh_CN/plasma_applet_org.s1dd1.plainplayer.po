@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 18:34+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: 2026-09-23 17:52+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -26,27 +26,6 @@ msgstr "常规"
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "鼠标"
-
-#: player/package/contents/ui/PlayerView.qml:171
-msgctxt "the widget's header line"
-msgid "NOW PLAYING"
-msgstr "正在播放"
-
-#: player/package/contents/ui/PlayerView.qml:174
-msgctxt "no MPRIS player on the bus"
-msgid "no player"
-msgstr "没有播放器"
-
-#: player/package/contents/ui/PlayerView.qml:190
-msgctxt "playback status"
-msgid "stopped"
-msgstr "已停止"
-
-#: player/package/contents/ui/PlayerView.qml:194
-#: player/package/contents/ui/PlayerView.qml:296
-msgctxt "playback status"
-msgid "paused"
-msgstr "已暂停"
 
 #: player/package/contents/ui/configGeneral.qml:28
 msgctxt "settings section"
@@ -147,9 +126,30 @@ msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
 "that is where its settings are, or ./install.sh with the clicks off switch.\n"
-"With the mouse passing through, the controls cannot be clicked."
+"The controls take the mouse even then; the rest of the widget lets it "
+"through."
 msgstr ""
 "点击穿透时，鼠标左右键都会落到桌面上。\n"
 "小部件只在桌面的编辑模式下接管鼠标：\n"
 "设置也在那里，或带 clicks off 开关运行 ./install.sh。\n"
-"鼠标穿透时，控制按钮无法点击。"
+"即便如此，控制按钮仍会接收鼠标；部件的其余部分则让其穿透。"
+
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr "正在播放"
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr "没有播放器"
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr "已停止"
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
+msgstr "已暂停"

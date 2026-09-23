@@ -48,7 +48,8 @@ Neither needs a code change — just a row in the description.
 | `spectrum/shared/` | the visualizer's renderer — one for ring, arc and line — copied into the package |
 | `spectrum/window/` | the visualizer's former window host and its editor — retired (decision 9), kept for reference |
 | `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service; the visualizer reads it |
-| `player/package/` | the "now playing" widget: a Plasma 6 widget over Plasma's own MPRIS model — no shared files, no service |
+| `player/package/` | the "now playing" widget as a Plasma 6 widget: host, settings pages, catalogs — no service |
+| `player/shared/` | the player's view — the MPRIS model, the lines, the controls — copied into `player/package/` and into `spectrum/package/` on install: the visualizer draws it in the centre of its ring |
 | `weather/package/` | the weather widget: a Plasma 6 widget that asks Open-Meteo itself over https — no shared files, no service |
 | `po/` | translation catalogs, one domain per widget, four in all; `extract.py` refreshes them and starts a missing one, `build.py` compiles |
 | `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
@@ -56,7 +57,9 @@ Neither needs a code change — just a row in the description.
 | `docs/` | traps, decisions, the working method, the session journal, the KDE Store texts |
 
 Generated and not in git: `monitor/package/contents/code/description.js` (edit
-`schema/*.json` instead), the packages' `contents/locale/` (edit `po/`), `dist/`.
+`schema/*.json` instead), the packages' `contents/locale/` (edit `po/`), the packages'
+copies of the shared QML (edit `monitor/shared/`, `spectrum/shared/`, `player/shared/`;
+`--status` says when a copy differs), `dist/`.
 
 ## The development cycle
 
@@ -69,6 +72,7 @@ Generated and not in git: `monitor/package/contents/code/description.js` (edit
 journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors land here
 ./install.sh --status                                               # what is installed and running
 ./install.sh --pack                                                 # .plasmoid files for a release → dist/
+./install.sh --check-passthrough                                    # the click-through stand: 17 tests against the shell's compiled applet wrapper
 ```
 
 Four things that will otherwise waste your afternoon — all four are in
@@ -134,14 +138,20 @@ The player and the weather were added this way; copy whichever is closer to your
 1. **Package** — `<name>/package/`: `metadata.json` (id `org.s1dd1.plain<name>`, category,
    version), `contents/config/main.xml` and `config.qml` (the settings schema and its
    pages), `contents/ui/main.qml` — the host: the size from `Layout.*` on the root, constant
-   for the given settings, and the two click-through `Binding`s copied as they are
-   (decision 8) — and the view next to it, with the lines and the drawing. Strings go
-   through `i18n()`.
+   for the given settings, and the two click-through `Binding`s copied as they are —
+   the wrapper disabled (decision 8), or, when a part of the widget must stay clickable,
+   a `containmentMask` over that part, as the player does (decision 11) — and the view
+   next to it, with the lines and the drawing. A view that another widget draws too goes
+   to `<name>/shared/` instead, as the player's does. Strings go through `i18n()`.
 2. **`install.sh`** — the `<NAME>_ID` / `_SRC` / `_DEST` variables, `<name>_prepare` (the
-   catalogs), `<name>_install` and `<name>_status`, the source in the list in `pack()`, the
-   call in `status`, the `--<name>` key in the `case` and in the usage line.
-3. **`po/extract.py`** — an entry in `DOMAINS`; `python3 po/extract.py` then writes the
-   template and a catalog for every language the project has.
+   catalogs, and the copy of any shared QML into the package — `player_prepare` copies
+   `player/shared/PlayerView.qml` into the player's package, `spectrum_prepare` the same
+   file into the visualizer's; the copies are gitignored and `<name>_status` compares them
+   with the source), `<name>_install` and `<name>_status`, the source in the list in
+   `pack()`, the call in `status`, the `--<name>` key in the `case` and in the usage line.
+3. **`po/extract.py`** — an entry in `DOMAINS`; a shared directory drawn by two widgets is
+   listed under both their domains, as `player/shared` is. `python3 po/extract.py` then
+   writes the template and a catalog for every language the project has.
 4. **README** — a row in the directory table, an install line, a paragraph; the same in
    `README.ru.md`.
 5. **Run it** — `./install.sh --<name>`, look at the desktop, read the journal, say in the
@@ -187,6 +197,13 @@ Rules for the source strings:
 - **Files only the plasmoid loads call `i18n()`**; the shared QML in `monitor/shared/` and
   `spectrum/shared/` calls `tr.i18n()` through a `KI18nContext` — a habit from the retired
   window hosts, whose bare `qml6` runner had no `i18n()` of its own.
+- **A shared file with two plasmoid hosts calls bare `i18n()`.** `player/shared/PlayerView.qml`
+  is loaded by the player and by the visualizer, and a bare `i18n()` resolves through the
+  domain of the plasmoid that loads the copy: the same file translates from the player's
+  catalog inside plainplayer and from the visualizer's inside plainspectrum (verified
+  2026-09-23). So `po/extract.py` lists `player/shared` under both domains, and a new
+  string there lands in two catalogs. A `KI18nContext` with a hard-wired domain would pin
+  the file to one.
 - **Do not translate keys**: sensor ids, config keys, block ids.
 - **The menu and autostart entries** the retired window hosts' `setup.py` wrote are marked
   with `N_(context, text)`; the strings stay in the catalogs as long as the code does.

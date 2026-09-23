@@ -40,3 +40,7 @@ monitor/package/contents/ui/SensorRegistry.qml
 monitor/window/SensorRegistry.qml
 monitor/window/description.js
 monitor/window/services.sh
+
+# Копии общего вида плеера: источник — player/shared/ (второй хост — визуализатор)
+player/package/contents/ui/PlayerView.qml
+spectrum/package/contents/ui/PlayerView.qml

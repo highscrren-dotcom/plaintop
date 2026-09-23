@@ -77,13 +77,20 @@ spectrum_prepare() {
     # Same as the monitor: the shared QML lives in spectrum/shared/ and is copied in.
     cp "$SPECTRUM_SRC/shared/Ring.qml" "$SPECTRUM_SRC/shared/Spectrum.qml" \
         "$SPECTRUM_SRC/package/contents/ui/" || { red "  ✗ shared files were not copied"; return 1; }
+    # The player's view too: the visualizer can draw it in the centre of the ring, and the
+    # one source is player/shared/. Its strings translate through this package's catalog,
+    # so extract.py lists player/shared under both domains.
+    cp "$REPO/player/shared/PlayerView.qml" "$SPECTRUM_SRC/package/contents/ui/" \
+        || { red "  ✗ player/shared/PlayerView.qml was not copied"; return 1; }
     # Catalogs, as for the monitor: contents/locale for the plasmoid (decision 7).
     python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainspectrum "$SPECTRUM_SRC/package/contents/locale" || return 1
 }
 
 player_prepare() {
-    # Nothing to copy in: the player has no shared QML and never had a window host. Only
-    # the catalogs, as for the other two (decision 7).
+    # The view lives in player/shared/ — the visualizer draws the same file in the centre
+    # of its ring — and is copied in here, as the monitor's shared QML is. Then the
+    # catalogs, as for the other widgets (decision 7).
+    cp "$REPO/player/shared/"*.qml "$PLAYER_SRC/contents/ui/" || { red "  ✗ shared files were not copied"; return 1; }
     python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plainplayer "$PLAYER_SRC/contents/locale" || return 1
 }
 
@@ -298,6 +305,9 @@ spectrum_status() {
         cmp -s "$f" "$SPECTRUM_DEST/contents/ui/$(basename "$f")" \
             || { red "  ≠ shared/$(basename "$f") — DIFFERS from the repo"; diff=1; }
     done
+    # The player's view is a copy as well, from the player's own shared directory.
+    cmp -s "$REPO/player/shared/PlayerView.qml" "$SPECTRUM_DEST/contents/ui/PlayerView.qml" \
+        || { red "  ≠ player/shared/PlayerView.qml — DIFFERS from the repo"; diff=1; }
     [ $diff -eq 0 ] && grn "  ✓ widget installed, files match the repo"
 
     # The relay runs from its own copy; a port that answers says nothing about which code.
@@ -376,6 +386,12 @@ player_status() {
         rel=${f#"$PLAYER_SRC"/}
         cmp -s "$f" "$PLAYER_DEST/$rel" || { red "  ≠ $rel — DIFFERS from the repo"; diff=1; }
     done < <(find "$PLAYER_SRC" -type f)
+    # Same trap as the monitor: the view is copied in from player/shared/ at install time,
+    # so the loop above would compare with that old copy. Compare with the source.
+    for f in "$REPO/player/shared/"*.qml; do
+        cmp -s "$f" "$PLAYER_DEST/contents/ui/$(basename "$f")" \
+            || { red "  ≠ shared/$(basename "$f") — DIFFERS from the repo"; diff=1; }
+    done
     [ $diff -eq 0 ] && grn "  ✓ widget installed, files match the repo"
     local n
     n=$(grep -c "^plugin=$PLAYER_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)

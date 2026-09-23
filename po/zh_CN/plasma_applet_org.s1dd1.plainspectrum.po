@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-22 18:48+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -18,10 +18,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr "正在播放"
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr "没有播放器"
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr "已停止"
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
+msgstr "已暂停"
+
 #: spectrum/package/contents/config/config.qml:7
 msgctxt "settings page"
 msgid "Ring"
 msgstr "环形"
+
+#: spectrum/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Player"
+msgstr "播放器"
 
 #: spectrum/package/contents/ui/configGeneral.qml:50
 #: spectrum/window/settings.qml:122
@@ -286,7 +311,120 @@ msgstr ""
 "频谱由 plainspectrum-relay 服务中的 cava 计算；\n"
 "频率和设备在 ~/.config/plainspectrum/relay.env 中设置"
 
-#: spectrum/package/contents/ui/main.qml:124
+#: spectrum/package/contents/ui/configPlayer.qml:34
+msgctxt "the player drawn inside the visualizer"
+msgid "In the ring:"
+msgstr "环内："
+
+#: spectrum/package/contents/ui/configPlayer.qml:35
+msgid "show the player in the centre of the ring"
+msgstr "在环的中心显示播放器"
+
+#: spectrum/package/contents/ui/configPlayer.qml:39
+msgid ""
+"The track, the position bar and the controls of the player widget,\n"
+"drawn over the free disc inside the bars. On a line they go along\n"
+"the edge the bars reach last. The ring keeps its size."
+msgstr ""
+"播放器部件的曲目、进度条和控制按钮，\n"
+"绘制在柱条内侧的空白圆盘上。线形布局时沿柱条最后触及的\n"
+"边缘排列。环的大小不变。"
+
+#: spectrum/package/contents/ui/configPlayer.qml:44
+msgctxt "settings section"
+msgid "Text"
+msgstr "文字"
+
+#: spectrum/package/contents/ui/configPlayer.qml:48
+msgid "Font:"
+msgstr "字体："
+
+#: spectrum/package/contents/ui/configPlayer.qml:55
+msgctxt "font size"
+msgid "Size:"
+msgstr "字号："
+
+#: spectrum/package/contents/ui/configPlayer.qml:63
+msgid "Width, characters:"
+msgstr "宽度 (字符)："
+
+#: spectrum/package/contents/ui/configPlayer.qml:70
+msgid ""
+"The player is this many characters wide and five lines tall;\n"
+"a longer title is cut with an ellipsis."
+msgstr ""
+"播放器宽度为此字符数，高五行；\n"
+"过长的标题以省略号截断。"
+
+#: spectrum/package/contents/ui/configPlayer.qml:75
+msgctxt "settings section"
+msgid "Palette"
+msgstr "调色板"
+
+#: spectrum/package/contents/ui/configPlayer.qml:78
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "主文字："
+
+#: spectrum/package/contents/ui/configPlayer.qml:85
+msgctxt "palette: colour of"
+msgid "Title:"
+msgstr "标题："
+
+#: spectrum/package/contents/ui/configPlayer.qml:92
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "次要文字："
+
+#: spectrum/package/contents/ui/configPlayer.qml:98
+msgctxt "settings section"
+msgid "Player"
+msgstr "播放器"
+
+#: spectrum/package/contents/ui/configPlayer.qml:102
+msgid "Player:"
+msgstr "播放器："
+
+#: spectrum/package/contents/ui/configPlayer.qml:105
+msgctxt "player field placeholder"
+msgid "whoever is playing"
+msgstr "正在播放的那个"
+
+#: spectrum/package/contents/ui/configPlayer.qml:109
+msgid ""
+"Empty: whoever is playing. Otherwise a part of the player's name\n"
+"or desktop entry — vlc, spotify, strawberry; when no player matches,\n"
+"back to whoever is playing."
+msgstr ""
+"留空：正在播放的那个。否则填播放器名称或\n"
+"桌面项的一部分——vlc、spotify、strawberry；没有匹配的播放器时，\n"
+"回到正在播放的那个。"
+
+#: spectrum/package/contents/ui/configPlayer.qml:116
+msgid "Album:"
+msgstr "专辑："
+
+#: spectrum/package/contents/ui/configPlayer.qml:118
+msgid "show the album line"
+msgstr "显示专辑行"
+
+#: spectrum/package/contents/ui/configPlayer.qml:123
+msgid "Controls:"
+msgstr "控制："
+
+#: spectrum/package/contents/ui/configPlayer.qml:125
+msgid "show the previous, play/pause and next row"
+msgstr "显示上一曲、播放/暂停和下一曲一行"
+
+#: spectrum/package/contents/ui/configPlayer.qml:129
+msgid ""
+"With no player on the bus the centre of the ring stays empty.\n"
+"The controls take the mouse even while the rest passes clicks through."
+msgstr ""
+"总线上没有播放器时，环的中心保持空白。\n"
+"即使其余部分让点击穿透，控制按钮仍会接收鼠标。"
+
+#: spectrum/package/contents/ui/main.qml:237
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 18:34+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: 2026-09-23 17:52+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -27,27 +27,6 @@ msgstr "Ogólne"
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "Mysz"
-
-#: player/package/contents/ui/PlayerView.qml:171
-msgctxt "the widget's header line"
-msgid "NOW PLAYING"
-msgstr "TERAZ GRA"
-
-#: player/package/contents/ui/PlayerView.qml:174
-msgctxt "no MPRIS player on the bus"
-msgid "no player"
-msgstr "brak odtwarzacza"
-
-#: player/package/contents/ui/PlayerView.qml:190
-msgctxt "playback status"
-msgid "stopped"
-msgstr "zatrzymano"
-
-#: player/package/contents/ui/PlayerView.qml:194
-#: player/package/contents/ui/PlayerView.qml:296
-msgctxt "playback status"
-msgid "paused"
-msgstr "pauza"
 
 #: player/package/contents/ui/configGeneral.qml:28
 msgctxt "settings section"
@@ -148,9 +127,30 @@ msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
 "that is where its settings are, or ./install.sh with the clicks off switch.\n"
-"With the mouse passing through, the controls cannot be clicked."
+"The controls take the mouse even then; the rest of the widget lets it "
+"through."
 msgstr ""
 "Gdy kliknięcia przechodzą na wylot, oba przyciski myszy trafiają na pulpit.\n"
 "Widżet przejmuje mysz tylko w trybie edycji pulpitu:\n"
 "tam są jego ustawienia, albo ./install.sh z przełącznikiem clicks off.\n"
-"Gdy mysz przechodzi na wylot, w sterowanie nie da się kliknąć."
+"Przyciski i tak przyjmują mysz; reszta widżetu ją przepuszcza."
+
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr "TERAZ GRA"
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr "brak odtwarzacza"
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr "zatrzymano"
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
+msgstr "pauza"

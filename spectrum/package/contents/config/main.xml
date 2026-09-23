@@ -117,6 +117,45 @@
     <entry name="relayPort" type="Int">
       <default>8788</default>
     </entry>
+
+    <!-- The player in the centre of the ring: the player widget's own view
+         (player/shared/PlayerView.qml, copied in at install time) drawn over the free
+         disc inside the bars, off by default. The keys mirror the player widget's, with
+         the same defaults, prefixed so they sit next to the ring's in one group. -->
+    <entry name="playerShow" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Which player to show: empty for whoever is playing, otherwise a part of the
+         player's name or desktop entry, matched case-insensitively. -->
+    <entry name="playerFilter" type="String">
+      <default></default>
+    </entry>
+    <entry name="playerAlbum" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="playerControls" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="playerFontFamily" type="String">
+      <default>JetBrainsMono Nerd Font Mono</default>
+    </entry>
+    <entry name="playerFontSize" type="Int">
+      <default>10</default>
+    </entry>
+    <!-- Width of the player in characters: its board is this wide and five lines tall,
+         and a longer title is cut with an ellipsis. It never changes the applet's size. -->
+    <entry name="playerColumns" type="Int">
+      <default>44</default>
+    </entry>
+    <entry name="playerColorFg" type="String">
+      <default>#C8CCD4</default>
+    </entry>
+    <entry name="playerColorAccent" type="String">
+      <default>#E05561</default>
+    </entry>
+    <entry name="playerColorDim" type="String">
+      <default>#6B7280</default>
+    </entry>
   </group>
 
 </kcfg>

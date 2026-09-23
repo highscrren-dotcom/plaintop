@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 18:34+0500\n"
+"POT-Creation-Date: 2026-09-23 20:05+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,27 +25,6 @@ msgstr ""
 #: player/package/contents/config/config.qml:13
 msgctxt "settings page"
 msgid "Mouse"
-msgstr ""
-
-#: player/package/contents/ui/PlayerView.qml:171
-msgctxt "the widget's header line"
-msgid "NOW PLAYING"
-msgstr ""
-
-#: player/package/contents/ui/PlayerView.qml:174
-msgctxt "no MPRIS player on the bus"
-msgid "no player"
-msgstr ""
-
-#: player/package/contents/ui/PlayerView.qml:190
-msgctxt "playback status"
-msgid "stopped"
-msgstr ""
-
-#: player/package/contents/ui/PlayerView.qml:194
-#: player/package/contents/ui/PlayerView.qml:296
-msgctxt "playback status"
-msgid "paused"
 msgstr ""
 
 #: player/package/contents/ui/configGeneral.qml:28
@@ -142,5 +121,26 @@ msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
 "that is where its settings are, or ./install.sh with the clicks off switch.\n"
-"With the mouse passing through, the controls cannot be clicked."
+"The controls take the mouse even then; the rest of the widget lets it "
+"through."
+msgstr ""
+
+#: player/shared/PlayerView.qml:179
+msgctxt "the widget's header line"
+msgid "NOW PLAYING"
+msgstr ""
+
+#: player/shared/PlayerView.qml:184
+msgctxt "no MPRIS player on the bus"
+msgid "no player"
+msgstr ""
+
+#: player/shared/PlayerView.qml:200
+msgctxt "playback status"
+msgid "stopped"
+msgstr ""
+
+#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+msgctxt "playback status"
+msgid "paused"
 msgstr ""

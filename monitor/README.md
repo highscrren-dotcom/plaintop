@@ -52,6 +52,12 @@ showed — and, since 0.3, three blocks it never had:
 Default order: pressure after the processor, the battery after the network, health after
 the services.
 
+Also since 0.3, the disks block labels the root mount `root` rather than `/`: the bar
+beside it is made of slashes too, and `/   //` read as one thing. Other mounts keep the
+last element of their path. The labels are four characters — `root`, `home`, `data`,
+`boot` — and the bar gives up one so the percentage column stays aligned with the
+three-character labels of the other bars; a longer name is cut.
+
 **Which blocks and in what order comes from the description** (`../schema/widget.json`):
 enable, disable, reorder, change parameters, add a block of your own — from an arbitrary
 command or from any ksystemstats sensor. It is edited on the *Blocks* page of the
@@ -137,6 +143,6 @@ sensors like the rest. The rejected approaches and what each one costs — `../d
 - **Per-package CPU temperatures** — currently the maximum across a node's cores is taken;
   the sensors have no `coretemp-isa-000N`, so packages will have to be fetched from
   `sensors -u` by an occasional call.
-- **Disk reads and writes** in the "/" line — conky had `R:` and `W:` there.
+- **Disk reads and writes** in the `root` line — conky had `R:` and `W:` there.
 - **A generator for conky** — the description layer was meant to be shared by both
   engines; right now there is only one generator.

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 18:18+0500\n"
+"POT-Creation-Date: 2026-09-23 20:10+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Brazilian Portuguese\n"
@@ -150,70 +150,70 @@ msgstr ""
 "A lista de processos é o item mais caro de coletar: a cada 2 s\n"
 "cerca de 3% de um núcleo, a cada 10 s cerca de 1,3%"
 
-#: monitor/shared/MonitorData.qml:583
+#: monitor/shared/MonitorData.qml:587
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1d"
 
-#: monitor/shared/MonitorData.qml:584
+#: monitor/shared/MonitorData.qml:588
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1h"
 
-#: monitor/shared/MonitorData.qml:585
+#: monitor/shared/MonitorData.qml:589
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1min"
 
-#: monitor/shared/MonitorData.qml:592
+#: monitor/shared/MonitorData.qml:596
 #, kde-format
 msgctxt "battery: hours and minutes of an estimate"
 msgid "%1h %2m"
 msgstr "%1h %2min"
 
-#: monitor/shared/MonitorData.qml:608
+#: monitor/shared/MonitorData.qml:612
 msgctxt "battery: no current flowing, charged"
 msgid "full"
 msgstr "cheia"
 
-#: monitor/shared/MonitorData.qml:609
+#: monitor/shared/MonitorData.qml:613
 msgctxt "battery: no current flowing"
 msgid "idle"
 msgstr "ociosa"
 
-#: monitor/shared/MonitorData.qml:612
+#: monitor/shared/MonitorData.qml:616
 #, kde-format
 msgctxt "battery: charging; the power and the time to full"
 msgid "charging  %1 W  %2 to full"
 msgstr "carregando  %1 W  %2 até encher"
 
-#: monitor/shared/MonitorData.qml:616
+#: monitor/shared/MonitorData.qml:620
 #, kde-format
 msgctxt "battery: discharging; the power and the time left"
 msgid "discharging  %1 W  %2 left"
 msgstr "descarregando  %1 W  restam %2"
 
-#: monitor/shared/MonitorData.qml:619
+#: monitor/shared/MonitorData.qml:623
 #, kde-format
 msgctxt "battery: wear, a percentage"
 msgid "health %1"
 msgstr "saúde %1"
 
-#: monitor/shared/MonitorData.qml:670
+#: monitor/shared/MonitorData.qml:674
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "requer novo login"
 
-#: monitor/shared/MonitorData.qml:671
+#: monitor/shared/MonitorData.qml:675
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1 de %2"
 
-#: monitor/shared/MonitorData.qml:677
+#: monitor/shared/MonitorData.qml:681
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
@@ -221,7 +221,7 @@ msgid_plural "idle, %1 models"
 msgstr[0] "ocioso, %1 modelo"
 msgstr[1] "ocioso, %1 modelos"
 
-#: monitor/shared/MonitorData.qml:679
+#: monitor/shared/MonitorData.qml:683
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
@@ -229,45 +229,45 @@ msgid_plural "%1 updates"
 msgstr[0] "%1 atualização"
 msgstr[1] "%1 atualizações"
 
-#: monitor/shared/MonitorData.qml:715
+#: monitor/shared/MonitorData.qml:719
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "dddd, d 'de' MMMM"
 
-#: monitor/shared/MonitorData.qml:766
+#: monitor/shared/MonitorData.qml:770
 #, kde-format
 msgctxt "pressure: time every task stalled, memory and I/O"
 msgid "full  mem %1  io %2"
 msgstr "full  mem %1  io %2"
 
-#: monitor/shared/MonitorData.qml:810
+#: monitor/shared/MonitorData.qml:816
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "não montado"
 
-#: monitor/shared/MonitorData.qml:816
+#: monitor/shared/MonitorData.qml:822
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "tempo ativo %1"
 
-#: monitor/shared/MonitorData.qml:852
+#: monitor/shared/MonitorData.qml:858
 msgctxt "health: failed systemd units"
 msgid "failed units"
 msgstr "unidades com falha"
 
-#: monitor/shared/MonitorData.qml:854 monitor/shared/MonitorData.qml:861
+#: monitor/shared/MonitorData.qml:860 monitor/shared/MonitorData.qml:867
 #, kde-format
 msgctxt "health: a count for the system and one for the user session"
 msgid "%1 system, %2 user"
 msgstr "%1 sistema, %2 usuário"
 
-#: monitor/shared/MonitorData.qml:857
+#: monitor/shared/MonitorData.qml:863
 msgctxt "health: journal entries of priority error or worse"
 msgid "errors since boot"
 msgstr "erros desde o boot"
 
-#: monitor/shared/MonitorData.qml:859
+#: monitor/shared/MonitorData.qml:865
 msgctxt "health: the system journal cannot be read by this user"
 msgid "no access"
 msgstr "sem acesso"
