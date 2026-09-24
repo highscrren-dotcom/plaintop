@@ -861,3 +861,38 @@ last parse on a 304 froze "now" and the day rows at the hour of the last 200, an
 the age hid it. The widget keeps the raw body of the last 200, re-parses it on a 304 from
 the entry covering the current hour, and sends `If-Modified-Since` only while that body is
 in memory.
+
+## At 3 px, `Text.QtRendering` blurs the dots — and the software backend hides the difference
+
+The weather icon is 24 rows of characters at 3 px, each character one dot of the picture.
+With `renderType: Text.NativeRendering` that is what comes out: glyphs hinted to the pixel
+grid, even grey dots. With the default `Text.QtRendering` — a distance field scaled down
+to 3 px — every character smears into its neighbours with coloured fringes, and the
+picture is a blur. ⚠️ Only a real GPU scene graph shows this: `plasmawindowed` on the
+offscreen platform runs Qt Quick's software backend, where both render types go through
+the same raster path and the two pictures are identical — a comparison there says "no
+difference" and is wrong for the desktop. Compare under the RHI, `QSG_RHI_BACKEND=opengl
+QT_QUICK_BACKEND=rhi`, or on the live desktop. The icon's `Text` is `NativeRendering`,
+like every line of the widgets. Verified 2026-09-24.
+
+## `lineHeightMode: FixedHeight` below the natural line: `implicitHeight` is one line too tall
+
+A `Text` of n lines with `lineHeightMode: Text.FixedHeight` and a `lineHeight` smaller
+than the font's own line does not measure n × fixed. Its `implicitHeight` is
+(n − 1) × fixed + natural: the rows are packed, but the last one is counted at the natural
+height. The icon at 3 px measures 73 px, not 72 (23 × 3 + 4); at 4 px 98, at 5 px 122. A
+box sized from `implicitHeight` is a line taller than the picture. Size the box yourself —
+rows × fixed — as `iconHeight` does in `WeatherView.qml` and `main.qml`; the glyphs of the
+last row hang one pixel below it, into the next line's empty top. Measured with
+`/usr/lib/qt6/bin/qml` on the offscreen platform, Qt 6.11, 2026-09-24.
+
+## The natural line of a 3 px `NativeRendering` `Text` is 4 px
+
+`font.pixelSize: 3` with `renderType: Text.NativeRendering` gives a line 4 px tall —
+hinting rounds the line, as it rounds 10 pt to 18 px (above); 4 px gives 6, 5 px gives 7.
+A picture stacked at the font's own line height is a third taller at 3 px than its
+characters say, half again at 4, and the cell the generator draws for (0.6 wide for 1
+tall: 1.8 × 3 px) no longer holds — discs come out tall. So the icon packs its rows at
+exactly `iconSize` — `lineHeightMode: Text.FixedHeight` with `lineHeight` equal to the
+pixel size — and is 24 × `iconSize` pixels tall: 72 at the default, four lines at 10 pt.
+Measured the same way, 2026-09-24.

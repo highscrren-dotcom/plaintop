@@ -84,7 +84,7 @@ Russian machine-translated, corrections welcome. The updates line reads pacman.
 Out of the box the widget takes clicks like any other; General → Mouse lets both buttons
 through to the desktop, and the widget takes the mouse only in the desktop's edit mode —
 which is also where its settings are. Source and details:
-https://github.com/highscrren-dotcom/plaintop
+https://github.com/highscrren-dotcom/plaintop, devlog: https://t.me/s1dd1_logs
 
 ———
 
@@ -106,7 +106,7 @@ NVMe, сетевой интерфейс — находятся на самой �
 Сразу после установки виджет ловит клики, как любой другой; «Общее → Мышь» пропускает
 на рабочий стол обе кнопки, а мышь виджет берёт только в режиме правки рабочего стола —
 там же и его настройки. Исходники и подробности:
-https://github.com/highscrren-dotcom/plaintop
+https://github.com/highscrren-dotcom/plaintop, дневник разработки: https://t.me/s1dd1_logs
 ```
 
 ## plainspectrum — audio visualizer
@@ -170,7 +170,8 @@ frequency range are set in ~/.config/plainspectrum/relay.env.
 The interface follows Plasma's language — ten languages, all but English and Russian
 machine-translated, corrections welcome.
 
-Source, issues, details: https://github.com/highscrren-dotcom/plaintop
+Source, issues, details: https://github.com/highscrren-dotcom/plaintop,
+devlog: https://t.me/s1dd1_logs
 
 ———
 
@@ -212,7 +213,8 @@ PlainExt для Rainmeter: один цвет, прямые концы, без г
 Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и русского,
 переведено машинно, исправления приветствуются.
 
-Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
+Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop,
+дневник разработки: https://t.me/s1dd1_logs
 ```
 
 ## plainplayer — now playing
@@ -253,7 +255,8 @@ as an option there.
 The interface follows Plasma's language — ten languages, all but English and Russian
 machine-translated, corrections welcome.
 
-Source, issues, details: https://github.com/highscrren-dotcom/plaintop
+Source, issues, details: https://github.com/highscrren-dotcom/plaintop,
+devlog: https://t.me/s1dd1_logs
 
 ———
 
@@ -277,7 +280,8 @@ MPRIS он читает через модуль штатного медиако�
 Интерфейс говорит на языке Plasma — десять языков, всё, кроме английского и русского,
 переведено машинно, исправления приветствуются.
 
-Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
+Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop,
+дневник разработки: https://t.me/s1dd1_logs
 ```
 
 ## plainweather — weather
@@ -298,10 +302,11 @@ MPRIS он читает через модуль штатного медиако�
 
 ```
 plainweather — the weather for the Plasma 6 desktop as plain monospace text, in the
-style of the plaintop monitor: no icons, no frames. A header with the place, the
+style of the plaintop monitor: no frames, no graphics. A header with the place, the
 current conditions — temperature, a word for the sky, what it feels like, wind and
 humidity — and one row per forecast day, 0 to 7, with the low, the high, the sky and
-the chance of rain.
+the chance of rain. Left of those, the current sky as a picture made of characters in
+the widget's own font — sun, cloud, rain, snow, fog, lightning; it can be turned off.
 
 The data comes from one of four sources, chosen in the settings: Open-Meteo (the
 default) and MET Norway need no key; WeatherAPI.com and Visual Crossing take a free key
@@ -326,14 +331,17 @@ units, days, the attribution line; the Mouse page lets both buttons through to t
 desktop like the other plaintop widgets. The interface follows Plasma's language — ten
 languages, all but English and Russian machine-translated, corrections welcome.
 
-Source, issues, details: https://github.com/highscrren-dotcom/plaintop
+Source, issues, details: https://github.com/highscrren-dotcom/plaintop,
+devlog: https://t.me/s1dd1_logs
 
 ———
 
 plainweather — погода для рабочего стола Plasma 6 простым моноширинным текстом, в стиле
-монитора plaintop: без значков и рамок. Заголовок с местом, текущие условия —
+монитора plaintop: без рамок и графики. Заголовок с местом, текущие условия —
 температура, слово про небо, «ощущается», ветер и влажность — и по строке на день
-прогноза, от 0 до 7: минимум, максимум, небо и вероятность осадков.
+прогноза, от 0 до 7: минимум, максимум, небо и вероятность осадков. Слева от строк —
+текущее небо картинкой из символов шрифта самого виджета: солнце, облако, дождь, снег,
+туман, молния; её можно выключить.
 
 Данные — из одного из четырёх источников, выбранного в настройках: Open-Meteo (по
 умолчанию) и MET Norway без ключа; WeatherAPI.com и Visual Crossing — с бесплатным ключом
@@ -358,5 +366,6 @@ plainweather — погода для рабочего стола Plasma 6 про
 других виджетов plaintop. Интерфейс говорит на языке Plasma — десять языков, всё, кроме
 английского и русского, переведено машинно, исправления приветствуются.
 
-Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop
+Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop,
+дневник разработки: https://t.me/s1dd1_logs
 ```

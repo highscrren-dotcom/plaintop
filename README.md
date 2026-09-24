@@ -29,6 +29,8 @@ see [Three layers](#three-layers) below.
 Built and used on one machine: CachyOS, Plasma 6.7.5, KWin on Wayland. It should work on
 any Plasma 6 desktop, but nothing else has been tested — reports welcome.
 
+Devlog: [t.me/s1dd1_logs](https://t.me/s1dd1_logs) — the author's Telegram channel.
+
 What is in the repository:
 
 | Directory | What it is | State |
@@ -163,7 +165,12 @@ visualizer's ring, as an option there; the widget stays a product of its own
 `weather/` shows the weather in the same lines: a header with the place, the current
 conditions — temperature, a word for the sky, what it feels like, wind and humidity — and
 one row per forecast day with the low, the high, the sky and the chance of rain where the
-source gives it. The data comes from one of four sources, chosen on the *Location* page:
+source gives it. Left of the current line and the day rows there is a picture of the sky
+made of characters — a sun with rays, a cloud, rain as the same slashes the monitor's bars
+are made of, snow, fog, a bolt; twelve pictures by WMO code group, 48 by 24 characters of
+the widget's own font at three pixels each, so it is text like the rest of the widget. The
+*Icon* setting on the *General* page turns it off or sets the size, 3 to 5 px. The data
+comes from one of four sources, chosen on the *Location* page:
 [Open-Meteo](https://open-meteo.com) (the default) and [MET Norway](https://api.met.no)
 need no key; [WeatherAPI.com](https://www.weatherapi.com) and
 [Visual Crossing](https://www.visualcrossing.com) take a free key from your own account,
