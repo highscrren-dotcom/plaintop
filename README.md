@@ -65,8 +65,8 @@ Widgets*, search for the name:
   repository needed;
 - the visualizer, `plainspectrum` — [store.kde.org/p/2372815](https://store.kde.org/p/2372815/);
   it draws nothing until the relay below is installed;
-- the player and the weather are not in the store yet — for now the repository is the
-  only way.
+- the player, `plainplayer` — [store.kde.org/p/2373633](https://store.kde.org/p/2373633/);
+- the weather, `plainweather` — [store.kde.org/p/2373634](https://store.kde.org/p/2373634/).
 
 **From the repository** — all four widgets and the relay:
 
