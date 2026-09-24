@@ -5,6 +5,7 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 
 import "Sources.js" as Sources
+import "Icons.js" as Icons
 
 // Plasmoid host for the weather. The requests, the lines and the drawing live in
 // WeatherView.qml next to this file; this one is the shell-facing part — size, settings,
@@ -41,15 +42,39 @@ PlasmoidItem {
         renderType: Text.NativeRendering
     }
 
+    // The icon's box, measured as WeatherView draws it: the blank grid of Icons.js in the
+    // font at `iconSize` pixels, the rows packed at that size (24 × 3 = 72 px, four lines
+    // at 10 pt). Measured whenever the icon is on, whatever the data, so the hint below
+    // does not move with the weather.
+    Text {
+        id: iconProbe
+        visible: false
+        text: Icons.BLANK.join("\n")
+        textFormat: Text.PlainText
+        font.family: root.cfg.fontFamily
+        font.pixelSize: Math.max(1, root.cfg.iconSize)
+        lineHeightMode: Text.FixedHeight
+        lineHeight: Math.max(1, root.cfg.iconSize)
+        renderType: Text.NativeRendering
+    }
+
     // ⚠️ The containment takes the applet size from Layout.* ON THE ROOT, and the hint
     // must be constant for the given settings: a hint that followed the lines shown would
     // make the containment relayout on every change and drop the widget into the 0,0
     // corner. See docs/GOTCHAS.md.
     // Day rows: as many as asked for, and no more than the source gives (an unknown source
-    // id is Open-Meteo, as in the view).
-    readonly property int rows: 2 + Math.max(0, Math.min(Sources.get(cfg.source).maxDays, cfg.days)) + (cfg.attribution ? 1 : 0)
-    readonly property real boardWidth: Math.ceil(cell.advanceWidth * Math.max(10, cfg.columns))
-    readonly property real boardHeight: Math.ceil(lineProbe.implicitHeight * rows)
+    // id is Open-Meteo, as in the view). The board is the header, then the icon beside
+    // the "now" line and the day rows — whichever of the two is taller — then the
+    // attribution; `columns` is the text's width, the icon and a one-cell gap come before it.
+    readonly property int dayRows: Math.max(0, Math.min(Sources.get(cfg.source).maxDays, cfg.days))
+    readonly property real lineHeight: lineProbe.implicitHeight
+    // The width from the probe, the height as 24 packed rows (the view does the same: the
+    // last row's glyphs hang a pixel below it, into the next line's empty top).
+    readonly property real iconWidth: cfg.icon === 1 ? iconProbe.implicitWidth + cell.advanceWidth : 0
+    readonly property real iconHeight: cfg.icon === 1 ? Icons.HEIGHT * Math.max(1, cfg.iconSize) : 0
+    readonly property real boardWidth: Math.ceil(iconWidth + cell.advanceWidth * Math.max(10, cfg.columns))
+    readonly property real boardHeight: Math.ceil(lineHeight * (1 + (cfg.attribution ? 1 : 0))
+                                                  + Math.max(iconHeight, lineHeight * (1 + dayRows)))
 
     Layout.minimumWidth: boardWidth
     Layout.minimumHeight: boardHeight
@@ -112,6 +137,8 @@ PlasmoidItem {
             days: root.cfg.days
             attribution: root.cfg.attribution
             columns: Math.max(10, root.cfg.columns)
+            icon: root.cfg.icon
+            iconSize: root.cfg.iconSize
             cachedJson: root.cfg.lastWeather
             cachedTime: root.cfg.lastFetched
 

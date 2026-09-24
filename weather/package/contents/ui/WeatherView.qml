@@ -3,9 +3,11 @@ import QtQuick
 import org.kde.plasma.plasma5support as P5Support
 
 import "Sources.js" as Sources
+import "Icons.js" as Icons
 
 // The weather as text: one line for now, one per forecast day, drawn the way the monitor
-// draws its lines — monospace, no frames. The data comes from one of the sources in
+// draws its lines — monospace, no frames — and, on the left of those, the current
+// conditions as a text-art icon (Icons.js). The data comes from one of the sources in
 // Sources.js — Open-Meteo by default, MET Norway, WeatherAPI.com or Visual Crossing — read
 // with XMLHttpRequest straight from the widget: an https request to a public host works
 // inside plasmashell (verified 2026-09-23; only file:// is blocked, docs/GOTCHAS.md), so
@@ -35,7 +37,11 @@ Item {
     property int units: 0
     property int days: 3
     property bool attribution: true
+    // The text's width in characters: the icon, when on, sits to the left of it.
     property int columns: 52
+    // The icon of the current conditions: 0 none, 1 on the left; its font size in pixels.
+    property int icon: 1
+    property int iconSize: 3
     // The last good answer and when it came, from the config: drawn at start, before
     // the first request of this run completes.
     property string cachedJson: ""
@@ -599,8 +605,73 @@ Item {
         renderType: Text.NativeRendering
     }
 
-    Column {
-        spacing: 0
+    // ── Layout ────────────────────────────────────────────────────────────────
+    // One line and one cell of the widget's font. A hidden Text for the line, not
+    // FontMetrics: NativeRendering rounds the line to whole pixels (docs/GOTCHAS.md).
+    Text {
+        id: lineProbe
+        visible: false
+        text: "0"
+        font.family: view.fontFamily
+        font.pointSize: view.fontSize
+        renderType: Text.NativeRendering
+    }
+    TextMetrics {
+        id: cell
+        font.family: view.fontFamily
+        font.pointSize: view.fontSize
+        text: "0"
+    }
+    readonly property real lineHeight: lineProbe.implicitHeight
+
+    // The icon takes its place only beside data: the "now" line and the day rows are
+    // shifted right of it, the header and the attribution stay at the left edge. Without
+    // an icon for the code (a source that gave none) the place is kept and left empty, so
+    // the text does not jump. When the icon is taller than the rows beside it (fewer than
+    // four at 3 px and 10 pt), the attribution moves down below it.
+    readonly property bool iconOn: icon === 1 && located && !(needsKey && !hasKey) && weather !== null
+    readonly property var iconId: (weather !== null && weather.current) ? Icons.forCode(weather.current.code) : null
+    readonly property bool iconShown: iconOn && iconId !== null
+    // The box is the rows' height, not the Text's: the last row's glyphs hang a pixel
+    // below their packed line (implicitHeight 73 at 3 px), and that pixel is the next
+    // line's top, where no text is drawn — so 24 × 3 = 72 px, four lines at 10 pt exactly.
+    readonly property real iconWidth: iconItem.implicitWidth
+    readonly property real iconHeight: Icons.HEIGHT * Math.max(1, iconSize)
+    readonly property real indent: iconOn ? iconWidth + cell.advanceWidth : 0
+    readonly property int lastBeside: lines.length - 1 - (attribution ? 1 : 0)
+
+    function lineX(i) {
+        return (iconOn && i >= 1 && i <= lastBeside) ? indent : 0
+    }
+    function lineY(i) {
+        if (!iconOn || i <= lastBeside)
+            return i * lineHeight
+        return lineHeight + Math.max(iconHeight, lastBeside * lineHeight)
+    }
+
+    Item {
+        anchors.fill: parent
+
+        // The icon: one Text of 48 columns by 24 rows in the widget's font at `iconSize`
+        // pixels, the rows packed at that size (FixedHeight — the font's own line would be
+        // a third taller), so each character is one dot of a picture 24 × iconSize pixels
+        // tall: four lines at the defaults. Its box is measured on the blank grid too, so
+        // the layout stands whether or not there is an icon to draw. PlainText: a Text with
+        // the default format accepts the left button (docs/GOTCHAS.md); this one must not.
+        Text {
+            id: iconItem
+            visible: view.iconShown
+            x: 0
+            y: view.lineHeight
+            text: view.iconShown ? Icons.ICONS[view.iconId].join("\n") : Icons.BLANK.join("\n")
+            textFormat: Text.PlainText
+            color: view.colorFg
+            font.family: view.fontFamily
+            font.pixelSize: Math.max(1, view.iconSize)
+            lineHeightMode: Text.FixedHeight
+            lineHeight: Math.max(1, view.iconSize)
+            renderType: Text.NativeRendering
+        }
 
         // The model is a count, not the array: with a count the delegates stay when the
         // lines are rebuilt, and a Text whose string did not change does nothing
@@ -613,6 +684,8 @@ Item {
                 required property int index
                 readonly property var parts: view.lines[index] || []
                 spacing: 0
+                x: view.lineX(index)
+                y: view.lineY(index)
 
                 Repeater {
                     model: lineRow.parts.length
