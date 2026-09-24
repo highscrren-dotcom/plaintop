@@ -19,13 +19,14 @@ widget's `metadata.json`; bump it there before building a new upload.
 text below, `plaintop-0.2.plasmoid` and `plainspectrum-0.2.plasmoid` (MD5 equal to the
 built files); the 0.1 files are still listed beside them.
 
-⚠️ Uploads of 2026-09-24, checked over the store's API at 06:43 UTC: `plaintop-0.3.plasmoid`
-is on the plaintop page (MD5 equal to the file in the Desktop kit, whose content equals the
-current build) but the product's *Version* field still read 0.2 — it must be bumped by hand;
-plainspectrum 0.3 was not uploaded yet; plainplayer 0.1 (https://store.kde.org/p/2373633/,
-Plasma 6 Multimedia) and plainweather 0.1 (https://store.kde.org/p/2373634/, Plasma 6 Weather)
-were created at 06:14–06:16 UTC and are in the catalogue, but the API had not indexed them,
-so their files are unverified from here (the CDN answers 429 to downloads through the tunnel).
+⚠️ Uploaded 2026-09-24 (06:09–06:17 UTC by the store's `changed` fields), verified over the
+store's API at 07:09 UTC: plaintop 0.3 and plainspectrum 0.3 updated, plainplayer 0.1
+(https://store.kde.org/p/2373633/, Plasma 6 Multimedia) and plainweather 0.1
+(https://store.kde.org/p/2373634/, Plasma 6 Weather) created; every listed file's MD5 equals
+the file in the Desktop kit, whose unpacked content equals the current build. ⚠️ The API lagged
+the site by about an hour this time (at 06:48 UTC it still showed the old versions) — Plasma's
+*Download New Widgets* reads the API, so an update shows up there with that delay. The CDN
+answered 429 to downloads through the tunnel, so the check went by MD5 fields, not downloads.
 GitHub release v0.3 carries all four packages, verified by download (sha256).
 
 ## Uploading
@@ -49,7 +50,7 @@ The store is run by Pling, not by KDE; there is no review before a product goes 
 
 Published 2026-09-22: https://store.kde.org/p/2372814/
 
-**0.3 — file uploaded 2026-09-24; the *Version* field still read 0.2 at 06:43 UTC.** What's new: three block types — pressure stall information
+**0.3 — uploaded 2026-09-24.** What's new: three block types — pressure stall information
 (PSI) for CPU, memory and I/O; the battery, shown only where one exists; system health —
 failed systemd units, errors since boot and the last error lines of the journal. Separators
 collapse where a block hides, so no double rules. The description below already says so.
@@ -117,7 +118,7 @@ https://github.com/highscrren-dotcom/plaintop, дневник разработк
 
 Published 2026-09-22: https://store.kde.org/p/2372815/
 
-**0.3 — not uploaded yet as of 2026-09-24 06:43 UTC.** What's new: the player in the centre of the ring — the
+**0.3 — uploaded 2026-09-24.** What's new: the player in the centre of the ring — the
 plainplayer view on a new *Player* page, off by default, with the player's own font, width
 and colours; on a line it goes along the edge the bars reach last. With *Mouse* on, only
 the player's controls row takes clicks, the rest of the widget lets them through. The
