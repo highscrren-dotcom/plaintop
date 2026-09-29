@@ -410,7 +410,7 @@ ApplicationWindow {
                 }
 
                 KQuickControls.ColorButton {
-                    Kirigami.FormData.label: tr.i18nc("palette: colour of", "Header:")
+                    Kirigami.FormData.label: tr.i18nc("palette: colour of", "Header and clock:")
                     color: app.num("colorAccent", "#E05561")
                     onColorChanged: app.change("colorAccent", color.toString())
                 }

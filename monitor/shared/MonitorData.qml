@@ -560,9 +560,16 @@ Item {
     // with the label length.
     // The label is three characters; a wider label (the disks use four: "root", "home")
     // takes its extra characters from the bar, so the percentage column stays aligned.
-    function barRow(label, value, labelWidth) {
+    // The percentage is a part of its own in the value colour, so the numbers stand out
+    // of the column; `tail` follows it in the main colour.
+    function barRow(label, value, labelWidth, tail) {
         const lw = labelWidth || 3
-        return String(label).padEnd(lw).slice(0, lw) + " " + bar(value, barWidth - (lw - 3)) + " " + pct(value)
+        const parts = [
+            { text: String(label).padEnd(lw).slice(0, lw) + " " + bar(value, barWidth - (lw - 3)) + " ", role: "fg" },
+            { text: pct(value), role: "value" }
+        ]
+        if (tail) parts.push({ text: tail, role: "fg" })
+        return { kind: "parts", parts: parts }
     }
 
     // The decimal separator is the locale's: a comma under ru_RU, a point under en_US.
@@ -641,13 +648,17 @@ Item {
         return max
     }
 
+    // Process rows: the name in the main colour, the figure as a value, as in the bar rows.
     function topRows(model, column, count, format) {
         const out = []
         const n = Math.min(count, model.rowCount())
         for (let i = 0; i < n; i++) {
             const name = String(model.data(model.index(i, 0), Proc.ProcessDataModel.Value) || "")
             const v = model.data(model.index(i, column), Proc.ProcessDataModel.Value)
-            out.push(name.slice(0, 20).padEnd(21) + "| " + format(Number(v) || 0))
+            out.push({ kind: "parts", parts: [
+                { text: name.slice(0, 20).padEnd(21) + "| ", role: "fg" },
+                { text: format(Number(v) || 0), role: "value" }
+            ] })
         }
         return out
     }
@@ -737,10 +748,10 @@ Item {
 
             case "cpu": {
                 const usage = num("cpu/all/usage", 0)
-                out.push(line(barRow("CPU", usage)))
+                out.push(barRow("CPU", usage))
                 if (p.per_socket !== false) {
                     for (let n = 0; n < nodeCpus.length; n++)
-                        out.push(line(barRow("S" + n, nodeUsage(n)) + "   node" + n))
+                        out.push(barRow("S" + n, nodeUsage(n), 3, "   node" + n))
                 }
                 if (p.model_line !== false) {
                     const name = (cpuSockets > 1 ? cpuSockets + "x " : "") + (cpuModel || "CPU")
@@ -755,15 +766,15 @@ Item {
                                  + (rpm.length > 0 ? rpm.join("/") + " rpm" : ""), "dim"))
                 }
                 for (const r of topRows(byCpu, 1, p.top_processes || 0, v => comma(v, 1) + "%"))
-                    out.push(line(r))
+                    out.push(r)
                 break
             }
 
             case "pressure": {
                 if (!hasPressure) break
-                out.push(line(barRow("PSI", num("pressure/cpu/some10Sec", 0))))
-                out.push(line(barRow("mem", num("pressure/memory/some10Sec", 0))))
-                out.push(line(barRow("io ", num("pressure/io/some10Sec", 0))))
+                out.push(barRow("PSI", num("pressure/cpu/some10Sec", 0)))
+                out.push(barRow("mem", num("pressure/memory/some10Sec", 0)))
+                out.push(barRow("io ", num("pressure/io/some10Sec", 0)))
                 // Full stalls are usually well under 1%, hence one decimal.
                 if (p.full === true)
                     out.push(line(tr.i18nc("pressure: time every task stalled, memory and I/O",
@@ -775,17 +786,17 @@ Item {
 
             case "memory": {
                 const used = num("memory/physical/usedPercent", 0)
-                out.push(line(barRow("RAM", used)))
+                out.push(barRow("RAM", used))
                 if (p.totals !== false)
                     out.push(line(gib(num("memory/physical/used", 0)) + " / "
                                   + gib(num("memory/physical/total", 0)), "dim"))
                 for (const r of topRows(byMem, 2, p.top_processes || 0, v => gib(v * 1024)))
-                    out.push(line(r))
+                    out.push(r)
                 break
             }
 
             case "gpu": {
-                out.push(line(barRow("GPU", num("gpu/gpu0/usage", 0))))
+                out.push(barRow("GPU", num("gpu/gpu0/usage", 0)))
                 if (p.details !== false) {
                     out.push(line("VRAM " + comma(num("gpu/gpu0/usedVram", 0) / 1073741824, 1)
                                   + "/" + comma(num("gpu/gpu0/totalVram", 0) / 1073741824, 1)
@@ -800,7 +811,7 @@ Item {
                     // The root mount is labelled "root", not "/": the bar beside it is made of slashes too,
                     // and "/   //" read as one thing. Other mounts keep their last path element.
                     const name = d.target === "/" ? "root" : d.target.split("/").pop()
-                    out.push(line(barRow(name, d.pct, 4)))
+                    out.push(barRow(name, d.pct, 4))
                     let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
                     if (d.target === "/" && p.nvme_temp !== false) {
                         const t = nvmeSensor.length > 0 ? Math.round(num(nvmeSensor, 0)) : 0
@@ -839,7 +850,7 @@ Item {
                 for (let i = 0; i < real.length; i++) {
                     const id = "power/" + real[i] + "/"
                     const percent = num(id + "chargePercentage", 0)
-                    out.push(line(barRow(real.length > 1 ? "BT" + i : "BAT", percent)))
+                    out.push(barRow(real.length > 1 ? "BT" + i : "BAT", percent))
                     out.push(line(batteryText(percent, num(id + "chargeRate", 0),
                                               num(id + "charge", 0), num(id + "capacity", 0),
                                               num(id + "health", -1)), "dim"))
@@ -882,7 +893,7 @@ Item {
             case "sensor": {
                 const v = num(p.id, 0)
                 const label = p.label || "SEN"
-                if (p.bar !== false) out.push(line(barRow(label, v) + (p.suffix || "")))
+                if (p.bar !== false) out.push(barRow(label, v, 3, p.suffix || ""))
                 else out.push(kvLine(label, comma(v, p.digits || 0) + (p.suffix || "")))
                 break
             }

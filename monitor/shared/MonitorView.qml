@@ -78,6 +78,7 @@ Item {
                         text: clockRow.visible ? modelData.big : ""
                         font.pointSize: view.fontSize * 3.4
                         font.bold: true
+                        color: view.colorAccent
                     }
 
                     Line {

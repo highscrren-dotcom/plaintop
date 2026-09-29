@@ -80,7 +80,7 @@ KCM.SimpleKCM {
         }
 
         KQuickControls.ColorButton {
-            Kirigami.FormData.label: i18nc("palette: colour of", "Header:")
+            Kirigami.FormData.label: i18nc("palette: colour of", "Header and clock:")
             color: page.cfg_colorAccent
             onColorChanged: page.cfg_colorAccent = color.toString()
         }

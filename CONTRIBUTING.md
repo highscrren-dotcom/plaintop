@@ -226,7 +226,7 @@ Rules for the source strings:
   not `"shown " + a + " of " + b`. A translator needs the whole sentence.
 - **Numbers with a noun use the plural call**, `i18np` / `i18ncp`: Russian, Ukrainian and
   Polish have three forms, and the catalog's own rules pick them.
-- **Give context where a word is ambiguous**: `i18nc("palette: colour of", "Header:")`.
+- **Give context where a word is ambiguous**: `i18nc("palette: colour of", "Header and clock:")`.
 - **Files only the plasmoid loads call `i18n()`**; the shared QML in `monitor/shared/` and
   `spectrum/shared/` calls `tr.i18n()` through a `KI18nContext` — a habit from the retired
   window hosts, whose bare `qml6` runner had no `i18n()` of its own.
