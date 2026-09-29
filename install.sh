@@ -477,6 +477,16 @@ print(n);" 2>/dev/null | tr -dc '0-9')
     fi
 }
 
+# Palettes: palettes/<name>.json holds the colour keys of all four widgets, "stock" is
+# their main.xml defaults. The keys are checked against main.xml before anything is written.
+palette() {
+    local command=$1 name=$2
+    echo "== Palette"
+    [ -n "$name" ] || { python3 "$REPO/palettes/palette.py" list; return 1; }
+    plasmashell_ready || { red "  ✗ plasmashell does not respond"; return 1; }
+    python3 "$REPO/palettes/palette.py" "$command" "$name"
+}
+
 # Left-button click-through on the desktop is not the applet's call: plasmashell wraps every
 # desktop applet in an ItemContainer that accepts the left button before the applet sees it
 # (the right one passes — the container takes only Qt::LeftButton). The widgets get through
@@ -679,9 +689,11 @@ case "${1:-}" in
   --windows-off) windows_off; exit $? ;;
   --clicks-off)  clicks_set false "widgets catch clicks (can be configured with the mouse)"; exit $? ;;
   --clicks-on)   clicks_set true "clicks pass through to the desktop"; exit $? ;;
+  --palette)      palette apply "${2:-}"; exit $? ;;
+  --palette-save) palette save "${2:-}"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--windows-off|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--deps]"; exit 0 ;;
+  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--windows-off|--clicks-on|--clicks-off|--palette NAME|--palette-save NAME|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Missing dependencies — install them and try again."; exit 1; }

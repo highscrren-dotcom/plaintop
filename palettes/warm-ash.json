@@ -1,0 +1,26 @@
+{
+  "org.s1dd1.plaintop": {
+    "colorFg": "#C9BFAF",
+    "colorAccent": "#FFD27A",
+    "colorDim": "#6F665A",
+    "colorValue": "#FFB000"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#C9BFAF",
+    "colorAccent": "#FFD27A",
+    "colorDim": "#6F665A"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#C9BFAF",
+    "colorAccent": "#FFB000",
+    "colorDim": "#6F665A"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#6F665A",
+    "colorHigh": "#FFB000",
+    "opacityPercent": 80,
+    "playerColorFg": "#C9BFAF",
+    "playerColorAccent": "#FFD27A",
+    "playerColorDim": "#6F665A"
+  }
+}
