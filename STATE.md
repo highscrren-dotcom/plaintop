@@ -48,8 +48,9 @@ plainweather 0.1; все стоят на столе, `--status` зелёный, 
   переключаться между ними из окна настроек. Дизайн = палитра четырёх виджетов + обои по
   экранам (`org.kde.image`, `FillMode`). Сейчас есть только палитры: `palettes/*.json` и
   `./install.sh --palette` / `--palette-save`. Сохранённые варианты и их обои: `amber` и
-  `warm-ash` — «лог 147» (`log-*.png`); `tachikoma` — `gits-canal-3440x1440.jpg` на DP-1,
-  обои для HDMI-A-1 ещё не присланы (все в `~/dev/stream-style/assets/wallpaper/`).
+  `warm-ash` — «лог 147» (`log-*.png`); `tachikoma` — `gits-canal-3440x1440.jpg` на DP-1 и
+  `gits-canal-1080x1920.jpg` на HDMI-A-1, оба `FillMode=2` (все в
+  `~/dev/stream-style/assets/wallpaper/`).
   ⚠️ Препятствия: QML в plasmashell не читает файлы (GOTCHAS), значит дизайны хранить в
   конфиге апплета; апплет не пишет конфиг соседних апплетов и обои — нужен путь через
   скриптинг оболочки.
