@@ -477,7 +477,7 @@ the first day can be forced to Monday or Sunday, and the empty cells can show th
 neighbouring months' days.
 
 Notes and calendars: a click on a day opens a sticker by the cell — a sheet framed with
-characters with the day's events and tasks and a note of yours; a day with an entry takes
+characters with the day's events and tasks and your notes, as many as you like; a day with an entry takes
 its own colour, and the next entries are listed under the months. Notes are iCalendar
 files on your disk, or go to an account's calendar. Accounts, any number: Yandex and iCloud
 over CalDAV with an app password, Google over CalDAV with a one-time OAuth login, any CalDAV
@@ -509,7 +509,7 @@ plaincalendar — настенный календарь для рабочего 
 месяцев.
 
 Заметки и календари: клик по дню открывает стикер у ячейки — лист в рамке из символов с
-событиями и задачами дня и вашей заметкой; день с записью красится своим цветом, а
+событиями и задачами дня и вашими заметками, сколько угодно; день с записью красится своим цветом, а
 ближайшие записи перечислены под месяцами. Заметки — файлы iCalendar на вашем диске или
 записи в календаре аккаунта. Аккаунтов сколько угодно: Яндекс и iCloud по CalDAV с паролем
 приложения, Google по CalDAV с однократным входом OAuth, любой сервер CalDAV, ссылки ICS на

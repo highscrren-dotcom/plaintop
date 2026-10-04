@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 18:11+0500\n"
+"POT-Creation-Date: 2026-10-04 19:05+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -69,18 +69,23 @@ msgctxt "reminder: it was due earlier"
 msgid "MISSED"
 msgstr "PERDIDO"
 
-#: calendar/package/contents/ui/Sticker.qml:74
-#: calendar/package/contents/ui/Sticker.qml:79
+#: calendar/package/contents/ui/Sticker.qml:150
+msgctxt "the sticker: a note with no text yet"
+msgid "(empty)"
+msgstr "(vazia)"
+
+#: calendar/package/contents/ui/Sticker.qml:162
+#: calendar/package/contents/ui/Sticker.qml:167
 msgctxt "the sticker's reminder choice"
 msgid "none"
 msgstr "não"
 
-#: calendar/package/contents/ui/Sticker.qml:75
+#: calendar/package/contents/ui/Sticker.qml:163
 msgctxt "the sticker's reminder choice"
 msgid "an hour before"
 msgstr "uma hora antes"
 
-#: calendar/package/contents/ui/Sticker.qml:76
+#: calendar/package/contents/ui/Sticker.qml:164
 #, kde-format
 msgctxt "the sticker's reminder choice"
 msgid "%1 min before"
@@ -88,31 +93,36 @@ msgid_plural "%1 min before"
 msgstr[0] "%1 min antes"
 msgstr[1] "%1 min antes"
 
-#: calendar/package/contents/ui/Sticker.qml:80
+#: calendar/package/contents/ui/Sticker.qml:168
 #, kde-format
 msgctxt "the sticker's reminder choice: at an hour of the note's day"
 msgid "at %1"
 msgstr "às %1"
 
-#: calendar/package/contents/ui/Sticker.qml:109
+#: calendar/package/contents/ui/Sticker.qml:190
 msgctxt "the sticker's time field"
 msgid "time:"
 msgstr "hora:"
 
-#: calendar/package/contents/ui/Sticker.qml:110
+#: calendar/package/contents/ui/Sticker.qml:191
 msgctxt "the sticker's reminder row"
 msgid "remind:"
 msgstr "lembrar:"
 
-#: calendar/package/contents/ui/Sticker.qml:253
+#: calendar/package/contents/ui/Sticker.qml:319
 msgctxt "the account's last fetch failed"
 msgid "offline"
 msgstr "offline"
 
-#: calendar/package/contents/ui/Sticker.qml:276
+#: calendar/package/contents/ui/Sticker.qml:350
 msgctxt "the sticker's hint line"
 msgid "Esc closes · an empty note deletes it"
 msgstr "Esc fecha · uma nota vazia a apaga"
+
+#: calendar/package/contents/ui/Sticker.qml:513
+msgctxt "the sticker's line that starts another note"
+msgid "new note"
+msgstr "nova nota"
 
 #: calendar/package/contents/ui/configAccounts.qml:29
 msgctxt "account preset"
@@ -139,44 +149,44 @@ msgctxt "account preset"
 msgid "ICS link, read-only"
 msgstr "link ICS, somente leitura"
 
-#: calendar/package/contents/ui/configAccounts.qml:101
+#: calendar/package/contents/ui/configAccounts.qml:103
 msgid "is python3 installed?"
 msgstr "o python3 está instalado?"
 
-#: calendar/package/contents/ui/configAccounts.qml:101
-#: calendar/package/contents/ui/configAccounts.qml:199
+#: calendar/package/contents/ui/configAccounts.qml:103
+#: calendar/package/contents/ui/configAccounts.qml:201
 #, kde-format
 msgid "The script did not answer: %1"
 msgstr "O script não respondeu: %1"
 
-#: calendar/package/contents/ui/configAccounts.qml:134
+#: calendar/package/contents/ui/configAccounts.qml:136
 msgid "The account needs an id — a short word, say “yandex”."
 msgstr "A conta precisa de um id — uma palavra curta, digamos “yandex”."
 
-#: calendar/package/contents/ui/configAccounts.qml:144
+#: calendar/package/contents/ui/configAccounts.qml:146
 msgid "Saved."
 msgstr "Salvo."
 
-#: calendar/package/contents/ui/configAccounts.qml:158
+#: calendar/package/contents/ui/configAccounts.qml:160
 msgid "Removed."
 msgstr "Removido."
 
-#: calendar/package/contents/ui/configAccounts.qml:169
+#: calendar/package/contents/ui/configAccounts.qml:171
 msgid "Asking the server…"
 msgstr "Consultando o servidor…"
 
-#: calendar/package/contents/ui/configAccounts.qml:178
+#: calendar/package/contents/ui/configAccounts.qml:180
 #, kde-format
 msgid "The link answers: %1 entry."
 msgid_plural "The link answers: %1 entries."
 msgstr[0] "O link responde: %1 entrada."
 msgstr[1] "O link responde: %1 entradas."
 
-#: calendar/package/contents/ui/configAccounts.qml:180
+#: calendar/package/contents/ui/configAccounts.qml:182
 msgid "The server answers, but lists no calendar."
 msgstr "O servidor responde, mas não lista nenhum calendário."
 
-#: calendar/package/contents/ui/configAccounts.qml:182
+#: calendar/package/contents/ui/configAccounts.qml:184
 #, kde-format
 msgid ""
 "The server answers: %1 calendar — pick one below, or leave the field empty "
@@ -191,7 +201,7 @@ msgstr[1] ""
 "O servidor responde: %1 calendários — escolha um abaixo ou deixe o campo "
 "vazio para o primeiro."
 
-#: calendar/package/contents/ui/configAccounts.qml:219
+#: calendar/package/contents/ui/configAccounts.qml:221
 msgid ""
 "Calendars the widget reads, and the one it writes your notes to (chosen on "
 "the Notes page). Yandex and iCloud take an app password from your account's "
@@ -201,82 +211,82 @@ msgstr ""
 "(escolhido na página Notas). Yandex e iCloud usam uma senha de aplicativo "
 "das configurações da sua conta; o Google entra uma vez pelo navegador."
 
-#: calendar/package/contents/ui/configAccounts.qml:248
+#: calendar/package/contents/ui/configAccounts.qml:250
 msgctxt "Google account state"
 msgid "signed in"
 msgstr "conectado"
 
-#: calendar/package/contents/ui/configAccounts.qml:248
+#: calendar/package/contents/ui/configAccounts.qml:250
 msgctxt "Google account state"
 msgid "not signed in yet"
 msgstr "ainda não conectado"
 
-#: calendar/package/contents/ui/configAccounts.qml:249
+#: calendar/package/contents/ui/configAccounts.qml:251
 msgctxt "CalDAV account state"
 msgid "no password"
 msgstr "sem senha"
 
-#: calendar/package/contents/ui/configAccounts.qml:263
+#: calendar/package/contents/ui/configAccounts.qml:265
 msgid "New"
 msgstr "Novo"
 
-#: calendar/package/contents/ui/configAccounts.qml:269
+#: calendar/package/contents/ui/configAccounts.qml:271
 msgid "Remove"
 msgstr "Remover"
 
-#: calendar/package/contents/ui/configAccounts.qml:300
+#: calendar/package/contents/ui/configAccounts.qml:302
 msgid "Provider:"
 msgstr "Provedor:"
 
-#: calendar/package/contents/ui/configAccounts.qml:312
+#: calendar/package/contents/ui/configAccounts.qml:314
 msgid "Id:"
 msgstr "Id:"
 
-#: calendar/package/contents/ui/configAccounts.qml:313
+#: calendar/package/contents/ui/configAccounts.qml:315
 msgctxt "placeholder for an account id"
 msgid "yandex"
 msgstr "yandex"
 
-#: calendar/package/contents/ui/configAccounts.qml:319
+#: calendar/package/contents/ui/configAccounts.qml:321
 msgid "Name:"
 msgstr "Nome:"
 
-#: calendar/package/contents/ui/configAccounts.qml:320
+#: calendar/package/contents/ui/configAccounts.qml:322
 msgctxt "placeholder for an account's name"
 msgid "as it is shown on the sticker"
 msgstr "como aparece no adesivo"
 
-#: calendar/package/contents/ui/configAccounts.qml:325
+#: calendar/package/contents/ui/configAccounts.qml:327
 msgid "Link:"
 msgstr "Link:"
 
-#: calendar/package/contents/ui/configAccounts.qml:325
+#: calendar/package/contents/ui/configAccounts.qml:327
 msgid "Server:"
 msgstr "Servidor:"
 
-#: calendar/package/contents/ui/configAccounts.qml:332
+#: calendar/package/contents/ui/configAccounts.qml:334
 msgid "Google account:"
 msgstr "Conta do Google:"
 
-#: calendar/package/contents/ui/configAccounts.qml:332
+#: calendar/package/contents/ui/configAccounts.qml:334
 msgid "Login:"
 msgstr "Usuário:"
 
-#: calendar/package/contents/ui/configAccounts.qml:334
+#: calendar/package/contents/ui/configAccounts.qml:336
 msgctxt "placeholder for a login"
 msgid "your login on the server"
 msgstr "seu usuário no servidor"
 
-#: calendar/package/contents/ui/configAccounts.qml:339
+#: calendar/package/contents/ui/configAccounts.qml:341
 msgid "App password:"
 msgstr "Senha de aplicativo:"
 
-#: calendar/package/contents/ui/configAccounts.qml:342
+#: calendar/package/contents/ui/configAccounts.qml:344
 msgctxt "placeholder: a password is stored"
 msgid "stored — type to replace"
 msgstr "salva — digite para substituir"
 
-#: calendar/package/contents/ui/configAccounts.qml:347
+#: calendar/package/contents/ui/configAccounts.qml:349
 msgid ""
 "Yandex: id.yandex.ru → Security → App passwords → Calendar.\n"
 "iCloud: appleid.apple.com → Sign-in and security → App-specific passwords."
@@ -285,20 +295,20 @@ msgstr ""
 "iCloud: appleid.apple.com → Início de sessão e segurança → Senhas "
 "específicas de app."
 
-#: calendar/package/contents/ui/configAccounts.qml:354
+#: calendar/package/contents/ui/configAccounts.qml:356
 msgid "OAuth client id:"
 msgstr "Id do cliente OAuth:"
 
-#: calendar/package/contents/ui/configAccounts.qml:361
+#: calendar/package/contents/ui/configAccounts.qml:363
 msgid "OAuth client secret:"
 msgstr "Segredo do cliente OAuth:"
 
-#: calendar/package/contents/ui/configAccounts.qml:364
+#: calendar/package/contents/ui/configAccounts.qml:366
 msgctxt "placeholder: a secret is stored"
 msgid "stored — type to replace"
 msgstr "salvo — digite para substituir"
 
-#: calendar/package/contents/ui/configAccounts.qml:369
+#: calendar/package/contents/ui/configAccounts.qml:371
 #, kde-format
 msgid ""
 "A “Desktop app” OAuth client from console.cloud.google.com, with the "
@@ -311,29 +321,29 @@ msgstr ""
 "ativada. Salve e depois entre uma vez pelo terminal:\n"
 "python3 %1 google-auth %2"
 
-#: calendar/package/contents/ui/configAccounts.qml:378
+#: calendar/package/contents/ui/configAccounts.qml:380
 msgid "Calendar:"
 msgstr "Calendário:"
 
-#: calendar/package/contents/ui/configAccounts.qml:381
+#: calendar/package/contents/ui/configAccounts.qml:383
 msgctxt "placeholder for the calendar href"
 msgid "empty — the first one on the server"
 msgstr "vazio — o primeiro no servidor"
 
-#: calendar/package/contents/ui/configAccounts.qml:386
+#: calendar/package/contents/ui/configAccounts.qml:388
 msgid "Found:"
 msgstr "Encontrados:"
 
-#: calendar/package/contents/ui/configAccounts.qml:389
+#: calendar/package/contents/ui/configAccounts.qml:391
 msgctxt "pick list placeholder"
 msgid "pick…"
 msgstr "escolher…"
 
-#: calendar/package/contents/ui/configAccounts.qml:396
+#: calendar/package/contents/ui/configAccounts.qml:398
 msgid "Save"
 msgstr "Salvar"
 
-#: calendar/package/contents/ui/configAccounts.qml:401
+#: calendar/package/contents/ui/configAccounts.qml:403
 msgid "Check"
 msgstr "Verificar"
 

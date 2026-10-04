@@ -209,6 +209,20 @@ def test_local_and_build():
     ok("2026-10-09" not in doc["days"] and not list((Path(TMP) / "plaincalendar" / "notes").glob("*.ics")), "deleted")
     code, doc = run("set", "local", "2026-13-40", base64.b64encode(b"x").decode())
     ok(code == 1 and doc["ok"] is False, "a bad date is refused: " + repr(doc))
+    # Several notes a day: "new" gets a fresh uid; --uid edits or deletes that one only.
+    b64 = lambda t: base64.b64encode(t.encode()).decode()
+    mine = lambda d: [e for e in d["days"].get("2026-10-11", []) if e["own"]]
+    run("set", "local", "2026-10-11", b64("10:00 Первая"))
+    code, doc = run("set", "local", "2026-10-11", b64("15:00 Вторая"), "--uid", "new")
+    ok(code == 0 and len(mine(doc)) == 2 and len({e["uid"] for e in mine(doc)}) == 2, "two notes on one day: " + repr([e["uid"] for e in mine(doc)]))
+    second = next(e["uid"] for e in mine(doc) if e["summary"] == "Вторая")
+    code, doc = run("set", "local", "2026-10-11", b64("16:00 Вторая, позже"), "--uid", second)
+    ok(sorted(e["text"] for e in mine(doc)) == ["10:00 Первая", "16:00 Вторая, позже"], "--uid edits that note: " + repr([e["text"] for e in mine(doc)]))
+    code, doc = run("delete", "local", "2026-10-11", "--uid", second)
+    ok([e["text"] for e in mine(doc)] == ["10:00 Первая"], "--uid deletes that note only: " + repr([e["text"] for e in mine(doc)]))
+    code, doc = run("set", "local", "2026-10-11", b64("x"), "--uid", "someone@elsewhere")
+    ok(code == 1 and doc["ok"] is False, "a uid that is no note of yours on that day is refused: " + repr(doc))
+    run("delete", "local", "2026-10-11")
     # Upcoming: from today on, done todos left out, limited.
     today = dt.date.today()
     for i, text in enumerate(["позавчера", "сегодня", "завтра", "через неделю"]):
@@ -398,6 +412,16 @@ def test_caldav():
     code, doc = run("delete", "yandex", "2026-10-20")
     dels = [l for l in STORE.log if l[0] == "DELETE"]
     ok(len(dels) == 1 and dels[0][2] == '"e2"' and not [x for x in doc["days"].get("2026-10-20", []) if x["own"]], "deleted on the server: " + repr(dels))
+    # A second note that day is a resource of its own, created and removed by its uid.
+    code, doc = run("set", "yandex", "2026-10-21", base64.b64encode("09:00 Утро".encode()).decode())
+    code, doc = run("set", "yandex", "2026-10-21", base64.b64encode("18:00 Вечер".encode()).decode(), "--uid", "new")
+    puts = [l for l in STORE.log if l[0] == "PUT"]
+    two = [x for x in doc["days"].get("2026-10-21", []) if x["own"]]
+    ok(len(two) == 2 and puts[-1][3] == "*" and puts[-1][1] != puts[-2][1], "a second note, a second resource: " + repr([p[1] for p in puts[-2:]]))
+    evening = next(x["uid"] for x in two if x["summary"] == "Вечер")
+    code, doc = run("delete", "yandex", "2026-10-21", "--uid", evening)
+    ok([x["summary"] for x in doc["days"].get("2026-10-21", []) if x["own"]] == ["Утро"], "the second deleted by its uid, the first kept")
+    run("delete", "yandex", "2026-10-21")
 
     # A wrong password: the account reports the error, the rest of the document stands.
     acc["password"] = "wrong"

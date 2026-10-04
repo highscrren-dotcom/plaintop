@@ -18,9 +18,10 @@ Accounts, ~/.config/plaincalendar/accounts.json (mode 600), one object each:
 
 "local" is always there: a folder of .ics files, one per note, a vdir. CalDAV is one
 protocol for all three providers; Google's only takes OAuth, hence its kind and the
-one-off browser login. The widget's own note of a day is an all-day VEVENT with the uid
-plaincalendar-<date>@<host>, in the account the settings name; the first line of the
-text is the SUMMARY, the rest the DESCRIPTION.
+one-off browser login. The widget's own notes of a day are VEVENTs with the uid
+plaincalendar-<date>@<host> (the first) or plaincalendar-<date>-<hex>@<host> (each one
+more, `set --uid new`), in the account the settings name; the first line of the text is
+the SUMMARY, the rest the DESCRIPTION.
 
 Reminders live in the text and in the data. A first line "14:30 Dentist" makes the note a
 timed event (DTSTART/DTEND in UTC, an hour long unless "14:30-15:15") with a VALARM
@@ -32,8 +33,8 @@ snoozed ones moved; the widget fires them. The state is reminders.json in the ca
 
     notes.py sync [--from D --to D] [--every MIN] [--force] [--upcoming N] [ALARM OPTS]
     notes.py dump [--from D --to D] [--upcoming N] [ALARM OPTS]               print from the caches
-    notes.py set ACCOUNT DATE B64TEXT [ALARM OPTS]                            create or update the note
-    notes.py delete ACCOUNT DATE
+    notes.py set ACCOUNT DATE B64TEXT [--uid UID|new] [ALARM OPTS]            create or update a note
+    notes.py delete ACCOUNT DATE [--uid UID]
     notes.py ack KEY                        the alarm was seen; never again
     notes.py snooze KEY MINUTES|ISO         again in MINUTES, or at a local "YYYY-MM-DDTHH:MM"
     notes.py claim KEY                      {"claimed": true} for the one instance that asked first
@@ -402,6 +403,19 @@ def note_uid(date):
     return f"plaincalendar-{date}@{socket.gethostname() or 'host'}"
 
 
+def own_uid(date, uid):
+    """The uid a set or delete works on. None or "" is the day's first note (the one
+    uid the widget had before a day could hold several), "new" a fresh one; anything
+    else must be a note of yours on that day — the widget never touches other entries."""
+    if not uid:
+        return note_uid(date)
+    if uid == "new":
+        return f"plaincalendar-{date}-{secrets.token_hex(3)}@{socket.gethostname() or 'host'}"
+    if not uid.startswith(f"plaincalendar-{date}") or "/" in uid or len(uid) > 200:
+        raise DavError(f"not a note of yours on {date}: {uid!r}")
+    return uid
+
+
 HEAD_RE = re.compile(r"^(!?)\s*(\d{1,2})[:.](\d{2})(?:\s*[-\u2013\u2014]\s*(\d{1,2})[:.](\d{2}))?(?:\s+(.*))?$")
 
 
@@ -579,13 +593,14 @@ def local_entries():
     return out
 
 
-def local_set(date, text, lead=10, hour="09:00"):
+def local_set(date, text, lead=10, hour="09:00", uid=None):
+    uid = uid or note_uid(date)
     LOCAL_DIR.mkdir(parents=True, exist_ok=True)
-    (LOCAL_DIR / f"{note_uid(date)}.ics").write_text(own_ics(date, text, None, lead, hour), encoding="utf-8")
+    (LOCAL_DIR / f"{uid}.ics").write_text(own_ics(date, text, uid, lead, hour), encoding="utf-8")
 
 
-def local_delete(date):
-    p = LOCAL_DIR / f"{note_uid(date)}.ics"
+def local_delete(date, uid=None):
+    p = LOCAL_DIR / f"{uid or note_uid(date)}.ics"
     if p.exists():
         p.unlink()
 
@@ -1094,16 +1109,17 @@ def find_account(accounts, account_id):
     raise DavError(f"no account {account_id!r}")
 
 
-def set_note(accounts, account_id, date, text, lead=10, hour="09:00"):
+def set_note(accounts, account_id, date, text, lead=10, hour="09:00", uid=None):
     try:
         dt.date.fromisoformat(date)
     except ValueError as ex:
         raise DavError(f"not a date: {date}") from ex
+    uid = own_uid(date, uid)
     if account_id == "local":
         if text.strip():
-            local_set(date, text, lead, hour)
+            local_set(date, text, lead, hour, uid)
         else:
-            local_delete(date)
+            local_delete(date, uid)
         return
     account = find_account(accounts, account_id)
     if account.get("kind") == "ics":
@@ -1111,10 +1127,10 @@ def set_note(accounts, account_id, date, text, lead=10, hour="09:00"):
     dav = Dav(account)
     calendar = calendar_of(account, dav)
     cache = load_cache(account_id)
-    existing = next((e for e in cache.get("entries", []) if e.get("uid") == note_uid(date) and e.get("href")), None)
+    existing = next((e for e in cache.get("entries", []) if e.get("uid") == uid and e.get("href")), None)
     if text.strip():
-        href = existing["href"] if existing else calendar.rstrip("/") + "/" + note_uid(date) + ".ics"
-        dav.put(href, own_ics(date, text, note_uid(date), lead, hour), existing.get("etag", "") if existing else "")
+        href = existing["href"] if existing else calendar.rstrip("/") + "/" + uid + ".ics"
+        dav.put(href, own_ics(date, text, uid, lead, hour), existing.get("etag", "") if existing else "")
     elif existing:
         dav.delete(existing["href"], existing.get("etag", ""))
 
@@ -1195,7 +1211,9 @@ def main(argv):
             p.add_argument("--every", type=int, default=15)
             p.add_argument("--force", action="store_true")
     p = sub.add_parser("set", parents=[alarms]); p.add_argument("account"); p.add_argument("date"); p.add_argument("b64")
+    p.add_argument("--uid", default="")
     p = sub.add_parser("delete", parents=[alarms]); p.add_argument("account"); p.add_argument("date")
+    p.add_argument("--uid", default="")
     p = sub.add_parser("ack", parents=[alarms]); p.add_argument("key")
     p = sub.add_parser("snooze", parents=[alarms]); p.add_argument("key"); p.add_argument("when")
     p = sub.add_parser("claim"); p.add_argument("key")
@@ -1229,7 +1247,7 @@ def main(argv):
             emit(build(accounts, lo, hi, args.upcoming, caches, opts))
         elif args.cmd in ("set", "delete"):
             text = base64.b64decode(args.b64).decode("utf-8") if args.cmd == "set" else ""
-            set_note(accounts, args.account, args.date, text, args.lead, args.hour)
+            set_note(accounts, args.account, args.date, text, args.lead, args.hour, args.uid)
             lo, hi = window()
             if args.account != "local":
                 refresh(find_account(accounts, args.account), lo, hi)

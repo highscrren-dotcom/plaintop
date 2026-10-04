@@ -727,7 +727,11 @@ text the script reads, the lead into `--lead`, so the iCalendar and the phone's 
 before, and typing "14:30 …" into the note still works. The field is a `TextInput` with an
 input mask, drawn in the widget's font between the frame's characters — the one control on
 the face, at the user's word. A note of yours without an alarm now stays silent: the
-"events without an alarm" rule counts for the accounts' entries only.
+"events without an alarm" rule counts for the accounts' entries only. The same day, also at
+the user's word: a day holds as many notes of yours as you like — the sticker lists them,
+a click puts one in the editor, "+ new note" starts another; each is a VEVENT of its own
+(the first keeps the uid `plaincalendar-<date>@<host>`, the others add a random suffix), so
+each rings and syncs on its own.
 
 **Why VALARM and not a schedule of our own.** The data already travel to Yandex, iCloud and
 Google over CalDAV; a VALARM in the same resource makes the phone ring with no second

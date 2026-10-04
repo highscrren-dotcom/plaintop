@@ -216,8 +216,9 @@ so its size holds whatever month it is. `./install.sh --calendar` installs it.
 **Notes and calendars.** A day with an entry takes a colour of its own, and a click on
 it — the cell is framed under the pointer — opens a sticker: a sheet framed with
 characters (`┌─┐│└┘`, or `+-+|` if you prefer ASCII) in the widget's font, with the day's
-events and tasks grouped by account, read-only, and a note of yours under them, the
-first line its title; Esc closes, an emptied note is deleted; it fades in or unfolds
+events and tasks grouped by account, read-only, and your notes under them — as many a
+day as you like: a click on one puts it in the editor, "+ new note" starts another; the
+first line is a note's title; Esc closes, an emptied note is deleted; it fades in or unfolds
 line by line. The next few entries are printed under the months. Your notes are all-day
 events in iCalendar: by default files in `~/.local/share/plaincalendar/notes/` (a vdir
 any sync tool can read), or, chosen on the *Notes* page, an account's calendar. The

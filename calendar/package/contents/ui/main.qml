@@ -116,7 +116,27 @@ PlasmoidItem {
         onNewData: function(source, data) {
             disconnectSource(source)
             root.takeDocument(data.stdout)
+            root.nextWrite()
         }
+    }
+
+    // Writes go one at a time: a sticker closing with several notes changed hands over
+    // several, and each answers with the whole document — run side by side, an earlier
+    // one could land last and show a document without the others.
+    property var writes: []
+    property bool writing: false
+    function write(args) {
+        writes.push(args)
+        if (!writing)
+            nextWrite()
+    }
+    function nextWrite() {
+        if (writes.length === 0) {
+            writing = false
+            return
+        }
+        writing = true
+        notesWriter.connectSource(command(writes.shift()))
     }
 
     function command(args) {
@@ -127,13 +147,14 @@ PlasmoidItem {
 
     // `lead`: the sticker's choice for a timed note, minutes before (-1 none); it follows
     // the settings' options, and the script takes the last --lead it is given.
-    function saveNote(dateKey, text, lead) {
+    function saveNote(dateKey, text, lead, uid) {
         const account = root.cfg.noteAccount.length > 0 ? root.cfg.noteAccount : "local"
         const own = (lead !== undefined && lead !== null) ? " --lead " + Math.max(-1, Number(lead)) : ""
+        const which = uid ? " --uid '" + String(uid).replace(/'/g, "'\\''") + "'" : ""
         const cmd = text.trim().length > 0
-            ? "set '" + account + "' '" + dateKey + "' '" + Qt.btoa(text) + "'" + root.alarmOptions + own
-            : "delete '" + account + "' '" + dateKey + "'" + root.alarmOptions
-        notesWriter.connectSource(command(cmd))
+            ? "set '" + account + "' '" + dateKey + "' '" + Qt.btoa(text) + "'" + which + root.alarmOptions + own
+            : "delete '" + account + "' '" + dateKey + "'" + which + root.alarmOptions
+        root.write(cmd)
     }
 
     // ── Reminders ─────────────────────────────────────────────────────────────
@@ -231,7 +252,7 @@ PlasmoidItem {
         default: cmd = "ack " + key
         }
         delete root.taken[a.key]
-        notesWriter.connectSource(command(cmd + root.alarmOptions))
+        root.write(cmd + root.alarmOptions)
     }
 
     // The optional system notification and sound, beside the sheet.
@@ -394,7 +415,7 @@ PlasmoidItem {
             columns: root.cfg.stickerColumns
             animation: root.cfg.stickerAnimation
 
-            onSave: (key, text, lead) => root.saveNote(key, text, lead)
+            onSave: (key, text, lead, uid) => root.saveNote(key, text, lead, uid)
         }
 
         Reminder {

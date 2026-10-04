@@ -59,8 +59,96 @@ PlasmaCore.Dialog {
     property TextInput timeItem: null
     property int chosenLead: 10
     property bool chosenBang: false
-    property string originalSig: ""
-    signal save(string dateKey, string text, int lead)
+    // `uid`: the note to write ("new" for one not saved yet); an empty text deletes it.
+    signal save(string dateKey, string text, int lead, string uid)
+
+    // The day's notes of yours in the account notes go to, each {uid, time, body, bang,
+    // lead, original}: uid "" is a note not saved yet, `original` its state when the
+    // sheet opened. The editor and the two rows hold the one at `current`.
+    property var notes: []
+    property int current: 0
+    function timedOf(n) { return validTime(n.time).length > 0 || /^\s*\d{1,2}[:.]\d{2}/.test(n.body) }
+    function composeOf(n) {
+        if (String(n.body).trim().length === 0) return ""
+        const t = validTime(n.time)
+        if (t.length > 0) return t + " " + String(n.body).replace(/^\s+/, "")
+        if (!timedOf(n) && n.bang && !/^\s*!/.test(n.body)) return "!" + n.body
+        return String(n.body)
+    }
+    function sigOf(n) { return composeOf(n) + "|" + (timedOf(n) ? n.lead : "") }
+    function editing() { return { uid: "", time: noteTime, body: noteText, bang: chosenBang, lead: chosenLead } }
+    // An entry as the editor takes it: the time and the "!" out of the text into their
+    // rows; a range ("9.00-10.30 …") stays in the text.
+    function noteOf(e) {
+        const own = (e.text !== undefined && e.text !== null && String(e.text).length > 0)
+            ? String(e.text) : e.summary + (e.description.length > 0 ? "\n" + e.description : "")
+        let time = "", body = own, bang = false
+        const m = own.match(/^(\d{1,2})[:.](\d{2})(?:[ \t]+|$)([\s\S]*)$/)
+        if (m && validTime(m[1] + ":" + m[2]).length > 0) {
+            time = validTime(m[1] + ":" + m[2])
+            body = m[3]
+        } else if (own.startsWith("!")) {
+            bang = true
+            body = own.slice(1)
+        }
+        const n = { uid: String(e.uid || ""), time: time, body: body, bang: bang,
+                    lead: (e.time && e.lead !== undefined) ? Number(e.lead) : leadDefault }
+        n.original = sigOf(n)
+        return n
+    }
+    function blankNote() {
+        const n = { uid: "", time: "", body: "", bang: false, lead: leadDefault }
+        n.original = sigOf(n)
+        return n
+    }
+    // The editor's state back into the list, and a note of the list into the editor.
+    function keep() {
+        if (current < 0 || current >= notes.length) return
+        const list = notes.slice()
+        const n = Object.assign({}, list[current])
+        n.time = noteTime; n.body = noteText; n.bang = chosenBang; n.lead = chosenLead
+        list[current] = n
+        notes = list
+    }
+    function load(i) {
+        current = i
+        const n = notes[i]
+        noteText = n.body
+        noteTime = n.time
+        chosenBang = n.bang
+        chosenLead = n.lead
+        if (editorItem) editorItem.text = n.body
+        if (timeItem) timeItem.text = n.time
+    }
+    function focusEditor() {
+        if (editorItem) {
+            editorItem.forceActiveFocus()
+            editorItem.cursorPosition = editorItem.length
+        }
+    }
+    function select(i) {
+        if (i === current) return
+        keep()
+        load(i)
+        Qt.callLater(focusEditor)
+    }
+    function addNote() {
+        keep()
+        const list = notes.slice()
+        list.push(blankNote())
+        notes = list
+        load(list.length - 1)
+        Qt.callLater(focusEditor)
+    }
+    // A line of the list: the time or the "!" and the first line of the text.
+    function noteLabel(i) {
+        const n = i === current ? editing() : notes[i]
+        if (!n) return ""
+        const t = validTime(n.time)
+        const first = String(n.body).split("\n")[0].trim()
+        const text = (t.length > 0 ? t + " " : (n.bang && !timedOf(n) ? "!" : "")) + first
+        return text.length > 0 ? text : i18nc("the sticker: a note with no text yet", "(empty)")
+    }
 
     function validTime(t) {
         const m = String(t).match(/^\s*(\d{1,2})[:.](\d{2})\s*$/)
@@ -93,15 +181,8 @@ PlasmaCore.Dialog {
         if (timed) chosenLead = c.lead
         else chosenBang = c.bang
     }
-    // What goes back: the text as the script reads it, and the lead.
-    function composed() {
-        const body = noteText
-        if (body.trim().length === 0) return ""
-        if (timeSet.length > 0) return timeSet + " " + body.replace(/^\s+/, "")
-        if (!timed && chosenBang && !/^\s*!/.test(body)) return "!" + body
-        return body
-    }
-    function signature() { return composed() + "|" + (timed ? chosenLead : "") }
+    // What goes back for the note in the editor: the text as the script reads it.
+    function composed() { return composeOf(editing()) }
 
     // The rows' labels and the choices laid out in lines within the frame; the number of
     // lines is the larger of the two sets', so the rows do not change while one types —
@@ -137,44 +218,18 @@ PlasmaCore.Dialog {
 
     function open(key, dayEntries, anchor) {
         const list = dayEntries || []
-        let own = ""
-        let ownEntry = null
-        for (let i = 0; i < list.length; i++) {
-            const e = list[i]
-            if (e.own && e.account === noteAccount) {
-                ownEntry = e
-                // The script rebuilds the editor's text: the time or the "!" in front.
-                own = (e.text !== undefined && e.text !== null && String(e.text).length > 0)
-                    ? String(e.text)
-                    : e.summary + (e.description.length > 0 ? "\n" + e.description : "")
-                break
-            }
-        }
-        // The time and the "!" leave the text for their rows; a range stays in the text.
-        let time = ""
-        let body = own
-        let bang = false
-        const m = own.match(/^(\d{1,2})[:.](\d{2})(?:[ \t]+|$)([\s\S]*)$/)
-        if (m && validTime(m[1] + ":" + m[2]).length > 0) {
-            time = validTime(m[1] + ":" + m[2])
-            body = m[3]
-        } else if (own.startsWith("!")) {
-            bang = true
-            body = own.slice(1)
-        }
-        chosenBang = bang
-        chosenLead = (ownEntry && ownEntry.time && ownEntry.lead !== undefined) ? Number(ownEntry.lead) : leadDefault
-        // The text first: a rebuilt editor row takes it as it is created.
-        original = body
-        noteText = body
-        noteTime = time
-        if (editorItem)
-            editorItem.text = body
-        if (timeItem)
-            timeItem.text = time
+        const mine = []
+        for (let i = 0; i < list.length; i++)
+            if (list[i].own && list[i].account === noteAccount)
+                mine.push(noteOf(list[i]))
+        if (mine.length === 0)
+            mine.push(blankNote())
+        // The notes first: rebuilt editor and time rows take the state as they are created.
+        notes = mine
+        load(0)
+        original = noteText
         dateKey = key
         entries = list
-        originalSig = signature()
         visualParent = anchor
         revealed = animation === 2 ? 0 : 1000
         visible = true
@@ -188,8 +243,19 @@ PlasmaCore.Dialog {
                 editorItem.forceActiveFocus()
                 editorItem.cursorPosition = editorItem.length
             }
-        } else if (signature() !== originalSig) {
-            save(dateKey, composed(), timed ? chosenLead : -1)
+        } else {
+            keep()
+            // A new note takes the day's own uid ("") while the day has no note saved —
+            // the one-note case stays as it was; next to saved ones it asks for "new".
+            let fresh = notes.every(x => x.uid.length === 0)
+            for (const n of notes) {
+                if (sigOf(n) === n.original) continue
+                const text = composeOf(n)
+                if (text.length === 0 && n.uid.length === 0) continue
+                const uid = n.uid.length > 0 ? n.uid : (fresh ? "" : "new")
+                if (n.uid.length === 0) fresh = false
+                save(dateKey, text, timedOf(n) ? n.lead : -1, uid)
+            }
         }
     }
 
@@ -264,6 +330,14 @@ PlasmaCore.Dialog {
                 if (e.description.length > 0)
                     out.push({ text: framed("  " + e.description.split("\n")[0]), role: "dim" })
             }
+        }
+        // The notes of yours, once there is more than the one being written: a line each,
+        // the one in the editor marked, and a line that starts another.
+        if (notes.length > 1 || (notes.length === 1 && notes[0].uid.length > 0)) {
+            out.push({ text: separator, role: "dim" })
+            for (let i = 0; i < notes.length; i++)
+                out.push({ note: true, line: i })
+            out.push({ note: true, line: -1 })
         }
         out.push({ text: separator, role: "dim" })
         out.push({ editor: true })
@@ -348,7 +422,8 @@ PlasmaCore.Dialog {
                     readonly property bool isEditor: spec.editor === true
                     readonly property bool isTime: spec.time === true
                     readonly property bool isRemind: spec.remind === true
-                    readonly property bool isPlain: !isEditor && !isTime && !isRemind
+                    readonly property bool isNote: spec.note === true
+                    readonly property bool isPlain: !isEditor && !isTime && !isRemind && !isNote
                     function claim() {
                         if (isEditor) {
                             editor.text = sticker.noteText
@@ -365,7 +440,8 @@ PlasmaCore.Dialog {
                         if (sticker.editorItem === editor) sticker.editorItem = null
                         if (sticker.timeItem === timeInput) sticker.timeItem = null
                     }
-                    readonly property Item shownRow: isEditor ? editRow : isTime ? timeRow : isRemind ? remindRow : lineText
+                    readonly property Item shownRow: isEditor ? editRow : isTime ? timeRow : isRemind ? remindRow
+                                                   : isNote ? noteRow : lineText
                     width: shownRow.width
                     height: shownRow.height
                     // The unfold: rows below the counter are laid out but not yet drawn.
@@ -422,6 +498,29 @@ PlasmaCore.Dialog {
                             text: (" " + sticker.f[3] + "\n").repeat(Math.max(1, editor.lineCount)).replace(/\n$/, "")
                             color: sticker.colorDim
                         }
+                    }
+
+                    // "│ > 19:00 test │" — a note of yours; a click puts it in the editor. The
+                    // last line, "+ new note", starts another.
+                    Row {
+                        id: noteRow
+                        visible: row.isNote
+                        readonly property bool adder: row.isNote && row.spec.line < 0
+                        readonly property bool marked: row.isNote && row.spec.line === sticker.current
+                        Line { text: sticker.f[3] + " "; color: sticker.colorDim }
+                        Line {
+                            text: !row.isNote ? ""
+                                : sticker.pad(noteRow.adder ? "+ " + i18nc("the sticker's line that starts another note", "new note")
+                                                            : (noteRow.marked ? "> " : "  ") + sticker.noteLabel(row.spec.line))
+                            color: noteRow.marked ? sticker.colorNote : noteRow.adder ? sticker.colorDim : sticker.colorFg
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: row.isNote
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: noteRow.adder ? sticker.addNote() : sticker.select(row.spec.line)
+                            }
+                        }
+                        Line { text: " " + sticker.f[3]; color: sticker.colorDim }
                     }
 
                     // "│ time:    __:__        │" — the field takes digits; empty means all day.
