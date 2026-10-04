@@ -152,17 +152,6 @@ PlasmaCore.Dialog {
 
     // ── Animation ─────────────────────────────────────────────────────────────
     property int revealed: 1000
-    Timer {
-        id: unfold
-        interval: 22
-        repeat: true
-        running: false
-        onTriggered: {
-            sticker.revealed++
-            if (sticker.revealed > sticker.rows.length)
-                stop()
-        }
-    }
 
     function paint(role) {
         switch (role) {
@@ -181,15 +170,30 @@ PlasmaCore.Dialog {
         textFormat: Text.PlainText
     }
 
-    TextMetrics {
-        id: cell
-        font.family: sticker.fontFamily
-        font.pointSize: sticker.fontSize
-        text: "0"
-    }
-
     mainItem: Item {
         id: sheet
+        // A Dialog's default property is mainItem: an object declared at its root
+        // is assigned there, and a second one fails the component — so the
+        // timer and the metrics live in the sheet.
+        Timer {
+            id: unfold
+            interval: 22
+            repeat: true
+            running: false
+            onTriggered: {
+                sticker.revealed++
+                if (sticker.revealed > sticker.rows.length)
+                    stop()
+            }
+        }
+
+        TextMetrics {
+            id: cell
+            font.family: sticker.fontFamily
+            font.pointSize: sticker.fontSize
+            text: "0"
+        }
+
         implicitWidth: column.width
         implicitHeight: column.height
 
