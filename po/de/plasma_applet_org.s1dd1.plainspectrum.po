@@ -49,45 +49,37 @@ msgid "Player"
 msgstr "Player"
 
 #: spectrum/package/contents/ui/configGeneral.qml:51
-#: spectrum/window/settings.qml:122
 msgctxt "settings section"
 msgid "Shape"
 msgstr "Form"
 
 #: spectrum/package/contents/ui/configGeneral.qml:55
-#: spectrum/window/settings.qml:125
 msgid "Layout:"
 msgstr "Anordnung:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:56
-#: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Ring"
 msgstr "Ring"
 
 #: spectrum/package/contents/ui/configGeneral.qml:56
-#: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Line"
 msgstr "Linie"
 
 #: spectrum/package/contents/ui/configGeneral.qml:61
-#: spectrum/window/settings.qml:132
 msgid "Bars:"
 msgstr "Balken:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:69
-#: spectrum/window/settings.qml:139
 msgid "Radius, px:"
 msgstr "Radius, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:78
-#: spectrum/window/settings.qml:146
 msgid "Span, °:"
 msgstr "Bogen, °:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:87
-#: spectrum/window/settings.qml:153
 msgid "Start angle, °:"
 msgstr "Startwinkel, °:"
 
@@ -96,58 +88,47 @@ msgid "Gap between bars, px:"
 msgstr "Abstand zwischen Balken, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:104
-#: spectrum/window/settings.qml:160
 msgid "Bar thickness, px:"
 msgstr "Balkendicke, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:111
-#: spectrum/window/settings.qml:174
 msgid "Length at silence, px:"
 msgstr "Länge bei Stille, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:119
-#: spectrum/window/settings.qml:181
 msgid "Extra length at maximum, px:"
 msgstr "Zusatzlänge bei Maximum, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:127
-#: spectrum/window/settings.qml:188
 msgid "Growth:"
 msgstr "Wachstum:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
-#: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "outward"
 msgstr "nach außen"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
-#: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "inward"
 msgstr "nach innen"
 
-#: spectrum/package/contents/ui/configGeneral.qml:129
-#: spectrum/package/contents/ui/configGeneral.qml:130
-#: spectrum/window/settings.qml:193 spectrum/window/settings.qml:195
+#: spectrum/package/contents/ui/configGeneral.qml:129 spectrum/package/contents/ui/configGeneral.qml:130
 msgctxt "growth"
 msgid "both ways"
 msgstr "in beide Richtungen"
 
 #: spectrum/package/contents/ui/configGeneral.qml:130
-#: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "up"
 msgstr "nach oben"
 
 #: spectrum/package/contents/ui/configGeneral.qml:130
-#: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "down"
 msgstr "nach unten"
 
 #: spectrum/package/contents/ui/configGeneral.qml:135
-#: spectrum/window/settings.qml:201
 msgid "Order:"
 msgstr "Reihenfolge:"
 
@@ -177,51 +158,42 @@ msgstr ""
 "von tief nach hoch, der Ring ist also um seine Mitte gespiegelt."
 
 #: spectrum/package/contents/ui/configGeneral.qml:156
-#: spectrum/window/settings.qml:213
 msgctxt "settings section"
 msgid "Appearance"
 msgstr "Erscheinungsbild"
 
 #: spectrum/package/contents/ui/configGeneral.qml:160
-#: spectrum/window/settings.qml:216
 msgid "Element:"
 msgstr "Element:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
-#: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Bar"
 msgstr "Balken"
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
-#: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Blocks"
 msgstr "Blöcke"
 
 #: spectrum/package/contents/ui/configGeneral.qml:166
-#: spectrum/window/settings.qml:223
 msgid "Block, px:"
 msgstr "Block, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:174
-#: spectrum/window/settings.qml:230
 msgid "Block gap, px:"
 msgstr "Blockabstand, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:182
-#: spectrum/window/settings.qml:237
 msgid "Ends:"
 msgstr "Enden:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:183
-#: spectrum/window/settings.qml:238
 msgctxt "bar ends"
 msgid "rounded"
 msgstr "abgerundet"
 
 #: spectrum/package/contents/ui/configGeneral.qml:188
-#: spectrum/window/settings.qml:244
 msgid "Colour:"
 msgstr "Farbe:"
 
@@ -230,18 +202,15 @@ msgid "High-frequency colour:"
 msgstr "Farbe der Höhen:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:205
-#: spectrum/window/settings.qml:261
 msgctxt "high-frequency colour"
 msgid "custom"
 msgstr "eigene"
 
 #: spectrum/package/contents/ui/configGeneral.qml:213
-#: spectrum/window/settings.qml:268
 msgid "Opacity, %:"
 msgstr "Deckkraft, %:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:221
-#: spectrum/window/settings.qml:275
 msgid "Circle:"
 msgstr "Kreis:"
 
@@ -250,18 +219,15 @@ msgid "a thin guide under the bars"
 msgstr "dünne Hilfslinie unter den Balken"
 
 #: spectrum/package/contents/ui/configGeneral.qml:226
-#: spectrum/window/settings.qml:281
 msgctxt "settings section"
 msgid "Behaviour"
 msgstr "Verhalten"
 
 #: spectrum/package/contents/ui/configGeneral.qml:230
-#: spectrum/window/settings.qml:284
 msgid "Data frames per second:"
 msgstr "Datenframes pro Sekunde:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:238
-#: spectrum/window/settings.qml:291
 msgid "Smoothing, ms:"
 msgstr "Glättung, ms:"
 
@@ -279,7 +245,6 @@ msgid "Silence"
 msgstr "Stille"
 
 #: spectrum/package/contents/ui/configGeneral.qml:254
-#: spectrum/window/settings.qml:298
 msgid "In silence:"
 msgstr "Bei Stille:"
 
@@ -288,7 +253,6 @@ msgid "dissolve the ring"
 msgstr "Ring ausblenden"
 
 #: spectrum/package/contents/ui/configGeneral.qml:260
-#: spectrum/window/settings.qml:305
 msgid "Silence threshold, %:"
 msgstr "Stilleschwelle, %:"
 
@@ -451,94 +415,3 @@ msgid ""
 msgstr ""
 "keine Daten: der Dienst plainspectrum-relay antwortet nicht\n"
 "Port %1"
-
-#: spectrum/window/settings.qml:20
-msgid "plainspectrum — settings"
-msgstr "plainspectrum — Einstellungen"
-
-#: spectrum/window/settings.qml:38
-#, kde-format
-msgid "the relay does not answer on port %1"
-msgstr "das Relay antwortet nicht auf Port %1"
-
-#: spectrum/window/settings.qml:43
-msgid "settings read"
-msgstr "Einstellungen gelesen"
-
-#: spectrum/window/settings.qml:73
-msgid "saved"
-msgstr "gespeichert"
-
-#: spectrum/window/settings.qml:73
-#, kde-format
-msgid "not saved: %1"
-msgstr "nicht gespeichert: %1"
-
-#: spectrum/window/settings.qml:98
-msgid "loading…"
-msgstr "wird geladen …"
-
-#: spectrum/window/settings.qml:103
-msgid "Reload"
-msgstr "Neu laden"
-
-#: spectrum/window/settings.qml:167
-msgid "Gap (line layout), px:"
-msgstr "Abstand (Linienanordnung), px:"
-
-#: spectrum/window/settings.qml:202
-msgid "mirrored"
-msgstr "gespiegelt"
-
-#: spectrum/window/settings.qml:208
-msgid "reverse order"
-msgstr "umgekehrte Reihenfolge"
-
-#: spectrum/window/settings.qml:250
-msgid "Highs colour:"
-msgstr "Farbe der Höhen:"
-
-#: spectrum/window/settings.qml:276
-msgid "a thin guide"
-msgstr "dünne Hilfslinie"
-
-#: spectrum/window/settings.qml:299
-msgid "dissolve"
-msgstr "ausblenden"
-
-#: spectrum/window/settings.qml:312
-msgid "Delay before vanishing, ms:"
-msgstr "Verzögerung vor dem Ausblenden, ms:"
-
-#: spectrum/window/settings.qml:319
-msgid "Fade, ms:"
-msgstr "Überblendung, ms:"
-
-#: spectrum/window/settings.qml:326
-msgid "Polls in silence:"
-msgstr "Abfragen bei Stille:"
-
-#: spectrum/window/settings.qml:390
-#, kde-format
-msgid "live preview · scale %1"
-msgstr "Live-Vorschau · Skalierung %1"
-
-#: spectrum/window/setup.py:64
-msgctxt "autostart entry: name"
-msgid "plainspectrum — audio visualizer"
-msgstr "plainspectrum — Audio-Visualisierung"
-
-#: spectrum/window/setup.py:66
-msgctxt "autostart entry: comment"
-msgid "The spectrum ring in its own window, clicks pass through"
-msgstr "Der Spektrumring in einem eigenen Fenster, Klicks gehen hindurch"
-
-#: spectrum/window/setup.py:67
-msgctxt "menu entry: name"
-msgid "plainspectrum — settings"
-msgstr "plainspectrum — Einstellungen"
-
-#: spectrum/window/setup.py:68
-msgctxt "menu entry: comment"
-msgid "Shape, colour and behaviour of the spectrum ring"
-msgstr "Form, Farbe und Verhalten des Spektrumrings"

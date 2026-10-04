@@ -40,21 +40,20 @@ Neither needs a code change — just a row in the description.
 |---|---|
 | `monitor/package/` | the text monitor as a Plasma 6 widget: QML, config schema, settings pages, the services script |
 | `monitor/shared/` | the monitor's data side and renderer, copied into the package on install |
-| `monitor/window/` | the monitor's former window host and its editor — retired (decision 9), kept for reference |
 | `monitor/generate.py` | description → JS module inside the package; validates before writing |
 | `schema/widget.json` | the default layout: which blocks, in what order, with what parameters |
 | `schema/blocks.json` | the vocabulary of block types and their parameters |
 | `spectrum/package/` | the audio visualizer as a Plasma 6 widget, with its settings page |
 | `spectrum/shared/` | the visualizer's renderer — one for ring, arc and line — copied into the package |
-| `spectrum/window/` | the visualizer's former window host and its editor — retired (decision 9), kept for reference |
 | `spectrum/relay.py` | cava's bands over local HTTP, run as a systemd user service; the visualizer reads it |
 | `player/package/` | the "now playing" widget as a Plasma 6 widget: host, settings pages, catalogs — no service |
 | `player/shared/` | the player's view — the MPRIS model, the lines, the controls — copied into `player/package/` and into `spectrum/package/` on install: the visualizer draws it in the centre of its ring |
 | `weather/package/` | the weather widget: a Plasma 6 widget that asks one of four sources itself over https — the sources are objects in `contents/ui/Sources.js` — no shared files, no service |
 | `calendar/package/` | the calendar widget: a Plasma 6 widget that draws the month grid from the locale and the clock — no shared files, no service, nothing fetched |
 | `po/` | translation catalogs, one domain per widget, five in all; `extract.py` refreshes them and starts a missing one, `build.py` compiles |
-| `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
-| `install.sh` | install, status, `.plasmoid` builds, conky and clicks on/off — all operations idempotent |
+| `install.sh` | install, status, the stands, `.plasmoid` builds, a GitHub release, clicks on/off, palettes — all operations idempotent |
+| `tests/` | the stands: `passthrough.qml`, `monitor.qml`, `weather.qml` under QtTest; `notes.py`, `relay.py` in plain Python |
+| `.github/workflows/` | `check.yml` runs everything that needs no Qt on every push; `qml-stands.yml` runs the QtTest stands in an Arch container on request |
 | `docs/` | traps, decisions, the working method, the session journal, the KDE Store texts |
 
 Generated and not in git: `monitor/package/contents/code/description.js` (edit
@@ -76,7 +75,18 @@ journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors
 ./install.sh --check-passthrough                                    # the click-through stand: 18 tests against the shell's compiled applet wrapper
 ./install.sh --check-monitor                                        # the monitor's line stand: every block type's lines from values pushed in by hand
 ./install.sh --check-notes                                          # the calendar's notes script: iCalendar, recurrence, alarms, the vdir, CalDAV against a fake server
+./install.sh --check-relay                                          # the relay's fold, resampling and cava configuration — Python, no cava
+./install.sh --check-weather                                        # the weather sources: four APIs' answers into the one shape the view draws
+./install.sh --release 0.5                                          # tag v0.5, push it, GitHub release with the five packages and SHA256SUMS
 ```
+
+**What runs by itself.** Every push runs `.github/workflows/check.yml` on GitHub: the two
+Python stands, `monitor/generate.py`, `palettes/palette.py check`, `bash -n` and
+`shellcheck -S error` over the shell scripts, `msgfmt --check` over all 45 catalogs, and
+`po/extract.py` as an advisory step (gettext versions wrap differently). The QtTest stands
+need Plasma's compiled modules, so `qml-stands.yml` runs them in an Arch container on
+request (*Actions → qml stands → Run workflow*) and once a week; it is advisory until it
+has proved itself — the desktop run is still the verification that counts.
 
 Four things that will otherwise waste your afternoon — all four are in
 [docs/GOTCHAS.md](docs/GOTCHAS.md) with the evidence:
@@ -244,8 +254,6 @@ Rules for the source strings:
   string there lands in two catalogs. A `KI18nContext` with a hard-wired domain would pin
   the file to one.
 - **Do not translate keys**: sensor ids, config keys, block ids.
-- **The menu and autostart entries** the retired window hosts' `setup.py` wrote are marked
-  with `N_(context, text)`; the strings stay in the catalogs as long as the code does.
 
 `msgfmt --check` runs on every install, so a translation that drops a `%1` fails there
 instead of on screen. To see the widget in another language without changing yours, run

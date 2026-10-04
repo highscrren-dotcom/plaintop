@@ -1,0 +1,30 @@
+# The QML stands — the click-through wrapper, the monitor's lines, the weather sources —
+# need Qt 6 and Plasma's compiled modules, so they run in an Arch container on request
+# (and once a week), not on every push. Advisory until it has proved itself: the container
+# is a moving target and the desktop run on s1dPC stays the verification that counts.
+name: qml stands
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+jobs:
+  stands:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    continue-on-error: true
+    steps:
+      - name: Plasma's modules
+        run: pacman -Syu --noconfirm --needed git python qt6-declarative plasma-workspace libksysguard kitemmodels ki18n
+
+      - uses: actions/checkout@v4
+
+      - name: the click-through stand
+        run: QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -input tests/passthrough.qml
+
+      - name: the monitor's line stand
+        run: QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -input tests/monitor.qml
+
+      - name: the weather sources stand
+        run: QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen /usr/lib/qt6/bin/qmltestrunner -input tests/weather.qml

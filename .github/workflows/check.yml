@@ -1,0 +1,59 @@
+# Everything that can be checked without a Plasma desktop, on every push: the Python stands
+# (the calendar's notes script, the relay), the monitor's description generator, the
+# palette keys, the shell scripts' syntax, every translation catalog. The QML stands need
+# Qt and Plasma and run in qml-stands.yml on request.
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  no-qt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: gettext and shellcheck
+        run: sudo apt-get update -q && sudo apt-get install -y -q gettext shellcheck
+
+      - name: Python compiles
+        run: python3 -m py_compile $(git ls-files '*.py')
+
+      - name: the monitor's description generates and validates
+        run: python3 monitor/generate.py
+
+      - name: palette keys match the widgets' settings
+        run: python3 palettes/palette.py check
+
+      - name: the calendar's notes stand
+        run: python3 tests/notes.py
+
+      - name: the relay stand
+        run: python3 tests/relay.py
+
+      - name: shell syntax
+        run: for f in $(git ls-files '*.sh'); do bash -n "$f" || exit 1; done
+
+      - name: shellcheck (errors)
+        run: shellcheck -S error $(git ls-files '*.sh')
+
+      - name: every catalog compiles with msgfmt --check
+        run: |
+          for po in po/*/*.po; do
+            msgfmt --check -o /dev/null "$po" || exit 1
+          done
+          echo "$(ls po/*/*.po | wc -l) catalogs"
+
+      # Advisory: xgettext's wrapping differs between gettext versions, so a diff here is
+      # read by a person, not acted on by the robot. A real gap shows as new msgids.
+      - name: extract.py is idempotent (advisory)
+        continue-on-error: true
+        run: |
+          python3 po/extract.py
+          git diff --stat -- po
+          git diff --exit-code -- po

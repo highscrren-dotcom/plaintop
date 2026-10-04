@@ -10,8 +10,8 @@ Why it is ours rather than an existing widget: `../docs/DECISIONS.md`, decisions
 For a while it had a second host, a click-through window, born of the left button
 (decision 5 — a desktop plasmoid would not hand it over, a plain window does). Since the
 plasmoid lets both buttons through by itself (decision 8, `../docs/GOTCHAS.md`) that host
-is retired (decision 9): one host, the plasmoid; the code stays in `window/` but is not
-installed.
+is retired (decision 9): one host, the plasmoid; its code left the tree on 2026-10-05
+(branch `archive/2026-10-05-conky-window-hosts`).
 
 ## How it is put together
 
@@ -25,9 +25,7 @@ cava ──► relay.py ──► plasmoid ──► Ring.qml
 | `shared/Spectrum.qml` | polls the relay, decides whether anything is playing, hands the bands over by signal |
 | `shared/Ring.qml` | draws them: a tick is a rectangle inside a zero-sized pivot, so ring, arc and line differ only in where the pivot stands |
 | `../player/shared/PlayerView.qml` | the player widget's view, copied in as well: drawn in the centre of the ring when the *Player* page says so |
-| `relay.py` | runs `cava`, serves its bands over `http://127.0.0.1:8788`, and **owns the settings file** |
-| `window/window.qml` | the retired window host: a window with `Qt.WindowTransparentForInput` (decision 9) |
-| `window/settings.qml` | that host's editor, with a live preview — retired with it |
+| `relay.py` | runs `cava`, serves its bands over `http://127.0.0.1:8788` (`/bands`, `/state`) |
 | `package/` | the plasmoid host, with Plasma's own settings dialog |
 
 The plasmoid loads the three shared files — `install.sh` copies them into the package,
@@ -43,12 +41,9 @@ The plasmoid keeps its settings in Plasma's own store instead.
 
 ```bash
 ./install.sh --spectrum            # the plasmoid + the relay service
-./install.sh --windows-off         # retire the window host of an earlier setup (decision 9)
-./install.sh --status              # the plasmoid, the relay port, the retired window
+./install.sh --status              # the plasmoid, the relay port
+./install.sh --check-relay         # the relay's fold, resampling and cava configuration, no cava needed
 ```
-
-`--spectrum-window` and `--spectrum-settings` still exist but belong to the retired host and
-are not to be used.
 
 Needs `cava` and `msgfmt` (gettext, for the translations).
 The relay's own knobs — device, band count, frame rate, noise reduction, frequency range,
@@ -58,8 +53,7 @@ After three seconds of silence cava stops computing and looks at the input once 
 (`PLAINSPECTRUM_SLEEP`, `0` turns it off): 3.9% of a core in silence becomes 0.35%, and
 the ring appears up to a second later when the sound returns.
 
-`--spectrum` places the plasmoid on the desktop; it holds off only while a not-yet-retired
-window host is still set up — run `--windows-off` first. The ring is moved like any widget,
+`--spectrum` places the plasmoid on the desktop. The ring is moved like any widget,
 in the desktop's edit mode.
 
 ## Settings

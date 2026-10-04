@@ -26,7 +26,6 @@ import time
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 SOURCE = os.environ.get("PLAINSPECTRUM_SOURCE", "auto")
@@ -45,69 +44,6 @@ SLEEP = int(os.environ.get("PLAINSPECTRUM_SLEEP", "3"))
 RANGE = 1000            # ascii_max_range: 1000 steps, or the bars visibly step
 
 state = {"raw": [0] * BARS, "frames": 0, "stamp": 0.0, "restarts": 0, "source": ""}
-
-# The relay owns the settings files of both widgets. QML cannot write files, so every
-# editor talks to this one owner over HTTP instead of racing over the file.
-#
-# ⚠️ The unit is still called plainspectrum-relay: renaming a running service for the sake
-# of a tidier name would cost the user their setup. What it is, is the local service for
-# the widgets — spectrum data plus settings storage.
-CONF_BASE = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-HERE = Path(__file__).resolve().parent
-CONFIGS = {
-    "ring": (CONF_BASE / "plainspectrum" / "ring.json", "ring.default.json"),
-    "monitor": (CONF_BASE / "plaintop" / "monitor.json", "monitor.default.json"),
-}
-config_lock = threading.Lock()
-
-
-def config_paths(widget):
-    path, defaults = CONFIGS.get(widget, CONFIGS["ring"])
-    return path, HERE / defaults
-
-
-def load_defaults(defaults_path):
-    if defaults_path.exists():
-        return json.loads(defaults_path.read_text(encoding="utf-8"))
-    return {}
-
-
-def read_config(widget="ring"):
-    path, defaults_path = config_paths(widget)
-    with config_lock:
-        if path.exists():
-            try:
-                return json.loads(path.read_text(encoding="utf-8"))
-            except json.JSONDecodeError as e:
-                print(f"{path.name} does not parse ({e}), falling back to defaults",
-                      file=sys.stderr, flush=True)
-        cfg = load_defaults(defaults_path)
-        if cfg:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n",
-                            encoding="utf-8")
-        return cfg
-
-
-def write_config(patch, widget="ring"):
-    """Merge a patch into a settings file, atomically."""
-    path, defaults_path = config_paths(widget)
-    with config_lock:
-        cfg = {}
-        if path.exists():
-            try:
-                cfg = json.loads(path.read_text(encoding="utf-8"))
-            except json.JSONDecodeError:
-                cfg = load_defaults(defaults_path)
-        else:
-            cfg = load_defaults(defaults_path)
-        cfg.update(patch)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        tmp.replace(path)
-        return cfg
-
 
 def default_monitor():
     """The monitor of the current default sink, or "" if pactl cannot say.
@@ -273,12 +209,6 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
             return
 
-        parsed = urlparse(self.path)
-        if parsed.path == "/config":
-            widget = parse_qs(parsed.query).get("widget", ["ring"])[0]
-            self.send_json(read_config(widget))
-            return
-
         query = parse_qs(urlparse(self.path).query)
         want = int(query.get("bars", [BARS])[0])
         mono = query.get("mono", ["0"])[0] in ("1", "true")
@@ -291,38 +221,6 @@ class Handler(BaseHTTPRequestHandler):
         body = ",".join(str(v) for v in resample(raw, want)).encode()
         self.send_response(200)
         self.send_header("Content-Type", "text/plain")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
-
-    def do_POST(self):
-        parsed = urlparse(self.path)
-        widget = parse_qs(parsed.query).get("widget", ["ring"])[0]
-        if parsed.path != "/config":
-            self.send_response(404)
-            self.send_header("Content-Length", "0")
-            self.end_headers()
-            return
-        length = int(self.headers.get("Content-Length", "0"))
-        raw = self.rfile.read(length).decode("utf-8") if length else "{}"
-        try:
-            patch = json.loads(raw)
-            if not isinstance(patch, dict):
-                raise ValueError("expected an object")
-        except (json.JSONDecodeError, ValueError) as e:
-            body = json.dumps({"error": str(e)}).encode()
-            self.send_response(400)
-            self.send_header("Content-Type", "application/json")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
-        self.send_json(write_config(patch, widget))
-
-    def send_json(self, payload):
-        body = json.dumps(payload, ensure_ascii=False).encode()
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)

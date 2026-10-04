@@ -29,18 +29,11 @@ CLAUDE.md
 # Копии общих компонентов визуализатора: источник — spectrum/shared/
 spectrum/package/contents/ui/Ring.qml
 spectrum/package/contents/ui/Spectrum.qml
-spectrum/window/Ring.qml
-spectrum/window/Spectrum.qml
 
 # Копии общих компонентов монитора: источник — monitor/shared/
 monitor/package/contents/ui/MonitorData.qml
 monitor/package/contents/ui/MonitorView.qml
-monitor/window/MonitorData.qml
-monitor/window/MonitorView.qml
 monitor/package/contents/ui/SensorRegistry.qml
-monitor/window/SensorRegistry.qml
-monitor/window/description.js
-monitor/window/services.sh
 
 # Копии общего вида плеера: источник — player/shared/ (второй хост — визуализатор)
 player/package/contents/ui/PlayerView.qml

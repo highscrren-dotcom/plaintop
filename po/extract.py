@@ -27,16 +27,14 @@ KEYWORDS = ["-ki18n:1", "-ki18nc:1c,2", "-ki18np:1,2", "-ki18ncp:1c,2,3"]
 
 DOMAINS = {
     "plasma_applet_org.s1dd1.plaintop": {
-        "sources": ["monitor/shared", "monitor/window", "monitor/package/contents"],
-        "python": ["monitor/window/setup.py"],
+        "sources": ["monitor/shared", "monitor/package/contents"],
         "schema": True,
     },
     # player/shared is listed under two domains on purpose: the visualizer draws the
     # player's view inside its own package, where i18n() resolves to the visualizer's
     # domain — so its strings must exist in both catalogs.
     "plasma_applet_org.s1dd1.plainspectrum": {
-        "sources": ["spectrum/shared", "spectrum/window", "spectrum/package/contents", "player/shared"],
-        "python": ["spectrum/window/setup.py"],
+        "sources": ["spectrum/shared", "spectrum/package/contents", "player/shared"],
         "schema": False,
     },
     "plasma_applet_org.s1dd1.plainplayer": {
@@ -86,11 +84,6 @@ def schema_calls():
                    for c, t in calls)
 
 
-# setup.py marks its .desktop texts with N_(context, text); the bare -k drops Python's
-# default keywords, so a throwaway `_` in a loop is never taken for a message.
-PY_KEYWORDS = ["-k", "-kN_:1c,2"]
-
-
 def xgettext(files, cwd, out, lang="JavaScript", keywords=KEYWORDS):
     subprocess.run(["xgettext", "-L", lang, "--from-code=UTF-8", *keywords,
                     "--package-name=plaintop", f"--msgid-bugs-address={BUGS}",
@@ -133,9 +126,6 @@ def template(domain, spec):
         tmp = Path(tmp)
         parts = [tmp / "code.pot"]
         xgettext(tracked(spec["sources"]), REPO, parts[0])
-        if spec.get("python"):
-            parts.append(tmp / "python.pot")
-            xgettext(spec["python"], REPO, parts[-1], "Python", PY_KEYWORDS)
         if spec["schema"]:
             # A path that reads as what it is in the template's "#:" location lines.
             src = tmp / "schema" / "blocks.json"

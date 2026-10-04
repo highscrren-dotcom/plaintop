@@ -49,45 +49,37 @@ msgid "Player"
 msgstr "プレーヤー"
 
 #: spectrum/package/contents/ui/configGeneral.qml:51
-#: spectrum/window/settings.qml:122
 msgctxt "settings section"
 msgid "Shape"
 msgstr "形状"
 
 #: spectrum/package/contents/ui/configGeneral.qml:55
-#: spectrum/window/settings.qml:125
 msgid "Layout:"
 msgstr "レイアウト:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:56
-#: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Ring"
 msgstr "リング"
 
 #: spectrum/package/contents/ui/configGeneral.qml:56
-#: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Line"
 msgstr "直線"
 
 #: spectrum/package/contents/ui/configGeneral.qml:61
-#: spectrum/window/settings.qml:132
 msgid "Bars:"
 msgstr "バーの本数:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:69
-#: spectrum/window/settings.qml:139
 msgid "Radius, px:"
 msgstr "半径 (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:78
-#: spectrum/window/settings.qml:146
 msgid "Span, °:"
 msgstr "円弧の範囲 (°):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:87
-#: spectrum/window/settings.qml:153
 msgid "Start angle, °:"
 msgstr "開始角度 (°):"
 
@@ -96,58 +88,47 @@ msgid "Gap between bars, px:"
 msgstr "バーの間隔 (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:104
-#: spectrum/window/settings.qml:160
 msgid "Bar thickness, px:"
 msgstr "バーの太さ (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:111
-#: spectrum/window/settings.qml:174
 msgid "Length at silence, px:"
 msgstr "無音時の長さ (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:119
-#: spectrum/window/settings.qml:181
 msgid "Extra length at maximum, px:"
 msgstr "最大時の追加の長さ (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:127
-#: spectrum/window/settings.qml:188
 msgid "Growth:"
 msgstr "伸びる方向:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
-#: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "outward"
 msgstr "外向き"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
-#: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "inward"
 msgstr "内向き"
 
-#: spectrum/package/contents/ui/configGeneral.qml:129
-#: spectrum/package/contents/ui/configGeneral.qml:130
-#: spectrum/window/settings.qml:193 spectrum/window/settings.qml:195
+#: spectrum/package/contents/ui/configGeneral.qml:129 spectrum/package/contents/ui/configGeneral.qml:130
 msgctxt "growth"
 msgid "both ways"
 msgstr "両方向"
 
 #: spectrum/package/contents/ui/configGeneral.qml:130
-#: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "up"
 msgstr "上向き"
 
 #: spectrum/package/contents/ui/configGeneral.qml:130
-#: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "down"
 msgstr "下向き"
 
 #: spectrum/package/contents/ui/configGeneral.qml:135
-#: spectrum/window/settings.qml:201
 msgid "Order:"
 msgstr "順序:"
 
@@ -176,51 +157,42 @@ msgstr ""
 "低域から高域へ並べるため、リングは中央で鏡像になります。"
 
 #: spectrum/package/contents/ui/configGeneral.qml:156
-#: spectrum/window/settings.qml:213
 msgctxt "settings section"
 msgid "Appearance"
 msgstr "外観"
 
 #: spectrum/package/contents/ui/configGeneral.qml:160
-#: spectrum/window/settings.qml:216
 msgid "Element:"
 msgstr "要素:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
-#: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Bar"
 msgstr "バー"
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
-#: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Blocks"
 msgstr "ブロック"
 
 #: spectrum/package/contents/ui/configGeneral.qml:166
-#: spectrum/window/settings.qml:223
 msgid "Block, px:"
 msgstr "ブロック (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:174
-#: spectrum/window/settings.qml:230
 msgid "Block gap, px:"
 msgstr "ブロックの間隔 (px):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:182
-#: spectrum/window/settings.qml:237
 msgid "Ends:"
 msgstr "端:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:183
-#: spectrum/window/settings.qml:238
 msgctxt "bar ends"
 msgid "rounded"
 msgstr "丸める"
 
 #: spectrum/package/contents/ui/configGeneral.qml:188
-#: spectrum/window/settings.qml:244
 msgid "Colour:"
 msgstr "色:"
 
@@ -229,18 +201,15 @@ msgid "High-frequency colour:"
 msgstr "高音域の色:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:205
-#: spectrum/window/settings.qml:261
 msgctxt "high-frequency colour"
 msgid "custom"
 msgstr "カスタム"
 
 #: spectrum/package/contents/ui/configGeneral.qml:213
-#: spectrum/window/settings.qml:268
 msgid "Opacity, %:"
 msgstr "不透明度 (%):"
 
 #: spectrum/package/contents/ui/configGeneral.qml:221
-#: spectrum/window/settings.qml:275
 msgid "Circle:"
 msgstr "円:"
 
@@ -249,18 +218,15 @@ msgid "a thin guide under the bars"
 msgstr "バーの下に細いガイド線"
 
 #: spectrum/package/contents/ui/configGeneral.qml:226
-#: spectrum/window/settings.qml:281
 msgctxt "settings section"
 msgid "Behaviour"
 msgstr "動作"
 
 #: spectrum/package/contents/ui/configGeneral.qml:230
-#: spectrum/window/settings.qml:284
 msgid "Data frames per second:"
 msgstr "毎秒のデータフレーム数:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:238
-#: spectrum/window/settings.qml:291
 msgid "Smoothing, ms:"
 msgstr "スムージング (ミリ秒):"
 
@@ -278,7 +244,6 @@ msgid "Silence"
 msgstr "無音"
 
 #: spectrum/package/contents/ui/configGeneral.qml:254
-#: spectrum/window/settings.qml:298
 msgid "In silence:"
 msgstr "無音時:"
 
@@ -287,7 +252,6 @@ msgid "dissolve the ring"
 msgstr "リングを消す"
 
 #: spectrum/package/contents/ui/configGeneral.qml:260
-#: spectrum/window/settings.qml:305
 msgid "Silence threshold, %:"
 msgstr "無音のしきい値 (%):"
 
@@ -449,94 +413,3 @@ msgid ""
 msgstr ""
 "データなし: plainspectrum-relay サービスが応答しません\n"
 "ポート %1"
-
-#: spectrum/window/settings.qml:20
-msgid "plainspectrum — settings"
-msgstr "plainspectrum — 設定"
-
-#: spectrum/window/settings.qml:38
-#, kde-format
-msgid "the relay does not answer on port %1"
-msgstr "リレーがポート %1 で応答しません"
-
-#: spectrum/window/settings.qml:43
-msgid "settings read"
-msgstr "設定を読み込みました"
-
-#: spectrum/window/settings.qml:73
-msgid "saved"
-msgstr "保存しました"
-
-#: spectrum/window/settings.qml:73
-#, kde-format
-msgid "not saved: %1"
-msgstr "保存できませんでした: %1"
-
-#: spectrum/window/settings.qml:98
-msgid "loading…"
-msgstr "読み込み中…"
-
-#: spectrum/window/settings.qml:103
-msgid "Reload"
-msgstr "再読み込み"
-
-#: spectrum/window/settings.qml:167
-msgid "Gap (line layout), px:"
-msgstr "直線時の間隔 (px):"
-
-#: spectrum/window/settings.qml:202
-msgid "mirrored"
-msgstr "ミラー"
-
-#: spectrum/window/settings.qml:208
-msgid "reverse order"
-msgstr "逆順"
-
-#: spectrum/window/settings.qml:250
-msgid "Highs colour:"
-msgstr "高音域の色:"
-
-#: spectrum/window/settings.qml:276
-msgid "a thin guide"
-msgstr "細いガイド線"
-
-#: spectrum/window/settings.qml:299
-msgid "dissolve"
-msgstr "消す"
-
-#: spectrum/window/settings.qml:312
-msgid "Delay before vanishing, ms:"
-msgstr "消えるまでの遅延 (ミリ秒):"
-
-#: spectrum/window/settings.qml:319
-msgid "Fade, ms:"
-msgstr "フェード (ミリ秒):"
-
-#: spectrum/window/settings.qml:326
-msgid "Polls in silence:"
-msgstr "無音時のポーリング:"
-
-#: spectrum/window/settings.qml:390
-#, kde-format
-msgid "live preview · scale %1"
-msgstr "ライブプレビュー · 倍率 %1"
-
-#: spectrum/window/setup.py:64
-msgctxt "autostart entry: name"
-msgid "plainspectrum — audio visualizer"
-msgstr "plainspectrum — オーディオビジュアライザー"
-
-#: spectrum/window/setup.py:66
-msgctxt "autostart entry: comment"
-msgid "The spectrum ring in its own window, clicks pass through"
-msgstr "スペクトルリングを独立したウィンドウで表示、クリックは透過します"
-
-#: spectrum/window/setup.py:67
-msgctxt "menu entry: name"
-msgid "plainspectrum — settings"
-msgstr "plainspectrum — 設定"
-
-#: spectrum/window/setup.py:68
-msgctxt "menu entry: comment"
-msgid "Shape, colour and behaviour of the spectrum ring"
-msgstr "スペクトルリングの形、色、動作"

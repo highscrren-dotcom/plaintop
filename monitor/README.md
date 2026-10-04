@@ -3,9 +3,9 @@
 English · [Русский](README.ru.md)
 
 A text system monitor for the Plasma 6 desktop, in QML. It runs as a plasmoid; the
-click-through window host it had for a while is retired (decision 9) and stays in
-`window/` for reference. Why a plasmoid at all — `../docs/DECISIONS.md`, decision 1;
-where the data comes from — decision 2.
+click-through window host it had for a while is retired (decision 9) and its code left the
+tree on 2026-10-05 (branch `archive/2026-10-05-conky-window-hosts`). Why a plasmoid at
+all — `../docs/DECISIONS.md`, decision 1; where the data comes from — decision 2.
 
 | Path | What it is |
 |---|---|
@@ -13,9 +13,6 @@ where the data comes from — decision 2.
 | `shared/MonitorView.qml` | draws those lines; the palette lives here, and every part of a line carries a role rather than a colour |
 | `shared/SensorRegistry.qml` | what sensors this machine has; finds the machine-specific ids and ranks the network interfaces |
 | `package/` | the plasmoid host, with Plasma's own settings dialog |
-| `window/window.qml` | the retired window host: a window with `Qt.WindowTransparentForInput` (decision 9) |
-| `window/settings.qml` | that host's editor, with a live preview in the real renderer — retired with it |
-| `window/setup.py` | deployed the window, its KWin rule and autostart; what matters now is `retire`, behind `./install.sh --windows-off` |
 | `generate.py` | `../schema/*.json` → `package/contents/code/description.js`; validates before writing |
 
 `install.sh` copies the shared files into the plasmoid package. An edited copy is how it
@@ -71,32 +68,27 @@ plasmoid's dialog. Separators collapse: a block that hides itself — the batter
 desktop, the pressure block on a kernel without PSI — leaves no double rule, and none
 stays at the top or the bottom.
 
-## Why there was a second host, and why it is retired
+## Why there was a second host, and why it is gone
 
 The window host was born of the mouse: a desktop plasmoid would not hand over the left
 button, four ways were tried (`../docs/GOTCHAS.md`), and a plain window with
 `Qt.WindowTransparentForInput` hands over both, so the monitor could sit over the desktop
 without stealing clicks from the icons under it. Since then the plasmoid has learned it
 too: the *Mouse* setting disables the applet container the shell wraps it in and masks the
-widget out of the desktop's context-menu lookup, both buttons reach the desktop, and the
-widget takes the mouse only in the desktop's edit mode — which is also where its settings
-are. That left the window host with nothing to add and its price still to pay: no Plasma
-settings dialog, no session handling, and no self-placement (under Wayland a window cannot
-position itself, so position, size, keep-below and skip-taskbar came from a KWin rule
-matched on the window title). So it is retired (decision 9): one host, the plasmoid. The
-code stays in `window/` but is not installed; `./install.sh --windows-off` retires an
-existing setup.
+widget out of the desktop's context-menu lookup — or, with active lines, masks it with a
+function (decision 14) — so both buttons reach the desktop and the widget takes the mouse
+only where it has something to click. That left the window host with nothing to add and its
+price still to pay: no Plasma settings dialog, no session handling, no self-placement under
+Wayland, and a relay that owned its settings file. Retired 2026-09-22 (decision 9), removed
+from the tree 2026-10-05; the branch `archive/2026-10-05-conky-window-hosts` keeps it with
+its editor and its `setup.py`, whose `retire` takes an old setup down.
 
 ## Install
 
 ```bash
 ./install.sh --plasmoid            # generate, install, restart the shell, place it on the desktop
-./install.sh --windows-off         # retire the window host of an earlier setup (decision 9)
 ./install.sh --status              # what is installed and running
 ```
-
-`--plaintop-window`, `--plaintop-export` and `--plaintop-settings` still exist but belong to
-the retired host and are not to be used.
 
 ⚠️ `--plasmoid` restarts the shell, and not for looks: plasmashell keeps the package's QML
 in a cache, and without the restart the widget stays on the old layout —

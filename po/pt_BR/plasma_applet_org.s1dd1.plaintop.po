@@ -24,7 +24,6 @@ msgid "General"
 msgstr "Geral"
 
 #: monitor/package/contents/config/config.qml:13
-#: monitor/window/settings.qml:300
 msgctxt "settings page"
 msgid "Blocks"
 msgstr "Blocos"
@@ -79,12 +78,10 @@ msgid ""
 msgstr "Os blocos e sua ordem. O layout padrão vem de schema/widget.json."
 
 #: monitor/package/contents/ui/configBlocks.qml:314
-#: monitor/window/settings.qml:491
 msgid "Up"
 msgstr "Subir"
 
 #: monitor/package/contents/ui/configBlocks.qml:321
-#: monitor/window/settings.qml:498
 msgid "Down"
 msgstr "Descer"
 
@@ -93,7 +90,6 @@ msgid "Duplicate"
 msgstr "Duplicar"
 
 #: monitor/package/contents/ui/configBlocks.qml:335
-#: monitor/window/settings.qml:505
 msgid "Remove"
 msgstr "Remover"
 
@@ -102,7 +98,6 @@ msgid "Reset"
 msgstr "Redefinir"
 
 #: monitor/package/contents/ui/configBlocks.qml:360
-#: monitor/window/settings.qml:524
 msgid "Add block"
 msgstr "Adicionar bloco"
 
@@ -172,56 +167,46 @@ msgid "Reload from the list"
 msgstr "Recarregar da lista"
 
 #: monitor/package/contents/ui/configGeneral.qml:46
-#: monitor/window/settings.qml:335
 msgid "Font:"
 msgstr "Fonte:"
 
 #: monitor/package/contents/ui/configGeneral.qml:52
-#: monitor/window/settings.qml:342
 msgctxt "font size"
 msgid "Size:"
 msgstr "Tamanho:"
 
 #: monitor/package/contents/ui/configGeneral.qml:59
-#: monitor/window/settings.qml:371
 msgid "Left padding, px:"
 msgstr "Margem esquerda, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:67
-#: monitor/window/settings.qml:378
 msgid "Top padding, px:"
 msgstr "Margem superior, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:75
-#: monitor/window/settings.qml:385
 msgid "Width, px:"
 msgstr "Largura, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:83
-#: monitor/window/settings.qml:392
 msgid "Height, px:"
 msgstr "Altura, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:90
-#: monitor/window/settings.qml:407
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Texto principal:"
 
 #: monitor/package/contents/ui/configGeneral.qml:96
-#: monitor/window/settings.qml:413
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr "Cabeçalho e relógio:"
 
 #: monitor/package/contents/ui/configGeneral.qml:102
-#: monitor/window/settings.qml:419
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Secundário:"
 
 #: monitor/package/contents/ui/configGeneral.qml:108
-#: monitor/window/settings.qml:425
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr "Valores:"
@@ -354,12 +339,10 @@ msgid "Interval, ms:"
 msgstr "Intervalo, ms:"
 
 #: monitor/package/contents/ui/configGeneral.qml:261
-#: monitor/window/settings.qml:356
 msgid "Top processes, every … s:"
 msgstr "Principais processos, a cada … s:"
 
 #: monitor/package/contents/ui/configGeneral.qml:267
-#: monitor/window/settings.qml:363
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
 "about 3% of a core, every 10 s about 1.3%"
@@ -778,190 +761,6 @@ msgstr "não é um repositório"
 msgctxt "line action: the block's command, in a terminal"
 msgid "run in a terminal"
 msgstr "executar num terminal"
-
-#: monitor/window/settings.qml:24
-msgid "plaintop — monitor settings"
-msgstr "plaintop — configurações do monitor"
-
-#: monitor/window/settings.qml:44
-#, kde-format
-msgid "the relay does not answer on port %1"
-msgstr "o relé não responde na porta %1"
-
-#: monitor/window/settings.qml:54
-msgid "settings read"
-msgstr "configurações lidas"
-
-#: monitor/window/settings.qml:89
-msgid "saved"
-msgstr "salvo"
-
-#: monitor/window/settings.qml:89
-#, kde-format
-msgid "not saved: %1"
-msgstr "não salvo: %1"
-
-#: monitor/window/settings.qml:299
-msgctxt "settings page"
-msgid "Appearance"
-msgstr "Aparência"
-
-#: monitor/window/settings.qml:303
-msgid "loading…"
-msgstr "carregando…"
-
-#: monitor/window/settings.qml:306 monitor/window/settings.qml:919
-msgid "Reload"
-msgstr "Recarregar"
-
-#: monitor/window/settings.qml:332
-msgctxt "settings section"
-msgid "Text"
-msgstr "Texto"
-
-#: monitor/window/settings.qml:349
-msgid "Update interval, ms:"
-msgstr "Intervalo de atualização, ms:"
-
-#: monitor/window/settings.qml:368
-msgctxt "settings section"
-msgid "Placement"
-msgstr "Posição"
-
-#: monitor/window/settings.qml:399
-msgid ""
-"The window's size and place are kept by a KWin rule — after a size change\n"
-"rerun: ./install.sh --plaintop-window"
-msgstr ""
-"O tamanho e a posição da janela são mantidos por uma regra do KWin — após "
-"mudar o tamanho\n"
-"execute de novo: ./install.sh --plaintop-window"
-
-#: monitor/window/settings.qml:404
-msgctxt "settings section"
-msgid "Palette"
-msgstr "Paleta"
-
-#: monitor/window/settings.qml:439
-msgid "The blocks and their order. Edits reach the monitor within two seconds."
-msgstr ""
-"Os blocos e sua ordem. As alterações chegam ao monitor em até dois segundos."
-
-#: monitor/window/settings.qml:588
-msgctxt "interface menu: automatic choice"
-msgid "— find it —"
-msgstr "— detectar —"
-
-#: monitor/window/settings.qml:609
-#, kde-format
-msgctxt "interface hint"
-msgid "found: %1"
-msgstr "detectada: %1"
-
-#: monitor/window/settings.qml:610
-#, kde-format
-msgctxt "interface hint"
-msgid "found: %1 (choosing…)"
-msgstr "detectada: %1 (escolhendo…)"
-
-#: monitor/window/settings.qml:613
-#, kde-format
-msgctxt "interface hint"
-msgid "%1 is not on this machine — %2"
-msgstr "%1 não existe nesta máquina — %2"
-
-#: monitor/window/settings.qml:627
-msgctxt "placeholder"
-msgid "empty — find it"
-msgstr "vazio — detectar"
-
-#: monitor/window/settings.qml:634
-msgid "Choose…"
-msgstr "Escolher…"
-
-#: monitor/window/settings.qml:642 monitor/window/settings.qml:692
-msgid "Auto"
-msgstr "Automático"
-
-#: monitor/window/settings.qml:676
-msgctxt "placeholder"
-msgid "empty — find them"
-msgstr "vazio — detectá-los"
-
-#: monitor/window/settings.qml:676
-msgid "nothing chosen"
-msgstr "nada escolhido"
-
-#: monitor/window/settings.qml:683
-msgid "Add…"
-msgstr "Adicionar…"
-
-#: monitor/window/settings.qml:749
-#, kde-format
-msgid "live preview · %1x%2 · scale %3 · lines %4"
-msgstr "prévia ao vivo · %1x%2 · escala %3 · linhas %4"
-
-#: monitor/window/settings.qml:767
-msgid "Sensors of this machine"
-msgstr "Sensores desta máquina"
-
-#: monitor/window/settings.qml:815
-msgid "search: part of an id"
-msgstr "pesquisar: parte de um identificador"
-
-#: monitor/window/settings.qml:819
-msgid "matching only"
-msgstr "apenas correspondentes"
-
-#: monitor/window/settings.qml:827
-#, kde-format
-msgid "shown %1 of %2"
-msgstr "exibidos %1 de %2"
-
-#: monitor/window/settings.qml:828
-msgid "the tree is still being read"
-msgstr "a árvore ainda está sendo lida"
-
-#: monitor/window/settings.qml:863
-msgid "no data"
-msgstr "sem dados"
-
-#: monitor/window/settings.qml:869
-msgid "or type an id by hand"
-msgstr "ou digite um identificador manualmente"
-
-#: monitor/window/settings.qml:876
-msgid "Mount points of this machine"
-msgstr "Pontos de montagem desta máquina"
-
-#: monitor/window/settings.qml:913
-#, kde-format
-msgid "mounted now: %1"
-msgstr "montados agora: %1"
-
-#: monitor/window/settings.qml:964
-msgid "or type a path by hand"
-msgstr "ou digite um caminho manualmente"
-
-#: monitor/window/setup.py:175
-msgctxt "autostart entry: name"
-msgid "plaintop — text monitor"
-msgstr "plaintop — monitor de texto"
-
-#: monitor/window/setup.py:177
-msgctxt "autostart entry: comment"
-msgid "The monitor in its own window, clicks pass through"
-msgstr "O monitor em uma janela própria, os cliques passam através dela"
-
-#: monitor/window/setup.py:178
-msgctxt "menu entry: name"
-msgid "plaintop — monitor settings"
-msgstr "plaintop — configurações do monitor"
-
-#: monitor/window/setup.py:179
-msgctxt "menu entry: comment"
-msgid "Appearance, palette and blocks of the text monitor"
-msgstr "Aparência, paleta e blocos do monitor de texto"
 
 #: schema/blocks.json:1
 msgctxt "schema: block name"

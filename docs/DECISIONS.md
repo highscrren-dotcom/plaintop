@@ -417,6 +417,14 @@ question left under decision 5.
 **Revisit if:** a host outside plasmashell is ever needed again — another desktop
 environment, for instance. The code is still there to start from.
 
+**Executed 2026-10-05.** The window hosts' code (`monitor/window/`, `spectrum/window/`,
+their editors and `setup.py`), the conky implementation (`conky/`) and the relay's settings
+storage that served the editors left the tree; `install.sh` lost `--windows-off`,
+`--plaintop-window`, `--plaintop-settings`, `--plaintop-export`, `--spectrum-window`,
+`--spectrum-settings`, `--conky-*` and `--check-input`, and the bare call prints the usage
+instead of deploying conky. The branch `archive/2026-10-05-conky-window-hosts` holds the
+last tree with all of it. The catalogs dropped the sixty strings only those files used.
+
 ## 10. The weather comes straight from QML — no relay (2026-09-23)
 
 **Decision:** the weather widget asks Open-Meteo itself, with `XMLHttpRequest` from its

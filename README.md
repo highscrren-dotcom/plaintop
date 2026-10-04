@@ -1,6 +1,6 @@
 # plaintop
 
-English · [Русский](README.ru.md)
+English · [Русский](README.ru.md) · [![checks](https://github.com/highscrren-dotcom/plaintop/actions/workflows/check.yml/badge.svg)](https://github.com/highscrren-dotcom/plaintop/actions/workflows/check.yml)
 
 A text system monitor for the KDE Plasma desktop: monospaced text drawn straight onto the
 wallpaper — load bars made of slashes, process tops, no frames, no rounded corners.
@@ -42,12 +42,11 @@ What is in the repository:
 
 | Directory | What it is | State |
 |---|---|---|
-| **`monitor/`** | the text monitor: a plasmoid, with the renderer and data side in `shared/`; the retired window host stays in `window/` (decision 9) | works |
+| **`monitor/`** | the text monitor: a plasmoid, with the renderer and data side in `shared/` | works |
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
 | **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module; its view lives in `shared/`, since the visualizer draws it too | works |
 | **`weather/`** | the weather widget: now and the next days as text, from one of four sources over https — Open-Meteo by default — no service of its own | works |
 | **`calendar/`** | the calendar widget: a wall calendar's page as text — one month or three, week numbers, the weekends and today marked — everything from the locale, no service | works |
-| **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
 plasmoid disables the wrapper the shell puts around it, so clicks land on the icons and the
@@ -59,8 +58,8 @@ lets them through (decision 11). How the left button was won back, after four fa
 attempts: [docs/GOTCHAS.md](docs/GOTCHAS.md). Before the plasmoid could do
 this, each widget had a **window host** — a plain window with `Qt.WindowTransparentForInput`.
 Those hosts are retired (decision 9): one host now, the plasmoid, with Plasma's own
-settings dialog. Their code stays in the tree but is not installed;
-`./install.sh --windows-off` retires an existing setup.
+settings dialog. Their code, and the first implementation on conky, left the tree on
+2026-10-05; the branch `archive/2026-10-05-conky-window-hosts` keeps both.
 
 Why the engine changed: [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -87,23 +86,19 @@ cd plaintop
 ./install.sh --player            # the "now playing" widget: plasmoid only
 ./install.sh --weather           # the weather widget: plasmoid only
 ./install.sh --calendar         # the calendar widget: plasmoid only
-./install.sh --windows-off       # retire the window hosts of an earlier setup (decision 9)
 ./install.sh --status            # what is installed and what is running
 ```
 
 The plasmoid lands in `~/.local/share/plasma/plasmoids/org.s1dd1.plaintop/`; the installer
-places it on the desktop (it holds off only while a not-yet-retired window host is still
-set up — run `--windows-off` first), and *Add Widgets* works as usual.
-`./install.sh --pack` builds the same packages as `.plasmoid` files into `dist/`, for the
-KDE Store or a release.
+places it on the desktop, and *Add Widgets* works as usual. `./install.sh --pack` builds
+the same packages as `.plasmoid` files into `dist/`, for the KDE Store or a release;
+`./install.sh --release 0.5` tags, pushes and publishes a GitHub release with the five
+packages and their checksums. One switch per call: each install restarts `plasmashell`,
+and systemd rate-limits restarts.
 
 ⚠️ `--plasmoid` restarts `plasmashell` on purpose: the shell caches a package's QML, and
 without a restart your edit silently does not arrive. That and a dozen other traps are in
 [docs/GOTCHAS.md](docs/GOTCHAS.md).
-
-The conky implementation has its own switches: `./install.sh` deploys and starts it,
-`--conky-files` deploys without starting (useful while it is switched off),
-`--conky-off` and `--conky-on` turn it off and back on.
 
 **Requirements:** Plasma 6 with `ksystemstats` (ships with Plasma) and KDE Frameworks
 6.23 or newer (for `KI18nContext`, decision 7), `python3` for the generator, the setup
@@ -112,9 +107,8 @@ scripts and the relay, `msgfmt` from gettext for the translations, and a monospa
 stand, `--check-passthrough`). The visualizer additionally needs `cava`; the player nothing
 extra — the MPRIS module it reads ships with plasma-workspace; the weather needs network
 access to the chosen source's host (`api.open-meteo.com` by default) and to
-`geocoding-api.open-meteo.com` for the place search; the calendar nothing beyond Plasma; the
-conky implementation needs
-`conky`, `python-xlib` and `lm_sensors`.
+`geocoding-api.open-meteo.com` for the place search; the calendar nothing beyond Plasma;
+`lm_sensors` gives the monitor its fan speeds and chip temperatures.
 
 ## Adapting it to your hardware
 
@@ -292,9 +286,8 @@ Right-click the widget → *Configure plaintop…*. Two pages:
   switch its lines' clicks off or give them a command of your own, pick sensors,
   interfaces and mount points from what the machine has, or edit the whole layout as JSON.
 
-That dialog is the only editor. The window hosts' own editors with a live preview
-(`window/settings.qml` in each widget) retired with them (decision 9);
-`./install.sh --plaintop-settings` / `--spectrum-settings` are not to be used.
+That dialog is the only editor; the window hosts' editors with a live preview went with
+them (decision 9).
 
 **Active lines.** A line that has something to do takes clicks: a left click runs its
 first action, a right click lists them all in a menu framed with characters, in the

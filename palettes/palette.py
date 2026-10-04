@@ -8,6 +8,7 @@ main.xml, so it cannot drift from the defaults.
     python3 palettes/palette.py apply NAME   # write into every instance on every desktop
     python3 palettes/palette.py save NAME    # the desktop's current colours → palettes/NAME.json
     python3 palettes/palette.py list
+    python3 palettes/palette.py check    # the keys against main.xml, every file loads (CI)
 
 install.sh wraps them as --palette NAME and --palette-save NAME. With two instances of one
 widget, save keeps the first one's colours.
@@ -151,5 +152,12 @@ if __name__ == "__main__":
         print("  " + "  ".join(names()))
     elif command in ("apply", "save") and arg:
         {"apply": apply, "save": save}[command](arg)
+    elif command == "check":
+        # For the CI: every key of KEYS exists in its main.xml, every palette file loads
+        # against the stock one — the same checks apply makes, with nothing written.
+        stock = defaults()
+        for name in names():
+            load(name, stock)
+        print(f"  ✓ palette keys match main.xml; {len(names())} palettes load: {', '.join(names())}")
     else:
-        fail(f"usage: palette.py apply NAME | save NAME | list; palettes: {', '.join(names())}")
+        fail(f"usage: palette.py apply NAME | save NAME | list | check; palettes: {', '.join(names())}")

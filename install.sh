@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
-# Deploy plaintop into the system and start it.
+# Install the five widgets, check them, pack them, release them.
 #
-# Source of truth: the conky/, monitor/, spectrum/, player/, weather/ and calendar/
-# directories of this repo. Files flow from here into ~/.config/conky,
-# ~/.local/share/plasma/plasmoids and the rest, never the other way around: edit in the
-# repo, then run ./install.sh.
+# Source of truth: the monitor/, spectrum/, player/, weather/ and calendar/ directories of
+# this repo. Files flow from here into ~/.local/share/plasma/plasmoids and the relay's
+# place, never the other way around: edit in the repo, then run ./install.sh --<widget>.
+# Each switch does one thing and is idempotent; the bare call prints them.
 set -uo pipefail
 cd "$(dirname "$0")"
 REPO=$PWD
-DEST="$HOME/.config/conky"
-AUTOSTART="$HOME/.config/autostart"
-APPS="$HOME/.local/share/applications"
 PLASMOID_ID="org.s1dd1.plaintop"
 PLASMOID_SRC="$REPO/monitor/package"
 PLASMOID_DEST="$HOME/.local/share/plasma/plasmoids/$PLASMOID_ID"
@@ -33,33 +30,7 @@ red()  { printf '\033[31m%s\033[0m\n' "$*"; }
 grn()  { printf '\033[32m%s\033[0m\n' "$*"; }
 dim()  { printf '\033[2m%s\033[0m\n' "$*"; }
 
-input_shape() {
-    python3 - <<'PY'
-import sys
-try:
-    from Xlib import display
-    from Xlib.ext import shape
-except ImportError:
-    print("  python-xlib is not installed — cannot check the input region"); sys.exit(0)
-d = display.Display(); root = d.screen().root
-def walk(w, out):
-    try: cls = w.get_wm_class()
-    except Exception: cls = None
-    if cls and any("conky" in c.lower() for c in cls): out.append((w, cls))
-    try:
-        for c in w.query_tree().children: walk(c, out)
-    except Exception: pass
-    return out
-ws = walk(root, [])
-if not ws:
-    print("  no conky windows"); sys.exit(0)
-for w, cls in ws:
-    g = w.get_geometry()
-    n = len(list(w.shape_get_rectangles(shape.SK.Input).rectangles))
-    verdict = "clicks pass through" if n == 0 else "CATCHES CLICKS"
-    print(f"  {hex(w.id)}  class={cls[0]}  {g.width}x{g.height}  input={n} → {verdict}")
-PY
-}
+
 
 # Make the monitor package complete: install and pack both start here, so what gets
 # installed and what gets published cannot differ.
@@ -171,36 +142,6 @@ print(k["Name"] + "-" + k["Version"])' "$src/metadata.json") \
     done
 }
 
-# Stop conky while the move to the plasmoid is under way — and bring it back.
-# ⚠️ Use `pkill -x conky` only: the pattern `pkill -f 'conky -c'` matches the command
-# line of our own shell and kills it.
-conky_off() {
-    echo "== Stopping conky"
-    pkill -x conky && grn "  ✓ process stopped" || dim "  conky was not running"
-    if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
-        # Hidden=true is the standard XDG way to disable autostart; the file stays in place.
-        grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop" \
-            || printf 'Hidden=true\n' >> "$AUTOSTART/conky-plainext.desktop"
-        grn "  ✓ autostart disabled (Hidden=true)"
-    else
-        dim "  no autostart entry anyway"
-    fi
-    # excludeApps in ksmserverrc already stops the session from restoring conky at login.
-    echo; status
-}
-
-conky_on() {
-    echo "== Bringing conky back"
-    if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
-        sed -i '/^Hidden=true$/d' "$AUTOSTART/conky-plainext.desktop"
-        grn "  ✓ autostart enabled"
-    else
-        cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && grn "  ✓ autostart restored"
-    fi
-    pgrep -x conky >/dev/null || "$DEST/start.sh" >/dev/null 2>&1 &
-    sleep 8
-    echo; status
-}
 
 # plasmashell scripting does not answer right after a restart — wait, do not guess.
 plasmashell_ready() {
@@ -233,13 +174,6 @@ spectrum_install() {
 
     mkdir -p "$RELAY_DEST" "$UNIT_DEST"
     install -m 755 "$SPECTRUM_SRC/relay.py" "$RELAY_DEST/relay.py" && echo "  → $RELAY_DEST/relay.py"
-    # The relay reads the defaults next to itself, and it is the only writer of both
-    # settings files. Without them a first install comes up with an empty editor. Each
-    # file is taken from the widget it belongs to, so there is one copy to edit.
-    install -m 644 "$SPECTRUM_SRC/window/ring.default.json" "$RELAY_DEST/ring.default.json" \
-        && echo "  → $RELAY_DEST/ring.default.json"
-    install -m 644 "$REPO/monitor/window/monitor.default.json" "$RELAY_DEST/monitor.default.json" \
-        && echo "  → $RELAY_DEST/monitor.default.json"
     install -m 644 "$SPECTRUM_SRC/plainspectrum-relay.service" "$UNIT_DEST/" \
         && echo "  → $UNIT_DEST/plainspectrum-relay.service"
 
@@ -263,12 +197,11 @@ spectrum_install() {
         dim "  plasmashell is not under systemd — restart the shell yourself"
     fi
 
-    # A window host not yet retired (decision 9) would draw the same ring: while its
-    # autostart entry exists, the plasmoid is installed but not placed. --windows-off retires it.
-    if [ -f "$HOME/.config/autostart/plainspectrum-window.desktop" ]; then
-        dim "  click-through window is set up — not placing the plasmoid on the desktop"
-        return 0
-    fi
+    # The window hosts are gone (decision 9; their code left the tree 2026-10-05, branch
+    # archive/2026-10-05-conky-window-hosts): an autostart entry of one would still start
+    # a second ring. Say so, do not act.
+    [ -f "$HOME/.config/autostart/plainspectrum-window.desktop" ] \
+        && red "  ⚠ ~/.config/autostart/plainspectrum-window.desktop remains from the retired window host — delete it"
 
     local n
     n=$(grep -c "^plugin=$SPECTRUM_ID$" "$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc" 2>/dev/null || true)
@@ -283,26 +216,6 @@ spectrum_install() {
     [ -n "$id" ] && grn "  ✓ added to the desktop (id=$id)" || red "  ✗ could not add it to the desktop"
 }
 
-# Standalone (click-through) host for the visualizer — retired (decision 9). It predates the
-# plasmoid's own click-through (decision 8): the plasmoid now lets both buttons through by
-# itself (see check_passthrough), so a second host with its KWin rule and autostart adds
-# nothing. Kept for reference, not to be used; `--windows-off` retires an existing setup.
-spectrum_window() {
-    echo "== Spectrum: click-through window"
-    if ! command -v qml6 >/dev/null; then
-        red "  ✗ qml6 is missing (package qt6-declarative)"; return 1
-    fi
-    python3 "$SPECTRUM_SRC/window/setup.py" install
-}
-
-spectrum_settings() {
-    python3 "$SPECTRUM_SRC/window/setup.py" settings
-}
-
-spectrum_window_status() {
-    echo "== Spectrum: window"
-    python3 "$SPECTRUM_SRC/window/setup.py" status
-}
 
 spectrum_status() {
     echo "== Spectrum"
@@ -615,6 +528,72 @@ check_notes() {
     fi
 }
 
+# The relay's pure functions: the stereo fold, the resampling, cava's configuration. Python
+# only, no cava, no Qt.
+check_relay() {
+    echo "== Relay stand"
+    if python3 "$REPO/tests/relay.py"; then
+        grn "  ✓ relay.py folds, resamples and configures as the stand says"
+    else
+        red "  ✗ the stand failed"; return 1
+    fi
+}
+
+# The weather sources: the four APIs' answers into the one shape the view draws. Plain
+# JavaScript under QtTest; nothing of Plasma is imported.
+check_weather() {
+    echo "== Weather sources stand"
+    local runner=/usr/lib/qt6/bin/qmltestrunner
+    if [ ! -x "$runner" ]; then
+        red "  ✗ $runner is missing (package qt6-declarative)"; return 1
+    fi
+    local out rc
+    out=$(QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen "$runner" -input "$REPO/tests/weather.qml" 2>&1); rc=$?
+    printf '%s\n' "$out" | grep -vE 'detached root|GC memory statistics|unloaded library|propertyCache' | sed 's/^/  /'
+    if [ $rc -eq 0 ]; then
+        grn "  ✓ every source parses and builds as the stand says"
+    else
+        red "  ✗ the stand failed (exit $rc)"
+    fi
+    return $rc
+}
+
+# A GitHub release: the five packages as --pack builds them, their checksums, an annotated
+# tag pushed, the release created with gh. Wants a clean, pushed main and gh signed in. The
+# KDE Store upload stays a browser job — docs/STORE.md has the fields.
+release() {
+    local version=${1:-}
+    [ -n "$version" ] || { red "  ✗ usage: $0 --release VERSION   (e.g. 0.5 → tag v0.5)"; return 1; }
+    echo "== Release v$version"
+    command -v gh >/dev/null || { red "  ✗ gh (the GitHub CLI) is missing"; return 1; }
+    gh auth status >/dev/null 2>&1 || { red "  ✗ gh is not signed in — run: gh auth login"; return 1; }
+    [ -z "$(git status --porcelain)" ] || { red "  ✗ the working tree is not clean — commit first"; return 1; }
+    [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ] || { red "  ✗ not on main"; return 1; }
+    git rev-parse -q --verify "refs/tags/v$version" >/dev/null && { red "  ✗ the tag v$version exists"; return 1; }
+    git fetch -q origin main || { red "  ✗ cannot reach origin"; return 1; }
+    [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] || { red "  ✗ main is not pushed, or behind origin — push first"; return 1; }
+    pack || return 1
+    (cd "$REPO/dist" && sha256sum ./*.plasmoid > SHA256SUMS) || { red "  ✗ no checksums"; return 1; }
+    local notes="$REPO/dist/RELEASE-v$version.md" f
+    {
+        echo "plaintop v$version — the five widgets as .plasmoid packages, the same files that go to the KDE Store."
+        echo
+        echo "| Package | sha256 |"
+        echo "|---|---|"
+        for f in "$REPO"/dist/*.plasmoid; do
+            printf '| %s | `%s` |\n' "$(basename "$f")" "$(sha256sum "$f" | cut -c1-64)"
+        done
+        echo
+        echo 'Install one with `kpackagetool6 --type Plasma/Applet --install NAME.plasmoid`, or through *Get New Widgets*.'
+        echo 'What changed — docs/STORE.md (per widget) and docs/JOURNAL.md.'
+    } > "$notes"
+    git tag -a "v$version" -m "plaintop v$version" || return 1
+    git push -q origin "v$version" || { red "  ✗ the tag did not push"; return 1; }
+    gh release create "v$version" "$REPO"/dist/*.plasmoid "$REPO/dist/SHA256SUMS" \
+        --title "plaintop v$version" --notes-file "$notes" || { red "  ✗ gh release create failed — the tag is pushed, create the release by hand"; return 1; }
+    grn "  ✓ released v$version: $(gh release view "v$version" --json url -q .url 2>/dev/null)"
+}
+
 # Idempotent: if the widget is already on the desktop, do nothing; otherwise place it.
 plasmoid_place() {
     local n
@@ -625,12 +604,10 @@ plasmoid_place() {
     # hints inside the widget, and the container resets the position to the corner
     # anyway. The widget draws the gap from the screen edge itself (its left/top
     # offset settings).
-    # A window host not yet retired (decision 9) would draw the same monitor: while its
-    # autostart entry exists, the plasmoid is not placed. --windows-off retires it.
-    if [ -f "$HOME/.config/autostart/plaintop-window.desktop" ]; then
-        dim "  click-through window is set up — not placing the plasmoid on the desktop"
-        return 0
-    fi
+    # The window hosts are gone (decision 9; code removed 2026-10-05): an autostart entry
+    # of one would still start a second monitor. Say so, do not act.
+    [ -f "$HOME/.config/autostart/plaintop-window.desktop" ] \
+        && red "  ⚠ ~/.config/autostart/plaintop-window.desktop remains from the retired window host — delete it"
 
     local id
     id=$(qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
@@ -639,37 +616,6 @@ plasmoid_place() {
     grn "  ✓ added to the desktop (id=$id)"
 }
 
-# Standalone (click-through) host for the text monitor — retired (decision 9), same story
-# as the ring: it predates the plasmoid's own click-through (decision 8; the plasmoid now
-# lets both buttons through by itself — see check_passthrough), so it has nothing left to
-# add. Kept for reference, not to be used; `--windows-off` retires an existing setup.
-plaintop_window() {
-    echo "== Monitor: click-through window"
-    if ! command -v qml6 >/dev/null; then
-        red "  ✗ qml6 is missing (package qt6-declarative)"; return 1
-    fi
-    python3 "$REPO/monitor/window/setup.py" install
-}
-
-# The window hosts are retired (decision 9): the plasmoids let both mouse buttons through by
-# themselves, so a second host with its KWin rule and autostart has nothing left to add.
-# This stops both windows and takes their pieces out; the settings files stay.
-windows_off() {
-    echo "== Monitor: window host retired"
-    python3 "$REPO/monitor/window/setup.py" retire || return 1
-    echo "== Spectrum: window host retired"
-    python3 "$SPECTRUM_SRC/window/setup.py" retire || return 1
-}
-
-plaintop_export() {
-    echo "== Monitor: settings from the plasmoid to the window"
-    python3 "$REPO/monitor/window/setup.py" export
-}
-
-plaintop_window_status() {
-    echo "== Monitor: window"
-    python3 "$REPO/monitor/window/setup.py" status
-}
 
 plasmoid_status() {
     echo "== Plasmoid"
@@ -694,27 +640,8 @@ plasmoid_status() {
 }
 
 status() {
-    echo "== Processes"
-    if pgrep -x conky >/dev/null; then pgrep -ax conky | sed 's/^/  /'; else dim "  conky is not running"; fi
-    echo "== Window and input region"; input_shape
-    echo "== Deployed"
-    for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
-        if [ -f "$DEST/$f" ]; then
-            # Compare against the @HOME@-substituted text, or the check lies on every file.
-            if sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" | cmp -s - "$DEST/$f"; then grn "  ✓ $f — matches the repo"
-            else red "  ≠ $f — DIFFERS from the repo"; fi
-        else red "  ✗ $f — not deployed"; fi
-    done
-    if [ -f "$AUTOSTART/conky-plainext.desktop" ]; then
-        if grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop"; then
-            dim "  • autostart disabled (Hidden=true) — to re-enable: ./install.sh --conky-on"
-        else grn "  ✓ autostart"; fi
-    else red "  ✗ autostart not set up"; fi
-    [ -f "$APPS/conky.desktop" ] && grn "  ✓ mask over the packaged conky.desktop" || red "  ✗ no mask"
-    echo; plasmoid_status
-    echo; plaintop_window_status
+    plasmoid_status
     echo; spectrum_status
-    echo; spectrum_window_status
     echo; player_status
     echo; weather_status
     echo; calendar_status
@@ -723,8 +650,8 @@ status() {
 deps() {
     local miss=0
     echo "== Dependencies"
-    command -v conky >/dev/null && grn "  ✓ conky $(conky --version 2>/dev/null | head -1 | awk '{print $2}')" || { red "  ✗ conky"; miss=1; }
-    python3 -c "import Xlib" 2>/dev/null && grn "  ✓ python-xlib" || { red "  ✗ python-xlib (needed for click-through)"; miss=1; }
+    command -v kpackagetool6 >/dev/null && grn "  ✓ kpackagetool6" || { red "  ✗ kpackagetool6 (plasma-workspace)"; miss=1; }
+    command -v msgfmt >/dev/null && grn "  ✓ msgfmt" || { red "  ✗ msgfmt (gettext, for the translations)"; miss=1; }
     command -v sensors >/dev/null && grn "  ✓ lm_sensors" || { red "  ✗ lm_sensors (temperatures and fan speeds)"; miss=1; }
     # ⚠️ No pipeline here, on purpose: under set -o pipefail the `fc-list | grep -q`
     # combination lies. grep -q exits on the first match, fc-list takes SIGPIPE, the
@@ -738,72 +665,43 @@ deps() {
     return $miss
 }
 
-# Deploy the conky files without starting it: conky may be switched off on purpose
-# while the files in the repository have already moved on.
-conky_deploy() {
-    echo; echo "== Deploying"
-    mkdir -p "$DEST" "$AUTOSTART" "$APPS"
-    # ⚠️ Deploying files must not flip conky on. Copying the autostart entry overwrites
-    # the Hidden=true put there by --conky-off, so remember it and put it back.
-    local was_hidden=0
-    grep -q "^Hidden=true$" "$AUTOSTART/conky-plainext.desktop" 2>/dev/null && was_hidden=1
-    for f in plainext.conf plainext.lua services.sh start.sh clickthrough.py; do
-        # ⚠️ @HOME@ is substituted here: conky itself does not expand environment variables
-        # in the config, and hardcoding /home/<someone> into the repo is not an option.
-        sed "s|@HOME@|$HOME|g" "$REPO/conky/$f" > "$DEST/$f" && echo "  → $DEST/$f"
-    done
-    chmod +x "$DEST"/*.sh "$DEST"/*.py
-    cp "$REPO/conky/conky-plainext.desktop" "$AUTOSTART/" && echo "  → $AUTOSTART/conky-plainext.desktop"
-    # A mask over /usr/share/applications/conky.desktop: otherwise KWin starts the packaged
-    # conky with its default config. The user directory comes first in XDG_DATA_DIRS.
-    cp "$REPO/conky/conky-mask.desktop" "$APPS/conky.desktop" && echo "  → $APPS/conky.desktop (mask)"
+usage() {
+    cat <<EOF
+Usage: $0 SWITCH
 
-    # excludeApps must match own_window_class, or the exclusion silently does nothing.
-    if command -v kwriteconfig6 >/dev/null; then
-        kwriteconfig6 --file ksmserverrc --group General --key excludeApps 'conky,conky-plainext'
-        echo "  → ksmserverrc: excludeApps=conky,conky-plainext"
-    fi
-    [ "$was_hidden" = 1 ] && printf 'Hidden=true\n' >> "$AUTOSTART/conky-plainext.desktop"
+  --plasmoid | --spectrum | --player | --weather | --calendar   install one widget (and restart the shell)
+  --status                       what is installed, what runs, what differs from the repo
+  --deps                         the tools the widgets need
+  --pack                         .plasmoid files into dist/, each test-installed
+  --release VERSION              tag vVERSION, push it, GitHub release with the packages and checksums
+  --clicks-on | --clicks-off     clicks through to the desktop, or the widgets take them
+  --palette NAME | --palette-save NAME   colours of the five widgets at once (palettes/)
+  --check-passthrough | --check-monitor | --check-notes | --check-relay | --check-weather   the stands
+
+One switch per call; installing several widgets means several calls — each restarts
+plasmashell, and systemd rate-limits restarts (docs/GOTCHAS.md).
+EOF
 }
 
 case "${1:-}" in
   --status)      status; exit 0 ;;
-  --check-input) input_shape; exit 0 ;;
   --check-passthrough) check_passthrough; exit $? ;;
   --check-monitor) check_monitor; exit $? ;;
   --check-notes) check_notes; exit $? ;;
+  --check-relay) check_relay; exit $? ;;
+  --check-weather) check_weather; exit $? ;;
   --deps)        deps; exit $? ;;
   --plasmoid)    plasmoid_install; exit $? ;;
   --pack)        pack; exit $? ;;
-  --conky-files) conky_deploy; echo; status; exit 0 ;;
+  --release)     release "${2:-}"; exit $? ;;
   --spectrum)    spectrum_install; exit $? ;;
   --player)      player_install; exit $? ;;
   --weather)     weather_install; exit $? ;;
   --calendar)    calendar_install; exit $? ;;
-  --spectrum-window)   spectrum_window; exit $? ;;
-  --spectrum-settings) spectrum_settings; exit $? ;;
-  --plaintop-window)   plaintop_window; exit $? ;;
-  --plaintop-export)   plaintop_export; exit $? ;;
-  --plaintop-settings) python3 "$REPO/monitor/window/setup.py" settings; exit $? ;;
-  --windows-off) windows_off; exit $? ;;
   --clicks-off)  clicks_set false "widgets catch clicks (can be configured with the mouse)"; exit $? ;;
   --clicks-on)   clicks_set true "clicks pass through to the desktop"; exit $? ;;
   --palette)      palette apply "${2:-}"; exit $? ;;
   --palette-save) palette save "${2:-}"; exit $? ;;
-  --conky-off)   conky_off; exit 0 ;;
-  --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--calendar|--windows-off|--clicks-on|--clicks-off|--palette NAME|--palette-save NAME|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--check-monitor|--check-notes|--deps]"; exit 0 ;;
+  -h|--help|"")  usage; exit 0 ;;
+  *)             red "unknown switch: $1"; usage; exit 1 ;;
 esac
-
-deps || { echo; red "Missing dependencies — install them and try again."; exit 1; }
-
-conky_deploy
-
-# A full install means "deploy and run", so the autostart entry is enabled here —
-# unlike a plain deploy, which keeps whatever state it found.
-sed -i '/^Hidden=true$/d' "$AUTOSTART/conky-plainext.desktop"
-
-echo; echo "== Starting"
-"$DEST/start.sh" >/dev/null 2>&1 &
-sleep 8
-echo; status

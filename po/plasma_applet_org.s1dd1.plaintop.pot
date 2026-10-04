@@ -24,7 +24,6 @@ msgid "General"
 msgstr ""
 
 #: monitor/package/contents/config/config.qml:13
-#: monitor/window/settings.qml:300
 msgctxt "settings page"
 msgid "Blocks"
 msgstr ""
@@ -79,12 +78,10 @@ msgid ""
 msgstr ""
 
 #: monitor/package/contents/ui/configBlocks.qml:314
-#: monitor/window/settings.qml:491
 msgid "Up"
 msgstr ""
 
 #: monitor/package/contents/ui/configBlocks.qml:321
-#: monitor/window/settings.qml:498
 msgid "Down"
 msgstr ""
 
@@ -93,7 +90,6 @@ msgid "Duplicate"
 msgstr ""
 
 #: monitor/package/contents/ui/configBlocks.qml:335
-#: monitor/window/settings.qml:505
 msgid "Remove"
 msgstr ""
 
@@ -102,7 +98,6 @@ msgid "Reset"
 msgstr ""
 
 #: monitor/package/contents/ui/configBlocks.qml:360
-#: monitor/window/settings.qml:524
 msgid "Add block"
 msgstr ""
 
@@ -172,56 +167,46 @@ msgid "Reload from the list"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:46
-#: monitor/window/settings.qml:335
 msgid "Font:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:52
-#: monitor/window/settings.qml:342
 msgctxt "font size"
 msgid "Size:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:59
-#: monitor/window/settings.qml:371
 msgid "Left padding, px:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:67
-#: monitor/window/settings.qml:378
 msgid "Top padding, px:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:75
-#: monitor/window/settings.qml:385
 msgid "Width, px:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:83
-#: monitor/window/settings.qml:392
 msgid "Height, px:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:90
-#: monitor/window/settings.qml:407
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:96
-#: monitor/window/settings.qml:413
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:102
-#: monitor/window/settings.qml:419
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:108
-#: monitor/window/settings.qml:425
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr ""
@@ -337,12 +322,10 @@ msgid "Interval, ms:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:261
-#: monitor/window/settings.qml:356
 msgid "Top processes, every … s:"
 msgstr ""
 
 #: monitor/package/contents/ui/configGeneral.qml:267
-#: monitor/window/settings.qml:363
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
 "about 3% of a core, every 10 s about 1.3%"
@@ -758,186 +741,6 @@ msgstr ""
 #: monitor/shared/MonitorData.qml:1598
 msgctxt "line action: the block's command, in a terminal"
 msgid "run in a terminal"
-msgstr ""
-
-#: monitor/window/settings.qml:24
-msgid "plaintop — monitor settings"
-msgstr ""
-
-#: monitor/window/settings.qml:44
-#, kde-format
-msgid "the relay does not answer on port %1"
-msgstr ""
-
-#: monitor/window/settings.qml:54
-msgid "settings read"
-msgstr ""
-
-#: monitor/window/settings.qml:89
-msgid "saved"
-msgstr ""
-
-#: monitor/window/settings.qml:89
-#, kde-format
-msgid "not saved: %1"
-msgstr ""
-
-#: monitor/window/settings.qml:299
-msgctxt "settings page"
-msgid "Appearance"
-msgstr ""
-
-#: monitor/window/settings.qml:303
-msgid "loading…"
-msgstr ""
-
-#: monitor/window/settings.qml:306 monitor/window/settings.qml:919
-msgid "Reload"
-msgstr ""
-
-#: monitor/window/settings.qml:332
-msgctxt "settings section"
-msgid "Text"
-msgstr ""
-
-#: monitor/window/settings.qml:349
-msgid "Update interval, ms:"
-msgstr ""
-
-#: monitor/window/settings.qml:368
-msgctxt "settings section"
-msgid "Placement"
-msgstr ""
-
-#: monitor/window/settings.qml:399
-msgid ""
-"The window's size and place are kept by a KWin rule — after a size change\n"
-"rerun: ./install.sh --plaintop-window"
-msgstr ""
-
-#: monitor/window/settings.qml:404
-msgctxt "settings section"
-msgid "Palette"
-msgstr ""
-
-#: monitor/window/settings.qml:439
-msgid "The blocks and their order. Edits reach the monitor within two seconds."
-msgstr ""
-
-#: monitor/window/settings.qml:588
-msgctxt "interface menu: automatic choice"
-msgid "— find it —"
-msgstr ""
-
-#: monitor/window/settings.qml:609
-#, kde-format
-msgctxt "interface hint"
-msgid "found: %1"
-msgstr ""
-
-#: monitor/window/settings.qml:610
-#, kde-format
-msgctxt "interface hint"
-msgid "found: %1 (choosing…)"
-msgstr ""
-
-#: monitor/window/settings.qml:613
-#, kde-format
-msgctxt "interface hint"
-msgid "%1 is not on this machine — %2"
-msgstr ""
-
-#: monitor/window/settings.qml:627
-msgctxt "placeholder"
-msgid "empty — find it"
-msgstr ""
-
-#: monitor/window/settings.qml:634
-msgid "Choose…"
-msgstr ""
-
-#: monitor/window/settings.qml:642 monitor/window/settings.qml:692
-msgid "Auto"
-msgstr ""
-
-#: monitor/window/settings.qml:676
-msgctxt "placeholder"
-msgid "empty — find them"
-msgstr ""
-
-#: monitor/window/settings.qml:676
-msgid "nothing chosen"
-msgstr ""
-
-#: monitor/window/settings.qml:683
-msgid "Add…"
-msgstr ""
-
-#: monitor/window/settings.qml:749
-#, kde-format
-msgid "live preview · %1x%2 · scale %3 · lines %4"
-msgstr ""
-
-#: monitor/window/settings.qml:767
-msgid "Sensors of this machine"
-msgstr ""
-
-#: monitor/window/settings.qml:815
-msgid "search: part of an id"
-msgstr ""
-
-#: monitor/window/settings.qml:819
-msgid "matching only"
-msgstr ""
-
-#: monitor/window/settings.qml:827
-#, kde-format
-msgid "shown %1 of %2"
-msgstr ""
-
-#: monitor/window/settings.qml:828
-msgid "the tree is still being read"
-msgstr ""
-
-#: monitor/window/settings.qml:863
-msgid "no data"
-msgstr ""
-
-#: monitor/window/settings.qml:869
-msgid "or type an id by hand"
-msgstr ""
-
-#: monitor/window/settings.qml:876
-msgid "Mount points of this machine"
-msgstr ""
-
-#: monitor/window/settings.qml:913
-#, kde-format
-msgid "mounted now: %1"
-msgstr ""
-
-#: monitor/window/settings.qml:964
-msgid "or type a path by hand"
-msgstr ""
-
-#: monitor/window/setup.py:175
-msgctxt "autostart entry: name"
-msgid "plaintop — text monitor"
-msgstr ""
-
-#: monitor/window/setup.py:177
-msgctxt "autostart entry: comment"
-msgid "The monitor in its own window, clicks pass through"
-msgstr ""
-
-#: monitor/window/setup.py:178
-msgctxt "menu entry: name"
-msgid "plaintop — monitor settings"
-msgstr ""
-
-#: monitor/window/setup.py:179
-msgctxt "menu entry: comment"
-msgid "Appearance, palette and blocks of the text monitor"
 msgstr ""
 
 #: schema/blocks.json:1

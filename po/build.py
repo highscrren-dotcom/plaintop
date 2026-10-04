@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Compile one widget's catalogs: po/<lang>/<domain>.po → <outdir>/<lang>/LC_MESSAGES/<domain>.mo
 
-Used by install.sh, which builds into the plasmoid package (contents/locale), and by the
-window hosts' setup.py, which deploys the same files into ~/.local/share/locale. This
+Used by install.sh, which builds into the plasmoid package (contents/locale). This
 domain's old .mo files are removed first, so a language dropped from po/ does not linger
 in a package — and only this domain's, so two domains can share an output directory.
 Only msgfmt is needed here; refreshing the catalogs is extract.py's job.

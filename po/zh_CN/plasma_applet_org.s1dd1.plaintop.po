@@ -24,7 +24,6 @@ msgid "General"
 msgstr "常规"
 
 #: monitor/package/contents/config/config.qml:13
-#: monitor/window/settings.qml:300
 msgctxt "settings page"
 msgid "Blocks"
 msgstr "区块"
@@ -79,12 +78,10 @@ msgid ""
 msgstr "区块及其顺序。默认布局来自 schema/widget.json。"
 
 #: monitor/package/contents/ui/configBlocks.qml:314
-#: monitor/window/settings.qml:491
 msgid "Up"
 msgstr "上移"
 
 #: monitor/package/contents/ui/configBlocks.qml:321
-#: monitor/window/settings.qml:498
 msgid "Down"
 msgstr "下移"
 
@@ -93,7 +90,6 @@ msgid "Duplicate"
 msgstr "复制"
 
 #: monitor/package/contents/ui/configBlocks.qml:335
-#: monitor/window/settings.qml:505
 msgid "Remove"
 msgstr "移除"
 
@@ -102,7 +98,6 @@ msgid "Reset"
 msgstr "重置"
 
 #: monitor/package/contents/ui/configBlocks.qml:360
-#: monitor/window/settings.qml:524
 msgid "Add block"
 msgstr "添加区块"
 
@@ -171,56 +166,46 @@ msgid "Reload from the list"
 msgstr "从列表重新载入"
 
 #: monitor/package/contents/ui/configGeneral.qml:46
-#: monitor/window/settings.qml:335
 msgid "Font:"
 msgstr "字体："
 
 #: monitor/package/contents/ui/configGeneral.qml:52
-#: monitor/window/settings.qml:342
 msgctxt "font size"
 msgid "Size:"
 msgstr "字号："
 
 #: monitor/package/contents/ui/configGeneral.qml:59
-#: monitor/window/settings.qml:371
 msgid "Left padding, px:"
 msgstr "左边距 (px)："
 
 #: monitor/package/contents/ui/configGeneral.qml:67
-#: monitor/window/settings.qml:378
 msgid "Top padding, px:"
 msgstr "上边距 (px)："
 
 #: monitor/package/contents/ui/configGeneral.qml:75
-#: monitor/window/settings.qml:385
 msgid "Width, px:"
 msgstr "宽度 (px)："
 
 #: monitor/package/contents/ui/configGeneral.qml:83
-#: monitor/window/settings.qml:392
 msgid "Height, px:"
 msgstr "高度 (px)："
 
 #: monitor/package/contents/ui/configGeneral.qml:90
-#: monitor/window/settings.qml:407
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "主文字："
 
 #: monitor/package/contents/ui/configGeneral.qml:96
-#: monitor/window/settings.qml:413
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr "标题和时钟："
 
 #: monitor/package/contents/ui/configGeneral.qml:102
-#: monitor/window/settings.qml:419
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "次要文字："
 
 #: monitor/package/contents/ui/configGeneral.qml:108
-#: monitor/window/settings.qml:425
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr "数值："
@@ -346,12 +331,10 @@ msgid "Interval, ms:"
 msgstr "间隔 (毫秒)："
 
 #: monitor/package/contents/ui/configGeneral.qml:261
-#: monitor/window/settings.qml:356
 msgid "Top processes, every … s:"
 msgstr "进程排行，每 … 秒："
 
 #: monitor/package/contents/ui/configGeneral.qml:267
-#: monitor/window/settings.qml:363
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
 "about 3% of a core, every 10 s about 1.3%"
@@ -768,188 +751,6 @@ msgstr "不是仓库"
 msgctxt "line action: the block's command, in a terminal"
 msgid "run in a terminal"
 msgstr "在终端中运行"
-
-#: monitor/window/settings.qml:24
-msgid "plaintop — monitor settings"
-msgstr "plaintop — 监视器设置"
-
-#: monitor/window/settings.qml:44
-#, kde-format
-msgid "the relay does not answer on port %1"
-msgstr "中继在端口 %1 上无响应"
-
-#: monitor/window/settings.qml:54
-msgid "settings read"
-msgstr "已读取设置"
-
-#: monitor/window/settings.qml:89
-msgid "saved"
-msgstr "已保存"
-
-#: monitor/window/settings.qml:89
-#, kde-format
-msgid "not saved: %1"
-msgstr "未保存：%1"
-
-#: monitor/window/settings.qml:299
-msgctxt "settings page"
-msgid "Appearance"
-msgstr "外观"
-
-#: monitor/window/settings.qml:303
-msgid "loading…"
-msgstr "正在加载…"
-
-#: monitor/window/settings.qml:306 monitor/window/settings.qml:919
-msgid "Reload"
-msgstr "重新加载"
-
-#: monitor/window/settings.qml:332
-msgctxt "settings section"
-msgid "Text"
-msgstr "文字"
-
-#: monitor/window/settings.qml:349
-msgid "Update interval, ms:"
-msgstr "更新间隔 (毫秒)："
-
-#: monitor/window/settings.qml:368
-msgctxt "settings section"
-msgid "Placement"
-msgstr "位置"
-
-#: monitor/window/settings.qml:399
-msgid ""
-"The window's size and place are kept by a KWin rule — after a size change\n"
-"rerun: ./install.sh --plaintop-window"
-msgstr ""
-"窗口的大小和位置由 KWin 规则保持——更改大小后\n"
-"请重新运行：./install.sh --plaintop-window"
-
-#: monitor/window/settings.qml:404
-msgctxt "settings section"
-msgid "Palette"
-msgstr "调色板"
-
-#: monitor/window/settings.qml:439
-msgid "The blocks and their order. Edits reach the monitor within two seconds."
-msgstr "区块及其顺序。修改会在两秒内应用到监视器。"
-
-#: monitor/window/settings.qml:588
-msgctxt "interface menu: automatic choice"
-msgid "— find it —"
-msgstr "— 自动查找 —"
-
-#: monitor/window/settings.qml:609
-#, kde-format
-msgctxt "interface hint"
-msgid "found: %1"
-msgstr "已找到：%1"
-
-#: monitor/window/settings.qml:610
-#, kde-format
-msgctxt "interface hint"
-msgid "found: %1 (choosing…)"
-msgstr "已找到：%1（选择中…）"
-
-#: monitor/window/settings.qml:613
-#, kde-format
-msgctxt "interface hint"
-msgid "%1 is not on this machine — %2"
-msgstr "本机没有 %1——%2"
-
-#: monitor/window/settings.qml:627
-msgctxt "placeholder"
-msgid "empty — find it"
-msgstr "留空则自动查找"
-
-#: monitor/window/settings.qml:634
-msgid "Choose…"
-msgstr "选择…"
-
-#: monitor/window/settings.qml:642 monitor/window/settings.qml:692
-msgid "Auto"
-msgstr "自动"
-
-#: monitor/window/settings.qml:676
-msgctxt "placeholder"
-msgid "empty — find them"
-msgstr "留空则自动查找"
-
-#: monitor/window/settings.qml:676
-msgid "nothing chosen"
-msgstr "未选择"
-
-#: monitor/window/settings.qml:683
-msgid "Add…"
-msgstr "添加…"
-
-#: monitor/window/settings.qml:749
-#, kde-format
-msgid "live preview · %1x%2 · scale %3 · lines %4"
-msgstr "实时预览 · %1x%2 · 缩放 %3 · %4 行"
-
-#: monitor/window/settings.qml:767
-msgid "Sensors of this machine"
-msgstr "本机传感器"
-
-#: monitor/window/settings.qml:815
-msgid "search: part of an id"
-msgstr "搜索：ID 的一部分"
-
-#: monitor/window/settings.qml:819
-msgid "matching only"
-msgstr "仅显示匹配项"
-
-#: monitor/window/settings.qml:827
-#, kde-format
-msgid "shown %1 of %2"
-msgstr "已显示 %1 项，共 %2 项"
-
-#: monitor/window/settings.qml:828
-msgid "the tree is still being read"
-msgstr "传感器树仍在读取中"
-
-#: monitor/window/settings.qml:863
-msgid "no data"
-msgstr "无数据"
-
-#: monitor/window/settings.qml:869
-msgid "or type an id by hand"
-msgstr "或手动输入 ID"
-
-#: monitor/window/settings.qml:876
-msgid "Mount points of this machine"
-msgstr "本机挂载点"
-
-#: monitor/window/settings.qml:913
-#, kde-format
-msgid "mounted now: %1"
-msgstr "当前已挂载：%1"
-
-#: monitor/window/settings.qml:964
-msgid "or type a path by hand"
-msgstr "或手动输入路径"
-
-#: monitor/window/setup.py:175
-msgctxt "autostart entry: name"
-msgid "plaintop — text monitor"
-msgstr "plaintop — 文本监视器"
-
-#: monitor/window/setup.py:177
-msgctxt "autostart entry: comment"
-msgid "The monitor in its own window, clicks pass through"
-msgstr "在独立窗口中显示监视器，点击可穿透"
-
-#: monitor/window/setup.py:178
-msgctxt "menu entry: name"
-msgid "plaintop — monitor settings"
-msgstr "plaintop — 监视器设置"
-
-#: monitor/window/setup.py:179
-msgctxt "menu entry: comment"
-msgid "Appearance, palette and blocks of the text monitor"
-msgstr "文本监视器的外观、调色板和区块"
 
 #: schema/blocks.json:1
 msgctxt "schema: block name"

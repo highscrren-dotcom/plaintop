@@ -7,7 +7,153 @@ running it on a live system — nothing here comes "from the docs" or "from memo
 
 Two parts: conky first (the initial implementation), then the plasmoid (the target one).
 
-# Part I. conky
+## Start here: fifteen rules
+
+The ones a session trips over first; each links to its section with the evidence.
+
+1. QML in plasmashell cannot read files or fetch file://: data comes through the executable engine or an imported .js. → [Reading files from QML inside plasmashell is forbidden](#reading-files-from-qml-inside-plasmashell-is-forbidden)
+2. The applet's size is Layout.* on the root and must be a constant, or the widget jumps to the corner. → [The applet size is set by Layout.* on the root — and only as a constant](#the-applet-size-is-set-by-layout-on-the-root--and-only-as-a-constant)
+3. The shell's wrapper keeps the left button; disable it or mask it — the widget cannot let clicks through from inside. → [The applet's wrapper takes the left button — and can be told to let go](#the-applets-wrapper-takes-the-left-button--and-can-be-told-to-let-go)
+4. containmentMask on a PlasmoidItem goes through a Binding by name; written declaratively it does not compile. → ["PlasmoidItem.containmentMask" is not available in org.kde.plasma.plasmoid 255.255](#plasmoiditemcontainmentmask-is-not-available-in-orgkdeplasmaplasmoid-255255)
+5. Under a partial mask every Text is PlainText: the default textFormat accepts the left button and arms edit mode. → [A Text with the default textFormat accepts the left button](#a-text-with-the-default-textformat-accepts-the-left-button)
+6. SensorDataModel drops ids it cannot resolve; read columns by their id, never by position. → [SensorDataModel silently drops ids it cannot resolve](#sensordatamodel-silently-drops-ids-it-cannot-resolve)
+7. Qt logs go to journald when stderr is not a terminal: QT_FORCE_STDERR_LOGGING=1 for any probe. → [Qt logs go to journald, not to stderr](#qt-logs-go-to-journald-not-to-stderr)
+8. /usr/bin/qml, qmllint and qmltestrunner are Qt 5; the Qt 6 ones live in /usr/lib/qt6/bin/. → [/usr/bin/qmllint is the Qt 5 one too — as are qml and qmltestrunner](#usrbinqmllint-is-the-qt-5-one-too--as-are-qml-and-qmltestrunner)
+9. qmllint's exit code 0 proves nothing: load every file with Qt.createComponent() and read its status. → [Two properties of one name fail the component — qmllint only warns](#two-properties-of-one-name-fail-the-component--qmllint-only-warns)
+10. A PlasmaCore.Dialog's default property is mainItem: a Timer or TextMetrics at its root fails the component. → [A PlasmaCore.Dialog takes what sits at its root as mainItem](#a-plasmacoredialog-takes-what-sits-at-its-root-as-mainitem)
+11. Qt 6.11's engine has no trimEnd, replaceAll, at, flat, fromEntries — a regular expression instead. → [Qt 6.11's QML engine lacks the newer string and array methods](#qt-611s-qml-engine-lacks-the-newer-string-and-array-methods)
+12. Whatever the executable engine runs is on a command line, readable by every user: secrets go through QtCore.Settings. → [Whatever goes through the executable engine is on a command line](#whatever-goes-through-the-executable-engine-is-on-a-command-line)
+13. setsid does not leave the shell's cgroup; a program that must outlive a restart goes through systemd-run --user --scope. → [setsid does not take a process out of the shell's cgroup — a restart kills it](#setsid-does-not-take-a-process-out-of-the-shells-cgroup--a-restart-kills-it)
+14. Reassigning a var map rebuilds everything that reads it: mutate in place, rebuild on one tick. → [Reassigning a var map from many handlers rebuilds everything that reads it](#reassigning-a-var-map-from-many-handlers-rebuilds-everything-that-reads-it)
+15. A string literal broken across source lines reaches the catalog cut in half: one line with \n. → [A string literal broken across source lines reaches the catalog cut in half](#a-string-literal-broken-across-source-lines-reaches-the-catalog-cut-in-half)
+
+## Contents by topic
+
+**The mouse and click-through**
+
+- [The applet's wrapper takes the left button — and can be told to let go](#the-applets-wrapper-takes-the-left-button--and-can-be-told-to-let-go)
+- ["PlasmoidItem.containmentMask" is not available in org.kde.plasma.plasmoid 255.255](#plasmoiditemcontainmentmask-is-not-available-in-orgkdeplasmaplasmoid-255255)
+- [A partial containmentMask on the wrapper: the buttons take the mouse, the rest lets it through](#a-partial-containmentmask-on-the-wrapper-the-buttons-take-the-mouse-the-rest-lets-it-through)
+- [A Text with the default textFormat accepts the left button](#a-text-with-the-default-textformat-accepts-the-left-button)
+- [containmentMask coordinates: only the mask's x/y count](#containmentmask-coordinates-only-the-masks-xy-count)
+- [On the stand, edit mode reorders the containers](#on-the-stand-edit-mode-reorders-the-containers)
+- [A plain window can: Qt.WindowTransparentForInput works under KWin Wayland](#a-plain-window-can-qtwindowtransparentforinput-works-under-kwin-wayland)
+
+**Size, placement, text rendering, dialogs**
+
+- [The applet size is set by Layout.* on the root — and only as a constant](#the-applet-size-is-set-by-layout-on-the-root--and-only-as-a-constant)
+- [The applet position cannot be pinned programmatically](#the-applet-position-cannot-be-pinned-programmatically)
+- [An animated transform costs more than the data it animates](#an-animated-transform-costs-more-than-the-data-it-animates)
+- [FontMetrics.height is not the height of a NativeRendering line](#fontmetricsheight-is-not-the-height-of-a-nativerendering-line)
+- [At 3 px, Text.QtRendering blurs the dots — and the software backend hides the difference](#at-3-px-textqtrendering-blurs-the-dots--and-the-software-backend-hides-the-difference)
+- [lineHeightMode: FixedHeight below the natural line: implicitHeight is one line too tall](#lineheightmode-fixedheight-below-the-natural-line-implicitheight-is-one-line-too-tall)
+- [The natural line of a 3 px NativeRendering Text is 4 px](#the-natural-line-of-a-3-px-nativerendering-text-is-4-px)
+- [A framed line drawn as one Text paints its sides in the line's colour](#a-framed-line-drawn-as-one-text-paints-its-sides-in-the-lines-colour)
+- [A PlasmaCore.Dialog can keep its sheet's first size](#a-plasmacoredialog-can-keep-its-sheets-first-size)
+- [A PlasmaCore.Dialog takes what sits at its root as mainItem](#a-plasmacoredialog-takes-what-sits-at-its-root-as-mainitem)
+- [A ListView in a Kirigami.FormLayout comes out zero pixels high](#a-listview-in-a-kirigamiformlayout-comes-out-zero-pixels-high)
+
+**The QML engine and its traps**
+
+- [Reading files from QML inside plasmashell is forbidden](#reading-files-from-qml-inside-plasmashell-is-forbidden)
+- [plasmashell keeps the package's QML in a cache](#plasmashell-keeps-the-packages-qml-in-a-cache)
+- [Scripting plasmashell is not full QML](#scripting-plasmashell-is-not-full-qml)
+- [http://127.0.0.1 is allowed, file:// is not](#http127001-is-allowed-file-is-not)
+- [left and right are FINAL on every Item](#left-and-right-are-final-on-every-item)
+- [A list reaches a Repeater delegate as a variant list, not a JS array](#a-list-reaches-a-repeater-delegate-as-a-variant-list-not-a-js-array)
+- [Reassigning a var map from many handlers rebuilds everything that reads it](#reassigning-a-var-map-from-many-handlers-rebuilds-everything-that-reads-it)
+- [A Repeater fed a JS array recreates every delegate when the array changes](#a-repeater-fed-a-js-array-recreates-every-delegate-when-the-array-changes)
+- [The QML font has no families in Qt 6.11](#the-qml-font-has-no-families-in-qt-611)
+- [Qt's XMLHttpRequest has no timeout](#qts-xmlhttprequest-has-no-timeout)
+- [new Date("YYYY-MM-DD") is UTC midnight](#new-dateyyyy-mm-dd-is-utc-midnight)
+- [QML's JavaScript has no time zones: toLocaleString ignores timeZone](#qmls-javascript-has-no-time-zones-tolocalestring-ignores-timezone)
+- [A change handler sees derived bindings before they update](#a-change-handler-sees-derived-bindings-before-they-update)
+- [QML's Locale counts months from 0 and Sunday as 0](#qmls-locale-counts-months-from-0-and-sunday-as-0)
+- [Two properties of one name fail the component — qmllint only warns](#two-properties-of-one-name-fail-the-component--qmllint-only-warns)
+- [Qt 6.11's QML engine lacks the newer string and array methods](#qt-611s-qml-engine-lacks-the-newer-string-and-array-methods)
+- [An id inside a Repeater delegate is out of reach — and the delegate may be rebuilt](#an-id-inside-a-repeater-delegate-is-out-of-reach--and-the-delegate-may-be-rebuilt)
+- [Qt.btoa encodes its string as UTF-8 itself — the browser idiom encodes it twice](#qtbtoa-encodes-its-string-as-utf-8-itself--the-browser-idiom-encodes-it-twice)
+- [A C++ model's rows from QML: neither roleNames() nor roleForName() is callable](#a-c-models-rows-from-qml-neither-rolenames-nor-roleforname-is-callable)
+- [Kirigami's FormLayout complains when a Repeater rebuilds its children](#kirigamis-formlayout-complains-when-a-repeater-rebuilds-its-children)
+- [A string literal broken across source lines reaches the catalog cut in half](#a-string-literal-broken-across-source-lines-reaches-the-catalog-cut-in-half)
+- [A bare qml host has no i18nc](#a-bare-qml-host-has-no-i18nc)
+
+**Sensors and the data side**
+
+- [There is no systemmonitor engine in Plasma 6](#there-is-no-systemmonitor-engine-in-plasma-6)
+- [Sensors do not answer instantly](#sensors-do-not-answer-instantly)
+- [Ready-made formatting breaks monospace columns](#ready-made-formatting-breaks-monospace-columns)
+- [ksysguard model roles are addressed by name](#ksysguard-model-roles-are-addressed-by-name)
+- [SensorDataModel silently drops ids it cannot resolve](#sensordatamodel-silently-drops-ids-it-cannot-resolve)
+- [cpu/all/coreCount is not cpu/all/cpuCount](#cpuallcorecount-is-not-cpuallcpucount)
+- [Chip names rot exactly like hwmon indexes](#chip-names-rot-exactly-like-hwmon-indexes)
+- [The sensor tree also contains regex templates](#the-sensor-tree-also-contains-regex-templates)
+- [Network interfaces come out of the tree in hash order](#network-interfaces-come-out-of-the-tree-in-hash-order)
+- [Inside a Sensors.Sensor, a bare name is the sensor's own property](#inside-a-sensorssensor-a-bare-name-is-the-sensors-own-property)
+- [A child's CPU time is not in the parent's own](#a-childs-cpu-time-is-not-in-the-parents-own)
+- [ProcessDataModel reads all of /proc every 2 s, whatever else is set](#processdatamodel-reads-all-of-proc-every-2-s-whatever-else-is-set)
+- [The ksystemstats power plugin lists every Solid::Battery — mice and headsets included](#the-ksystemstats-power-plugin-lists-every-solidbattery--mice-and-headsets-included)
+- [The sensor tree lists a childless power group, and does not list pressure](#the-sensor-tree-lists-a-childless-power-group-and-does-not-list-pressure)
+- [The services source runs whether its block is shown or not — the new sources are gated](#the-services-source-runs-whether-its-block-is-shown-or-not--the-new-sources-are-gated)
+- [barRow labels are three characters](#barrow-labels-are-three-characters)
+
+**Processes, systemd, the tools**
+
+- [systemd silences plasmashell after frequent restarts](#systemd-silences-plasmashell-after-frequent-restarts)
+- [Qt logs go to journald, not to stderr](#qt-logs-go-to-journald-not-to-stderr)
+- [setsid does not take a process out of the shell's cgroup — a restart kills it](#setsid-does-not-take-a-process-out-of-the-shells-cgroup--a-restart-kills-it)
+- [Whatever goes through the executable engine is on a command line](#whatever-goes-through-the-executable-engine-is-on-a-command-line)
+- [Importing a package's Python script writes __pycache__ into the package](#importing-a-packages-python-script-writes-__pycache__-into-the-package)
+- [A status check that compares with the install-time copy passes after every edit](#a-status-check-that-compares-with-the-install-time-copy-passes-after-every-edit)
+- [plasmawindowed runs one instance: a second launch exits 0 and says nothing](#plasmawindowed-runs-one-instance-a-second-launch-exits-0-and-says-nothing)
+- [/usr/bin/qmltestrunner is the Qt 5 one](#usrbinqmltestrunner-is-the-qt-5-one)
+- [/usr/bin/qmllint is the Qt 5 one too — as are qml and qmltestrunner](#usrbinqmllint-is-the-qt-5-one-too--as-are-qml-and-qmltestrunner)
+
+**Translations**
+
+- [xgettext marks ki18n placeholders as JavaScript format](#xgettext-marks-ki18n-placeholders-as-javascript-format)
+- [KDE's Formats win over LANG and LC_ALL](#kdes-formats-win-over-lang-and-lc_all)
+- [A locale that is not generated silently turns every translation off](#a-locale-that-is-not-generated-silently-turns-every-translation-off)
+- [msginit for zh_CN leaves Plural-Forms: nplurals=INTEGER](#msginit-for-zh_cn-leaves-plural-forms-npluralsinteger)
+- [A bare i18n() in a shared file follows the host's domain](#a-bare-i18n-in-a-shared-file-follows-the-hosts-domain)
+- [po/extract.py reads only files git knows](#poextractpy-reads-only-files-git-knows)
+- [Country names in the interface's language: org.kde.i18n.localeData, with two traps](#country-names-in-the-interfaces-language-orgkdei18nlocaledata-with-two-traps)
+
+**The weather sources**
+
+- [MET Norway answers 403 to the default User-Agent](#met-norway-answers-403-to-the-default-user-agent)
+- [A 304 has no body — never JSON.parse it](#a-304-has-no-body--never-jsonparse-it)
+- [Visual Crossing answers fifteen days when no dates are named — and bills them](#visual-crossing-answers-fifteen-days-when-no-dates-are-named--and-bills-them)
+- ["offline" in the weather header may be the network, not the widget — and the source is a setting](#offline-in-the-weather-header-may-be-the-network-not-the-widget--and-the-source-is-a-setting)
+- [A 304 is not "nothing changed" for a forecast cut at the request hour](#a-304-is-not-nothing-changed-for-a-forecast-cut-at-the-request-hour)
+
+**cava and the relay**
+
+- [cava computes through silence unless sleep_timer is set](#cava-computes-through-silence-unless-sleep_timer-is-set)
+- [cava's stereo frame is a mirror: the left channel backwards, then the right](#cavas-stereo-frame-is-a-mirror-the-left-channel-backwards-then-the-right)
+- [cava reads noise_reduction from [smoothing] only](#cava-reads-noise_reduction-from-smoothing-only)
+- [At boot the relay can start before PipeWire — and one bad line used to kill it](#at-boot-the-relay-can-start-before-pipewire--and-one-bad-line-used-to-kill-it)
+- [A pid file does not know about the autostart](#a-pid-file-does-not-know-about-the-autostart)
+
+**The calendar and KHolidays**
+
+- [KHolidays' QML module lists the regions and gives no holidays; the calendar plugin does](#kholidays-qml-module-lists-the-regions-and-gives-no-holidays-the-calendar-plugin-does)
+- [The holiday regions are one file for the whole shell](#the-holiday-regions-are-one-file-for-the-whole-shell)
+- [KHolidays' plans are Qt resources, readable only where file reads are allowed](#kholidays-plans-are-qt-resources-readable-only-where-file-reads-are-allowed)
+
+**conky (archive)**
+
+- [Conky works under Wayland](#conky-works-under-wayland)
+- [Window type: normal only](#window-type-normal-only)
+- [Click-through: conky has NO setting of its own](#click-through-conky-has-no-setting-of-its-own)
+- [Who starts conky — many paths, and you cannot block them all](#who-starts-conky--many-paths-and-you-cannot-block-them-all)
+- [Small things that cost time](#small-things-that-cost-time)
+- [Traps in the scripts themselves](#traps-in-the-scripts-themselves)
+
+# Part I. conky (archive)
+
+The conky implementation left the tree on 2026-10-05 (decision 9 executed; the branch
+`archive/2026-10-05-conky-window-hosts` keeps it). Its lessons stay.
 
 ## Conky works under Wayland
 
