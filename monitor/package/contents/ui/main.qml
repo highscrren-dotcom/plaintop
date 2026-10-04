@@ -155,9 +155,12 @@ PlasmoidItem {
 
     // ── Running the actions ───────────────────────────────────────────────────
     // One-shot commands through the executable engine, each its own source, dropped once
-    // answered. A terminal or a GUI program is detached (setsid -f), so it outlives a
-    // restart of the shell and the source answers at once; a quick command — kill,
-    // systemctl, wpctl — runs attached, and a non-zero exit shows its stderr in a notice.
+    // answered. A terminal or a GUI program is detached so the source answers at once,
+    // and goes into a scope of its own (systemd-run --scope) so it outlives a restart of
+    // the shell: setsid alone leaves it in plasma-plasmashell.service's cgroup, which
+    // systemd kills whole on a restart (KillMode=control-group). Without systemd-run,
+    // setsid only. A quick command — kill, systemctl, wpctl — runs attached, and a
+    // non-zero exit shows its stderr in a notice.
     property string lastTitle: ""
 
     P5Support.DataSource {
@@ -186,7 +189,8 @@ PlasmoidItem {
             cmd = (String(root.cfg.terminal).trim() || "konsole -e") + " sh -c " + monitorData.sh(body)
         }
         if (it.terminal === true || it.gui === true || it.editor === true)
-            cmd = "setsid -f " + cmd + " >/dev/null 2>&1"
+            cmd = "if command -v systemd-run >/dev/null 2>&1; then setsid -f systemd-run --user --scope --quiet --collect -- "
+                + cmd + " >/dev/null 2>&1; else setsid -f " + cmd + " >/dev/null 2>&1; fi"
         return cmd
     }
 
