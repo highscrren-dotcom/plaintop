@@ -303,8 +303,8 @@ Item {
         font.pointSize: view.fontSize
         text: "0"
     }
-    readonly property real cellWidth: cell.advanceWidth
-    readonly property real leftColumn: (weekNumbers ? 4 : 0) * cellWidth
+    readonly property real charWidth: cell.advanceWidth
+    readonly property real leftColumn: (weekNumbers ? 4 : 0) * charWidth
 
     function dayAt(x, y) {
         const row = Math.floor(y / lineHeight)
@@ -312,7 +312,7 @@ Item {
         const inBlock = row - block * (linesPerMonth + 1)
         if (block < 0 || block >= shown || inBlock < 2 || inBlock > 7)
             return ""
-        const col = Math.floor((x - leftColumn) / (cw * cellWidth))
+        const col = Math.floor((x - leftColumn) / (cw * charWidth))
         if (col < 0 || col > 6)
             return ""
         const rows = cellMap[block]
@@ -327,9 +327,9 @@ Item {
             for (let r = 0; r < cellMap[b].length; r++)
                 for (let c = 0; c < 7; c++)
                     if (cellMap[b][r][c] === key)
-                        return Qt.rect(leftColumn + c * cw * cellWidth,
+                        return Qt.rect(leftColumn + c * cw * charWidth,
                                        (b * (linesPerMonth + 1) + 2 + r) * lineHeight,
-                                       cw * cellWidth, lineHeight)
+                                       cw * charWidth, lineHeight)
         return Qt.rect(0, 0, 0, 0)
     }
 
