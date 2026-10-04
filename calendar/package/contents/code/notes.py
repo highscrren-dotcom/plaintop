@@ -900,11 +900,20 @@ def refresh(account, lo, hi):
 
 
 # ── The document the widget reads ─────────────────────────────────────────────
+def lead_of(e):
+    """Minutes the first alarm rings before the start — what the sticker's "remind" row
+    shows for a note of yours; -1 when no alarm counts from the start."""
+    for a in e.get("alarms") or []:
+        if a and "rel" in a and not a.get("end") and a["rel"] <= 0:
+            return int(-a["rel"] // 60)
+    return -1
+
+
 def shown(e, account_id, day):
     return {"account": account_id, "uid": e.get("uid", ""), "kind": e["kind"],
             "summary": e.get("summary", ""), "description": e.get("description", ""),
             "time": e.get("time", ""), "end": e.get("end", ""), "done": bool(e.get("done")),
-            "own": is_own(e), "alarm": bool(e.get("alarms")),
+            "own": is_own(e), "alarm": bool(e.get("alarms")), "lead": lead_of(e),
             "text": own_text(e) if is_own(e) else "",
             "date": day.isoformat(), "start": e["start"]}
 
@@ -951,7 +960,7 @@ def alarm_times(e, day, opts):
     """When an entry's occurrence on `day` rings, local datetimes. A VALARM relative to
     the start of an all-day entry counts from `hour` of its day, not midnight — the hour
     a phone would use; one relative to the end counts from the end of a timed entry.
-    Without a VALARM, a timed entry rings `lead` minutes before, when asked."""
+    Without a VALARM, an account's timed entry rings `lead` minutes before, when asked."""
     h, mi = parse_hour(opts["hour"])
     if e.get("time"):
         t = dt.datetime.strptime(e["time"], "%H:%M").time()
@@ -968,7 +977,10 @@ def alarm_times(e, day, opts):
         else:
             anchor = start + dt.timedelta(minutes=e.get("minutes", 0)) if a.get("end") and e.get("time") else start
             out.append(anchor + dt.timedelta(seconds=int(a.get("rel", 0))))
-    if not e.get("alarms") and e.get("time") and opts.get("events") and opts.get("lead", -1) is not None and opts["lead"] >= 0:
+    # The accounts' timed entries without a VALARM; a note of yours says for itself —
+    # "none" in the sticker writes it without one, and it must stay silent.
+    if (not e.get("alarms") and e.get("time") and not is_own(e) and opts.get("events")
+            and opts.get("lead", -1) is not None and opts["lead"] >= 0):
         out.append(start - dt.timedelta(minutes=opts["lead"]))
     return out
 

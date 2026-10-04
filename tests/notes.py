@@ -528,6 +528,15 @@ def test_reminders():
     mine = [a for a in doc["alarms"] if a["own"]]
     ok(code == 0 and len(mine) == 1 and mine[0]["at"] == tomorrow + "T11:50" and mine[0]["text"] == "12:00 Созвон", "the note's alarm in the document: " + repr(doc["alarms"]))
     ok(doc["days"][tomorrow][0]["text"] == "12:00 Созвон" and doc["days"][tomorrow][0]["time"] == "12:00", "the day's entry carries the text and the time: " + repr(doc["days"][tomorrow][0]))
+    ok(doc["days"][tomorrow][0]["lead"] == 10, "the entry carries its lead for the sticker's remind row: " + repr(doc["days"][tomorrow][0].get("lead")))
+    # The sticker's other choices: an hour before, and no alarm at all.
+    code, doc = run("set", "local", tomorrow, base64.b64encode("12:00 Созвон".encode()).decode(), "--lead", "60")
+    ok(doc["days"][tomorrow][0]["lead"] == 60 and [a["at"] for a in doc["alarms"] if a["own"]] == [tomorrow + "T11:00"], "an hour before: " + repr(doc["days"][tomorrow][0].get("lead")))
+    code, doc = run("set", "local", tomorrow, base64.b64encode("12:00 Созвон".encode()).decode(), "--lead", "-1")
+    ok(doc["days"][tomorrow][0]["lead"] == -1 and not doc["days"][tomorrow][0]["alarm"], "no alarm: lead -1, alarm false")
+    code, doc = run("dump", "--lead", "10")
+    ok(not [a for a in doc["alarms"] if a["own"]], "a note of yours without an alarm stays silent under the settings' lead: " + repr(doc["alarms"]))
+    code, doc = run("set", "local", tomorrow, base64.b64encode("12:00 Созвон".encode()).decode(), "--lead", "10")
     key = mine[0]["key"]
     code, doc = run("ack", key)
     ok(code == 0 and not [a for a in doc["alarms"] if a["own"]], "acknowledged: gone")
