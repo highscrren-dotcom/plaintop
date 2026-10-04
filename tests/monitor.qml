@@ -295,5 +295,113 @@ Item {
                                 { id: "s3", type: "separator", enabled: true }])
             compare(texts(lines), ["x"], "no leading, doubled or trailing rule")
         }
+
+        // --- Active lines, 17 and up: the action a line carries comes from its block.
+        // Written 2026-10-04 without Qt, like the rest of this file was.
+        function test_17_lines_carry_actions_from_their_block() {
+            reset()
+            monitor.actions = true
+            const lines = show([{ id: "head", type: "header", enabled: true, params: { text: "stand", hostname: false } },
+                                { id: "cpu", type: "cpu", enabled: true,
+                                  params: { per_socket: false, model_line: false, top_processes: 0 } }])
+            compare(lines.length, 2, texts(lines))
+            verify(lines[0].action !== undefined, "the header has an action: " + JSON.stringify(lines[0]))
+            compare(lines[0].action.items[0].configure, true, "…which opens the settings")
+            compare(lines[1].action.title, "CPU")
+            compare(lines[1].action.items.length, 1)
+            verify(/systemmonitor/.test(lines[1].action.items[0].run), "the bar opens System Monitor: " + lines[1].action.items[0].run)
+            compare(lines[1].action.items[0].gui, true, "…detached, as a GUI program")
+            compare(lines[1].action.items[0].confirm, false)
+        }
+
+        function test_18_actions_off_globally_or_per_block() {
+            reset()
+            const cpu = { id: "cpu", type: "cpu", enabled: true, params: { per_socket: false, model_line: false, top_processes: 0 } }
+            monitor.actions = false
+            let lines = show([cpu])
+            verify(lines[0].action === undefined, "switched off: no action")
+            monitor.actions = true
+            lines = show([{ id: "cpu", type: "cpu", enabled: true, active: false, params: cpu.params }])
+            verify(lines[0].action === undefined, "the block opted out: no action")
+            lines = show([{ id: "t", type: "text", enabled: true, params: { text: "note", role: "fg" } }])
+            verify(lines[0].action === undefined, "a text line has nothing to do by itself")
+            lines = show([{ id: "t", type: "text", enabled: true, click: "notify-send {name}", params: { text: "note", role: "fg" } }])
+            verify(lines[0].action !== undefined, "…unless the block names a command")
+            compare(lines[0].action.items.length, 1)
+        }
+
+        function test_19_the_blocks_own_click_goes_first_with_the_row_filled_in() {
+            reset()
+            monitor.cmdOut = { u: "nginx.service|active\nsshd.service|failed" }
+            const lines = show([{ id: "u", type: "units", enabled: true, click: "systemctl status {unit} # {value}",
+                                  params: { units: ["nginx.service", "sshd.service"], user: false } }])
+            compare(lines.length, 2, texts(lines))
+            const a = lines[1].action
+            compare(a.title, "sshd.service")
+            compare(a.items.length, 6, "the custom one and five built in")
+            compare(a.items[0].run, "systemctl status sshd.service # failed", "the custom command, filled in, first")
+            compare(a.items[1].run, "systemctl status 'sshd.service'", "then the built-in status")
+            compare(a.items[1].terminal, true)
+            compare(a.items[1].confirm, false, "status runs without a question")
+            compare(a.items[2].confirm, true, "start asks first")
+            compare(a.items[4].run, "systemctl restart 'sshd.service'")
+            verify(/^journalctl -e -u 'sshd.service'$/.test(a.items[5].run), "the journal: " + a.items[5].run)
+            const user = show([{ id: "u", type: "units", enabled: true, params: { units: ["nginx.service", "sshd.service"], user: true } }])
+            compare(user[0].action.items[0].run, "systemctl --user status 'nginx.service'", "the user manager")
+            compare(user[0].action.items[4].run, "journalctl --user -e -u 'nginx.service'")
+        }
+
+        function test_20_disks_repos_and_the_power_menu() {
+            reset()
+            monitor.diskRows = [{ target: "/home", size: 100 * 1073741824, used: 50 * 1073741824, pct: 50 }]
+            let lines = show([{ id: "d", type: "disks", enabled: true, params: { mounts: ["/home"], nvme_temp: false } }])
+            compare(lines.length, 2, texts(lines))
+            compare(lines[0].action.title, "/home")
+            compare(lines[0].action.items[0].run, "xdg-open '/home'", "the first item opens the folder")
+            compare(lines[0].action.items[0].gui, true)
+            compare(lines[1].action.title, "/home", "the free/total line shares the action")
+            // Repositories: the path comes from the parameter, the script printed only its name.
+            monitor.cmdOut = { r: "plaintop|main|2|1|0\nother|notgit" }
+            lines = show([{ id: "r", type: "repos", enabled: true, params: { paths: ["~/dev/plaintop", "/tmp/other"] } }])
+            compare(lines.length, 2, texts(lines))
+            compare(lines[0].action.items[0].run, "cd \"$HOME\"'/dev/plaintop' && exec \"${SHELL:-sh}\"", "a terminal at the path, ~ left to the shell")
+            compare(lines[0].action.items[0].terminal, true)
+            compare(lines[0].action.items[2].editor, true, "the editor item carries the path alone")
+            compare(lines[0].action.items[2].run, "\"$HOME\"'/dev/plaintop'")
+            compare(lines[1].action.items.length, 2, "not a repository: open and a terminal, no git")
+            // The power menu: every step but the lock asks first.
+            lines = show([{ id: "up", type: "uptime", enabled: true }])
+            const p = lines[0].action.items
+            compare(p.length, 4)
+            compare(p[0].run, "loginctl lock-session"); compare(p[0].confirm, false)
+            compare(p[2].run, "systemctl reboot"); compare(p[2].confirm, true)
+            compare(p[3].run, "systemctl poweroff"); compare(p[3].confirm, true)
+            // The quoting helpers.
+            compare(monitor.sh("it's"), "'it'\\''s'")
+            compare(monitor.pathArg("~/dev/a b"), "\"$HOME\"'/dev/a b'")
+            compare(monitor.pathArg("/plain"), "'/plain'")
+            compare(monitor.fill("kill {pid} {x}", { pid: 42 }), "kill 42 {x}", "unknown placeholders stay")
+        }
+
+        function test_21_sound_toggles_mute_health_reboots_after_a_question() {
+            reset()
+            monitor.cmdOut = { snd: "sink|Speakers|45|1" }
+            let lines = show([{ id: "snd", type: "sound", enabled: true, params: { input: false, device: true } }])
+            compare(lines.length, 2, texts(lines))
+            compare(lines[0].action.items[0].run, "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle", "the first item toggles the mute")
+            compare(lines[0].action.items[0].confirm, false)
+            compare(lines[1].action.title, "Speakers", "the device line shares it")
+            monitor.cmdOut = { snd: "source|Mic|80|0" }
+            lines = show([{ id: "snd", type: "sound", enabled: true, params: { input: true, device: false } }])
+            compare(lines[0].action.items[0].run, "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
+            monitor.healthData = { failed: ["0", "0"], err: ["3", "1"], lines: [{ ident: "kwin_wayland", text: "oops" }], reboot: true }
+            lines = show([{ id: "h", type: "health", enabled: true, params: { units: true, errors: true, lines: 3, reboot: true } }])
+            compare(lines.length, 4, texts(lines))
+            compare(lines[0].action.items[0].run, "systemctl --failed; systemctl --user --failed")
+            compare(lines[0].action.items[0].hold, true, "a listing is held open")
+            compare(lines[1].action.items[0].run, "journalctl -p err -b -e")
+            compare(lines[2].action.items[0].run, "systemctl reboot"); compare(lines[2].action.items[0].confirm, true)
+            compare(lines[3].action.items[0].run, "journalctl -b -e -t 'kwin_wayland'", "the error line opens its program's journal")
+        }
     }
 }

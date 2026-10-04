@@ -29,6 +29,12 @@ KCM.SimpleKCM {
     property alias cfg_separatorWidth: sepWidthField.value
     property alias cfg_sparkGlyphs: sparkField.text
     property alias cfg_secondColumn: columnField.value
+    property alias cfg_actions: actionsBox.checked
+    property alias cfg_terminal: terminalField.text
+    property alias cfg_editor: editorField.text
+    property alias cfg_frame: frameField.text
+    property string cfg_colorPaper: "#141820"
+    property alias cfg_paperOpacity: paperField.value
 
 
     Kirigami.FormLayout {
@@ -111,9 +117,56 @@ KCM.SimpleKCM {
         }
 
         Label {
-            text: i18n("While clicks go through, both mouse buttons land on the desktop.\nThe widget takes the mouse only in the desktop's edit mode:\nthat is where its settings are, or ./install.sh with the clicks off switch")
+            text: i18n("While clicks go through, both buttons land on the desktop everywhere but on\nthe active lines, which keep theirs. With those off too, the widget takes the\nmouse only in the desktop's edit mode — where its settings are\n(or ./install.sh with the clicks off switch).")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
+        }
+
+        CheckBox {
+            id: actionsBox
+            Kirigami.FormData.label: i18n("Active lines:")
+            text: i18n("a click runs the line's action, the right button lists them")
+        }
+
+        Label {
+            text: i18n("A bar opens System Monitor, a disk its folder, a unit its status, a process\nasks before it is ended, the header opens these settings. The Blocks page\nswitches a block's lines off or gives them a command of your own.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
+        }
+
+        TextField {
+            id: terminalField
+            Kirigami.FormData.label: i18n("Terminal:")
+            Layout.fillWidth: true
+            placeholderText: "konsole -e"
+        }
+
+        TextField {
+            id: editorField
+            Kirigami.FormData.label: i18n("Editor:")
+            Layout.fillWidth: true
+            placeholderText: "kate"
+        }
+
+        TextField {
+            id: frameField
+            Kirigami.FormData.label: i18n("Menu frame:")
+            Layout.preferredWidth: Kirigami.Units.gridUnit * 8
+            maximumLength: 8
+            placeholderText: "┌─┐│└┘├┤"
+        }
+
+        KQuickControls.ColorButton {
+            Kirigami.FormData.label: i18nc("palette: colour of", "Menu paper:")
+            color: page.cfg_colorPaper
+            onColorChanged: page.cfg_colorPaper = color.toString()
+        }
+
+        SpinBox {
+            id: paperField
+            Kirigami.FormData.label: i18n("Paper opacity, %:")
+            from: 0
+            to: 100
         }
 
         Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Lines") }

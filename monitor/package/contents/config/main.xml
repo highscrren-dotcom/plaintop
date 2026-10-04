@@ -14,6 +14,33 @@
     <entry name="clickThrough" type="Bool">
       <default>false</default>
     </entry>
+    <!-- Active lines: a line with something to do runs it on a left click and lists its
+         actions on a right click; while clicks go through, those lines alone take the
+         mouse (a containment mask that asks the view). Off, no line takes a click. -->
+    <entry name="actions" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- The terminal the actions open: a command the rest is appended to, as
+         "konsole -e sh -c '…'". Empty means konsole. -->
+    <entry name="terminal" type="String">
+      <default>konsole -e</default>
+    </entry>
+    <!-- The editor a repository is opened in; its path is the argument. -->
+    <entry name="editor" type="String">
+      <default>kate</default>
+    </entry>
+    <!-- The menu's frame: eight characters — top-left, horizontal, top-right, vertical,
+         bottom-left, bottom-right, two junctions — the same setting as the calendar's. -->
+    <entry name="frame" type="String">
+      <default>┌─┐│└┘├┤</default>
+    </entry>
+    <!-- The menu's sheet behind the text, and how opaque it is. -->
+    <entry name="colorPaper" type="String">
+      <default>#141820</default>
+    </entry>
+    <entry name="paperOpacity" type="Int">
+      <default>94</default>
+    </entry>
     <!-- Palette, carried over from conky/plainext.conf. The line builder works in roles
          ("fg", "dim", "accent", "value") and the view maps them to these four. -->
     <entry name="colorFg" type="String">

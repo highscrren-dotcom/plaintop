@@ -58,6 +58,12 @@ last element of their path. The labels are four characters — `root`, `home`, `
 `boot` — and the bar gives up one so the percentage column stays aligned with the
 three-character labels of the other bars; a longer name is cut.
 
+Since 0.5 the lines are **active**: a left click runs what a line is about — a bar opens
+System Monitor, a disk its folder, a unit its status, a process asks before it is ended,
+the header opens the settings — and a right click lists every action in a menu framed
+with characters; the *Blocks* page switches a block's lines off or gives them a command of
+your own. Details under *Settings*.
+
 **Which blocks and in what order comes from the description** (`../schema/widget.json`):
 enable, disable, reorder, change parameters, add a block of your own — from an arbitrary
 command or from any ksystemstats sensor. It is edited on the *Blocks* page of the
@@ -106,8 +112,26 @@ qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript \
 
 **The plasmoid** keeps its settings in Plasma's store: `package/contents/config/main.xml`
 is the schema, and the dialog has two pages — *General* (font, sizes, padding, the four
-palette colours, mouse, intervals) and *Blocks*, where the header
+palette colours, mouse, the active lines, intervals) and *Blocks*, where the header
 text lives too — empty by default, so a fresh install shows only the hostname.
+
+**Active lines.** `MonitorData` attaches an `action` to a line — a title and a list of
+items, each a shell command with flags (in a terminal, held open, detached as a GUI
+program, through the editor, after a question) or the widget's own settings dialog — and
+`MonitorView` gives such a line a mouse area and a one-pixel frame under the pointer. The
+host runs the items: terminal and GUI programs detached with `setsid -f`, so they outlive
+a restart of the shell; a quick command — `kill`, `systemctl`, `wpctl` — attached, its
+stderr shown in a notice when it fails. The menu, the question and the notice are one
+`PlasmaCore.Dialog` without a background, framed with the characters from the settings
+(`frame`, eight of them, the same setting as the calendar's sticker) on a sheet of
+`colorPaper`. Settings: `actions` (the whole thing), `terminal` (`konsole -e`), `editor`
+(`kate`); per block, the fields `active` (false switches its lines off) and `click` (a
+command of your own, first in the menu, with `{name}` `{pid}` `{path}` `{unit}` `{value}`
+filled in from the row). While clicks pass through, the active lines are the one thing
+that takes the mouse — a containment mask that is a function, decision 14 in
+`../docs/DECISIONS.md`. ⚠️ Built 2026-10-04 without Qt: the line stand covers the
+actions attached (`./install.sh --check-monitor`, tests 17–21) and the click-through
+stand the function mask (test 18); the desktop run is still ahead.
 
 The process-list interval is the setting worth knowing about: the process list behind the
 top lists is the most expensive thing collected — about 3% of a core at the default 2 s,

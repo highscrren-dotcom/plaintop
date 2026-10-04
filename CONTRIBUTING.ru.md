@@ -74,7 +74,7 @@
 journalctl --user -b --since "-1min" | grep -i plaintop             # ошибки QML приходят сюда
 ./install.sh --status                                               # что установлено и что работает
 ./install.sh --pack                                                 # файлы .plasmoid для релиза → dist/
-./install.sh --check-passthrough                                    # стенд сквозных кликов: 17 тестов на скомпилированной обёртке апплета оболочки
+./install.sh --check-passthrough                                    # стенд сквозных кликов: 18 тестов на скомпилированной обёртке апплета оболочки
 ./install.sh --check-monitor                                        # стенд строк монитора: строки каждого типа блока из значений, поданных вручную
 ./install.sh --check-notes                                          # скрипт заметок календаря: iCalendar, повторения, vdir, CalDAV на поддельном сервере
 ```

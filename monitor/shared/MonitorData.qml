@@ -51,6 +51,14 @@ Item {
     // Sparklines: the glyphs the "history" parameter draws with, lowest to highest.
     property string sparkGlyphs: "▁▂▃▄▅▆▇█"
 
+    // Active lines. On, a line that has something to do carries an `action` — a title
+    // and a list of items, the first of them what a left click runs, all of them the
+    // right-click menu; the view draws such a line with a mouse area, the host runs the
+    // items. Off, no line carries one and the widget takes no clicks of its own. A block
+    // opts out with its "active" field (false); its "click" field is a command of the
+    // user's own, put first, with {name} {pid} {path} {unit} {value} filled in per row.
+    property bool actions: true
+
     // ⚠️ Translations go through a context object, not a bare i18n(): this file runs in
     // the plasmoid, where i18n() exists, and in the bare qml6 window host, where it does
     // not. The domain is the plasmoid's own, so both hosts read one catalog — see
@@ -464,7 +472,9 @@ Item {
 
     Proc.ProcessDataModel {
         id: procs
-        enabledAttributes: ["name", "usage", "memory"]
+        // "pid" is the fourth column: the process rows' actions need it. Its absence
+        // (an older libksysguard) costs only those actions.
+        enabledAttributes: ["name", "usage", "memory", "pid"]
         enabled: monitor.liveSensors && monitor.needProcesses && (!monitor.processDuty || monitor.processAwake)
     }
 
@@ -920,18 +930,154 @@ Item {
     }
 
     // Process rows: the name in the main colour, the figure as a value, as in the bar rows.
-    function topRows(model, column, count, format) {
+    // Each row's action names the process and, with a pid, can end it.
+    function topRows(model, column, count, format, block) {
         const out = []
         const n = Math.min(count, model.rowCount())
         for (let i = 0; i < n; i++) {
             const name = String(model.data(model.index(i, 0), Proc.ProcessDataModel.Value) || "")
             const v = model.data(model.index(i, column), Proc.ProcessDataModel.Value)
-            out.push({ kind: "parts", parts: [
+            const pid = Math.round(Number(model.data(model.index(i, 3), Proc.ProcessDataModel.Value)) || 0)
+            const row = { kind: "parts", parts: [
                 { text: name.slice(0, 20).padEnd(21) + "| ", role: "fg" },
                 { text: format(Number(v) || 0), role: "value" }
-            ] })
+            ] }
+            out.push(attach(row, block, pid > 0 ? name + " " + pid : name, processItems(name, pid),
+                            { name: name, pid: pid, value: Number(v) || 0 }))
         }
         return out
+    }
+
+    // ── Active lines ──────────────────────────────────────────────────────────
+    // A line's action is {title, items}; an item is {text, run, terminal, hold, gui,
+    // editor, confirm} — a shell command for the host to run: in a terminal (held open
+    // after it ends when `hold`), detached as a GUI program, as the editor's argument,
+    // or after a question — or {text, configure: true} for the widget's own settings.
+    // The host owns the terminal and editor commands; this side only knows what a row is
+    // about. Nothing is attached while `actions` is off or the block's "active" field
+    // says false; a block's "click" command, when set, becomes the first item.
+    function sh(s) {
+        return "'" + String(s).replace(/'/g, "'\\''") + "'"
+    }
+    // A path argument, quoted; a leading ~ is left to the shell as $HOME.
+    function pathArg(p) {
+        const s = String(p)
+        return s.startsWith("~") ? '"$HOME"' + sh(s.slice(1)) : sh(s)
+    }
+    function item(text, run, opts) {
+        const o = opts || {}
+        return { text: text, run: run, terminal: o.terminal === true, hold: o.hold === true,
+                 gui: o.gui === true, editor: o.editor === true, confirm: o.confirm === true }
+    }
+    // "{name}" and the like in the user's own command, from the row's values.
+    function fill(template, vars) {
+        return String(template).replace(/\{(\w+)\}/g,
+            (m, k) => (vars && vars[k] !== undefined) ? String(vars[k]) : m)
+    }
+    function attach(row, block, title, items, vars) {
+        if (!actions || !row || !block || block.active === false)
+            return row
+        const list = (items || []).slice()
+        const custom = String(block.click || "").trim()
+        if (custom.length > 0)
+            list.unshift(item(tr.i18nc("line action: the block's own command", "run %1", clipText(custom, 30)),
+                              fill(custom, vars)))
+        if (list.length > 0)
+            row.action = { title: String(title || ""), items: list }
+        return row
+    }
+    function monitorItem() {
+        return item(tr.i18nc("line action: open Plasma's System Monitor", "System Monitor"),
+                    "plasma-systemmonitor", { gui: true })
+    }
+    function infoItem() {
+        return item(tr.i18nc("line action: open Plasma's Info Center", "system information"), "kinfocenter", { gui: true })
+    }
+    function settingsItem(kcm, text) {
+        return item(text, "kcmshell6 " + kcm, { gui: true })
+    }
+    function clockItem() {
+        return settingsItem("kcm_clock", tr.i18nc("line action", "date and time settings"))
+    }
+    function terminalAt(path) {
+        return item(tr.i18nc("line action", "open in a terminal"),
+                    "cd " + pathArg(path) + ' && exec "${SHELL:-sh}"', { terminal: true })
+    }
+    function openItem(path) {
+        return item(tr.i18nc("line action", "open in the file manager"), "xdg-open " + pathArg(path), { gui: true })
+    }
+    function diskItems(target) {
+        return [openItem(target), terminalAt(target), monitorItem()]
+    }
+    function powerItems() {
+        return [item(tr.i18nc("line action", "lock the screen"), "loginctl lock-session"),
+                item(tr.i18nc("line action", "log out"),
+                     "qdbus6 org.kde.Shutdown /Shutdown logout 2>/dev/null || qdbus org.kde.Shutdown /Shutdown logout",
+                     { confirm: true }),
+                item(tr.i18nc("line action", "reboot"), "systemctl reboot", { confirm: true }),
+                item(tr.i18nc("line action", "power off"), "systemctl poweroff", { confirm: true })]
+    }
+    function processItems(name, pid) {
+        const out = []
+        if (pid > 0) {
+            out.push(item(tr.i18nc("line action: send SIGTERM to the process", "terminate %1", name),
+                          "kill -TERM " + pid, { confirm: true }))
+            out.push(item(tr.i18nc("line action: send SIGKILL to the process", "kill %1", name),
+                          "kill -KILL " + pid, { confirm: true }))
+        }
+        out.push(monitorItem())
+        return out
+    }
+    function updateItem(cmd) {
+        return item(tr.i18nc("line action: the package manager's update in a terminal", "update in a terminal"),
+                    cmd, { terminal: true, hold: true })
+    }
+    function serviceItems(label) {
+        switch (label) {
+        case "docker":
+        case "podman":
+            return [item(tr.i18nc("line action: list the containers in a terminal", "containers in a terminal"),
+                         label + " ps -a", { terminal: true, hold: true })]
+        case "ollama":
+            return [item(tr.i18nc("line action: list ollama's models in a terminal", "models in a terminal"),
+                         "ollama ps; ollama list", { terminal: true, hold: true })]
+        case "libvirt":
+            return [item(tr.i18nc("line action: open virt-manager", "Virtual Machine Manager"), "virt-manager", { gui: true })]
+        case "pacman": return [updateItem("sudo pacman -Syu")]
+        case "apt": return [updateItem("sudo apt update && sudo apt upgrade")]
+        case "dnf": return [updateItem("sudo dnf upgrade")]
+        case "zypper": return [updateItem("sudo zypper update")]
+        case "flatpak": return [updateItem("flatpak update")]
+        }
+        return []
+    }
+    function unitItems(unit, user) {
+        const ctl = "systemctl " + (user ? "--user " : "")
+        return [item(tr.i18nc("line action: systemctl status in a terminal", "status"), ctl + "status " + sh(unit), { terminal: true }),
+                item(tr.i18nc("line action: systemctl start", "start"), ctl + "start " + sh(unit), { confirm: true }),
+                item(tr.i18nc("line action: systemctl stop", "stop"), ctl + "stop " + sh(unit), { confirm: true }),
+                item(tr.i18nc("line action: systemctl restart", "restart"), ctl + "restart " + sh(unit), { confirm: true }),
+                item(tr.i18nc("line action: the unit's journal in a terminal", "journal"),
+                     "journalctl " + (user ? "--user " : "") + "-e -u " + sh(unit), { terminal: true })]
+    }
+    function soundItems(input, muted) {
+        const node = input ? "@DEFAULT_AUDIO_SOURCE@" : "@DEFAULT_AUDIO_SINK@"
+        return [item(muted ? tr.i18nc("line action", "unmute") : tr.i18nc("line action", "mute"),
+                     "wpctl set-mute " + node + " toggle"),
+                settingsItem("kcm_pulseaudio", tr.i18nc("line action", "sound settings"))]
+    }
+    function repoItems(path) {
+        return [terminalAt(path), openItem(path),
+                item(tr.i18nc("line action", "open in the editor"), pathArg(path), { editor: true }),
+                item(tr.i18nc("line action: git pull in a terminal", "git pull"),
+                     "cd " + pathArg(path) + " && git pull", { terminal: true, hold: true })]
+    }
+    function journalItem(ident) {
+        return ident.length > 0
+            ? item(tr.i18nc("line action: this program's journal in a terminal", "journal of %1", ident),
+                   "journalctl -b -e -t " + sh(ident), { terminal: true })
+            : item(tr.i18nc("line action: the journal's errors in a terminal", "errors in a terminal"),
+                   "journalctl -p err -b -e", { terminal: true })
     }
 
     // ── Building lines from the description ───────────────────────────────────
@@ -1029,7 +1175,9 @@ Item {
                 const parts = [String(p.text || ""), String(host || "")]
                 const head = parts.filter(s => s.length > 0).join("\\")
                 if (head.length > 0)
-                    out.push(line(head, "accent"))
+                    out.push(attach(line(head, "accent"), b, head,
+                                    [{ text: tr.i18nc("line action: open the widget's settings dialog", "settings…"),
+                                       configure: true }], {}))
                 break
             }
             case "clock": {
@@ -1042,7 +1190,7 @@ Item {
                 let small = p.seconds === false ? "" : Qt.formatTime(d, ":ss")
                 if (twelve)
                     small += " " + Qt.formatTime(d, "AP")
-                out.push({ kind: "clock", big: big, small: small })
+                out.push(attach({ kind: "clock", big: big, small: small }, b, big, [clockItem()], {}))
                 break
             }
             case "date": {
@@ -1051,12 +1199,15 @@ Item {
                 // The names follow the locale; the order is the translation's to set.
                 const d = new Date().toLocaleDateString(Qt.locale(),
                     tr.i18nc("date line: a Qt date pattern, no year", "dddd, MMMM d"))
-                out.push(line(d.charAt(0).toUpperCase() + d.slice(1), "value"))
+                const text = d.charAt(0).toUpperCase() + d.slice(1)
+                out.push(attach(line(text, "value"), b, text, [clockItem()], {}))
                 break
             }
-            case "os":
-                out.push(line((sval("os/system/name") || "") + "  " + (sval("os/kernel/version") || ""), "dim"))
+            case "os": {
+                const name = String(sval("os/system/name") || "")
+                out.push(attach(line(name + "  " + (sval("os/kernel/version") || ""), "dim"), b, name, [infoItem()], {}))
                 break
+            }
 
             case "separator": {
                 // Blocks that hide themselves would leave two of these in a row, or one at
@@ -1072,12 +1223,14 @@ Item {
             case "cpu": {
                 const usage = num("cpu/all/usage", 0)
                 const warn = Number(p.warn) || 0
-                out.push(warnLine(barRow("CPU", usage, 3, sparkTail(b.id, p, 100)), usage, warn))
+                out.push(attach(warnLine(barRow("CPU", usage, 3, sparkTail(b.id, p, 100)), usage, warn),
+                                b, "CPU", [monitorItem()], { value: Math.round(usage) }))
                 // One node is the whole machine: its line would only repeat the one above.
                 if (p.per_socket !== false && nodeCpus.length > 1) {
                     for (let n = 0; n < nodeCpus.length; n++) {
                         const u = nodeUsage(n)
-                        out.push(warnLine(barRow("S" + n, u, 3, "   node" + n), u, warn))
+                        out.push(attach(warnLine(barRow("S" + n, u, 3, "   node" + n), u, warn),
+                                        b, "S" + n, [monitorItem()], { value: Math.round(u) }))
                     }
                 }
                 if (p.model_line !== false) {
@@ -1096,13 +1249,14 @@ Item {
                     }
                     const ghz = p.frequency === false ? 0 : avgFrequency()
                     const hot = temps.length > 0 ? Math.max(...temps) : 0
-                    out.push(warnLine(name + "  " + cpuCores + "c/" + cpuThreads + "t  "
-                                      + (ghz > 0 ? comma(ghz, 1) + " GHz  " : "")
-                                      + (temps.length > 0 ? temps.join("/") + "°C  " : "")
-                                      + (rpm.length > 0 ? rpm.join("/") + " rpm" : ""),
-                                      hot, Number(p.warn_temp) || 0, "dim"))
+                    out.push(attach(warnLine(name + "  " + cpuCores + "c/" + cpuThreads + "t  "
+                                             + (ghz > 0 ? comma(ghz, 1) + " GHz  " : "")
+                                             + (temps.length > 0 ? temps.join("/") + "°C  " : "")
+                                             + (rpm.length > 0 ? rpm.join("/") + " rpm" : ""),
+                                             hot, Number(p.warn_temp) || 0, "dim"),
+                                    b, name, [monitorItem()], { value: hot }))
                 }
-                for (const r of topRows(byCpu, 1, p.top_processes || 0, v => comma(v, 1) + "%"))
+                for (const r of topRows(byCpu, 1, p.top_processes || 0, v => comma(v, 1) + "%", b))
                     out.push(r)
                 break
             }
@@ -1116,9 +1270,10 @@ Item {
                 // tasks as cores.
                 const warn = Number(p.warn) || 0
                 const share = coreCount > 0 ? v[0] * 100 / coreCount : 0
-                out.push(warnLine(tr.i18nc("load average over 1, 5 and 15 minutes", "load %1  %2  %3",
-                                           comma(v[0], 2), comma(v[1], 2), comma(v[2], 2)),
-                                  share, warn, "dim"))
+                out.push(attach(warnLine(tr.i18nc("load average over 1, 5 and 15 minutes", "load %1  %2  %3",
+                                                  comma(v[0], 2), comma(v[1], 2), comma(v[2], 2)),
+                                         share, warn, "dim"),
+                                b, "load", [monitorItem()], { value: comma(v[0], 2) }))
                 break
             }
 
@@ -1128,25 +1283,29 @@ Item {
                 const psi = num("pressure/cpu/some10Sec", 0)
                 const mem = num("pressure/memory/some10Sec", 0)
                 const io = num("pressure/io/some10Sec", 0)
-                out.push(warnLine(barRow("PSI", psi, 3, sparkTail(b.id, p, 100)), psi, warn))
-                out.push(warnLine(barRow("mem", mem), mem, warn))
-                out.push(warnLine(barRow("io ", io), io, warn))
+                out.push(attach(warnLine(barRow("PSI", psi, 3, sparkTail(b.id, p, 100)), psi, warn),
+                                b, "PSI", [monitorItem()], { value: Math.round(psi) }))
+                out.push(attach(warnLine(barRow("mem", mem), mem, warn), b, "mem", [monitorItem()], { value: Math.round(mem) }))
+                out.push(attach(warnLine(barRow("io ", io), io, warn), b, "io", [monitorItem()], { value: Math.round(io) }))
                 // Full stalls are usually well under 1%, hence one decimal.
                 if (p.full === true)
-                    out.push(line(tr.i18nc("pressure: time every task stalled, memory and I/O",
-                                           "full  mem %1  io %2",
-                                           comma(num("pressure/memory/full10Sec", 0), 1) + "%",
-                                           comma(num("pressure/io/full10Sec", 0), 1) + "%"), "dim"))
+                    out.push(attach(line(tr.i18nc("pressure: time every task stalled, memory and I/O",
+                                                  "full  mem %1  io %2",
+                                                  comma(num("pressure/memory/full10Sec", 0), 1) + "%",
+                                                  comma(num("pressure/io/full10Sec", 0), 1) + "%"), "dim"),
+                                    b, "PSI", [monitorItem()], {}))
                 break
             }
 
             case "memory": {
                 const used = num("memory/physical/usedPercent", 0)
-                out.push(warnLine(barRow("RAM", used, 3, sparkTail(b.id, p, 100)), used, Number(p.warn) || 0))
+                out.push(attach(warnLine(barRow("RAM", used, 3, sparkTail(b.id, p, 100)), used, Number(p.warn) || 0),
+                                b, "RAM", [monitorItem()], { value: Math.round(used) }))
                 if (p.totals !== false)
-                    out.push(line(gib(num("memory/physical/used", 0)) + " / "
-                                  + gib(num("memory/physical/total", 0)), "dim"))
-                for (const r of topRows(byMem, 2, p.top_processes || 0, v => gib(v * 1024)))
+                    out.push(attach(line(gib(num("memory/physical/used", 0)) + " / "
+                                         + gib(num("memory/physical/total", 0)), "dim"),
+                                    b, "RAM", [monitorItem()], { value: Math.round(used) }))
+                for (const r of topRows(byMem, 2, p.top_processes || 0, v => gib(v * 1024), b))
                     out.push(r)
                 break
             }
@@ -1156,9 +1315,11 @@ Item {
                 const total = num("memory/swap/total", 0)
                 if (!(total > 0)) break
                 const used = swapPercent()
-                out.push(warnLine(barRow("SWP", used, 3, sparkTail(b.id, p, 100)), used, Number(p.warn) || 0))
+                out.push(attach(warnLine(barRow("SWP", used, 3, sparkTail(b.id, p, 100)), used, Number(p.warn) || 0),
+                                b, "SWP", [monitorItem()], { value: Math.round(used) }))
                 if (p.totals !== false)
-                    out.push(line(gib(num("memory/swap/used", 0)) + " / " + gib(total), "dim"))
+                    out.push(attach(line(gib(num("memory/swap/used", 0)) + " / " + gib(total), "dim"),
+                                    b, "SWP", [monitorItem()], { value: Math.round(used) }))
                 break
             }
 
@@ -1168,15 +1329,18 @@ Item {
                 for (let i = 0; i < gpus.length; i++) {
                     const id = "gpu/" + gpus[i] + "/"
                     const usage = num(id + "usage", 0)
-                    out.push(warnLine(barRow(gpus.length > 1 ? "GP" + i : "GPU", usage, 3,
-                                             sparkTail(b.id + ":" + gpus[i], p, 100)), usage, warn))
+                    const label = gpus.length > 1 ? "GP" + i : "GPU"
+                    out.push(attach(warnLine(barRow(label, usage, 3,
+                                                    sparkTail(b.id + ":" + gpus[i], p, 100)), usage, warn),
+                                    b, label, [monitorItem()], { name: gpus[i], value: Math.round(usage) }))
                     if (p.details !== false) {
                         const t = Math.round(num(id + "temperature", 0))
                         const watts = num(id + "power", 0) || num(id + "power1", 0)
-                        out.push(warnLine("VRAM " + comma(num(id + "usedVram", 0) / 1073741824, 1)
-                                          + "/" + comma(num(id + "totalVram", 0) / 1073741824, 1)
-                                          + " GB  temp " + t + "°C  pwr " + Math.round(watts) + "W",
-                                          t, warnTemp, "dim"))
+                        out.push(attach(warnLine("VRAM " + comma(num(id + "usedVram", 0) / 1073741824, 1)
+                                                 + "/" + comma(num(id + "totalVram", 0) / 1073741824, 1)
+                                                 + " GB  temp " + t + "°C  pwr " + Math.round(watts) + "W",
+                                                 t, warnTemp, "dim"),
+                                        b, label, [monitorItem()], { name: gpus[i], value: t }))
                     }
                 }
                 break
@@ -1187,13 +1351,15 @@ Item {
                     // The root mount is labelled "root", not "/": the bar beside it is made of slashes too,
                     // and "/   //" read as one thing. Other mounts keep their last path element.
                     const name = d.target === "/" ? "root" : d.target.split("/").pop()
-                    out.push(warnLine(barRow(name, d.pct, 4), d.pct, Number(p.warn) || 0))
+                    const vars = { name: name, path: d.target, value: d.pct }
+                    out.push(attach(warnLine(barRow(name, d.pct, 4), d.pct, Number(p.warn) || 0),
+                                    b, d.target, diskItems(d.target), vars))
                     let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
                     if (d.target === "/" && p.nvme_temp !== false) {
                         const t = nvmeSensor.length > 0 ? Math.round(num(nvmeSensor, 0)) : 0
                         if (t > 0) note += "  nvme " + t + "°C"
                     }
-                    out.push(line(note, "dim"))
+                    out.push(attach(line(note, "dim"), b, d.target, diskItems(d.target), vars))
                 }
                 // Configured but not mounted: say so instead of staying silent.
                 for (const m of (p.mounts || [])) {
@@ -1205,17 +1371,24 @@ Item {
                 break
             }
 
-            case "uptime":
-                out.push(line(tr.i18nc("uptime line", "uptime %1",
-                                       human(num("os/system/uptime", 0)))))
+            case "uptime": {
+                // The session's own line: the power menu lives here, every step but the
+                // lock behind a question.
+                const text = tr.i18nc("uptime line", "uptime %1", human(num("os/system/uptime", 0)))
+                out.push(attach(line(text), b, text, powerItems(), {}))
                 break
+            }
 
             case "network": {
                 // netIface already honours p.interface and falls back to discovery.
                 const iface = netIface
-                out.push(line(iface + "  Dl " + speed(num("network/" + iface + "/download", 0))
-                              + "  Ul " + speed(num("network/" + iface + "/upload", 0))
-                              + sparkTail(b.id, p, 0), "dim"))
+                const netItems = [settingsItem("kcm_networkmanagement", tr.i18nc("line action", "network settings")),
+                                  item(tr.i18nc("line action: ip addr in a terminal", "addresses in a terminal"),
+                                       "ip -c addr", { terminal: true, hold: true })]
+                out.push(attach(line(iface + "  Dl " + speed(num("network/" + iface + "/download", 0))
+                                     + "  Ul " + speed(num("network/" + iface + "/upload", 0))
+                                     + sparkTail(b.id, p, 0), "dim"),
+                                b, iface, netItems, { name: iface }))
                 // The second line: the address, the totals since boot, the Wi-Fi signal —
                 // each only when asked for and when the interface reports it.
                 const extra = []
@@ -1231,15 +1404,16 @@ Item {
                     extra.push(tr.i18nc("network: Wi-Fi signal strength", "signal %1",
                                         Math.round(num("network/" + iface + "/signal", 0)) + "%"))
                 if (extra.length > 0)
-                    out.push(line(clip(extra.join("  ")), "dim"))
+                    out.push(attach(line(clip(extra.join("  ")), "dim"), b, iface, netItems, { name: iface }))
                 break
             }
 
             case "diskio": {
                 if (diskReadId.length === 0) break
-                out.push(line(tr.i18nc("disk I/O: read and write rates", "I/O  R %1  W %2",
-                                       speed(num(diskReadId, 0)), speed(num(diskWriteId, 0)))
-                              + sparkTail(b.id, p, 0), "dim"))
+                out.push(attach(line(tr.i18nc("disk I/O: read and write rates", "I/O  R %1  W %2",
+                                              speed(num(diskReadId, 0)), speed(num(diskWriteId, 0)))
+                                     + sparkTail(b.id, p, 0), "dim"),
+                                b, "I/O", [monitorItem()], { name: diskReadId.split("/")[1] || "" }))
                 break
             }
 
@@ -1250,14 +1424,16 @@ Item {
                     if (id.length === 0 || !sensorReady(id)) continue
                     const t = num(id, 0)
                     const label = tempLabel(e) || names[id] || id.split("/").pop()
-                    out.push(kvLine(label, Math.round(t) + "°C", (warn > 0 && t >= warn) ? "accent" : "fg"))
+                    out.push(attach(kvLine(label, Math.round(t) + "°C", (warn > 0 && t >= warn) ? "accent" : "fg"),
+                                    b, label, [monitorItem()], { name: label, value: Math.round(t) }))
                 }
                 break
             }
 
             case "text": {
+                // Only the block's own "click" command makes a text line active.
                 const t = String(p.text || "")
-                if (t.length > 0) out.push(line(clip(t), p.role || "fg"))
+                if (t.length > 0) out.push(attach(line(clip(t), p.role || "fg"), b, t, [], {}))
                 break
             }
 
@@ -1277,40 +1453,56 @@ Item {
                     const id = "power/" + real[i] + "/"
                     const percent = num(id + "chargePercentage", 0)
                     const low = Number(p.warn_low) || 0
-                    const batRow = barRow(real.length > 1 ? "BT" + i : "BAT", percent)
-                    out.push((low > 0 && percent <= low) ? tint(batRow, "accent") : batRow)
-                    out.push(line(batteryText(percent, num(id + "chargeRate", 0),
-                                              num(id + "charge", 0), num(id + "capacity", 0),
-                                              num(id + "health", -1)), "dim"))
+                    const label = real.length > 1 ? "BT" + i : "BAT"
+                    const energy = [settingsItem("kcm_powerdevilprofilesconfig", tr.i18nc("line action", "energy settings"))]
+                    const batRow = barRow(label, percent)
+                    out.push(attach((low > 0 && percent <= low) ? tint(batRow, "accent") : batRow,
+                                    b, label, energy, { value: Math.round(percent) }))
+                    out.push(attach(line(batteryText(percent, num(id + "chargeRate", 0),
+                                                     num(id + "charge", 0), num(id + "capacity", 0),
+                                                     num(id + "health", -1)), "dim"),
+                                    b, label, energy, { value: Math.round(percent) }))
                 }
                 break
             }
 
             case "services":
-                for (const s of serviceRows) out.push(kvLine(s.label, serviceText(s)))
+                for (const s of serviceRows)
+                    out.push(attach(kvLine(s.label, serviceText(s)), b, s.label, serviceItems(s.label), { name: s.label }))
                 break
 
             case "health": {
                 const h = healthData
                 if (p.units !== false && h.failed) {
                     const zero = h.failed[0] === "0" && h.failed[1] === "0"
-                    out.push(kvLine(tr.i18nc("health: failed systemd units", "failed units"),
-                                    zero ? "0" : tr.i18nc("health: a count for the system and one for the user session",
-                                                          "%1 system, %2 user", h.failed[0], h.failed[1])))
+                    const title = tr.i18nc("health: failed systemd units", "failed units")
+                    out.push(attach(kvLine(title,
+                                           zero ? "0" : tr.i18nc("health: a count for the system and one for the user session",
+                                                                 "%1 system, %2 user", h.failed[0], h.failed[1])),
+                                    b, title,
+                                    [item(tr.i18nc("line action: systemctl --failed in a terminal", "failed units in a terminal"),
+                                          "systemctl --failed; systemctl --user --failed", { terminal: true, hold: true })],
+                                    { value: h.failed[0] }))
                 }
                 if (p.errors !== false && h.err) {
-                    out.push(kvLine(tr.i18nc("health: journal entries of priority error or worse", "errors since boot"),
-                                    h.err[0] === "noaccess"
-                                        ? tr.i18nc("health: the system journal cannot be read by this user", "no access")
-                                        : tr.i18nc("health: a count for the system and one for the user session",
-                                                   "%1 system, %2 user", h.err[0], h.err[1] || "0")))
+                    const title = tr.i18nc("health: journal entries of priority error or worse", "errors since boot")
+                    out.push(attach(kvLine(title,
+                                           h.err[0] === "noaccess"
+                                               ? tr.i18nc("health: the system journal cannot be read by this user", "no access")
+                                               : tr.i18nc("health: a count for the system and one for the user session",
+                                                          "%1 system, %2 user", h.err[0], h.err[1] || "0")),
+                                    b, title, [journalItem("")], { value: h.err[0] }))
                 }
-                if (p.reboot !== false && h.reboot)
-                    out.push(kvLine(tr.i18nc("health: a kernel newer than the running one is installed", "reboot"),
-                                    tr.i18nc("health: a reboot is pending", "pending"), "accent"))
+                if (p.reboot !== false && h.reboot) {
+                    const title = tr.i18nc("health: a kernel newer than the running one is installed", "reboot")
+                    out.push(attach(kvLine(title, tr.i18nc("health: a reboot is pending", "pending"), "accent"),
+                                    b, title, [item(tr.i18nc("line action", "reboot now"), "systemctl reboot", { confirm: true })], {}))
+                }
                 const n = p.lines === undefined ? 3 : Math.max(0, Number(p.lines) || 0)
                 for (const l of (h.lines || []).slice(0, n))
-                    out.push(line(clip((l.ident ? l.ident + "  " : "") + l.text), "dim"))
+                    out.push(attach(line(clip((l.ident ? l.ident + "  " : "") + l.text), "dim"),
+                                    b, l.ident || tr.i18nc("line action: menu title for a journal line", "journal"),
+                                    [journalItem(l.ident || "")], { name: l.ident || "" }))
                 break
             }
 
@@ -1322,8 +1514,9 @@ Item {
                     const f = row.split("|")
                     if (f.length < 2) continue
                     const state = f[1].trim()
-                    out.push(kvLine(f[0].replace(/\.service$/, "").slice(0, 20), unitState(state),
-                                    state === "failed" ? "accent" : (state === "active" ? "fg" : "dim")))
+                    out.push(attach(kvLine(f[0].replace(/\.service$/, "").slice(0, 20), unitState(state),
+                                           state === "failed" ? "accent" : (state === "active" ? "fg" : "dim")),
+                                    b, f[0], unitItems(f[0], p.user === true), { unit: f[0], name: f[0], value: state }))
                 }
                 break
             }
@@ -1338,8 +1531,10 @@ Item {
                     if (f.length < 3) continue
                     const percent = Number(f[1]) || 0
                     const note = f[2] === "charging" ? "  " + tr.i18nc("peripheral battery: charging", "charging") : ""
-                    out.push(kvLine(f[0].slice(0, 20), percent + "%" + note,
-                                    (low > 0 && percent <= low) ? "accent" : "fg"))
+                    out.push(attach(kvLine(f[0].slice(0, 20), percent + "%" + note,
+                                           (low > 0 && percent <= low) ? "accent" : "fg"),
+                                    b, f[0], [settingsItem("kcm_bluetooth", tr.i18nc("line action", "Bluetooth settings"))],
+                                    { name: f[0], value: percent }))
                 }
                 break
             }
@@ -1354,11 +1549,13 @@ Item {
                     if (f.length < 4) continue
                     const vol = Number(f[2]) || 0
                     const muted = f[3] === "1"
-                    const volRow = barRow(f[0] === "source" ? "MIC" : "VOL", vol, 3,
+                    const input = f[0] === "source"
+                    const volRow = barRow(input ? "MIC" : "VOL", vol, 3,
                                           muted ? "  " + tr.i18nc("sound: the device is muted", "muted") : "")
-                    out.push(muted ? tint(volRow, "dim") : volRow)
+                    const vars = { name: f[1], value: vol }
+                    out.push(attach(muted ? tint(volRow, "dim") : volRow, b, f[1], soundItems(input, muted), vars))
                     if (p.device !== false && f[1].length > 0)
-                        out.push(line(clip(f[1]), "dim"))
+                        out.push(attach(line(clip(f[1]), "dim"), b, f[1], soundItems(input, muted), vars))
                 }
                 break
             }
@@ -1367,12 +1564,19 @@ Item {
                 // "name|branch|dirty|ahead|behind" per path; a dirty tree in the accent colour.
                 const text = cmdOut[b.id]
                 if (text === undefined) break
-                for (const row of text.split("\n")) {
-                    const f = row.split("|")
+                // One line per path, in the order of the parameter: the path itself is
+                // what the actions need, and the script prints only its last element.
+                const rows = text.split("\n")
+                for (let ri = 0; ri < rows.length; ri++) {
+                    const f = rows[ri].split("|")
                     if (f.length < 2) continue
+                    const path = String((p.paths || [])[ri] || "")
+                    const items = path.length > 0 ? repoItems(path) : []
                     if (f[1] === "notgit") {
-                        out.push(kvLine(f[0].slice(0, 20),
-                                        tr.i18nc("repos: the path is not a git repository", "not a repository"), "dim"))
+                        out.push(attach(kvLine(f[0].slice(0, 20),
+                                               tr.i18nc("repos: the path is not a git repository", "not a repository"), "dim"),
+                                        b, f[0], path.length > 0 ? [openItem(path), terminalAt(path)] : [],
+                                        { name: f[0], path: path }))
                         continue
                     }
                     const dirty = Number(f[2]) || 0, ahead = Number(f[3]) || 0, behind = Number(f[4]) || 0
@@ -1380,7 +1584,8 @@ Item {
                     if (dirty > 0) v += "  ±" + dirty
                     if (ahead > 0) v += "  ↑" + ahead
                     if (behind > 0) v += "  ↓" + behind
-                    out.push(kvLine(f[0].slice(0, 20), v, dirty > 0 ? "accent" : "fg"))
+                    out.push(attach(kvLine(f[0].slice(0, 20), v, dirty > 0 ? "accent" : "fg"),
+                                    b, f[0], items, { name: f[0], path: path, value: f[1] }))
                 }
                 break
             }
@@ -1388,7 +1593,12 @@ Item {
             case "command": {
                 const text = cmdOut[b.id]
                 const rows = (text === undefined ? ["…"] : text.split("\n")).slice(0, p.lines || 1)
-                for (const r of rows) out.push(kvLine(p.label || b.id, r))
+                const label = p.label || b.id
+                const items = String(p.command || "").length > 0
+                    ? [item(tr.i18nc("line action: the block's command, in a terminal", "run in a terminal"),
+                            p.command, { terminal: true, hold: true })]
+                    : []
+                for (const r of rows) out.push(attach(kvLine(label, r), b, label, items, { name: label, value: r }))
                 break
             }
 
@@ -1396,21 +1606,25 @@ Item {
                 const v = num(p.id, 0)
                 const label = p.label || "SEN"
                 const warn = Number(p.warn) || 0
+                const vars = { name: p.id || "", value: comma(v, p.digits || 0) }
                 if (p.bar !== false)
-                    out.push(warnLine(barRow(label, v, 3, (p.suffix || "") + sparkTail(b.id, p, 100)), v, warn))
+                    out.push(attach(warnLine(barRow(label, v, 3, (p.suffix || "") + sparkTail(b.id, p, 100)), v, warn),
+                                    b, label, [monitorItem()], vars))
                 else
-                    out.push(kvLine(label, comma(v, p.digits || 0) + (p.suffix || "") + sparkTail(b.id, p, 0),
-                                    (warn > 0 && v >= warn) ? "accent" : "fg"))
+                    out.push(attach(kvLine(label, comma(v, p.digits || 0) + (p.suffix || "") + sparkTail(b.id, p, 0),
+                                           (warn > 0 && v >= warn) ? "accent" : "fg"),
+                                    b, label, [monitorItem()], vars))
                 break
             }
 
             case "passport": {
-                if (cpuModel) out.push(line("CPU | " + (cpuSockets > 1 ? cpuSockets + "x " : "") + cpuModel, "dim"))
+                if (cpuModel) out.push(attach(line("CPU | " + (cpuSockets > 1 ? cpuSockets + "x " : "") + cpuModel, "dim"),
+                                              b, cpuModel, [infoItem()], { name: cpuModel }))
                 for (const g of gpus) {
                     const gpu = sval("gpu/" + g + "/name")
-                    if (gpu) out.push(line("GPU | " + gpu, "dim"))
+                    if (gpu) out.push(attach(line("GPU | " + gpu, "dim"), b, String(gpu), [infoItem()], { name: gpu }))
                 }
-                if (boardLine) out.push(line("MBD | " + boardLine, "dim"))
+                if (boardLine) out.push(attach(line("MBD | " + boardLine, "dim"), b, boardLine, [infoItem()], { name: boardLine }))
                 break
             }
             }

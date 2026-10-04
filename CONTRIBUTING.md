@@ -73,7 +73,7 @@ copies of the shared QML (edit `monitor/shared/`, `spectrum/shared/`, `player/sh
 journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors land here
 ./install.sh --status                                               # what is installed and running
 ./install.sh --pack                                                 # .plasmoid files for a release → dist/
-./install.sh --check-passthrough                                    # the click-through stand: 17 tests against the shell's compiled applet wrapper
+./install.sh --check-passthrough                                    # the click-through stand: 18 tests against the shell's compiled applet wrapper
 ./install.sh --check-monitor                                        # the monitor's line stand: every block type's lines from values pushed in by hand
 ./install.sh --check-notes                                          # the calendar's notes script: iCalendar, recurrence, the vdir, CalDAV against a fake server
 ```

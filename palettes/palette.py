@@ -25,7 +25,7 @@ REPO = HERE.parent
 # The keys a palette may set. Checked against main.xml before anything is written:
 # writeConfig takes any name, and a misspelt key would sit in the config doing nothing.
 KEYS = {
-    "org.s1dd1.plaintop": ("monitor/package", ["colorFg", "colorAccent", "colorDim", "colorValue"]),
+    "org.s1dd1.plaintop": ("monitor/package", ["colorFg", "colorAccent", "colorDim", "colorValue", "colorPaper"]),
     "org.s1dd1.plainplayer": ("player/package", ["colorFg", "colorAccent", "colorDim"]),
     "org.s1dd1.plainweather": ("weather/package", ["colorFg", "colorAccent", "colorDim"]),
     "org.s1dd1.plainspectrum": ("spectrum/package", ["color", "colorHigh", "opacityPercent",

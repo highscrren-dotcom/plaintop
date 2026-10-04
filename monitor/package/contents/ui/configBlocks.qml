@@ -383,6 +383,24 @@ KCM.SimpleKCM {
                 currentIndex: (page.selected >= 0 && Number(page.blocks[page.selected].column) === 2) ? 1 : 0
                 onActivated: page.setField("column", currentIndex === 1 ? 2 : 1)
             }
+
+            // The block's lines as active lines: off, they take no clicks; a command of
+            // the user's own goes first in the menu and runs on a left click, with the
+            // row's values filled in.
+            CheckBox {
+                Kirigami.FormData.label: i18n("Active:")
+                text: i18n("the block's lines take clicks")
+                checked: page.selected >= 0 ? page.blocks[page.selected].active !== false : true
+                onToggled: page.setField("active", checked)
+            }
+
+            TextField {
+                Kirigami.FormData.label: i18n("Click:")
+                Layout.fillWidth: true
+                text: page.selected >= 0 ? String(page.blocks[page.selected].click || "") : ""
+                placeholderText: i18nc("placeholder for the block's own click command", "a command of your own; {name} {pid} {path} {unit} {value} are filled in")
+                onEditingFinished: page.setField("click", text)
+            }
         }
 
         Kirigami.FormLayout {

@@ -614,3 +614,66 @@ network failures: `· offline` with the backoff of decision 10.
 broken parser — then that source is fixed or dropped, and the others keep working: the
 abstraction is there so that dropping one is deleting an object. And what decision 10 says:
 if Plasma sandboxes network access, a relay, and the sources move into it as they are.
+
+## 14. Active lines in the monitor: the containment mask is a function, not a rectangle (2026-10-04)
+
+**Decision:** the monitor's lines are active by default. A line that has something to do
+carries an `action` — a title and items, each a shell command with flags (terminal, held
+open, detached GUI program, editor, a question first) or the widget's settings dialog —
+attached by `MonitorData` per block type: bars open System Monitor; a disk opens its folder
+or a terminal there; a unit shows its status, starts, stops, restarts or opens its journal;
+a process is terminated or killed after a question; the updates line runs the package
+manager; the sound line toggles mute; a repository opens a terminal, the file manager, the
+editor or pulls; the uptime line locks, logs out, reboots or powers off; the header opens
+the settings. A left click runs the first item, a right click opens the menu — the calendar
+sticker's kind of window: `PlasmaCore.Dialog`, no background, a frame of characters, the
+widget's font and palette. The host runs the items (`setsid -f` for programs that must
+outlive the shell, attached for quick commands, whose stderr shows in a notice). Per
+block, the fields `active` and `click` (a command of the user's own, first in the menu, with
+`{name}` `{pid}` `{path}` `{unit}` `{value}` filled in); on *General*, `actions`, `terminal`,
+`editor`, the menu's `frame`, `colorPaper` and `paperOpacity`.
+
+**The mask.** While clicks pass through, the active lines must still take the mouse. The
+player's recipe (decision 11) keeps the wrapper enabled and gives it a `containmentMask`
+over the controls row — one rectangle. The monitor's active lines are scattered down the
+column, with passive lines between them, so one rectangle would either swallow those or
+miss some. Qt accepts as a mask any `QObject` with an invokable `contains(QPointF)`
+(`QQuickItem::setContainmentMask` looks the method up by signature and invokes it with
+the point in the masked item's coordinates). A QML `QtObject` with a typed function —
+`function contains(p: point): bool` — publishes exactly that method, and its body asks the
+view whether an active line's delegate lies under the point (`childAt()` on the live
+columns). Two such objects: one for the wrapper (the left button's delivery), one for the
+`PlasmoidItem` (the desktop's geometric lookup for the right button); both `null` in edit
+mode and both set by name through a `Binding`, as before.
+
+**Why a function and not rectangles.** A list of rectangles has no home: a mask is one
+object, and an Item's `contains()` cannot be overridden from QML. Caching rectangles would
+also mean refreshing them after every tick's relayout; `childAt()` reads the live geometry
+at the moment of the hit test and costs a walk over some forty children per press or hover.
+
+**What we pay.** The click-through path of the monitor changes from "wrapper disabled"
+(decision 8, proven on the desktop) to "wrapper masked by a function" (not yet seen on a
+desktop) whenever the active lines are on. If Qt refuses the object — the typed function
+not exposed as `contains(QPointF)` on this Qt — the mask reads back `null`, a warning is
+logged and the host falls back to an `Item` over the active lines' bounding rectangle:
+coarser, but click-through holds. With the active lines off, the old path is unchanged.
+Hover over the wrapper now calls the function on every move.
+
+**Alternatives considered.** A separate `MouseArea` per action with the wrapper disabled
+— impossible, a disabled subtree takes no mouse (decision 8). One rectangle over the whole
+column — passive lines would stop passing clicks, which is the point of click-through. A
+`containmentMask` per column — still one rectangle each. Making only one block's lines
+active — the user asked for lines "for every occasion"; what a line does is data per block
+type, and a block can opt out.
+
+**Verified by running:** the line stand, `tests/monitor.qml` 17–21 — actions attached per
+block type, off globally and per block, the custom click first with the row filled in,
+units with and without `--user`, disks, repositories with the path from the parameter, the
+power menu's questions, sound's mute toggle, health's journal and reboot items, the quoting
+helpers. **Not yet:** `tests/passthrough.qml` test 18 (the function mask on the compiled
+`ItemContainer`) and the desktop — both written without Qt; the next desktop session runs
+them first.
+
+**Revisit when:** test 18 fails — then the fallback rectangle is the mask and the
+decision's second half is rewritten; or when a block wants more than one action per line
+beyond the menu.

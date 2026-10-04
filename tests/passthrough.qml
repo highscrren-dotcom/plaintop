@@ -25,9 +25,15 @@
 // QT_FORCE_STDERR_LOGGING Qt logs to journald when stderr is not a terminal, so a pipe sees
 // nothing.
 //
+// Test 18 asks one thing more, for the monitor's active lines (decision 14): is a QtObject
+// with a typed QML function "contains(p: point): bool" accepted as a containmentMask —
+// Qt wants any QObject with an invokable contains(QPointF) — and does it gate the wrapper
+// like the rectangle does? ⚠️ Written 2026-10-04 without Qt, not yet run: the monitor
+// falls back to a bounding rectangle when the object is refused.
+//
 // The stand tests Plasma's behaviour, not ours: the trick lives or dies with ItemContainer and
 // Qt's event delivery, so re-run it after every Plasma or Qt upgrade. Last verified 2026-09-23
-// against plasma-workspace 6.7.5 and Qt 6.11.2: 19 of 19 passed.
+// against plasma-workspace 6.7.5 and Qt 6.11.2: 19 of 19 passed (tests 1–17).
 
 import QtQuick
 import QtTest
@@ -99,7 +105,7 @@ Item {
                 // the buttons' rectangle as a child of the content item — test_16
                 Item { id: rowMaskInContent; x: 40; y: 176; width: 120; height: 24; visible: false }
             }
-            property Item mask: null
+            property QtObject mask: null
             Binding { target: row; property: "containmentMask"; value: row.mask }
         }
     }
@@ -108,6 +114,17 @@ Item {
     // scene coordinates — Qt reads only the mask's x/y and takes them as the masked item's own
     // (test_16). Invisible: contains() does not look at visibility.
     Item { id: rowMaskInScene; x: 40; y: 176; width: 120; height: 24; visible: false }
+
+    // A mask that is not an Item: the buttons' rectangle as a function. Only the object's
+    // contains() is consulted — no position is subtracted, the point is the container's own.
+    QtObject {
+        id: fnMask
+        property int calls: 0
+        function contains(p: point): bool {
+            calls++
+            return p.x >= 40 && p.x < 160 && p.y >= 176 && p.y < 200
+        }
+    }
 
     // Can an ItemContainer name containmentMask declaratively? A PlasmoidItem cannot (GOTCHAS);
     // test_17 records what this type does.
@@ -340,6 +357,26 @@ Item {
             clicksWithMask(rowMaskInScene, "scene child")
             clicksWithMask(rowMaskInContent, "content child")
             row.leftPadding = 0
+        }
+        function test_18_a_function_mask_gates_the_wrapper_like_the_rectangle() {
+            resetRow(); row.mask = fnMask; fnMask.calls = 0
+            compare(row.containmentMask, fnMask, "the wrapper took the object as its mask (refused: no invokable contains(QPointF) — see the monitor's fallback)")
+            compare(row.contains(Qt.point(50, 190)), true, "contains() asks the function: inside")
+            compare(row.contains(Qt.point(50, 100)), false, "outside")
+            verify(fnMask.calls >= 2, "the function was called: " + fnMask.calls)
+            mouseClick(scene, 480, 198, Qt.LeftButton)
+            compare(buttons.nLeft, 1, "inside: the buttons take the left button")
+            compare(desktop.nLeft, 0); compare(beneathArea.nLeft, 0)
+            mouseClick(scene, 480, 150, Qt.LeftButton)
+            compare(beneathArea.nLeft, 1, "outside: the applet beneath")
+            mouseClick(scene, 480, 60, Qt.LeftButton)
+            compare(desktop.nLeft, 1, "outside, nothing beneath: the desktop")
+            compare(row.editMode, false)
+            mouseMove(scene, 480, 150)
+            compare(beneathArea.containsMouse, true, "hover outside goes beneath")
+            mouseMove(scene, 480, 198)
+            compare(buttons.containsMouse, true, "hover inside reaches the buttons")
+            mouseMove(scene, 1, 1)
         }
         function test_17_declarative_mask_on_an_ItemContainer_and_nothing_clips() {
             compare(declared.contains(Qt.point(10, 10)), true, "containmentMask: named declaratively loads on an ItemContainer")

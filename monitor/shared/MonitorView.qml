@@ -6,6 +6,11 @@ import QtQuick
 // lives here, so the same descriptors serve both hosts and the colours stay one setting
 // rather than four literals scattered through the builder. Two columns: the first at the
 // left padding, the second — the blocks whose "column" field says so — at `secondColumn`.
+//
+// Active lines: a line that carries an `action` gets a mouse area of its own size and a
+// one-pixel frame while the pointer is over it (dimmer while its menu is open). The view
+// only reports the click — `activate` — and answers hit tests for the host's containment
+// masks (`activeAt`, `activeBounds`); running the actions is the host's business.
 Item {
     id: view
 
@@ -25,6 +30,14 @@ Item {
     property color colorDim: "#6B7280"
     property color colorValue: "#8FB6E0"
 
+    // The line whose menu is open keeps its frame: the column (1 or 2) and the index.
+    property int framedColumn: -1
+    property int framedIndex: -1
+
+    // A click on an active line: its action, the button, where it is (column, index)
+    // and its rectangle in the view's coordinates — the anchor for the menu.
+    signal activate(var action, int button, int column, int index, rect area)
+
     function paint(role) {
         switch (role) {
         case "accent": return view.colorAccent
@@ -34,7 +47,43 @@ Item {
         }
     }
 
+    // Is there an active line at this point of the view? Asked by the host's containment
+    // masks on every press and hover while clicks pass through, so it is a hit test on the
+    // live delegates — childAt() — rather than a cached list of rectangles.
+    function activeAt(x, y) {
+        const columns = [leftColumn, rightColumn]
+        for (let i = 0; i < columns.length; i++) {
+            const col = columns[i]
+            if (!col.visible) continue
+            const c = col.childAt(x - col.x, y - col.y)
+            if (c && c.active === true) return true
+        }
+        return false
+    }
+
+    // The rectangle around every active line, in the view's coordinates; 0×0 without
+    // one. The host's fallback mask when a function mask is refused.
+    function activeBounds() {
+        let r = null
+        const columns = [leftColumn, rightColumn]
+        for (let i = 0; i < columns.length; i++) {
+            const col = columns[i]
+            if (!col.visible) continue
+            for (let k = 0; k < col.children.length; k++) {
+                const c = col.children[k]
+                if (!c || c.active !== true) continue
+                const x0 = col.x + c.x, y0 = col.y + c.y, x1 = x0 + c.width, y1 = y0 + c.height
+                r = r === null ? [x0, y0, x1, y1]
+                               : [Math.min(r[0], x0), Math.min(r[1], y0), Math.max(r[2], x1), Math.max(r[3], y1)]
+            }
+        }
+        return r === null ? Qt.rect(0, 0, 0, 0) : Qt.rect(r[0], r[1], r[2] - r[0], r[3] - r[1])
+    }
+
     // A widget line: monospace text, colour and size set in place.
+    // ⚠️ PlainText, and not only for the markup: a Text with the default textFormat accepts
+    // the left button, and under a partial containment mask such a child arms the
+    // wrapper's press-and-hold timer on a plain click (docs/GOTCHAS.md, decision 11).
     component Line: Text {
         color: view.colorFg
         font.family: view.fontFamily
@@ -53,6 +102,7 @@ Item {
     component LineColumn: Column {
         id: column
         property var items: []
+        property int which: 1
         spacing: 0
 
         Repeater {
@@ -62,9 +112,40 @@ Item {
                 id: lineItem
                 required property int index
                 readonly property var modelData: column.items[index] || ({ kind: "parts", parts: [] })
+                // The line's action, when it has one: what the mouse area reports and what
+                // the host's hit test (activeAt) looks for in the column's children.
+                readonly property var action: modelData.action || null
+                readonly property bool active: action !== null && action !== undefined
 
                 implicitWidth: modelData.kind === "clock" ? clockRow.implicitWidth : partsRow.implicitWidth
                 implicitHeight: modelData.kind === "clock" ? clockRow.implicitHeight : partsRow.implicitHeight
+
+                // The frame: a pixel around the line under the pointer, dimmer around the
+                // line whose menu is open. A Rectangle takes no mouse.
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: -1
+                    color: "transparent"
+                    border.width: 1
+                    border.color: view.colorValue
+                    visible: lineItem.active
+                             && (area.containsMouse
+                                 || (view.framedColumn === column.which && view.framedIndex === lineItem.index))
+                    opacity: area.containsMouse ? 0.9 : 0.5
+                }
+
+                // The one thing in the widget that takes the mouse, and only on an active
+                // line: disabled, it is not a pointer target and gets no hover.
+                MouseArea {
+                    id: area
+                    anchors.fill: parent
+                    enabled: lineItem.active
+                    hoverEnabled: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: mouse => view.activate(lineItem.action, mouse.button, column.which, lineItem.index,
+                                                      lineItem.mapToItem(view, 0, 0, lineItem.width, lineItem.height))
+                }
 
                 // Row sets only x, so the small seconds can sit on the baseline of the big
                 // clock — otherwise they drift in height.
@@ -115,15 +196,19 @@ Item {
     // anyway — verified. This way the conky-like gap from the edge holds wherever the host
     // put the widget.
     LineColumn {
+        id: leftColumn
         x: view.padLeft
         y: view.padTop
         items: view.lines
+        which: 1
     }
 
     LineColumn {
+        id: rightColumn
         x: view.secondColumn > 0 ? view.secondColumn : Math.round(view.width / 2)
         y: view.padTop
         items: view.lines2
+        which: 2
         visible: items.length > 0
     }
 }

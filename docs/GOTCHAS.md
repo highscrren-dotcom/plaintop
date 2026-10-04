@@ -723,6 +723,32 @@ full capture. A second, throwaway stand put the real `PlayerView.qml` inside the
 `ItemContainer`: 11 of 11. ⚠️ The stand is offscreen; real clicks on the live desktop are
 still the user's check. Verified 2026-09-23, plasma-workspace 6.7.5, Qt 6.11.2.
 
+### A mask need not be an Item: any QObject with `contains(QPointF)` — the monitor's active lines
+
+The monitor's active lines (decision 14) are scattered down the column with passive lines
+between them, and a mask is one object, so no rectangle fits. `QQuickItem::setContainmentMask`
+(qtdeclarative, `qquickitem.cpp`) takes any `QObject`: it looks up
+`indexOfMethod("contains(QPointF)")` on the object's meta-object and, on a hit test, invokes
+that method with the point in the masked item's coordinates (no position is subtracted, as
+it is for an Item mask); an object without such a method is refused with the warning
+"Object set as mask does not have an invokable contains method, ignoring it", and the
+property stays `null`. A QML `QtObject` with a **typed** function publishes the method:
+
+```qml
+QtObject {
+    function contains(p: point): bool { return view.activeAt(…) }
+}
+```
+
+— the annotations matter: an untyped `function contains(p)` is `contains(QVariant)` in the
+meta-object and is refused. `monitor/package/contents/ui/main.qml` sets two such objects
+(the wrapper's and the PlasmoidItem's), reads the wrapper's `containmentMask` back 400 ms
+later and falls back to an Item over the active lines' bounding rectangle when it reads
+`null`. ⚠️ Written 2026-10-04 without Qt — `tests/passthrough.qml` test 18 is the check on
+the compiled `ItemContainer`; neither the stand nor the desktop has run it yet. If the
+read-back itself is refused by the engine (a revisioned property read from JS returns
+`undefined`, not `null`), the probe concludes nothing and the journal has the warning.
+
 ## A `Text` with the default `textFormat` accepts the left button
 
 Under a partial mask this is the trap. A `Text` built with the default `textFormat`

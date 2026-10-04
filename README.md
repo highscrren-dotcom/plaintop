@@ -24,7 +24,9 @@ zypper, flatpak), the systemd units you name, any temperature sensors you pick, 
 output's volume, your git repositories, system health — failed systemd units, errors
 since boot, a pending reboot, the last error lines of the journal — a static hardware
 passport, and lines of your own. A bar past its threshold turns red; a bar can carry a
-sparkline of its last readings; blocks can go into a second column.
+sparkline of its last readings; blocks can go into a second column. The lines are active:
+a click on a bar opens System Monitor, on a disk its folder, on a unit its status, on a
+process a question before it is ended; the right button lists what a line can do.
 
 Which of those appear, in what order, and with what parameters is **data, not code** —
 see [Three layers](#three-layers) below.
@@ -252,27 +254,45 @@ Right-click the widget → *Configure plaintop…*. Two pages:
 
 - *General* — font, size, edge padding, widget size, the four palette colours, the bars'
   width and characters, the separator, the sparkline glyphs, where the second column
-  starts, the mouse, update interval, how often the process list is read.
+  starts, the mouse and the active lines with the terminal and editor they use and the
+  menu's frame and paper, update interval, how often the process list is read.
 - *Blocks* — enable, disable, reorder, edit parameters, add a block of any type
   from the vocabulary, duplicate or remove one, name it, send it to the second column,
-  pick sensors, interfaces and mount points from what the machine has, or edit the whole
-  layout as JSON.
+  switch its lines' clicks off or give them a command of your own, pick sensors,
+  interfaces and mount points from what the machine has, or edit the whole layout as JSON.
 
 That dialog is the only editor. The window hosts' own editors with a live preview
 (`window/settings.qml` in each widget) retired with them (decision 9);
 `./install.sh --plaintop-settings` / `--spectrum-settings` are not to be used.
 
+**Active lines.** A line that has something to do takes clicks: a left click runs its
+first action, a right click lists them all in a menu framed with characters, in the
+widget's own font and colours; the line under the pointer gets a one-pixel frame.
+Bars open System Monitor; a disk opens its folder, or a terminal there; a systemd unit
+shows its status, starts, stops, restarts, or opens its journal; a process is terminated or
+killed after a question; the updates line runs the package manager in a terminal; the
+sound line toggles mute; a repository opens a terminal, the file manager, the editor or
+pulls; the uptime line locks the screen, logs out, reboots or powers off, each but the
+lock after a question; the header opens the settings — handy while clicks pass through.
+Terminal programs run detached in the terminal from *General* (`konsole -e` by default),
+held open where there is output to read. On the *Blocks* page a block's lines can be
+switched off (*Active*) or given a command of your own (*Click*), with `{name}`, `{pid}`,
+`{path}`, `{unit}` and `{value}` filled in from the row; the *Active lines* switch on
+*General* turns the whole thing off.
+
 **About the mouse.** Out of the box the plasmoid takes clicks like any widget, so a
 right-click reaches its settings. The *Mouse* setting — and the
 `./install.sh --clicks-on` / `--clicks-off` switches behind it — lets both buttons through
-to the desktop: input goes off on the widget's own representation, and the applet
-container the shell wraps it in is disabled too, since that container is what kept the
-left button. The widget takes the mouse only in the desktop's edit mode, which is also
-where its settings are (or `--clicks-off`). The player, and the visualizer with the player
-in its ring, do it differently: the container stays enabled and gets a mask over the
-controls row, so those buttons keep working and everything else passes (decision 11).
-`docs/GOTCHAS.md` has the whole story: the four attempts that failed, the line that let
-the button go, and the mask.
+to the desktop everywhere but on the active lines: the applet container the shell wraps
+the widget in stays enabled and gets a containment mask that is not a rectangle but an
+object asking the view "is an active line under this point?" — the player's way
+(decision 11) generalised to lines scattered down a column (decision 14). With the active
+lines off too, input goes off on the widget's own representation and the container is
+disabled, since that container is what kept the left button, and the widget takes the
+mouse only in the desktop's edit mode, which is also where its settings are (or
+`--clicks-off`). The player, and the visualizer with the player in its ring, mask their
+controls row the same way. `docs/GOTCHAS.md` has the whole story: the four attempts that
+failed, the line that let the button go, and the mask.
 
 **Palettes.** `./install.sh --palette NAME` writes a palette into every instance of the
 five widgets at once, and `--palette-save NAME` keeps the desktop's current colours as

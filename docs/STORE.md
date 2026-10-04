@@ -70,6 +70,16 @@ duplicate button, a name per block, and the layout as JSON to edit or paste. Fix
 model line's "62/0°C" on a one-node machine and the redundant node line there; the GPU's
 power on AMD cards, which read "pwr 0W"; sparkline glyphs half a step too high.
 
+**0.5 — not uploaded yet.** What's new: active lines — a left click runs what a line is
+about (a bar opens System Monitor, a disk its folder, a systemd unit its status, a process
+asks before it is terminated, the sound line toggles mute, the uptime line locks, logs out,
+reboots or powers off after a question, the header opens the settings), a right click lists
+every action in a menu framed with characters in the widget's own font; the line under the
+pointer gets a frame; a block's lines can be switched off or given a command of your own
+with the row's values filled in; while clicks pass through, only the active lines take the
+mouse. Settings for the terminal and the editor the actions use, the menu's frame and paper.
+⚠️ Not yet run on a desktop at the time of writing — the gallery picture must show a menu.
+
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
 - **License:** GPL-2.0-or-later
