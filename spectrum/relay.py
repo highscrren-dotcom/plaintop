@@ -136,7 +136,6 @@ def cava_config(source_name):
         "autosens=1\n"
         f"lower_cutoff_freq={LOW_HZ}\n"
         f"higher_cutoff_freq={HIGH_HZ}\n"
-        f"noise_reduction={NOISE}\n"
         f"sleep_timer={SLEEP}\n"
         "[input]\n"
         "method=pipewire\n"
@@ -146,6 +145,11 @@ def cava_config(source_name):
         "raw_target=/dev/stdout\n"
         "data_format=ascii\n"
         f"ascii_max_range={RANGE}\n"
+        # ⚠️ Under [smoothing], not [general]: cava reads "smoothing:noise_reduction" and
+        # nothing else, so the key sat in the wrong section from the first version and
+        # PLAINSPECTRUM_NOISE never reached it — cava smoothed at its default 77 all along.
+        "[smoothing]\n"
+        f"noise_reduction={NOISE}\n"
     )
 
 
