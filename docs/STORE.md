@@ -124,6 +124,12 @@ and colours; on a line it goes along the edge the bars reach last. With *Mouse* 
 the player's controls row takes clicks, the rest of the widget lets them through. The
 description below already says so.
 
+**0.4 — not uploaded yet.** What's new: a *Channels* switch on the *Ring* page, on by
+default — one spectrum around the whole ring, both channels averaged by the relay; off
+keeps cava's stereo frame, which is mirrored about its middle. Needs the relay from this
+version (`./install.sh --spectrum`): an older relay ignores the request and serves the
+mirrored frame.
+
 - **File:** `dist/plainspectrum-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Multimedia
 - **License:** GPL-2.0-or-later

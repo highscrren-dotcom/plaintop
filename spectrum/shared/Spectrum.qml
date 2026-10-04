@@ -18,6 +18,10 @@ QtObject {
     property int quietDelayMs: 900
     property bool mirror: false
     property bool reverse: false
+    // Ask the relay to fold cava's stereo frame into one spectrum (relay.py, fold_mono):
+    // on, the bands run from low to high over the whole count; off, they come as cava
+    // gives them — the left channel reversed, then the right — mirrored about the middle.
+    property bool mono: true
 
     // Read by the host.
     property bool relayUp: false
@@ -72,7 +76,8 @@ QtObject {
                 }
             }
         }
-        xhr.open("GET", "http://127.0.0.1:" + relayPort + "/bands?bars=" + count)
+        xhr.open("GET", "http://127.0.0.1:" + relayPort + "/bands?bars=" + count
+                        + (mono ? "&mono=1" : ""))
         xhr.send()
     }
 

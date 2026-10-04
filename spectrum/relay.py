@@ -12,6 +12,12 @@ QML is cheaper, and at 30 requests a second that difference is measurable.
 cava runs with a fixed, generous band count; the widget asks for the number it
 draws via `?bars=N` and the downsampling happens here, in Python, rather than in
 the widget's JavaScript.
+
+cava's frame is stereo by default — the left channel from its highest band down to
+its lowest, then the right channel from lowest to highest — so drawn as it comes a
+ring shows the same spectrum twice, mirrored about its middle. `?mono=1` asks for
+the two channels averaged into one run of bands from low to high (fold_mono); the
+choice is each widget's own and costs no cava restart.
 """
 import json
 import os
@@ -118,6 +124,9 @@ def default_monitor():
         return ""
 
 
+# cava is left in its default stereo mode on purpose: a stereo frame holds both channels,
+# and the relay folds them into one spectrum when a widget asks (`?mono=1`), so the
+# choice is each widget's own and costs no cava restart — a mono cava could serve only mono.
 def cava_config(source_name):
     source = f"source={source_name}\n" if source_name else ""
     return (
@@ -208,17 +217,38 @@ def watch_device(proc, source_name):
             return
 
 
+def fold_mono(values):
+    """One spectrum from cava's stereo frame: band j of the left channel, which cava
+    writes reversed in the first half, averaged with band j of the right channel in
+    the second half. Half as many bands, from low to high."""
+    half = len(values) // 2
+    return [(values[half - 1 - j] + values[half + j]) // 2 for j in range(half)]
+
+
 def resample(values, want):
-    """Average the fixed cava bands down to the count the widget draws."""
-    if want <= 0 or want == len(values):
+    """The fixed cava bands as the count the widget draws: averaged down when there are
+    more of them, interpolated linearly when fewer — a folded frame has half the bands,
+    and repeating every few values would show as pairs of equal ticks on the ring."""
+    n = len(values)
+    if want <= 0 or want == n or n == 0:
         return values
+    if want < n:
+        out = []
+        step = n / want
+        for i in range(want):
+            lo = int(i * step)
+            hi = max(lo + 1, int((i + 1) * step))
+            chunk = values[lo:hi]
+            out.append(sum(chunk) // len(chunk))
+        return out
+    if n == 1:
+        return values * want
     out = []
-    step = len(values) / want
     for i in range(want):
-        lo = int(i * step)
-        hi = max(lo + 1, int((i + 1) * step))
-        chunk = values[lo:hi]
-        out.append(sum(chunk) // len(chunk))
+        pos = i * (n - 1) / (want - 1)
+        lo = int(pos)
+        hi = min(lo + 1, n - 1)
+        out.append(int(values[lo] + (values[hi] - values[lo]) * (pos - lo)))
     return out
 
 
@@ -247,10 +277,13 @@ class Handler(BaseHTTPRequestHandler):
 
         query = parse_qs(urlparse(self.path).query)
         want = int(query.get("bars", [BARS])[0])
+        mono = query.get("mono", ["0"])[0] in ("1", "true")
         # cava falls asleep on silence (sleep_timer, set in cava_config) and simply stops
         # writing. Serving its last frame would leave the widget frozen mid-note, so
         # silence is served as zeros once no frame has arrived for a second.
         raw = state["raw"] if time.monotonic() - state["stamp"] < 1.0 else [0] * BARS
+        if mono:
+            raw = fold_mono(raw)
         body = ",".join(str(v) for v in resample(raw, want)).encode()
         self.send_response(200)
         self.send_header("Content-Type", "text/plain")

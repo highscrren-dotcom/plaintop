@@ -69,6 +69,7 @@ PlasmoidItem {
         quietDelayMs: root.cfg.quietDelayMs
         mirror: root.cfg.mirror
         reverse: root.cfg.reverse
+        mono: root.cfg.monoSpectrum
     }
 
     // The shell's edit mode: the one moment a click-through widget must take the mouse.

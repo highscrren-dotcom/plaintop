@@ -523,3 +523,19 @@ msgstr "plainspectrum — настройки"
 msgctxt "menu entry: comment"
 msgid "Shape, colour and behaviour of the spectrum ring"
 msgstr "Форма, цвет и поведение кольца спектра"
+
+#: spectrum/package/contents/ui/configGeneral.qml:146
+msgid "Channels:"
+msgstr "Каналы:"
+
+#: spectrum/package/contents/ui/configGeneral.qml:147
+msgid "one spectrum around the whole ring, both channels averaged"
+msgstr "один спектр на всё кольцо, оба канала усреднены"
+
+#: spectrum/package/contents/ui/configGeneral.qml:151
+msgid ""
+"Off: as cava gives it — the left channel from high to low, then the right\n"
+"from low to high, so the ring is mirrored about its middle."
+msgstr ""
+"Выключено: как отдаёт cava — левый канал от высоких к низким, затем правый\n"
+"от низких к высоким, и кольцо зеркально относительно середины."
