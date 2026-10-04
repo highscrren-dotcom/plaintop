@@ -352,7 +352,7 @@ MPRIS он читает через модуль штатного медиако�
 Published 2026-09-24: https://store.kde.org/p/2373634/ (category Plasma 6 Weather)
 
 - **File:** `dist/plainweather-<version>.plasmoid`
-- **Category:** Plasma 6 Extensions → Online Services
+- **Category:** Plasma 6 Weather (as set on the store page)
 - **License:** GPL-2.0-or-later
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
 - **Tags:** weather, forecast, open-meteo, met.no, weatherapi, text
@@ -451,14 +451,14 @@ field and a "remind" row — none, minutes or an hour before a timed note, or at
 of an all-day one; typing "14:30 Dentist" or "!Buy milk" into the note does the same; both are VALARMs, so the account's phone rings too. The accounts'
 events ring by their own alarms. A due alarm opens a sheet by the day's cell with snooze,
 an hour, tomorrow, done, and "task done" for tasks; missed ones come one by one. Optional
-system notification and sound. As many notes a day as you like, each with its own reminder.
+system notification and a sound — five plain tones of its own or a file of yours. As many notes a day as you like, each with its own reminder.
 Checked on the desktop 2026-10-04, Yandex included.
 
 - **File:** `dist/plaincalendar-<version>.plasmoid`
-- **Category:** Plasma 6 Extensions → Date and Time
+- **Category:** Plasma 6 Calendars (as set on the store page)
 - **License:** GPL-2.0-or-later
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
-- **Tags:** calendar, month, week numbers, text, monospace
+- **Tags:** calendar, month, week numbers, text, monospace, notes, reminders, caldav
 - **Images:** three months one under another, the week numbers, a weekend in red, today
   in brackets — needs no data, any machine renders it. Rendered 2026-10-04: a logo (the
   October block) and a gallery picture (three months), English locale, stock colours
@@ -486,6 +486,13 @@ server, read-only ICS links; passwords stay in a file only you can read. Yandex 
 tried end to end, the others not yet — reports welcome. The notes run a small helper in
 Python 3 (the standard library only) from the widget's package; without notes the calendar
 fetches nothing.
+
+Reminders: under a note the sticker has a time field and a "remind" row — none, ten
+minutes or an hour before a timed note, or at 09:00 for an all-day one. When one is due a
+small sheet in the same frame opens by the day: in 10 minutes, in an hour, tomorrow at
+09:00, done. A reminder is a VALARM in the note, so the account's calendar keeps it and a
+phone synced to it can ring too. Optionally a system notification and a sound — five
+plain tones of the widget's own, or a file of yours.
 
 Right-click → Configure: months (one or three), week numbers, the first day of the
 week, the weekends' colour, the neighbouring months; font, size, cell width, the colours;
@@ -518,6 +525,13 @@ plaincalendar — настенный календарь для рабочего 
 остальные пока нет — сообщения приветствуются. Заметки запускают небольшой помощник на
 Python 3 (только стандартная библиотека) из пакета виджета; без заметок календарь ничего не
 запрашивает.
+
+Напоминания: под заметкой в стикере поле времени и строка «напомнить» — нет, за десять
+минут или за час до заметки со временем, или в 09:00 для заметки на весь день. Когда
+подходит время, у дня открывается маленький лист в той же рамке: через 10 минут, через час,
+завтра в 09:00, готово. Напоминание — это VALARM в заметке, так что календарь аккаунта его
+хранит, и синхронизированный с ним телефон тоже может позвонить. По желанию — системное
+уведомление и звук: пять простых сигналов самого виджета или свой файл.
 
 Правый клик → Настроить: месяцы (один или три), номера недель, первый день недели, цвет
 выходных, соседние месяцы; шрифт, кегль, ширина ячейки, цвета; страница «Заметки» —
