@@ -125,6 +125,22 @@ Item {
             monitor.registry.ids = ["cpu/all/usage", "memory/physical/usedPercent"]
         }
 
+        function test_16_gpu_power_falls_back_to_power1() {
+            reset()
+            // amdgpu: "power" listed but never filled, the package power in "power1".
+            monitor.registry.ids = ["gpu/gpu0/usage", "gpu/gpu0/power", "gpu/gpu0/power1"]
+            monitor.publish("gpu/gpu0/usage", 30, true)
+            monitor.publish("gpu/gpu0/power1", 19, true)
+            let lines = show([{ id: "gpu", type: "gpu", enabled: true, params: { details: true } }])
+            verify(monitor.gpuIds.indexOf("gpu/gpu0/power1") >= 0, "power1 is read: " + monitor.gpuIds)
+            verify(find(lines, /pwr 19W$/) !== null, "the PPT figure: " + texts(lines))
+            // A card that fills "power" keeps it.
+            monitor.publish("gpu/gpu0/power", 42, true)
+            lines = show([{ id: "gpu", type: "gpu", enabled: true, params: { details: true } }])
+            verify(find(lines, /pwr 42W$/) !== null, "power wins when it has a value: " + texts(lines))
+            monitor.registry.ids = ["cpu/all/usage", "memory/physical/usedPercent"]
+        }
+
         function test_04_threshold_turns_the_line_accent() {
             reset()
             monitor.publish("cpu/all/usage", 95, true)

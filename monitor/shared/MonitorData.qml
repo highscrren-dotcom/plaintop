@@ -291,9 +291,14 @@ Item {
     readonly property var gpuIds: {
         const out = []
         const keys = hasBlock("gpu") ? ["usage", "temperature", "usedVram", "totalVram", "power", "name"] : ["name"]
-        for (const g of gpus)
+        for (const g of gpus) {
             for (const k of keys)
                 out.push("gpu/" + g + "/" + k)
+            // amdgpu leaves "power" empty and reports the package power as "power1" (PPT,
+            // the figure `sensors` shows); read it only where the plugin lists it.
+            if (hasBlock("gpu") && registry.match("^gpu/" + g + "/power1$").length > 0)
+                out.push("gpu/" + g + "/power1")
+        }
         return out
     }
 
@@ -1167,9 +1172,10 @@ Item {
                                              sparkTail(b.id + ":" + gpus[i], p, 100)), usage, warn))
                     if (p.details !== false) {
                         const t = Math.round(num(id + "temperature", 0))
+                        const watts = num(id + "power", 0) || num(id + "power1", 0)
                         out.push(warnLine("VRAM " + comma(num(id + "usedVram", 0) / 1073741824, 1)
                                           + "/" + comma(num(id + "totalVram", 0) / 1073741824, 1)
-                                          + " GB  temp " + t + "°C  pwr " + Math.round(num(id + "power", 0)) + "W",
+                                          + " GB  temp " + t + "°C  pwr " + Math.round(watts) + "W",
                                           t, warnTemp, "dim"))
                     }
                 }
