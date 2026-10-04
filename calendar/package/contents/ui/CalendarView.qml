@@ -141,8 +141,9 @@ Item {
         // ⚠️ standaloneMonthName, not monthName: in Russian and the other Slavic
         // languages monthName is the genitive — "октября", the form that follows a day
         // number — while a title wants the nominative, "октябрь". Uppercase, as every
-        // header in these widgets.
-        const title = String(loc.standaloneMonthName(month + 1, Locale.LongFormat)).toUpperCase()
+        // header in these widgets. QML's Locale counts the months from 0, as Date does:
+        // 9 is October.
+        const title = String(loc.standaloneMonthName(month, Locale.LongFormat)).toUpperCase()
         out.push(fit([{ text: title, role: "fg" }, { text: " " + year, role: "dim" }]))
 
         // The names, one per column, ending where the numbers under them end; a weekend's
