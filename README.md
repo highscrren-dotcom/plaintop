@@ -47,6 +47,7 @@ What is in the repository:
 | **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module; its view lives in `shared/`, since the visualizer draws it too | works |
 | **`weather/`** | the weather widget: now and the next days as text, from one of four sources over https — Open-Meteo by default — no service of its own | works |
 | **`calendar/`** | the calendar widget: a wall calendar's page as text — one month or three, week numbers, the weekends and today marked — everything from the locale, no service | works |
+| **`win/`** | the same five widgets on Windows 11: bare-Qt window hosts behind QML-only shims of the Plasma modules, and one Python service for the readings — [win/README.md](win/README.md) | written, not yet seen on a Windows desktop |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
 plasmoid disables the wrapper the shell puts around it, so clicks land on the icons and the
@@ -253,6 +254,17 @@ the one Plasma's clock calendar uses too, and with none ticked it is your locale
 own colour, "every holiday, name days too" the name days as well (Greece, Sweden), and
 *World days* adds the UN's and UNESCO's best known international days. Which holidays
 are days off comes from KHolidays' own plans, read by `calendar/holidays.py`.
+
+## Windows
+
+The same five widgets run on Windows 11 from this repository, drawn by the same shared QML
+files: `qml.exe` from Qt 6.11 hosts each one in a frameless transparent window, QML-only
+stand-ins under `win/host/imports/` play the Plasma modules those files import, and one
+Python service on `127.0.0.1:8788` serves the readings in ksystemstats' vocabulary, the
+spectrum from a WASAPI loopback, the media session, `notes.py`, the holidays and the
+settings. Decision 17 explains why it is built that way; **[win/README.md](win/README.md)**
+says what to install and how to run it, and what has not yet been seen on a real desktop —
+the port was written and checked without one.
 
 ## Three layers
 

@@ -45,8 +45,19 @@ def toast(title, text):
     return True
 
 
+def sound_path(name):
+    """A reminder sound: "builtin:bell" is one of the calendar's own five (copied beside the
+    service by win/build.py), anything else a file of the user's."""
+    name = str(name or "").strip()
+    if name.startswith("builtin:"):
+        here = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(here, "sounds", name[len("builtin:"):] + ".wav")
+    return name
+
+
 def play(path):
     """A .wav by path, asynchronously; anything else is ignored."""
+    path = sound_path(path)
     if not path or not os.path.isfile(path):
         return False
     try:

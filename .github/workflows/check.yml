@@ -2,6 +2,11 @@
 # (the calendar's notes script, the relay), the monitor's description generator, the
 # palette keys, the shell scripts' syntax, every translation catalog. The QML stands need
 # Qt and Plasma and run in qml-stands.yml on request.
+#
+# The Windows port (win/) is checked on a Windows runner: the service's Python stands, then
+# the real service started against a bare Qt 6 and the five window hosts loaded through the
+# QML-only shims (tests/win_hosts.py). That is the one place the port meets Windows before
+# a person's desktop does — win/README.md.
 name: checks
 
 on:
@@ -57,3 +62,56 @@ jobs:
           python3 po/extract.py
           git diff --stat -- po
           git diff --exit-code -- po
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: the service's dependencies
+        run: python -m pip install --quiet numpy psutil holidays tzdata tzlocal
+
+      # Qt 6.11 and not older: Qt 6.10's QML parser refuses `h.public` in the calendar's
+      # shared files (docs/GOTCHAS.md); 6.11 takes it, as the desktop's 6.11.2 does.
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.11.*"
+          modules: ""
+          cache: true
+
+      - name: Python compiles
+        run: python -m py_compile win/build.py win/service/server.py win/service/monitor_win.py win/service/exec_win.py win/service/bands.py win/service/player_win.py win/service/notes_bridge.py win/service/holidays_win.py win/service/timezones.py win/service/settings_store.py win/service/ui.py win/service/notify_win.py tests/win_service.py tests/win_bands.py tests/win_media.py tests/win_hosts.py
+
+      - name: the service's stands
+        run: |
+          python tests/win_service.py
+          python tests/win_bands.py
+          python tests/win_media.py
+
+      - name: the calendar's notes stand, on Windows paths
+        run: python tests/notes.py
+
+      - name: the hosts, through the shims, against the real service
+        run: python tests/win_hosts.py --qt "$env:QT_ROOT_DIR"
+        env:
+          QT_QPA_PLATFORM: offscreen
+
+      # Advisory until it has proved itself: the zip with qml.exe, its modules and the
+      # frozen service, kept as an artifact so a person can try it on a desktop.
+      - name: the zip (advisory)
+        continue-on-error: true
+        run: |
+          python -m pip install --quiet pyinstaller
+          python win/package.py --qt "$env:QT_ROOT_DIR"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
+        with:
+          name: plaintop-win
+          path: dist/plaintop-win.zip
+          if-no-files-found: ignore

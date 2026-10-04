@@ -829,3 +829,143 @@ for the three choices.
 **Revisit when:** KHolidays' QML module learns to give holidays for a date, or the plugin
 marks the kind of a holiday — then the generator goes; or a per-widget choice is asked for.
 
+
+## 17. Windows: the same five widgets on a bare Qt, behind QML-only shims, with one local service (2026-10-05)
+
+**Decision:** the five widgets run on Windows 11 from this repository, with the look and
+the behaviour of the plasmoids, and without a line of C++ of our own:
+
+- **The hosts** are `qml.exe` from Qt 6.11 running `win/host/<widget>.qml` — one process
+  and one window per widget: frameless, transparent, `Qt.Tool`, `Qt.WindowStaysOnBottomHint`,
+  and `Qt.WindowTransparentForInput` while the *Mouse* setting lets clicks through. That is
+  the archived window host of decision 5 (`monitor/window/window.qml`, 2026-09-21) on
+  another OS; the reason it was retired on Plasma (decision 9: the plasmoid can let the
+  mouse through itself) does not exist on Windows, where there is no plasmoid.
+- **The shared QML is not touched.** `MonitorData.qml`, `MonitorView.qml`,
+  `SensorRegistry.qml`, `PlayerView.qml`, `WeatherView.qml`, `CalendarView.qml`,
+  `Sticker.qml`, `Reminder.qml`, `Ring.qml`, `Spectrum.qml` and the monitor's `ActionMenu.qml`
+  are copied in by `win/build.py` as `install.sh` copies them into the packages. The Plasma
+  modules they import exist on Windows as QML-only stand-ins under `win/host/imports/`:
+  `org.kde.ksysguard.sensors` (`Sensor`, `SensorDataModel`, `SensorTreeModel`),
+  `org.kde.ksysguard.process`, `org.kde.kitemmodels`, `org.kde.plasma.plasma5support`
+  (`DataSource`, the `executable` and `time` engines), `org.kde.ki18n`, `org.kde.plasma.core`
+  (`Dialog`, `Types`) and `org.kde.plasma.private.mpris` — the same type names, the same
+  properties, the same methods and the same enumeration values the shared files use, and
+  nothing more.
+- **The data come from one service**, `win/service/`, Python on `127.0.0.1:8788` —
+  `spectrum/relay.py` grown up. It speaks ksystemstats' vocabulary (`/monitor` publishes
+  `cpu/all/usage`, `memory/physical/used`, `gpu/gpu0/temperature`… with the same units) and
+  the executable engine's protocol (`/exec` answers the command lines `MonitorData` builds
+  — `df`, `lscpu`, `services.sh`, `health.sh` — from Windows sources in the same output
+  format), serves the relay's `/bands` from a WASAPI loopback capture with the frame in
+  cava's stereo order, the System Media Transport Controls as `/player`, `notes.py` as
+  `/notes` in its own process, the `holidays` package as `/holidays`, zoneinfo as `/time`.
+  The whole contract is `win/PROTOCOL.md`.
+- **The service owns the settings and the processes.** The keys and the defaults are each
+  widget's `main.xml`, read at start; the values live in `%APPDATA%\plaintop\<widget>.ini`,
+  a host polls `/settings/<widget>` once a second and a settings window of our own
+  (`win/host/settings.qml`, plain QtQuick.Controls) posts to it; the service starts and
+  stops the hosts, the settings windows and the tray icon (`/ui`), hands each host the port
+  and a write token on its command line, and — at the user's choice — parents a host's
+  window under the wallpaper's `WorkerW`, where it sits behind the desktop icons.
+- **The mouse, first stage:** the *Mouse* setting is whole-window — on, every click passes
+  through, the active lines and the calendar's cells included, as the Plasma widgets were
+  before decision 11; off, the widget takes the mouse, a left drag moves it, the right
+  button opens its menu. The monitor's active lines ship off on Windows (their items are
+  Linux commands).
+- **Translations** are the same `po/` catalogs, converted with `lconvert -target-language`
+  and loaded with `qml -translation`; the `i18n*` functions sit on each window's root and
+  go to `qsTranslate("", text, context, n)`.
+
+**Why shims and not a split of the data files.** `MonitorData.qml` is 1 600 lines of which
+the subscriptions are a tenth and the line builders the rest, in one file; the task was
+"the same lines, without the ksystemstats subscriptions". Four ways were weighed:
+
+| Way | What it costs |
+|---|---|
+| A data file of the Windows host's own with the builders copied in | ~1 000 lines in two places, drifting apart with the first fix — the rule the project already lives by forbids it |
+| Split `MonitorData.qml` into sources and builders, the Windows host supplying its own sources | A refactor of the Plasma widget that cannot be verified on the desktop from here; `tests/monitor.qml` needs Plasma to run; the same again for `PlayerView.qml`, which carries its MPRIS model inside |
+| The service emits ready-made lines | The formatting and the plural forms rewritten in Python, a second copy of the catalogs' call sites |
+| **Shims** | A dozen small QML files mimicking the surface the shared files use; the shared files byte-identical on both hosts; the Plasma side untouched |
+
+The shims also give the Plasma stands a bare-Qt runner: `tests/monitor.qml` and the others
+import the same module names, so they can run without the Arch container once pointed at
+`win/host/imports` — not done yet.
+
+**Why one service and not readings from QML.** QML in a bare host may read files and
+`file://`, so the hosts could have read `/proc`'s Windows equivalents — there are none to
+read: CPU, memory and the rest are Win32 calls, the sound is WASAPI, the player is WinRT.
+Something had to run them, and the project already had the shape for it: a relay on a
+local port, polled with `XMLHttpRequest`, measured on Plasma at thirty requests a second
+(decision 4). With a service there anyway, it took the rest — the settings (one owner,
+decision 5), the secrets (a note's account password travels in a POST body, never on a
+command line, which is why Plasma needed `inbox.ini`), the processes.
+
+**Why no C++.** A C++ host would need a compiler on the user's machine or a build on ours,
+a CMake project and a plugin to maintain; `qml.exe` is in every Qt install, and Python with
+PyInstaller is the whole service. The price is listed below; it has one item that may yet
+reverse this.
+
+**What we pay.**
+- The shims mimic private KDE APIs. The surface is small and named in each file, but a
+  change in how a shared file uses, say, `SensorDataModel` must be mirrored in the shim by
+  hand — nothing fails to compile, the Windows host just goes quiet.
+- `PlayerView.qml` calls the D-Bus-named methods `Previous()`, `PlayPause()`, `Next()`, and
+  QML refuses to declare a method whose name begins with a capital letter. The mpris shim
+  puts those three names on `Object.prototype`, forwarding to the lowercase methods of the
+  QtObject they are called on — a QObject wrapper looks an unknown name up along the
+  JavaScript prototype chain (verified; `GOTCHAS.md`). The two honest alternatives failed
+  by measurement: a QML-created object's wrapper is not extensible, and a `ListModel` row
+  object's extra JavaScript properties vanish with the next garbage collection.
+- `/exec` recognises the monitor's Linux command lines by the script's base name and the
+  first word and answers them from Windows sources. A new command in `MonitorData` is a
+  new case in `exec_win.py`, or it falls through to `cmd.exe` and prints nothing.
+- A local HTTP service that runs commands. It binds `127.0.0.1`, every write needs the
+  token it hands its own hosts, and a request carrying a browser's `Origin` header is
+  refused; the token file is the user's. That is the whole protection, and it is written
+  down in `win/PROTOCOL.md`.
+- No hit test under click-through: the monitor's active lines, the player's controls and
+  the calendar's cells are dead while clicks pass through. A per-rectangle input region is
+  `WM_NCHITTEST`, which a bare `qml.exe` cannot answer. The C++-free candidate for the
+  second stage: the service reports the cursor (`GetCursorPos`) on request, the host polls
+  it while passing clicks and drops `Qt.WindowTransparentForInput` while the cursor is over
+  an active rectangle — the mask of decision 14, polled instead of asked. Not built, not
+  measured.
+- Qt 6.11 or newer: Qt 6.10's QML parser refuses `h.public` in `CalendarView.qml` and
+  `Sticker.qml` (a reserved word after a dot), 6.11 takes it, as the desktop's 6.11.2 does.
+- A Windows host of its own for the holidays (`win/host/calendar/Holidays.qml`): the
+  plasmoid's file classifies a day off by its name against KHolidays' plans, and the
+  `holidays` package names its days differently (21 of 29 names match for Russia, Germany
+  and the United States) but says itself which is a day off — so the Windows file asks the
+  service and repeats the eleven world days of the plasmoid's list, the one duplication in
+  the port.
+- Two edits to shared files: `MonitorData.qml` learns the `winget` label for the updates
+  line (two `case`s, inert on Plasma), `notes.py` takes `%APPDATA%` and `%LOCALAPPDATA%`
+  for its folders on Windows and opens the browser without `xdg-open` (the stand's 145
+  checks pass as before).
+- Two runtimes to ship: Qt's `qml.exe` with its modules (`windeployqt`), and Python with
+  numpy, psutil, holidays, tzdata and the optional winsdk, soundcard, pycaw.
+
+**Verified by running.** Written in a Linux container without Windows, so what was run is
+Qt 6.11.3 offscreen against a stand-in service speaking the protocol, and the service's
+Python stands: `tests/win_hosts.qml`, 9 of 9 — the monitor draws its 41 lines from
+`/monitor` through the shims (the frame grabbed and compared with `docs/screenshot.png`),
+the player's lines come from `/player` and a click on `>>` reaches the service through the
+prototype trick, the weather fetches and shows its header, the visualizer sees `/bands`
+and draws the ring, the calendar gets its document from `/notes` and opens the sticker —
+a window of the `Dialog` shim — by a day's cell; `tests/win_media.py` 94 checks (the SMTC
+mapping through a fake backend, `notes.py` in the service's process, the holidays of
+Bavaria and Russia, the time zones); `tests/win_service.py` and `tests/win_bands.py` for
+the monitor's sensors, the command emulation and the spectrum's analyzer on synthetic
+signals; `tests/notes.py` 145 as before. The CI job on `windows-latest` runs the same stands
+on Windows with the real service. **Not verified anywhere yet:** the WASAPI capture, the
+WinRT media session, LibreHardwareMonitor's JSON on a live machine, the window flags on a
+real desktop (transparency, keep-below, the input transparency toggled at run time), the
+`WorkerW` parenting, the tray icon, the toast — the user's desktop is the first place these
+run.
+
+**Revisit if:** the second-stage hit test turns out to need more than the polled cursor —
+then a small C++ host (one `QWindow` subclass answering `WM_NCHITTEST`) replaces
+`qml.exe`, and nothing else changes; or Plasma's private modules change their surface
+under the shared files faster than the shims can follow — then the split of the data files
+(the second row of the table) is the next step, on both hosts at once.

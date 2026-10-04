@@ -60,7 +60,8 @@ def find_qml(host_dir):
     if found:
         return found
     here = Path(host_dir).resolve().parent
-    for p in (here / "qt" / "bin" / exe, here.parent / "qt" / "bin" / exe):
+    # The zip the packager builds: plaintop.exe, host/ and qt/bin/ side by side.
+    for p in (here / "qt" / "bin" / exe, here.parent / "qt" / "bin" / exe, Path(sys.argv[0]).resolve().parent / "qt" / "bin" / exe):
         if p.is_file():
             return str(p)
     if os.name == "nt":
@@ -90,8 +91,16 @@ class Manager:
         qm = self.host_dir / "i18n" / f"{DOMAINS.get(widget, widget)}_{self.lang}.qm"
         return str(qm) if qm.is_file() else None
 
-    def command(self, qml_file, widget, extra=()):
+    def command(self, qml_file, widget, extra=(), transparent=True, widgets=False):
+        """qml's command line. `--transparent` asks for an alpha channel in the window's
+        surface — without it a "transparent" window is black on Windows; `-a widget` is
+        the QApplication the tray icon needs (Qt.labs.platform has no native tray without
+        Qt Widgets)."""
         cmd = [self.qml, "-I", str(self.host_dir / "imports")]
+        if transparent:
+            cmd.append("--transparent")
+        if widgets:
+            cmd += ["-a", "widget"]
         qm = self.catalog(widget)
         if qm:
             cmd += ["-translation", qm]
@@ -151,11 +160,11 @@ class Manager:
         name = f"settings-{widget}"
         if self.running(name):
             return
-        self.spawn(name, self.command("settings.qml", widget))
+        self.spawn(name, self.command("settings.qml", widget, transparent=False))
 
     def tray(self):
         if not self.running("tray"):
-            self.spawn("tray", self.command("tray.qml", "tray"))
+            self.spawn("tray", self.command("tray.qml", "tray", transparent=False, widgets=True))
 
     def start_shown(self):
         """At launch: every widget whose `shown` setting is on, and the tray."""

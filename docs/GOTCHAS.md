@@ -141,6 +141,18 @@ The ones a session trips over first; each links to its section with the evidence
 - [The holiday regions are one file for the whole shell](#the-holiday-regions-are-one-file-for-the-whole-shell)
 - [KHolidays' plans are Qt resources, readable only where file reads are allowed](#kholidays-plans-are-qt-resources-readable-only-where-file-reads-are-allowed)
 
+**The Windows port**
+
+- [QML refuses a method or a property named with a capital letter — Object.prototype resolves it on a QObject wrapper](#qml-refuses-a-method-or-a-property-named-with-a-capital-letter--objectprototype-resolves-it-on-a-qobject-wrapper)
+- [A QObject wrapper's extra JavaScript properties: refused on QML-made objects, lost from a ListModel's rows at the next collection](#a-qobject-wrappers-extra-javascript-properties-refused-on-qml-made-objects-lost-from-a-listmodels-rows-at-the-next-collection)
+- [A ListModel takes no child objects](#a-listmodel-takes-no-child-objects)
+- [lconvert puts msgctxt into Qt's disambiguation, and drops the plural forms unless told the language](#lconvert-puts-msgctxt-into-qts-disambiguation-and-drops-the-plural-forms-unless-told-the-language)
+- [Qt 6.10's QML parser refuses a reserved word after a dot; 6.11 takes it](#qt-610s-qml-parser-refuses-a-reserved-word-after-a-dot-611-takes-it)
+- [qmltestrunner passes no arguments to the QML it runs](#qmltestrunner-passes-no-arguments-to-the-qml-it-runs)
+- [The qml tool needs --transparent for a transparent window and -a widget for a tray icon](#the-qml-tool-needs---transparent-for-a-transparent-window-and--a-widget-for-a-tray-icon)
+- [A QML-declared enum reads unscoped, like a C++ Q_ENUM](#a-qml-declared-enum-reads-unscoped-like-a-c-q_enum)
+- [pkill by pattern kills the shell that typed it](#pkill-by-pattern-kills-the-shell-that-typed-it)
+
 **conky (archive)**
 
 - [Conky works under Wayland](#conky-works-under-wayland)
@@ -1270,3 +1282,96 @@ is `roleForName()` on a `KSortFilterProxyModel` over it, KF 6.30. `data(index, 2
 but the number is the model's private business. An `Instantiator` over the model with a
 `QtObject` delegate of `required property` roles reads every row by name; collect after
 `objectAdded` (with `Qt.callLater`, once). 2026-10-04.
+
+# Part III. the Windows port
+
+The same shared QML on a bare Qt 6 under Windows 11, behind QML-only shims and one local
+service (decision 17, `win/PROTOCOL.md`). Written in a Linux container with Qt 6.10 and 6.11
+offscreen; what each entry says was run there.
+
+## QML refuses a method or a property named with a capital letter — Object.prototype resolves it on a QObject wrapper
+
+`player/shared/PlayerView.qml` calls the D-Bus-named methods of kmpris's player container —
+`player.Previous()`, `PlayPause()`, `Next()` — and a QML-only stand-in cannot declare them:
+"Method names cannot begin with an upper case letter", and the same for properties and
+signals. What does work: a QObject wrapper looks an unknown name up along the JavaScript
+prototype chain, so `Object.defineProperty(Object.prototype, "PlayPause", { value: function()
+{ return this.playPause() } })` makes `qtobject.PlayPause()` call the lowercase method of the
+object it was called on, and it survives `gc()`. The mpris shim installs the three names
+once (`win/host/imports/org/kde/plasma/private/mpris/Mpris2Model.qml`). Qt 6.10 and 6.11,
+2026-10-05.
+
+## A QObject wrapper's extra JavaScript properties: refused on QML-made objects, lost from a ListModel's rows at the next collection
+
+Two ways around the capital-letter rule that fail. `c.PlayPause = fn` on an object created
+by QML throws "Cannot assign to non-existent property": the engine makes those wrappers
+non-extensible. On an object the engine did not create — a `ListModel` row from `get(i)` —
+the assignment is taken, the property reads back, and after `gc()` it is `undefined`: the
+wrapper is weak, the row object outlives it, and the next wrapper is a fresh one. Verified
+with `typeof` before and after three `gc()` calls, Qt 6.10, 2026-10-05.
+
+## A ListModel takes no child objects
+
+A `Timer` or a `QtObject` declared inside a `ListModel` fails the component: "ListElement:
+cannot contain nested elements" — the default property is the list of elements. Declare them
+as properties (`property Timer t: Timer { … }`); an inline `component` and a `Component`
+property are fine. The `Mpris2Model` shim is a `ListModel` with everything else hung off
+properties. Qt 6.10, 2026-10-05.
+
+## lconvert puts msgctxt into Qt's disambiguation, and drops the plural forms unless told the language
+
+`lconvert -i x.po -o x.qm` turns a gettext catalog into Qt's: the `msgctxt` lands in the
+message's *comment* (the disambiguation), and the Qt context is empty. So a string with a
+ki18n context is found by `qsTranslate("", text, context)`, never by `qsTranslate(context,
+text)`; a bare `i18n()` string by `qsTranslate("", text)`. And without `-target-language ru`
+lconvert prints "Removed plural forms as the target language has less forms" and every
+plural reads as the singular — the PO header's `Language: ru` is not enough. With it,
+`qsTranslate("", "%1 update", "pacman: pending updates", n)` gives «обновление,
+обновления, обновлений» for 1, 2, 5 and «aktualizacja, aktualizacje, aktualizacji» for
+Polish. `%1` is not substituted by Qt; `win/host/imports/plaintop/I18n.js` does it. Qt 6.10,
+2026-10-05.
+
+## Qt 6.10's QML parser refuses a reserved word after a dot; 6.11 takes it
+
+`hol.some(h => h.public)` in `CalendarView.qml` and `h.public ? …` in `Sticker.qml` fail to
+load on Qt 6.10.1 with "Expected token `identifier'" at that line, and load on 6.11.3 (and on
+the desktop's 6.11.2, where they were written). JavaScript allows a reserved word as a
+property name after a dot; Qt's parser only learned it in 6.11. The Windows port therefore
+needs Qt 6.11 or newer, and `jurplel/install-qt-action` is pinned to `6.11.*`.
+2026-10-05.
+
+## qmltestrunner passes no arguments to the QML it runs
+
+`qmltestrunner -input stand.qml -- --port 1234` stops with "Unknown option: '--'", and a bare
+positional argument is taken for another input file; `Qt.application.arguments` in the stand
+holds only what the runner itself was given. A stand that needs a port and a token gets them
+through a generated module instead: `tests/win_hosts.py` writes `standargs/qmldir` and a
+`StandArgs` singleton into a temporary directory and adds it with `-import`. The `qml` tool
+does pass everything after `--`. Qt 6.11, 2026-10-05.
+
+## The qml tool needs --transparent for a transparent window and -a widget for a tray icon
+
+`Window { color: "transparent" }` gets an alpha channel only when the tool was started with
+`--transparent` (it sets `QQuickWindow::setDefaultAlphaBuffer`); without it the window is
+opaque where the platform needs the format up front. And `Qt.labs.platform`'s
+`SystemTrayIcon` and `Menu` print "No native SystemTrayIcon implementation available. Qt
+Labs Platform requires Qt Widgets" under the default `QGuiApplication`: `qml -a widget` runs
+a `QApplication` and the native tray appears. `win/service/ui.py` builds both command lines.
+Offscreen on Linux the error is what was seen; the tray itself is the desktop's check.
+Qt 6.11, 2026-10-05.
+
+## A QML-declared enum reads unscoped, like a C++ Q_ENUM
+
+`enum Roles { SensorId = 256, Value }` in `SensorDataModel.qml` is readable as
+`Sensors.SensorDataModel.SensorId` — without the enum's name — exactly as the C++ model's
+`Q_ENUM` is read in `MonitorData.qml`, and as `Sensors.SensorDataModel.Roles.SensorId` too.
+That is what lets a QML-only module stand in for `org.kde.ksysguard.sensors` and
+`org.kde.plasma.core` (`PlasmaCore.Dialog.PopupMenu`, `PlasmaCore.Types.TopEdge`) without
+touching the shared files. Qt 6.10 and 6.11, 2026-10-05.
+
+## pkill by pattern kills the shell that typed it
+
+`pkill -f "fake_service.py 18788"` matched the command line of the shell running the
+`pkill` itself and killed it (exit 144), the fake service with it. The project's rule
+"never pkill by pattern" stands for one more reason; a process started for a check is stopped
+by the pid written down when it was started. 2026-10-05.
