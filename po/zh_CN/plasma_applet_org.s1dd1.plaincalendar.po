@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 22:56+0500\n"
+"POT-Creation-Date: 2026-10-04 23:28+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -522,66 +522,97 @@ msgctxt "palette: colour of"
 msgid "Today:"
 msgstr "今天："
 
-#: calendar/package/contents/ui/configHolidays.qml:30
+#: calendar/package/contents/ui/configHolidays.qml:89
+msgctxt "a region's plan of"
+msgid "name days"
+msgstr "命名日"
+
+#: calendar/package/contents/ui/configHolidays.qml:90
+msgctxt "a region's plan of"
+msgid "Islamic holidays"
+msgstr "伊斯兰节日"
+
+#: calendar/package/contents/ui/configHolidays.qml:91
+msgctxt "a region's plan of"
+msgid "Catholic holidays"
+msgstr "天主教节日"
+
+#: calendar/package/contents/ui/configHolidays.qml:120
 msgid "Holidays:"
 msgstr "节假日："
 
-#: calendar/package/contents/ui/configHolidays.qml:31
+#: calendar/package/contents/ui/configHolidays.qml:121
 msgid "mark them in the grid and name them in the sticker"
 msgstr "在网格中标出并在便签中显示名称"
 
-#: calendar/package/contents/ui/configHolidays.qml:36
+#: calendar/package/contents/ui/configHolidays.qml:126
 msgid "Which:"
 msgstr "范围："
 
-#: calendar/package/contents/ui/configHolidays.qml:38
+#: calendar/package/contents/ui/configHolidays.qml:128
 msgctxt "which holidays to mark"
 msgid "days off only"
 msgstr "仅法定假日"
 
-#: calendar/package/contents/ui/configHolidays.qml:39
+#: calendar/package/contents/ui/configHolidays.qml:129
 msgctxt "which holidays to mark"
 msgid "every holiday but name days"
 msgstr "除命名日外的所有节日"
 
-#: calendar/package/contents/ui/configHolidays.qml:44
+#: calendar/package/contents/ui/configHolidays.qml:130
+msgctxt "which holidays to mark"
+msgid "every holiday, name days too"
+msgstr "所有纪念日，包括命名日"
+
+#: calendar/package/contents/ui/configHolidays.qml:135
 msgid "World days:"
 msgstr "国际日："
 
-#: calendar/package/contents/ui/configHolidays.qml:46
+#: calendar/package/contents/ui/configHolidays.qml:137
 msgid "the UN's and UNESCO's best known international days"
 msgstr "联合国和教科文组织最知名的国际日"
 
-#: calendar/package/contents/ui/configHolidays.qml:50
+#: calendar/package/contents/ui/configHolidays.qml:141
 msgctxt "palette: colour of"
 msgid "Other holidays:"
 msgstr "其他节日："
 
-#: calendar/package/contents/ui/configHolidays.qml:57
+#: calendar/package/contents/ui/configHolidays.qml:148
 msgid ""
 "A day off takes the weekends' colour; other holidays and world days this one."
 msgstr "法定假日使用周末的颜色；其他节日和国际日使用此颜色。"
 
-#: calendar/package/contents/ui/configHolidays.qml:62
+#: calendar/package/contents/ui/configHolidays.qml:153
 msgctxt "settings section"
 msgid "Regions"
 msgstr "地区"
 
-#: calendar/package/contents/ui/configHolidays.qml:68
-#, kde-format
-msgid ""
-"%1 region chosen. The choice is shared with the calendar of Plasma's clock "
-"and saved at once."
-msgid_plural ""
-"%1 regions chosen. The choice is shared with the calendar of Plasma's clock "
-"and saved at once."
-msgstr[0] "已选择 %1 个地区。此选择与 Plasma 时钟的日历共用，并立即保存。"
+#: calendar/package/contents/ui/configHolidays.qml:157
+msgid "Chosen:"
+msgstr "已选："
 
-#: calendar/package/contents/ui/configHolidays.qml:71
+#: calendar/package/contents/ui/configHolidays.qml:180
+msgctxt "@action:button drop a holiday region"
+msgid "Remove"
+msgstr "移除"
+
+#: calendar/package/contents/ui/configHolidays.qml:193
 msgid ""
-"None chosen: your locale's own region. The choice is shared with the "
-"calendar of Plasma's clock and saved at once."
-msgstr "未选择：使用您区域设置的地区。此选择与 Plasma 时钟的日历共用，并立即保存。"
+"none — your locale's own region. Once you tick one, only the ticked ones "
+"count: tick yours too."
+msgstr ""
+"无 — 使用区域设置所在的地区。一旦勾选一个，就只算勾选的：请把您自己的地区也勾"
+"上。"
+
+#: calendar/package/contents/ui/configHolidays.qml:201
+msgid ""
+"Tick as many as you like. The choice is shared with the calendar of Plasma's "
+"clock and saved at once."
+msgstr "可以任意勾选多个。此选择与 Plasma 时钟的日历共享，并立即保存。"
+
+#: calendar/package/contents/ui/configHolidays.qml:257
+msgid "Nothing found"
+msgstr "未找到"
 
 #: calendar/package/contents/ui/configMouse.qml:19
 msgid "Mouse:"
@@ -826,13 +857,3 @@ msgstr "有记录的日期："
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "便签纸面："
-
-#~ msgctxt "placeholder: no sound"
-#~ msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
-#~ msgstr "无 — 或 /usr/share/sounds/freedesktop/stereo/message.oga"
-
-#, kde-format
-#~ msgctxt ""
-#~ "the sticker's second hint line: the reminders' syntax; %1 is an hour"
-#~ msgid "14:30 text — rings before it · !text — rings at %1"
-#~ msgstr "14:30 文本 — 提前提醒 · !文本 — %1 提醒"

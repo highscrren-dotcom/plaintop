@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 22:56+0500\n"
+"POT-Creation-Date: 2026-10-04 23:28+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -525,66 +525,99 @@ msgctxt "palette: colour of"
 msgid "Today:"
 msgstr "今日:"
 
-#: calendar/package/contents/ui/configHolidays.qml:30
+#: calendar/package/contents/ui/configHolidays.qml:89
+msgctxt "a region's plan of"
+msgid "name days"
+msgstr "名前の日"
+
+#: calendar/package/contents/ui/configHolidays.qml:90
+msgctxt "a region's plan of"
+msgid "Islamic holidays"
+msgstr "イスラム教の祝日"
+
+#: calendar/package/contents/ui/configHolidays.qml:91
+msgctxt "a region's plan of"
+msgid "Catholic holidays"
+msgstr "カトリックの祝日"
+
+#: calendar/package/contents/ui/configHolidays.qml:120
 msgid "Holidays:"
 msgstr "祝日:"
 
-#: calendar/package/contents/ui/configHolidays.qml:31
+#: calendar/package/contents/ui/configHolidays.qml:121
 msgid "mark them in the grid and name them in the sticker"
 msgstr "グリッドで色分けし、付箋に名前を表示"
 
-#: calendar/package/contents/ui/configHolidays.qml:36
+#: calendar/package/contents/ui/configHolidays.qml:126
 msgid "Which:"
 msgstr "対象:"
 
-#: calendar/package/contents/ui/configHolidays.qml:38
+#: calendar/package/contents/ui/configHolidays.qml:128
 msgctxt "which holidays to mark"
 msgid "days off only"
 msgstr "休日のみ"
 
-#: calendar/package/contents/ui/configHolidays.qml:39
+#: calendar/package/contents/ui/configHolidays.qml:129
 msgctxt "which holidays to mark"
 msgid "every holiday but name days"
 msgstr "名前の日以外のすべての記念日"
 
-#: calendar/package/contents/ui/configHolidays.qml:44
+#: calendar/package/contents/ui/configHolidays.qml:130
+msgctxt "which holidays to mark"
+msgid "every holiday, name days too"
+msgstr "名前の日も含むすべての記念日"
+
+#: calendar/package/contents/ui/configHolidays.qml:135
 msgid "World days:"
 msgstr "国際デー:"
 
-#: calendar/package/contents/ui/configHolidays.qml:46
+#: calendar/package/contents/ui/configHolidays.qml:137
 msgid "the UN's and UNESCO's best known international days"
 msgstr "国連とユネスコの主な国際デー"
 
-#: calendar/package/contents/ui/configHolidays.qml:50
+#: calendar/package/contents/ui/configHolidays.qml:141
 msgctxt "palette: colour of"
 msgid "Other holidays:"
 msgstr "その他の記念日:"
 
-#: calendar/package/contents/ui/configHolidays.qml:57
+#: calendar/package/contents/ui/configHolidays.qml:148
 msgid ""
 "A day off takes the weekends' colour; other holidays and world days this one."
 msgstr "休日は週末の色、その他の記念日と国際デーはこの色になります。"
 
-#: calendar/package/contents/ui/configHolidays.qml:62
+#: calendar/package/contents/ui/configHolidays.qml:153
 msgctxt "settings section"
 msgid "Regions"
 msgstr "地域"
 
-#: calendar/package/contents/ui/configHolidays.qml:68
-#, kde-format
-msgid ""
-"%1 region chosen. The choice is shared with the calendar of Plasma's clock "
-"and saved at once."
-msgid_plural ""
-"%1 regions chosen. The choice is shared with the calendar of Plasma's clock "
-"and saved at once."
-msgstr[0] "%1 件の地域を選択中。選択は Plasma の時計のカレンダーと共有され、すぐに保存されます。"
+#: calendar/package/contents/ui/configHolidays.qml:157
+msgid "Chosen:"
+msgstr "選択中:"
 
-#: calendar/package/contents/ui/configHolidays.qml:71
+#: calendar/package/contents/ui/configHolidays.qml:180
+msgctxt "@action:button drop a holiday region"
+msgid "Remove"
+msgstr "外す"
+
+#: calendar/package/contents/ui/configHolidays.qml:193
 msgid ""
-"None chosen: your locale's own region. The choice is shared with the "
-"calendar of Plasma's clock and saved at once."
-msgstr "未選択: ロケールの地域を使います。選択は Plasma の時計のカレンダーと共有され、すぐに保存されます。"
+"none — your locale's own region. Once you tick one, only the ticked ones "
+"count: tick yours too."
+msgstr ""
+"なし — ロケールの地域を使います。一つでもチェックすると、チェックした地域だけ"
+"になります。ご自分の地域もチェックしてください。"
+
+#: calendar/package/contents/ui/configHolidays.qml:201
+msgid ""
+"Tick as many as you like. The choice is shared with the calendar of Plasma's "
+"clock and saved at once."
+msgstr ""
+"いくつでもチェックできます。選択は Plasma の時計のカレンダーと共有され、すぐ"
+"に保存されます。"
+
+#: calendar/package/contents/ui/configHolidays.qml:257
+msgid "Nothing found"
+msgstr "見つかりません"
 
 #: calendar/package/contents/ui/configMouse.qml:19
 msgid "Mouse:"
@@ -834,13 +867,3 @@ msgstr "記録のある日:"
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "付箋の用紙:"
-
-#~ msgctxt "placeholder: no sound"
-#~ msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
-#~ msgstr "なし — または /usr/share/sounds/freedesktop/stereo/message.oga"
-
-#, kde-format
-#~ msgctxt ""
-#~ "the sticker's second hint line: the reminders' syntax; %1 is an hour"
-#~ msgid "14:30 text — rings before it · !text — rings at %1"
-#~ msgstr "14:30 テキスト — その前に通知 · !テキスト — %1 に通知"

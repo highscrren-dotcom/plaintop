@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 22:56+0500\n"
+"POT-Creation-Date: 2026-10-04 23:28+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -533,67 +533,101 @@ msgctxt "palette: colour of"
 msgid "Today:"
 msgstr "Heute:"
 
-#: calendar/package/contents/ui/configHolidays.qml:30
+#: calendar/package/contents/ui/configHolidays.qml:89
+msgctxt "a region's plan of"
+msgid "name days"
+msgstr "Namenstage"
+
+#: calendar/package/contents/ui/configHolidays.qml:90
+msgctxt "a region's plan of"
+msgid "Islamic holidays"
+msgstr "islamische Feiertage"
+
+#: calendar/package/contents/ui/configHolidays.qml:91
+msgctxt "a region's plan of"
+msgid "Catholic holidays"
+msgstr "katholische Feiertage"
+
+#: calendar/package/contents/ui/configHolidays.qml:120
 msgid "Holidays:"
 msgstr "Feiertage:"
 
-#: calendar/package/contents/ui/configHolidays.qml:31
+#: calendar/package/contents/ui/configHolidays.qml:121
 msgid "mark them in the grid and name them in the sticker"
 msgstr "im Raster markieren und im Zettel nennen"
 
-#: calendar/package/contents/ui/configHolidays.qml:36
+#: calendar/package/contents/ui/configHolidays.qml:126
 msgid "Which:"
 msgstr "Welche:"
 
-#: calendar/package/contents/ui/configHolidays.qml:38
+#: calendar/package/contents/ui/configHolidays.qml:128
 msgctxt "which holidays to mark"
 msgid "days off only"
 msgstr "nur arbeitsfreie Tage"
 
-#: calendar/package/contents/ui/configHolidays.qml:39
+#: calendar/package/contents/ui/configHolidays.qml:129
 msgctxt "which holidays to mark"
 msgid "every holiday but name days"
 msgstr "alle Feiertage außer Namenstagen"
 
-#: calendar/package/contents/ui/configHolidays.qml:44
+#: calendar/package/contents/ui/configHolidays.qml:130
+msgctxt "which holidays to mark"
+msgid "every holiday, name days too"
+msgstr "alle Feiertage, auch Namenstage"
+
+#: calendar/package/contents/ui/configHolidays.qml:135
 msgid "World days:"
 msgstr "Welttage:"
 
-#: calendar/package/contents/ui/configHolidays.qml:46
+#: calendar/package/contents/ui/configHolidays.qml:137
 msgid "the UN's and UNESCO's best known international days"
 msgstr "die bekanntesten internationalen Tage der UNO und UNESCO"
 
-#: calendar/package/contents/ui/configHolidays.qml:50
+#: calendar/package/contents/ui/configHolidays.qml:141
 msgctxt "palette: colour of"
 msgid "Other holidays:"
 msgstr "Andere Feiertage:"
 
-#: calendar/package/contents/ui/configHolidays.qml:57
+#: calendar/package/contents/ui/configHolidays.qml:148
 msgid ""
 "A day off takes the weekends' colour; other holidays and world days this one."
-msgstr "Ein arbeitsfreier Tag nimmt die Farbe der Wochenenden, andere Feiertage und Welttage diese."
+msgstr ""
+"Ein arbeitsfreier Tag nimmt die Farbe der Wochenenden, andere Feiertage und "
+"Welttage diese."
 
-#: calendar/package/contents/ui/configHolidays.qml:62
+#: calendar/package/contents/ui/configHolidays.qml:153
 msgctxt "settings section"
 msgid "Regions"
 msgstr "Regionen"
 
-#: calendar/package/contents/ui/configHolidays.qml:68
-#, kde-format
-msgid ""
-"%1 region chosen. The choice is shared with the calendar of Plasma's clock "
-"and saved at once."
-msgid_plural ""
-"%1 regions chosen. The choice is shared with the calendar of Plasma's clock "
-"and saved at once."
-msgstr[0] "%1 Region gewählt. Die Auswahl teilt sich der Kalender der Plasma-Uhr, sie wird sofort gespeichert."
-msgstr[1] "%1 Regionen gewählt. Die Auswahl teilt sich der Kalender der Plasma-Uhr, sie wird sofort gespeichert."
+#: calendar/package/contents/ui/configHolidays.qml:157
+msgid "Chosen:"
+msgstr "Gewählt:"
 
-#: calendar/package/contents/ui/configHolidays.qml:71
+#: calendar/package/contents/ui/configHolidays.qml:180
+msgctxt "@action:button drop a holiday region"
+msgid "Remove"
+msgstr "Entfernen"
+
+#: calendar/package/contents/ui/configHolidays.qml:193
 msgid ""
-"None chosen: your locale's own region. The choice is shared with the "
-"calendar of Plasma's clock and saved at once."
-msgstr "Keine gewählt: die Region Ihrer Spracheinstellung. Die Auswahl teilt sich der Kalender der Plasma-Uhr, sie wird sofort gespeichert."
+"none — your locale's own region. Once you tick one, only the ticked ones "
+"count: tick yours too."
+msgstr ""
+"keine — die Region Ihres Gebietsschemas. Sobald Sie eine ankreuzen, zählen "
+"nur die angekreuzten: kreuzen Sie Ihre auch an."
+
+#: calendar/package/contents/ui/configHolidays.qml:201
+msgid ""
+"Tick as many as you like. The choice is shared with the calendar of Plasma's "
+"clock and saved at once."
+msgstr ""
+"Kreuzen Sie beliebig viele an. Die Auswahl teilt sich der Kalender der "
+"Plasma-Uhr, sie wird sofort gespeichert."
+
+#: calendar/package/contents/ui/configHolidays.qml:257
+msgid "Nothing found"
+msgstr "Nichts gefunden"
 
 #: calendar/package/contents/ui/configMouse.qml:19
 msgid "Mouse:"
@@ -849,13 +883,3 @@ msgstr "Tage mit Einträgen:"
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "Zettelblatt:"
-
-#~ msgctxt "placeholder: no sound"
-#~ msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
-#~ msgstr "keine — oder /usr/share/sounds/freedesktop/stereo/message.oga"
-
-#, kde-format
-#~ msgctxt ""
-#~ "the sticker's second hint line: the reminders' syntax; %1 is an hour"
-#~ msgid "14:30 text — rings before it · !text — rings at %1"
-#~ msgstr "14:30 Text — klingelt davor · !Text — klingelt um %1"

@@ -7,14 +7,14 @@ import "HolidayKinds.js" as Kinds
 // clock shares (~/.config/plasma_calendar_holiday_regions; none chosen: the locale's own).
 // The plugin fills a day grid one month at a time, so there is a Calendar per shown month,
 // and it hands over every entry alike: HolidayKinds.js (made by calendar/holidays.py from
-// the plans) tells a day off from the rest and leaves the name days out. The world days
-// are this widget's own short list.
+// the plans) tells the days off and the name days. The world days are this widget's own
+// short list.
 Item {
     id: holidays
 
     property bool active: true
     property var months: []             // [[year, month 1–12], …] — the grid's months
-    property int kind: 0                // 0: days off only; 1: every holiday but name days
+    property int kind: 0                // 0: days off only; 1: every holiday but name days; 2: all
     property bool world: false          // the UN's and UNESCO's days too
 
     // dateKey → [{title, public, world}], what the view colours and the sticker lists.
@@ -55,7 +55,7 @@ Item {
         for (const k in raw) {
             for (const title of raw[k]) {
                 const pub = publicSet[title] === true
-                if (kind === 0 ? !pub : namedaySet[title] === true)
+                if (kind === 0 ? !pub : kind === 1 && namedaySet[title] === true)
                     continue
                 (out[k] = out[k] || []).push({ title: title, public: pub, world: false })
             }
