@@ -140,7 +140,9 @@ PlasmoidItem {
     // on two screens, the one that asks first shows it — and opens the sheet. The sheet
     // reports the choice; the script records it and prints the document anew, which
     // brings the next due alarm, if any, through the same door.
-    property var taken: ({})            // keys claimed or lost, this run of the shell
+    // Rings claimed or lost, this run of the shell. A ring is an alarm at a time — the key
+    // and `at` — so a snoozed alarm, back at a new time, is a new ring and is claimed anew.
+    property var taken: ({})
 
     function dueAlarms() {
         const now = Date.now()
@@ -148,13 +150,14 @@ PlasmoidItem {
         const out = []
         for (let i = 0; i < list.length; i++) {
             const a = list[i]
-            if (root.taken[a.key] === true) continue
+            const ring = a.key + "|" + a.at
+            if (root.taken[ring] === true) continue
             // "YYYY-MM-DDTHH:MM" is local time; Date.parse would take it as UTC.
             const p = String(a.at).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/)
             if (!p) continue
             const when = new Date(Number(p[1]), Number(p[2]) - 1, Number(p[3]), Number(p[4]), Number(p[5])).getTime()
             if (when <= now)
-                out.push({ alarm: a, when: when })
+                out.push({ alarm: a, when: when, ring: ring })
         }
         out.sort((x, y) => x.when - y.when)
         return out
@@ -167,9 +170,9 @@ PlasmoidItem {
         const due = root.dueAlarms()
         if (due.length === 0) return
         const first = due[0]
-        root.taken[first.alarm.key] = true
+        root.taken[first.ring] = true
         claimer.pending = first
-        claimer.connectSource(command("claim '" + String(first.alarm.key).replace(/'/g, "'\\''") + "'"))
+        claimer.connectSource(command("claim '" + String(first.ring).replace(/'/g, "'\\''") + "'"))
     }
 
     Timer {
