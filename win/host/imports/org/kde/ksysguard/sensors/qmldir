@@ -1,0 +1,5 @@
+module org.kde.ksysguard.sensors
+singleton SensorStore 1.0 SensorStore.qml
+Sensor 1.0 Sensor.qml
+SensorDataModel 1.0 SensorDataModel.qml
+SensorTreeModel 1.0 SensorTreeModel.qml

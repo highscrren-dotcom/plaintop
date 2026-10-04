@@ -1048,6 +1048,7 @@ Item {
         case "dnf": return [updateItem("sudo dnf upgrade")]
         case "zypper": return [updateItem("sudo zypper update")]
         case "flatpak": return [updateItem("flatpak update")]
+        case "winget": return [updateItem("winget upgrade --all")]
         }
         return []
     }
@@ -1120,6 +1121,7 @@ Item {
         case "dnf":
         case "zypper":
         case "flatpak":
+        case "winget":          // the Windows host's package manager (win/PROTOCOL.md)
             return tr.i18ncp("pacman: pending updates", "%1 update", "%1 updates",
                              Number(f[0]) || 0)
         }

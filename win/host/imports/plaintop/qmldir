@@ -1,0 +1,4 @@
+module plaintop
+singleton Service 1.0 Service.qml
+I18n 1.0 I18n.js
+WidgetWindow 1.0 WidgetWindow.qml

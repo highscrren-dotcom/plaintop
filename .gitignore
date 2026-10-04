@@ -38,3 +38,16 @@ monitor/package/contents/ui/SensorRegistry.qml
 # Копии общего вида плеера: источник — player/shared/ (второй хост — визуализатор)
 player/package/contents/ui/PlayerView.qml
 spectrum/package/contents/ui/PlayerView.qml
+
+# The Windows hosts' copies of the shared QML and the compiled catalogs: win/build.py
+win/host/monitor/
+win/host/spectrum/
+win/host/player/
+win/host/weather/
+win/host/calendar/CalendarView.qml
+win/host/calendar/Sticker.qml
+win/host/calendar/Reminder.qml
+win/host/calendar/HolidayKinds.js
+win/host/i18n/
+win/service/config/
+win/service/sounds/
