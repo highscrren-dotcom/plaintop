@@ -627,8 +627,10 @@ manager; the sound line toggles mute; a repository opens a terminal, the file ma
 editor or pulls; the uptime line locks, logs out, reboots or powers off; the header opens
 the settings. A left click runs the first item, a right click opens the menu — the calendar
 sticker's kind of window: `PlasmaCore.Dialog`, no background, a frame of characters, the
-widget's font and palette. The host runs the items (`setsid -f` for programs that must
-outlive the shell, attached for quick commands, whose stderr shows in a notice). Per
+widget's font and palette. The host runs the items (programs that must outlive the
+shell detached into a systemd scope of their own, `systemd-run --user --scope` — `setsid`
+alone leaves them in the shell's cgroup, which a restart kills whole; attached for quick
+commands, whose stderr shows in a notice). Per
 block, the fields `active` and `click` (a command of the user's own, first in the menu, with
 `{name}` `{pid}` `{path}` `{unit}` `{value}` filled in); on *General*, `actions`, `terminal`,
 `editor`, the menu's `frame`, `colorPaper` and `paperOpacity`.
@@ -652,8 +654,8 @@ also mean refreshing them after every tick's relayout; `childAt()` reads the liv
 at the moment of the hit test and costs a walk over some forty children per press or hover.
 
 **What we pay.** The click-through path of the monitor changes from "wrapper disabled"
-(decision 8, proven on the desktop) to "wrapper masked by a function" (not yet seen on a
-desktop) whenever the active lines are on. If Qt refuses the object — the typed function
+(decision 8, proven on the desktop) to "wrapper masked by a function" (seen on the
+desktop since 2026-10-04) whenever the active lines are on. If Qt refuses the object — the typed function
 not exposed as `contains(QPointF)` on this Qt — the mask reads back `null`, a warning is
 logged and the host falls back to an `Item` over the active lines' bounding rectangle:
 coarser, but click-through holds. With the active lines off, the old path is unchanged.
@@ -670,10 +672,17 @@ type, and a block can opt out.
 block type, off globally and per block, the custom click first with the row filled in,
 units with and without `--user`, disks, repositories with the path from the parameter, the
 power menu's questions, sound's mute toggle, health's journal and reboot items, the quoting
-helpers. **Not yet:** `tests/passthrough.qml` test 18 (the function mask on the compiled
-`ItemContainer`) and the desktop — both written without Qt; the next desktop session runs
-them first.
+helpers. `tests/passthrough.qml` test 18 — the function mask on the compiled
+`ItemContainer` gates clicks and hover like the rectangle — passed 2026-10-04 (20 of 20).
+On the desktop the same day, click-through on: no refusal in the journal; hover frames an
+active line and not a separator or a blank one; clicks between the lines and beside the
+text reach the wallpaper, a right click on the widget's empty space opens the desktop's
+menu; a left click on CPU opens System Monitor, on a disk its folder, on a process the
+question; a right click opens the framed menu under the line, keys and a click outside work;
+the sound line toggles mute; edit mode moves and resizes the whole widget. Also checked:
+`ProcessDataModel` has the `pid` attribute (the fourth column), the five KCM ids exist, and
+a program started the way the host starts it survives a restart of the shell.
 
-**Revisit when:** test 18 fails — then the fallback rectangle is the mask and the
+**Revisit when:** test 18 fails on a later Plasma or Qt — then the fallback rectangle is the mask and the
 decision's second half is rewritten; or when a block wants more than one action per line
 beyond the menu.

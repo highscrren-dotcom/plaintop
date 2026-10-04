@@ -744,10 +744,12 @@ QtObject {
 meta-object and is refused. `monitor/package/contents/ui/main.qml` sets two such objects
 (the wrapper's and the PlasmoidItem's), reads the wrapper's `containmentMask` back 400 ms
 later and falls back to an Item over the active lines' bounding rectangle when it reads
-`null`. ⚠️ Written 2026-10-04 without Qt — `tests/passthrough.qml` test 18 is the check on
-the compiled `ItemContainer`; neither the stand nor the desktop has run it yet. If the
-read-back itself is refused by the engine (a revisioned property read from JS returns
-`undefined`, not `null`), the probe concludes nothing and the journal has the warning.
+`null`. Verified 2026-10-04, Qt 6.11.2: in a bare `qml` host the typed object is taken
+(`contains()` answers through it) and the untyped one refused with that warning, the
+property left `null`; `tests/passthrough.qml` test 18 shows the typed mask gating the
+compiled `ItemContainer` like the rectangle — clicks and hover inside to the row, outside
+to the applet beneath or the desktop; and on the desktop, click-through on, the journal had
+no refusal and clicks between the monitor's lines reached the wallpaper.
 
 ## A `Text` with the default `textFormat` accepts the left button
 

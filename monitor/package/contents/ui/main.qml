@@ -102,9 +102,10 @@ PlasmoidItem {
     // (qquickitem.cpp, setContainmentMask); a QML function with typed parameters,
     // "function contains(p: point): bool", is such a method. Off in edit mode, so the
     // shell's own move, resize and configure handles apply to the whole widget.
-    // ⚠️ Not yet run on a desktop: if Qt refuses the object ("does not have an invokable
-    // contains method"), the mask reads back null and `maskFallback` switches to a plain
-    // Item over the active lines' bounding rectangle — coarser, but click-through holds.
+    // Taken on the desktop and on the stand (test 18), Qt 6.11. Should a later Qt refuse
+    // the object ("does not have an invokable contains method"), the mask reads back null
+    // and `maskFallback` switches to a plain Item over the active lines' bounding
+    // rectangle — coarser, but click-through holds.
     readonly property bool maskedLines: passing && actionsOn
     property bool maskFallback: false
 

@@ -119,8 +119,9 @@ text lives too — empty by default, so a fresh install shows only the hostname.
 items, each a shell command with flags (in a terminal, held open, detached as a GUI
 program, through the editor, after a question) or the widget's own settings dialog — and
 `MonitorView` gives such a line a mouse area and a one-pixel frame under the pointer. The
-host runs the items: terminal and GUI programs detached with `setsid -f`, so they outlive
-a restart of the shell; a quick command — `kill`, `systemctl`, `wpctl` — attached, its
+host runs the items: terminal and GUI programs detached, in a systemd scope of their own
+(`systemd-run --user --scope`, plain `setsid -f` without systemd), so they outlive a
+restart of the shell; a quick command — `kill`, `systemctl`, `wpctl` — attached, its
 stderr shown in a notice when it fails. The menu, the question and the notice are one
 `PlasmaCore.Dialog` without a background, framed with the characters from the settings
 (`frame`, eight of them, the same setting as the calendar's sticker) on a sheet of
@@ -129,9 +130,10 @@ stderr shown in a notice when it fails. The menu, the question and the notice ar
 command of your own, first in the menu, with `{name}` `{pid}` `{path}` `{unit}` `{value}`
 filled in from the row). While clicks pass through, the active lines are the one thing
 that takes the mouse — a containment mask that is a function, decision 14 in
-`../docs/DECISIONS.md`. ⚠️ Built 2026-10-04 without Qt: the line stand covers the
-actions attached (`./install.sh --check-monitor`, tests 17–21) and the click-through
-stand the function mask (test 18); the desktop run is still ahead.
+`../docs/DECISIONS.md`. The line stand covers the actions attached
+(`./install.sh --check-monitor`, tests 17–21), the click-through stand the function mask
+(test 18); both pass, and the desktop took the mask on 2026-10-04 — clicks between the
+lines reach the wallpaper, the lines take theirs.
 
 The process-list interval is the setting worth knowing about: the process list behind the
 top lists is the most expensive thing collected — about 3% of a core at the default 2 s,

@@ -28,12 +28,14 @@
 // Test 18 asks one thing more, for the monitor's active lines (decision 14): is a QtObject
 // with a typed QML function "contains(p: point): bool" accepted as a containmentMask —
 // Qt wants any QObject with an invokable contains(QPointF) — and does it gate the wrapper
-// like the rectangle does? ⚠️ Written 2026-10-04 without Qt, not yet run: the monitor
-// falls back to a bounding rectangle when the object is refused.
+// like the rectangle does? It is, and it does: passed 2026-10-04 on s1dPC, and the desktop
+// took the same mask. The monitor still falls back to a bounding rectangle if a future Qt
+// refuses the object.
 //
 // The stand tests Plasma's behaviour, not ours: the trick lives or dies with ItemContainer and
 // Qt's event delivery, so re-run it after every Plasma or Qt upgrade. Last verified 2026-09-23
-// against plasma-workspace 6.7.5 and Qt 6.11.2: 19 of 19 passed (tests 1–17).
+// against plasma-workspace 6.7.5 and Qt 6.11.2: 19 of 19 passed (tests 1–17); 2026-10-04,
+// same versions: 20 of 20 (tests 1–18).
 
 import QtQuick
 import QtTest
