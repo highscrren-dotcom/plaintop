@@ -961,3 +961,66 @@ half a sentence, no catalog can translate the string `i18n()` asks for, and the 
 English in every language. Write one-line literals with `\n` instead, as the rest of the
 project does. Found by `po/extract.py` on two hints of the monitor's General page,
 2026-10-04.
+
+## A `PlasmaCore.Dialog` takes what sits at its root as `mainItem`
+
+The dialog's default property is `mainItem`, a single `Item`. A `Timer` or a `TextMetrics`
+declared at the dialog's root beside `mainItem: Item { … }` is assigned to it too, and the
+component does not load: "Cannot assign object of type Timer to property of type
+QQuickItem*". The calendar's sticker did that, so no sticker could open; the objects live
+inside the sheet now (their ids still reach the whole file). qmllint says only "duplicate
+binding on mainItem". `Qt.createComponent()` on the file in a bare `qml` host gives the real
+error. 2026-10-04.
+
+## Two properties of one name fail the component — qmllint only warns
+
+`property int cellWidth` and `readonly property real cellWidth` in one object is a compile
+error ("Duplicate property name"); the calendar's view did not load at all and the widget
+would have drawn nothing. qmllint reports it as a warning with exit code 0, so a clean exit
+proves nothing: load every file with `Qt.createComponent()` and read `status`. 2026-10-04.
+
+## Qt 6.11's QML engine lacks the newer string and array methods
+
+`String.prototype.trimEnd`, `trimStart`, `replaceAll`, `matchAll`, `at`, `Array.prototype.flat`,
+`flatMap`, `at`, `findLast` and `Object.fromEntries` are `undefined` (probed in
+`/usr/lib/qt6/bin/qml`, Qt 6.11.2); `padStart`, `includes`, `Object.entries` and `?.` work.
+A call throws "TypeError: Property 'trimEnd' of object … is not a function" at run time —
+on the desktop the sticker's side borders came out empty. Use a regular expression:
+`.replace(/\s+$/, "")`. 2026-10-04.
+
+## An id inside a `Repeater` delegate is out of reach — and the delegate may be rebuilt
+
+The sticker's `TextEdit` sat in a row delegate and the dialog called `editor.text`: every
+click on a day threw "ReferenceError: editor is not defined". A delegate's ids belong to the
+delegate. With a count as the model, a change of the count rebuilds every delegate, so even
+a stored reference would point at a new, empty editor. Keep the state on the outer object
+(`noteText`) and let the delegate that plays the part register itself (`editorItem`) and
+take the state when it does. 2026-10-04.
+
+## `setsid` does not take a process out of the shell's cgroup — a restart kills it
+
+A program started from the executable engine lives in `plasma-plasmashell.service`'s
+cgroup, and the unit has `KillMode=control-group`: `systemctl --user restart
+plasma-plasmashell` kills everything in it. `setsid -f` makes a new session and changes
+nothing there. Shown on s1dPC: a `setsid -f sleep` started inside the unit's cgroup was gone
+after the restart; `setsid -f systemd-run --user --scope --quiet --collect -- sleep` moved to
+`app.slice/run-….scope` and lived. The monitor's actions use the second form where
+`systemd-run` exists. 2026-10-04.
+
+## Whatever goes through the executable engine is on a command line
+
+The engine starts its source string as a shell command, so its arguments — and those of the
+programs it starts — are in `/proc/*/cmdline`, readable by every user of the machine.
+The calendar's Accounts page passed a whole account, password included, as base64 to
+`notes.py account-save`. QML in plasmashell has one way to write a file: `QtCore.Settings`
+with a `location` (a QSettings INI, mode 644 — put it in a folder kept at 700). The page
+now writes the secrets there, hex-encoded so the INI quoting cannot touch them, and
+`account-save` takes them and deletes the file. 2026-10-04.
+
+## Importing a package's Python script writes `__pycache__` into the package
+
+`tests/notes.py` imports `calendar/package/contents/code/notes.py`, and Python wrote
+`__pycache__/notes.cpython-314.pyc` beside it — in the directory `--pack` zips and
+kpackagetool6 installs, and `--status` flagged it as a file that differs from the repo. The
+stand sets `sys.dont_write_bytecode`, and `calendar_prepare` removes the directory before
+an install or a pack. 2026-10-04.
