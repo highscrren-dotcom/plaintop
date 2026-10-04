@@ -244,7 +244,9 @@ server. The sheet does not take the keyboard from what you are typing. Alarms mi
 the machine was off come one after another, headed MISSED, up to a few hours back; with
 two instances of the widget, the one that claims an alarm first shows it. Acknowledgements
 and snoozes stay local, in `~/.cache/plaincalendar/reminders.json`. Optionally a system
-notification through `notify-send` and a sound file. Everything is on the *Notes* page.
+notification through `notify-send` and a sound — five short plain tones of the widget's own
+(bell, blip, chime, pager, tick; made by `calendar/sounds.py`) or a file of yours, with a
+*Listen* button. Everything is on the *Notes* page.
 
 ## Three layers
 

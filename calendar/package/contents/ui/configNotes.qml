@@ -27,13 +27,32 @@ KCM.SimpleKCM {
     property alias cfg_remindMissed: missedField.value
     property alias cfg_snoozeMinutes: snoozeField.value
     property alias cfg_remindSystem: systemBox.checked
-    property alias cfg_remindSound: soundField.text
+    // "" none, a built-in sound's name ("chime"), or a file's path.
+    property string cfg_remindSound: ""
 
     // Colours are stored as strings, while ColorButton works with a color: converted in place.
     property string cfg_colorNote: "#8FB6E0"
     property string cfg_colorPaper: "#141820"
 
     readonly property string script: Qt.resolvedUrl("../code/notes.py").toString().replace("file://", "")
+    // The sounds in the package (contents/sounds, made by calendar/sounds.py), in the
+    // order of the list after "none"; "your own file" ends it.
+    readonly property var builtinSounds: ["bell", "blip", "chime", "pager", "tick"]
+    // "Your own file" picked while its path is still empty.
+    property bool ownSound: false
+    function soundFile(v) {
+        const name = String(v || "").trim()
+        if (builtinSounds.indexOf(name) >= 0)
+            return Qt.resolvedUrl("../sounds/" + name + ".wav").toString().replace("file://", "")
+        return name.replace(/^file:\/\//, "")
+    }
+    function shQuote(s) { return "'" + String(s).replace(/'/g, "'\\''") + "'" }
+    P5Support.DataSource {
+        id: player
+        engine: "executable"
+        interval: 0
+        onNewData: function(source, data) { disconnectSource(source) }
+    }
     property var accountIds: ["local"]
     property var accountNames: [i18nc("the account of the widget's own notes: a folder of files", "local — this machine")]
 
@@ -192,12 +211,52 @@ KCM.SimpleKCM {
             text: i18n("also through notify-send — in Plasma's history, silenced by Do Not Disturb")
         }
 
+        RowLayout {
+            Kirigami.FormData.label: i18n("Sound:")
+            enabled: notesBox.checked && remindBox.checked
+            ComboBox {
+                id: soundBox
+                model: [i18nc("reminder sound", "none"), i18nc("reminder sound: a terminal's bell", "bell"),
+                        i18nc("reminder sound: two short beeps", "blip"), i18nc("reminder sound: two tones ringing out", "chime"),
+                        i18nc("reminder sound: three quick beeps", "pager"), i18nc("reminder sound: two dry ticks", "tick"),
+                        i18nc("reminder sound", "your own file…")]
+                readonly property int own: model.length - 1
+                // The setting drives the list: a built-in name picks its line, any other
+                // text is a file of your own.
+                currentIndex: {
+                    const v = String(page.cfg_remindSound).trim()
+                    if (page.ownSound) return own
+                    if (v.length === 0) return 0
+                    const i = page.builtinSounds.indexOf(v)
+                    return i >= 0 ? i + 1 : own
+                }
+                onActivated: index => {
+                    page.ownSound = index === own
+                    if (index === 0) page.cfg_remindSound = ""
+                    else if (index < own) page.cfg_remindSound = page.builtinSounds[index - 1]
+                    else page.cfg_remindSound = fileField.text.trim()
+                }
+            }
+            Button {
+                text: i18nc("play the chosen reminder sound", "Listen")
+                icon.name: "media-playback-start"
+                enabled: page.soundFile(page.cfg_remindSound).trim().length > 0
+                onClicked: {
+                    const f = page.shQuote(page.soundFile(page.cfg_remindSound).trim())
+                    player.connectSource("(pw-play " + f + " || paplay " + f + ") >/dev/null 2>&1 # " + Date.now())
+                }
+            }
+        }
+
         TextField {
-            id: soundField
+            id: fileField
             Kirigami.FormData.label: i18n("Sound file:")
+            visible: soundBox.currentIndex === soundBox.own
             enabled: notesBox.checked && remindBox.checked
             Layout.fillWidth: true
-            placeholderText: i18nc("placeholder: no sound", "none — or /usr/share/sounds/freedesktop/stereo/message.oga")
+            text: page.builtinSounds.indexOf(String(page.cfg_remindSound).trim()) < 0 ? String(page.cfg_remindSound).trim() : ""
+            placeholderText: "/usr/share/sounds/freedesktop/stereo/message.oga"
+            onTextEdited: page.cfg_remindSound = text.trim()
         }
 
         Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Sticker") }

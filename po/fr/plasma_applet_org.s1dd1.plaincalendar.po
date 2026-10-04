@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 19:05+0500\n"
+"POT-Creation-Date: 2026-10-04 21:25+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -450,7 +450,7 @@ msgstr ""
 "que les mois affichés : huit lignes chacun, avec une ligne vide entre eux."
 
 #: calendar/package/contents/ui/configGeneral.qml:107
-#: calendar/package/contents/ui/configNotes.qml:243
+#: calendar/package/contents/ui/configNotes.qml:302
 msgctxt "settings section"
 msgid "Palette"
 msgstr "Palette"
@@ -494,25 +494,25 @@ msgstr ""
 "Le widget ne prend la souris qu'en mode d'édition du bureau :\n"
 "c'est là que sont ses paramètres, ou ./install.sh avec l'option clicks off."
 
-#: calendar/package/contents/ui/configNotes.qml:38
+#: calendar/package/contents/ui/configNotes.qml:57
 msgctxt "the account of the widget's own notes: a folder of files"
 msgid "local — this machine"
 msgstr "local — cette machine"
 
-#: calendar/package/contents/ui/configNotes.qml:74
+#: calendar/package/contents/ui/configNotes.qml:93
 msgctxt "settings section"
 msgid "Notes"
 msgstr "Notes"
 
-#: calendar/package/contents/ui/configNotes.qml:78
+#: calendar/package/contents/ui/configNotes.qml:97
 msgid "Notes:"
 msgstr "Notes :"
 
-#: calendar/package/contents/ui/configNotes.qml:79
+#: calendar/package/contents/ui/configNotes.qml:98
 msgid "mark the days that have entries, open a sticker on click"
 msgstr "marquer les jours ayant des entrées, ouvrir un pense-bête au clic"
 
-#: calendar/package/contents/ui/configNotes.qml:83
+#: calendar/package/contents/ui/configNotes.qml:102
 msgid ""
 "A click on a day opens its sticker: the day's events and tasks from the "
 "accounts,\n"
@@ -526,11 +526,11 @@ msgstr ""
 "le calendrier\n"
 "n'est que la grille et ne prend aucun clic."
 
-#: calendar/package/contents/ui/configNotes.qml:90
+#: calendar/package/contents/ui/configNotes.qml:109
 msgid "Write notes to:"
 msgstr "Écrire les notes dans :"
 
-#: calendar/package/contents/ui/configNotes.qml:98
+#: calendar/package/contents/ui/configNotes.qml:117
 msgid ""
 "“local” keeps them as .ics files in ~/.local/share/plaincalendar/notes;\n"
 "an account from the Accounts page sends them to that calendar as all-day "
@@ -541,32 +541,32 @@ msgstr ""
 "un compte de la page Comptes les envoie dans ce calendrier comme événements "
 "d'une journée."
 
-#: calendar/package/contents/ui/configNotes.qml:105
+#: calendar/package/contents/ui/configNotes.qml:124
 msgid "Upcoming lines:"
 msgstr "Lignes « à venir » :"
 
-#: calendar/package/contents/ui/configNotes.qml:112
+#: calendar/package/contents/ui/configNotes.qml:131
 msgid "The next entries, one per line under the months; 0 hides them."
 msgstr "Les prochaines entrées, une par ligne sous les mois ; 0 les masque."
 
-#: calendar/package/contents/ui/configNotes.qml:119
+#: calendar/package/contents/ui/configNotes.qml:138
 msgid "Fetch the accounts every, min:"
 msgstr "Interroger les comptes toutes les, min :"
 
-#: calendar/package/contents/ui/configNotes.qml:125
+#: calendar/package/contents/ui/configNotes.qml:144
 msgctxt "settings section"
 msgid "Reminders"
 msgstr "Rappels"
 
-#: calendar/package/contents/ui/configNotes.qml:129
+#: calendar/package/contents/ui/configNotes.qml:148
 msgid "Reminders:"
 msgstr "Rappels :"
 
-#: calendar/package/contents/ui/configNotes.qml:131
+#: calendar/package/contents/ui/configNotes.qml:150
 msgid "a sheet by the day's cell when an entry is due"
 msgstr "une feuille près de la case du jour quand une entrée arrive à échéance"
 
-#: calendar/package/contents/ui/configNotes.qml:135
+#: calendar/package/contents/ui/configNotes.qml:154
 msgid ""
 "A note whose first line starts with a time — “14:30 Dentist” — becomes a "
 "timed\n"
@@ -585,71 +585,110 @@ msgstr ""
 "téléphone via le compte. La feuille propose de reporter, de remettre à "
 "demain, ou vu."
 
-#: calendar/package/contents/ui/configNotes.qml:142
+#: calendar/package/contents/ui/configNotes.qml:161
 msgid "Before a timed entry, min:"
 msgstr "Avant un rendez-vous, min :"
 
-#: calendar/package/contents/ui/configNotes.qml:146
+#: calendar/package/contents/ui/configNotes.qml:165
 msgctxt "no reminder before timed notes"
 msgid "none"
 msgstr "aucun"
 
-#: calendar/package/contents/ui/configNotes.qml:152
+#: calendar/package/contents/ui/configNotes.qml:171
 msgid "“!” notes ring at:"
 msgstr "Les notes « ! » sonnent à :"
 
-#: calendar/package/contents/ui/configNotes.qml:161
+#: calendar/package/contents/ui/configNotes.qml:180
 msgid "Events without an alarm:"
 msgstr "Événements sans alarme :"
 
-#: calendar/package/contents/ui/configNotes.qml:163
+#: calendar/package/contents/ui/configNotes.qml:182
 msgid "ring before them too, as for a timed note"
 msgstr "sonner aussi avant eux, comme pour une note horaire"
 
-#: calendar/package/contents/ui/configNotes.qml:168
+#: calendar/package/contents/ui/configNotes.qml:187
 msgid "Snooze for, min:"
 msgstr "Reporter de, min :"
 
-#: calendar/package/contents/ui/configNotes.qml:176
+#: calendar/package/contents/ui/configNotes.qml:195
 msgid "Show missed ones from the last, h:"
 msgstr "Montrer les manqués des dernières, h :"
 
-#: calendar/package/contents/ui/configNotes.qml:183
+#: calendar/package/contents/ui/configNotes.qml:202
 msgid "While the machine was off: alarms older than this are dropped quietly."
 msgstr ""
 "Pendant que la machine était éteinte : les alarmes plus anciennes sont "
 "abandonnées sans bruit."
 
-#: calendar/package/contents/ui/configNotes.qml:190
+#: calendar/package/contents/ui/configNotes.qml:209
 msgid "System notification:"
 msgstr "Notification système :"
 
-#: calendar/package/contents/ui/configNotes.qml:192
+#: calendar/package/contents/ui/configNotes.qml:211
 msgid ""
 "also through notify-send — in Plasma's history, silenced by Do Not Disturb"
 msgstr ""
 "aussi via notify-send — dans l'historique de Plasma, muet en « Ne pas "
 "déranger »"
 
-#: calendar/package/contents/ui/configNotes.qml:197
+#: calendar/package/contents/ui/configNotes.qml:215
+msgid "Sound:"
+msgstr "Son :"
+
+#: calendar/package/contents/ui/configNotes.qml:219
+msgctxt "reminder sound"
+msgid "none"
+msgstr "aucun"
+
+#: calendar/package/contents/ui/configNotes.qml:219
+msgctxt "reminder sound: a terminal's bell"
+msgid "bell"
+msgstr "cloche"
+
+#: calendar/package/contents/ui/configNotes.qml:220
+msgctxt "reminder sound: two short beeps"
+msgid "blip"
+msgstr "bip"
+
+#: calendar/package/contents/ui/configNotes.qml:220
+msgctxt "reminder sound: two tones ringing out"
+msgid "chime"
+msgstr "carillon"
+
+#: calendar/package/contents/ui/configNotes.qml:221
+msgctxt "reminder sound: three quick beeps"
+msgid "pager"
+msgstr "bipeur"
+
+#: calendar/package/contents/ui/configNotes.qml:221
+msgctxt "reminder sound: two dry ticks"
+msgid "tick"
+msgstr "tic-tac"
+
+#: calendar/package/contents/ui/configNotes.qml:222
+msgctxt "reminder sound"
+msgid "your own file…"
+msgstr "fichier personnel…"
+
+#: calendar/package/contents/ui/configNotes.qml:241
+msgctxt "play the chosen reminder sound"
+msgid "Listen"
+msgstr "Écouter"
+
+#: calendar/package/contents/ui/configNotes.qml:253
 msgid "Sound file:"
 msgstr "Fichier son :"
 
-#: calendar/package/contents/ui/configNotes.qml:200
-msgctxt "placeholder: no sound"
-msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
-msgstr "aucun — ou /usr/share/sounds/freedesktop/stereo/message.oga"
-
-#: calendar/package/contents/ui/configNotes.qml:203
+#: calendar/package/contents/ui/configNotes.qml:262
 msgctxt "settings section"
 msgid "Sticker"
 msgstr "Pense-bête"
 
-#: calendar/package/contents/ui/configNotes.qml:207
+#: calendar/package/contents/ui/configNotes.qml:266
 msgid "Frame characters:"
 msgstr "Caractères du cadre :"
 
-#: calendar/package/contents/ui/configNotes.qml:214
+#: calendar/package/contents/ui/configNotes.qml:273
 msgid ""
 "Eight characters: the corners, the horizontal, the vertical and the two\n"
 "junctions of a separator — “┌─┐│└┘├┤”, or “+-+|+++” in plain ASCII."
@@ -657,42 +696,46 @@ msgstr ""
 "Huit caractères : les coins, l'horizontale, la verticale et les deux\n"
 "jonctions d'un séparateur — « ┌─┐│└┘├┤ », ou « +-+|+++ » en ASCII simple."
 
-#: calendar/package/contents/ui/configNotes.qml:221
+#: calendar/package/contents/ui/configNotes.qml:280
 msgid "Sticker width, characters:"
 msgstr "Largeur du pense-bête, caractères :"
 
-#: calendar/package/contents/ui/configNotes.qml:229
+#: calendar/package/contents/ui/configNotes.qml:288
 msgid "Opening:"
 msgstr "Ouverture :"
 
-#: calendar/package/contents/ui/configNotes.qml:231
+#: calendar/package/contents/ui/configNotes.qml:290
 msgctxt "sticker animation"
 msgid "at once"
 msgstr "d'un coup"
 
-#: calendar/package/contents/ui/configNotes.qml:231
+#: calendar/package/contents/ui/configNotes.qml:290
 msgctxt "sticker animation"
 msgid "fade in"
 msgstr "fondu"
 
-#: calendar/package/contents/ui/configNotes.qml:231
+#: calendar/package/contents/ui/configNotes.qml:290
 msgctxt "sticker animation"
 msgid "unfold line by line"
 msgstr "déplier ligne par ligne"
 
-#: calendar/package/contents/ui/configNotes.qml:236
+#: calendar/package/contents/ui/configNotes.qml:295
 msgid "Sheet opacity, %:"
 msgstr "Opacité de la feuille, % :"
 
-#: calendar/package/contents/ui/configNotes.qml:246
+#: calendar/package/contents/ui/configNotes.qml:305
 msgctxt "palette: colour of"
 msgid "Days with entries:"
 msgstr "Jours avec entrées :"
 
-#: calendar/package/contents/ui/configNotes.qml:252
+#: calendar/package/contents/ui/configNotes.qml:311
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "Feuille du pense-bête :"
+
+#~ msgctxt "placeholder: no sound"
+#~ msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
+#~ msgstr "aucun — ou /usr/share/sounds/freedesktop/stereo/message.oga"
 
 #, kde-format
 #~ msgctxt ""

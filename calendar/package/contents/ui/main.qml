@@ -263,13 +263,22 @@ PlasmoidItem {
         onNewData: function(source, data) { disconnectSource(source) }
     }
     function shQuote(s) { return "'" + String(s).replace(/'/g, "'\\''") + "'" }
+    // The reminder sound: a built-in name is a file in the package (contents/sounds, made
+    // by calendar/sounds.py), anything else a path of your own; "" none.
+    readonly property var builtinSounds: ["bell", "blip", "chime", "pager", "tick"]
+    function soundFile(v) {
+        const name = String(v || "").trim()
+        if (builtinSounds.indexOf(name) >= 0)
+            return Qt.resolvedUrl("../sounds/" + name + ".wav").toString().replace("file://", "")
+        return name.replace(/^file:\/\//, "")
+    }
     function announce(a) {
         if (root.cfg.remindSystem) {
             const title = (a.time ? a.time + "  " : "") + String(a.summary || "")
             side.connectSource("notify-send -a plaincalendar -i office-calendar " + shQuote(title)
                                + " " + shQuote(String(a.description || "").split("\n")[0]) + " # " + Date.now())
         }
-        const sound = String(root.cfg.remindSound || "").trim()
+        const sound = root.soundFile(root.cfg.remindSound)
         if (sound.length > 0)
             side.connectSource("(pw-play " + shQuote(sound) + " || paplay " + shQuote(sound) + ") >/dev/null 2>&1 & # " + Date.now())
     }
