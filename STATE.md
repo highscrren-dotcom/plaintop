@@ -14,10 +14,13 @@
   (`pip install soundcard`), SMTC (`pip install winsdk`, Spotify/браузер), LHM JSON на 8085,
   `winget`/`wevtutil`/`route print`/`netsh wlan` на живом выводе, уведомление-тост и `winsound`,
   шрифт JetBrainsMono Nerd Font Mono, DPI. Записать в «Окружение» версию Windows, масштаб, Python, Qt.
-- **CI `windows`**: первый прогон упал на `install-qt-action` (aqt не видит архивов 6.11 для
-  Windows), второй — на Qt 6.10 — запущен пушем `d335735`; проверить итог и логи
-  (`Actions → checks`). Шаг «the zip (advisory)» (windeployqt + PyInstaller) совещательный, артефакт
-  `plaintop-win`.
+- **CI `windows` зелёный** (run 37232848468 на `1c7bb06`): на настоящей Windows (Qt 6.10.3 msvc2022,
+  Python 3.12) прошли `win_service` 165, `win_bands` 51, `win_media` 94, `notes.py` 145, стенд хостов
+  через шимы против настоящей службы (`qml.exe`!), стенды Plasma `weather`/`monitor` на голом Qt, и
+  шаг zip (windeployqt + PyInstaller) собрал `plaintop-win.zip` 58 MiB — артефакт `plaintop-win`
+  (хранится до 02.01.2027). Четыре прогона до зелёного: aqt без 6.11 для Windows → 6.10; Python
+  агента Qt затирал pip → Qt раньше Python; cp1252 → UTF-8; POSIX-биты в стенде заметок.
+  Пользователю: скачать артефакт и запустить `plaintop.exe` — это первый запуск на столе.
 - **Окно настроек** `win/host/settings.qml` (+ `tests/win_settings.qml`) делал агент — проверить,
   что доехало, прогнать стенд, закоммитить; затем `python3 po/extract.py` (новые строки хостов, трея,
   окна настроек — источники уже перечислены в `DOMAINS`), русские переводы к ним, `msgfmt --check`.
@@ -50,9 +53,10 @@ Windows, `webbrowser`). Стенды Plasma: `--check-notes` 145, `--check-relay
 - Документы: решение 17 EN/RU, GOTCHAS часть III (9 записей, EN/RU, оглавление), `win/README` пара,
   README пара (раздел Windows), CONTRIBUTING пара, `win/PROTOCOL.md` (EN).
 
-**Не проверено нигде** (нет Windows): всё, что перечислено в задаче сессии выше, плюс
-`windeployqt`/PyInstaller в `package.py`, `CREATE_NO_WINDOW`, `platform.win32_edition()`, pycaw,
-PowerShell-зонды батареи и Bluetooth, PnP-батареи, `psutil.win_service_iter()` стоимость.
+**Проверено на Windows только в CI (offscreen, без стола)**: служба целиком на psutil/winreg/
+`wevtutil`, `qml.exe` грузит хосты и шимы, zip собирается. **Не проверено нигде**: всё, что
+перечислено в задаче сессии выше (стол), плюс `CREATE_NO_WINDOW`, pycaw, PowerShell-зонды батареи и
+Bluetooth, стоимость `psutil.win_service_iter()`, сам `plaintop.exe` из zip (собран, не запускался).
 
 ⚠️ Qt локально в контейнере: `/opt/qt/{6.8.3,6.10.1,6.11.3}/gcc_64`; стенды — `QT_QPA_PLATFORM=offscreen
 LC_ALL=C.UTF-8 QT_FORCE_STDERR_LOGGING=1`. Заменитель службы для стендов без Python-службы остался в

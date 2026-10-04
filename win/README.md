@@ -11,8 +11,9 @@ in [../docs/DECISIONS.md](../docs/DECISIONS.md).
 
 ⚠️ **Status.** The port was written in a Linux container, without a Windows machine, and
 verified there on a bare Qt (6.8, 6.10 and 6.11) against a stand-in of the service and with the service's
-own Python stands; the CI job on `windows-latest` is where it first met Windows. The things
-only a desktop can show — the sound capture, the media session, the sensors from
+own Python stands; the CI job on `windows-latest` is where it first met Windows, and it is
+green: the service's stands, the hosts loaded by `qml.exe` against the real service, and the
+zip — all offscreen, no desktop. The things only a desktop can show — the sound capture, the media session, the sensors from
 LibreHardwareMonitor, the look of the window flags, the tray, the toast — have not been
 seen on one yet. Reports welcome.
 
@@ -64,6 +65,11 @@ switch, *behind the desktop icons*, close. The place is remembered.
 wallpaper engines do; off, the window is a tool window kept at the bottom of the stack,
 which Windows may raise above the icons. Not yet seen on a desktop: try it, and say what
 happened.
+
+**The zip.** Every green CI run keeps `plaintop-win.zip` as the artifact `plaintop-win`
+(*Actions → checks → the run → Artifacts*): `plaintop.exe` with the frozen service, `host/`,
+and `qt/` with `qml.exe` and its modules — unpack anywhere, run `plaintop.exe`; the font and
+the optional packages above are not inside. Built by `win/package.py`; not yet run by a person.
 
 **Autostart:** a shortcut in the Startup folder (`Win+R`, `shell:startup`) to
 `pythonw.exe C:\path\to\plaintop\win\plaintop.py`.

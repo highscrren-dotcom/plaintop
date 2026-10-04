@@ -963,11 +963,13 @@ the monitor's sensors, the command emulation and the spectrum's analyzer on synt
 signals; `tests/notes.py` 145 as before; the hosts' stand on Qt 6.8.3, 6.10.1 and 6.11.3 alike, and
 the Plasma widgets' own `tests/weather.qml` and `tests/monitor.qml` on the same bare Qt
 through the shims (10 and 23 passed) — their first run outside Plasma. The CI job on
-`windows-latest` runs the same stands on Windows with the real service. **Not verified anywhere yet:** the WASAPI capture, the
-WinRT media session, LibreHardwareMonitor's JSON on a live machine, the window flags on a
-real desktop (transparency, keep-below, the input transparency toggled at run time), the
-`WorkerW` parenting, the tray icon, the toast — the user's desktop is the first place these
-run.
+`windows-latest` runs the same stands on Windows with the real service. The fourth run of that job was green (2026-10-04, Qt 6.10.3): the
+service's stands on Windows itself, `qml.exe` loading the five hosts through the shims
+against the real service, and `windeployqt` + PyInstaller producing the 58 MiB zip. **Not
+verified anywhere yet:** the WASAPI capture, the WinRT media session, LibreHardwareMonitor's
+JSON on a live machine, the window flags on a real desktop (transparency, keep-below, the
+input transparency toggled at run time), the `WorkerW` parenting, the tray icon, the toast,
+the zip started by hand — the user's desktop is the first place these run.
 
 **Revisit if:** the second-stage hit test turns out to need more than the polled cursor —
 then a small C++ host (one `QWindow` subclass answering `WM_NCHITTEST`) replaces

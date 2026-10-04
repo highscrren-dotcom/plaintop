@@ -32,8 +32,10 @@ plasma5support, ki18n, core.Dialog/Types, private.mpris). Служба `win/serv
 плеера доходит до `/player`, погода тянет Open-Meteo, кольцо рисуется, календарь получает документ и
 открывает стикер у ячейки; `win_service.py` 167, `win_bands.py` 51 (440 Гц → полоса 102/256,
 0.2 мс/кадр), `win_media.py` 94, `notes.py` 145, `relay.py` 21. Впервые вне Plasma: `tests/monitor.qml`
-23 и `tests/weather.qml` 10 на голом Qt через шимы. CI: job `no-qt` зелёный; первый `windows`
-упал на `install-qt-action` — aqtinstall не находит архивов 6.11 для Windows; переведён на 6.10.
+23 и `tests/weather.qml` 10 на голом Qt через шимы. CI: job `no-qt` зелёный; `windows` стал зелёным с
+четвёртого прогона (run 37232848468): на настоящей Windows с Qt 6.10.3 — служебные стенды 165/51/94,
+`notes.py` 145, стенд хостов через шимы против настоящей службы в `qml.exe`, стенды Plasma на голом Qt,
+zip 58 MiB через windeployqt + PyInstaller (артефакт `plaintop-win`).
 
 **Что не получилось с первого раза.** Уппер-кейс методы `Previous()/PlayPause()/Next()` из
 `PlayerView`: объявить нельзя, JS-свойства на обёртке объекта из QML — «non-existent property»,
@@ -42,7 +44,10 @@ plasma5support, ki18n, core.Dialog/Types, private.mpris). Служба `win/serv
 заодно порт работает от 6.8. `qmltestrunner` не пропускает `--` — порт и токен стенду передаёт
 сгенерированный модуль `standargs` (`tests/win_hosts.py`). `Qt.labs.platform` требует `-a widget`,
 прозрачное окно — `--transparent`. `pkill -f` по шаблону убил собственную оболочку (код 144) —
-правило проекта подтверждено ещё раз.
+правило проекта подтверждено ещё раз. CI на Windows: aqt не видит архивов Qt 6.11 для Windows
+(ушли на 6.10); `install-qt-action` оставляет на PATH свой Python 3.14, и `pip install` до него
+пропадает (Qt теперь ставится первым); консоль раннера cp1252 — «✓» падал (`PYTHONUTF8`,
+`reconfigure`); стенд заметок проверял POSIX-биты (теперь только вне `nt`).
 
 **Решения сессии.** Шимы, а не разрез `MonitorData` (альтернативы — в решении 17). Хост без C++;
 хит-тест при сквозных кликах — второй этап (кандидат: опрос курсора через службу). Настройки —
@@ -50,8 +55,8 @@ plasma5support, ki18n, core.Dialog/Types, private.mpris). Служба `win/serv
 `Holidays.qml` у хоста Windows: пакет `holidays` сам знает выходные, имена с KHolidays совпадают
 21 из 29. Qt для CI — 6.10, минимум — 6.8. Активные строки на Windows выключены по умолчанию.
 
-**Чем продолжать.** Зелёный `windows` job (второй прогон после 6.10); стол пользователя — первый
-запуск WASAPI, WinRT, LHM, флагов окна, WorkerW, трея, уведомления; `po/extract.py` для новых
+**Чем продолжать.** Стол пользователя — первый запуск `plaintop.exe` из артефакта: WASAPI, WinRT,
+LHM, флаги окна, WorkerW, трей, уведомление; `po/extract.py` для новых
 строк хостов и окна настроек, русские переводы к ним; хит-тест второго этапа.
 
 ## 2026-10-05 (ночь, на s1dPC) — стенды на настоящем Qt, первый CI, релиз v0.5
