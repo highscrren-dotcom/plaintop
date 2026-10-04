@@ -780,10 +780,13 @@ Item {
             top = 1
             for (const v of values) if (v > top) top = v
         }
+        // Glyph i fills (i + 1)/n of the cell, so a value takes the lowest glyph that
+        // reaches it: half is "▄", not the rounded-up "▅"; zero still shows the lowest.
+        const n = glyphs.length
         const shown = values.slice(-width)
         let out = " ".repeat(Math.max(0, width - shown.length))
         for (const v of shown)
-            out += glyphs[Math.round(Math.max(0, Math.min(1, v / top)) * (glyphs.length - 1))]
+            out += glyphs[Math.max(0, Math.ceil(Math.max(0, Math.min(1, v / top)) * n) - 1)]
         return out
     }
 
