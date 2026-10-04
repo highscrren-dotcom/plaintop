@@ -451,7 +451,8 @@ field and a "remind" row — none, minutes or an hour before a timed note, or at
 of an all-day one; typing "14:30 Dentist" or "!Buy milk" into the note does the same; both are VALARMs, so the account's phone rings too. The accounts'
 events ring by their own alarms. A due alarm opens a sheet by the day's cell with snooze,
 an hour, tomorrow, done, and "task done" for tasks; missed ones come one by one. Optional
-system notification and sound. ⚠️ Not yet run on a desktop at the time of writing.
+system notification and sound. As many notes a day as you like, each with its own reminder.
+Checked on the desktop 2026-10-04, Yandex included.
 
 - **File:** `dist/plaincalendar-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Date and Time

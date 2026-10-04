@@ -757,10 +757,15 @@ script every few minutes, and a half-minute clock in the widget is enough.
 rings (relative, off the end, absolute, a day before an all-day entry, the lead), the
 schedule with acknowledged and snoozed alarms and the missed window, the timed and the "!"
 notes round-tripping through iCalendar, the CLI — set, ack, snooze by minutes and by time,
-claim first and second, a task completed on the fake server with If-Match. **Not yet:** the
-sheet on a desktop — placement, that a Notification-type dialog shows by a visualParent
-and takes no focus, hover and click on it, the claim with two instances, the system
-notification and the sound.
+claim first and second, a task completed on the fake server with If-Match. On the desktop,
+2026-10-04: the Notification-type sheet opens by its visualParent — by the day's cell once
+the anchor took the day's own month (it had hung from September's copy of the 4th); a
+click on "in 10 min" and on "done" reached reminders.json; a snoozed alarm rang again once
+a claim was made per ring (it had not); two notes on one day each rang; a missed alarm
+comes with MISSED; a timed note to Yandex reached the server with its VALARM; the
+notification and the sound commands ran (the sound into a null sink). Now 141 checks. **Not
+yet:** that the sheet takes no focus from what is being typed (nobody watched for it), two
+instances (the desktop has one), a task closed from the sheet on a real server.
 
 **Revisit when:** the desktop shows the Notification type cannot be placed by an item, or
 the sheet needs the keyboard after all — then PopupMenu with `hideOnWindowDeactivate` off.

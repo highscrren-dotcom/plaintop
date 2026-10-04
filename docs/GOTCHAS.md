@@ -1043,3 +1043,13 @@ is. 2026-10-04.
 too — red beside a title, bright beside an entry — and the frame looks broken where the
 rows change colour. Draw the sides as their own pieces in the frame's colour; the sticker
 and the menu recognise such a row by its first and last character. 2026-10-04.
+
+## `Qt.btoa` encodes its string as UTF-8 itself — the browser idiom encodes it twice
+
+In a browser `btoa` takes bytes, so non-ASCII text goes through
+`btoa(unescape(encodeURIComponent(text)))`. Qt 6's `Qt.btoa` takes a string and encodes it
+as UTF-8 before the base64: `Qt.btoa("тест")` is `0YLQtdGB0YI=`, the same as `printf тест |
+base64`, while the wrapped form gives `w5HCgsOQwrXDkcKBw5HCgg==` — every byte encoded again.
+The calendar saved a note typed in Russian as "ÑÐµÑÑ" until the wrapper went; the
+Accounts page would have done the same to an account named "Яндекс". Use `Qt.btoa(text)`
+alone (and `Qt.atob` gives the string back). `/usr/lib/qt6/bin/qml`, Qt 6.11.2, 2026-10-04.
