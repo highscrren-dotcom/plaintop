@@ -112,7 +112,8 @@ msgctxt "growth"
 msgid "inward"
 msgstr ""
 
-#: spectrum/package/contents/ui/configGeneral.qml:129 spectrum/package/contents/ui/configGeneral.qml:130
+#: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
 msgctxt "growth"
 msgid "both ways"
 msgstr ""
