@@ -67,6 +67,52 @@
     <entry name="weekendAccent" type="Bool">
       <default>true</default>
     </entry>
+
+    <!-- Notes and calendars: a day with an entry — a note of yours, an event or a task
+         from an account — takes the note colour, a click on it opens the sticker, and
+         the next few entries are printed under the months. Off, the calendar is the
+         plain grid and takes no clicks. The data comes from contents/code/notes.py,
+         run through the executable engine; the accounts live in its own file. -->
+    <entry name="notes" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="colorNote" type="String">
+      <default>#8FB6E0</default>
+    </entry>
+    <!-- Lines of upcoming entries under the months, 0 for none; the board reserves
+         them, so the size hint stays constant. -->
+    <entry name="upcoming" type="Int">
+      <default>3</default>
+    </entry>
+    <!-- The account the widget's own notes are written to: "local" is the folder of
+         .ics files, otherwise an account id from the Accounts page. -->
+    <entry name="noteAccount" type="String">
+      <default>local</default>
+    </entry>
+    <!-- Minutes between fetches of the accounts. -->
+    <entry name="syncMinutes" type="Int">
+      <default>15</default>
+    </entry>
+    <!-- The sticker: a flat sheet of the paper colour at this opacity, framed with
+         characters — eight of them: top-left, horizontal, top-right, vertical,
+         bottom-left, bottom-right, and the two junctions of a separator row; "+-+|+++"
+         in ASCII — this many characters wide inside the frame, and opened with no
+         animation (0), a fade (1) or unfolding line by line (2). -->
+    <entry name="colorPaper" type="String">
+      <default>#141820</default>
+    </entry>
+    <entry name="paperOpacity" type="Int">
+      <default>94</default>
+    </entry>
+    <entry name="frame" type="String">
+      <default>┌─┐│└┘├┤</default>
+    </entry>
+    <entry name="stickerColumns" type="Int">
+      <default>40</default>
+    </entry>
+    <entry name="stickerAnimation" type="Int">
+      <default>2</default>
+    </entry>
   </group>
 
 </kcfg>

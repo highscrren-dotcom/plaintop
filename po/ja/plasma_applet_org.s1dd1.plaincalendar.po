@@ -168,3 +168,328 @@ msgstr ""
 "クリックを通している間は、マウスの両方のボタンがデスクトップに届きます。\n"
 "ウィジェットがマウスを受け取るのはデスクトップの編集モードのときだけです:\n"
 "設定もそこにあります。または clicks off スイッチ付きの ./install.sh。"
+
+#: calendar/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Notes"
+msgstr "メモ"
+
+#: calendar/package/contents/config/config.qml:19
+msgctxt "settings page"
+msgid "Accounts"
+msgstr "アカウント"
+
+#: calendar/package/contents/ui/Sticker.qml:132
+msgctxt "the account's last fetch failed"
+msgid "offline"
+msgstr "オフライン"
+
+#: calendar/package/contents/ui/Sticker.qml:148
+msgctxt "the sticker's hint line"
+msgid "Esc closes · an empty note deletes it"
+msgstr "Esc で閉じる · 空にすると削除"
+
+#: calendar/package/contents/ui/configAccounts.qml:28
+msgctxt "account preset"
+msgid "Yandex (CalDAV)"
+msgstr "Yandex (CalDAV)"
+
+#: calendar/package/contents/ui/configAccounts.qml:29
+msgctxt "account preset"
+msgid "iCloud (CalDAV)"
+msgstr "iCloud (CalDAV)"
+
+#: calendar/package/contents/ui/configAccounts.qml:30
+msgctxt "account preset"
+msgid "Google (CalDAV, OAuth)"
+msgstr "Google (CalDAV、OAuth)"
+
+#: calendar/package/contents/ui/configAccounts.qml:31
+msgctxt "account preset"
+msgid "any CalDAV server"
+msgstr "任意の CalDAV サーバー"
+
+#: calendar/package/contents/ui/configAccounts.qml:32
+msgctxt "account preset"
+msgid "ICS link, read-only"
+msgstr "ICS リンク、読み取り専用"
+
+#: calendar/package/contents/ui/configAccounts.qml:70
+#, kde-format
+msgid "The script did not answer: %1"
+msgstr "スクリプトが応答しません: %1"
+
+#: calendar/package/contents/ui/configAccounts.qml:70
+msgid "is python3 installed?"
+msgstr "python3 はインストールされていますか?"
+
+#: calendar/package/contents/ui/configAccounts.qml:103
+msgid "The account needs an id — a short word, say “yandex”."
+msgstr "アカウントには id が必要です — 「yandex」のような短い語。"
+
+#: calendar/package/contents/ui/configAccounts.qml:113
+msgid "Saved."
+msgstr "保存しました。"
+
+#: calendar/package/contents/ui/configAccounts.qml:127
+msgid "Removed."
+msgstr "削除しました。"
+
+#: calendar/package/contents/ui/configAccounts.qml:138
+msgid "Asking the server…"
+msgstr "サーバーに問い合わせ中…"
+
+#: calendar/package/contents/ui/configAccounts.qml:147
+#, kde-format
+msgid "The link answers: %1 entry."
+msgid_plural "The link answers: %1 entries."
+msgstr[0] "リンクは応答しています: %1 件。"
+
+#: calendar/package/contents/ui/configAccounts.qml:149
+msgid "The server answers, but lists no calendar."
+msgstr "サーバーは応答しますが、カレンダーが見つかりません。"
+
+#: calendar/package/contents/ui/configAccounts.qml:188
+msgid ""
+"Calendars the widget reads, and the one it writes your notes to (chosen on the Notes page). Yandex and iCloud take an app password from your account's settings; Google signs in once through the browser."
+msgstr ""
+"ウィジェットが読むカレンダーと、メモを書き込むカレンダー（「メモ」ページで選択）。Yandex と iCloud はアカウント設定のアプリパスワードを使い、Google はブラウザで一度サインインします。"
+
+#: calendar/package/contents/ui/configAccounts.qml:217
+msgctxt "Google account state"
+msgid "signed in"
+msgstr "サインイン済み"
+
+#: calendar/package/contents/ui/configAccounts.qml:217
+msgctxt "Google account state"
+msgid "not signed in yet"
+msgstr "まだサインインしていません"
+
+#: calendar/package/contents/ui/configAccounts.qml:218
+msgctxt "CalDAV account state"
+msgid "no password"
+msgstr "パスワードなし"
+
+#: calendar/package/contents/ui/configAccounts.qml:232
+msgid "New"
+msgstr "新規"
+
+#: calendar/package/contents/ui/configAccounts.qml:238
+msgid "Remove"
+msgstr "削除"
+
+#: calendar/package/contents/ui/configAccounts.qml:269
+msgid "Provider:"
+msgstr "プロバイダー:"
+
+#: calendar/package/contents/ui/configAccounts.qml:281
+msgid "Id:"
+msgstr "Id:"
+
+#: calendar/package/contents/ui/configAccounts.qml:282
+msgctxt "placeholder for an account id"
+msgid "yandex"
+msgstr "yandex"
+
+#: calendar/package/contents/ui/configAccounts.qml:288
+msgid "Name:"
+msgstr "名前:"
+
+#: calendar/package/contents/ui/configAccounts.qml:289
+msgctxt "placeholder for an account's name"
+msgid "as it is shown on the sticker"
+msgstr "付箋に表示する名前"
+
+#: calendar/package/contents/ui/configAccounts.qml:294
+msgid "Link:"
+msgstr "リンク:"
+
+#: calendar/package/contents/ui/configAccounts.qml:294
+msgid "Server:"
+msgstr "サーバー:"
+
+#: calendar/package/contents/ui/configAccounts.qml:301
+msgid "Google account:"
+msgstr "Google アカウント:"
+
+#: calendar/package/contents/ui/configAccounts.qml:301
+msgid "Login:"
+msgstr "ログイン名:"
+
+#: calendar/package/contents/ui/configAccounts.qml:303
+msgctxt "placeholder for a login"
+msgid "your login on the server"
+msgstr "サーバーでのログイン名"
+
+#: calendar/package/contents/ui/configAccounts.qml:308
+msgid "App password:"
+msgstr "アプリパスワード:"
+
+#: calendar/package/contents/ui/configAccounts.qml:311
+msgctxt "placeholder: a password is stored"
+msgid "stored — type to replace"
+msgstr "保存済み — 入力で置き換え"
+
+#: calendar/package/contents/ui/configAccounts.qml:316
+msgid ""
+"Yandex: id.yandex.ru → Security → App passwords → Calendar.\n"
+"iCloud: appleid.apple.com → Sign-in and security → App-specific passwords."
+msgstr ""
+"Yandex: id.yandex.ru → セキュリティ → アプリパスワード → カレンダー。\n"
+"iCloud: appleid.apple.com → サインインとセキュリティ → App 用パスワード。"
+
+#: calendar/package/contents/ui/configAccounts.qml:323
+msgid "OAuth client id:"
+msgstr "OAuth クライアント ID:"
+
+#: calendar/package/contents/ui/configAccounts.qml:330
+msgid "OAuth client secret:"
+msgstr "OAuth クライアントシークレット:"
+
+#: calendar/package/contents/ui/configAccounts.qml:333
+msgctxt "placeholder: a secret is stored"
+msgid "stored — type to replace"
+msgstr "保存済み — 入力で置き換え"
+
+#: calendar/package/contents/ui/configAccounts.qml:338
+#, kde-format
+msgid ""
+"A “Desktop app” OAuth client from console.cloud.google.com, with the Calendar API\n"
+"enabled. Save, then sign in once from a terminal:\n"
+"python3 %1 google-auth %2"
+msgstr ""
+"console.cloud.google.com の「デスクトップアプリ」OAuth クライアント、Calendar API を有効に。\n"
+"保存後、ターミナルから一度サインイン:\n"
+"python3 %1 google-auth %2"
+
+#: calendar/package/contents/ui/configAccounts.qml:347
+msgid "Calendar:"
+msgstr "カレンダー:"
+
+#: calendar/package/contents/ui/configAccounts.qml:350
+msgctxt "placeholder for the calendar href"
+msgid "empty — the first one on the server"
+msgstr "空欄 — サーバー上の最初のもの"
+
+#: calendar/package/contents/ui/configAccounts.qml:355
+msgid "Found:"
+msgstr "見つかったもの:"
+
+#: calendar/package/contents/ui/configAccounts.qml:358
+msgctxt "pick list placeholder"
+msgid "pick…"
+msgstr "選択…"
+
+#: calendar/package/contents/ui/configAccounts.qml:365
+msgid "Save"
+msgstr "保存"
+
+#: calendar/package/contents/ui/configAccounts.qml:370
+msgid "Check"
+msgstr "確認"
+
+#: calendar/package/contents/ui/configNotes.qml:30
+msgctxt "the account of the widget's own notes: a folder of files"
+msgid "local — this machine"
+msgstr "ローカル — このマシン"
+
+#: calendar/package/contents/ui/configNotes.qml:66
+msgctxt "settings section"
+msgid "Notes"
+msgstr "メモ"
+
+#: calendar/package/contents/ui/configNotes.qml:70
+msgid "Notes:"
+msgstr "メモ:"
+
+#: calendar/package/contents/ui/configNotes.qml:71
+msgid "mark the days that have entries, open a sticker on click"
+msgstr "記録のある日に印を付け、クリックで付箋を開く"
+
+#: calendar/package/contents/ui/configNotes.qml:75
+msgid ""
+"A click on a day opens its sticker: the day's events and tasks from the accounts,\n"
+"and a note of yours — the first line is its title. Off, the calendar is the plain grid\n"
+"and takes no clicks at all."
+msgstr ""
+"日をクリックするとその付箋が開きます: アカウントからの当日の予定とタスク、\n"
+"そして自分のメモ — 1 行目が見出しです。オフにすると日付の表だけになり、\n"
+"クリックを受け付けません。"
+
+#: calendar/package/contents/ui/configNotes.qml:82
+msgid "Write notes to:"
+msgstr "メモの書き込み先:"
+
+#: calendar/package/contents/ui/configNotes.qml:90
+msgid ""
+"“local” keeps them as .ics files in ~/.local/share/plaincalendar/notes;\n"
+"an account from the Accounts page sends them to that calendar as all-day events."
+msgstr ""
+"「ローカル」は ~/.local/share/plaincalendar/notes に .ics ファイルとして保存し、\n"
+"「アカウント」ページのアカウントはそのカレンダーに終日の予定として送ります。"
+
+#: calendar/package/contents/ui/configNotes.qml:97
+msgid "Upcoming lines:"
+msgstr "「今後」の行数:"
+
+#: calendar/package/contents/ui/configNotes.qml:104
+msgid "The next entries, one per line under the months; 0 hides them."
+msgstr "次の記録を月の下に 1 行ずつ。0 で非表示。"
+
+#: calendar/package/contents/ui/configNotes.qml:111
+msgid "Fetch the accounts every, min:"
+msgstr "アカウントの取得間隔 (分):"
+
+#: calendar/package/contents/ui/configNotes.qml:117
+msgctxt "settings section"
+msgid "Sticker"
+msgstr "付箋"
+
+#: calendar/package/contents/ui/configNotes.qml:121
+msgid "Frame characters:"
+msgstr "枠の文字:"
+
+#: calendar/package/contents/ui/configNotes.qml:128
+msgid ""
+"Eight characters: the corners, the horizontal, the vertical and the two\n"
+"junctions of a separator — “┌─┐│└┘├┤”, or “+-+|+++” in plain ASCII."
+msgstr ""
+"8 文字: 四隅、横線、縦線、区切り線の両端の接続 —\n"
+"「┌─┐│└┘├┤」、または ASCII の「+-+|+++」。"
+
+#: calendar/package/contents/ui/configNotes.qml:135
+msgid "Sticker width, characters:"
+msgstr "付箋の幅 (文字数):"
+
+#: calendar/package/contents/ui/configNotes.qml:143
+msgid "Opening:"
+msgstr "開き方:"
+
+#: calendar/package/contents/ui/configNotes.qml:145
+msgctxt "sticker animation"
+msgid "at once"
+msgstr "すぐに"
+
+#: calendar/package/contents/ui/configNotes.qml:145
+msgctxt "sticker animation"
+msgid "fade in"
+msgstr "フェードイン"
+
+#: calendar/package/contents/ui/configNotes.qml:145
+msgctxt "sticker animation"
+msgid "unfold line by line"
+msgstr "1 行ずつ展開"
+
+#: calendar/package/contents/ui/configNotes.qml:150
+msgid "Sheet opacity, %:"
+msgstr "用紙の不透明度 %:"
+
+#: calendar/package/contents/ui/configNotes.qml:160
+msgctxt "palette: colour of"
+msgid "Days with entries:"
+msgstr "記録のある日:"
+
+#: calendar/package/contents/ui/configNotes.qml:166
+msgctxt "palette: colour of"
+msgid "Sticker sheet:"
+msgstr "付箋の用紙:"

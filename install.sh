@@ -602,6 +602,17 @@ check_monitor() {
     return $rc
 }
 
+# The calendar's notes script: its iCalendar parser, recurrence rules, the local vdir and
+# the CalDAV client against a fake server, all in Python — no Qt needed.
+check_notes() {
+    echo "== Calendar notes stand"
+    if python3 "$REPO/tests/notes.py"; then
+        grn "  ✓ notes.py does what the stand says"
+    else
+        red "  ✗ the stand failed"; return 1
+    fi
+}
+
 # Idempotent: if the widget is already on the desktop, do nothing; otherwise place it.
 plasmoid_place() {
     local n
@@ -758,6 +769,7 @@ case "${1:-}" in
   --check-input) input_shape; exit 0 ;;
   --check-passthrough) check_passthrough; exit $? ;;
   --check-monitor) check_monitor; exit $? ;;
+  --check-notes) check_notes; exit $? ;;
   --deps)        deps; exit $? ;;
   --plasmoid)    plasmoid_install; exit $? ;;
   --pack)        pack; exit $? ;;
@@ -778,7 +790,7 @@ case "${1:-}" in
   --palette-save) palette save "${2:-}"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--calendar|--windows-off|--clicks-on|--clicks-off|--palette NAME|--palette-save NAME|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--check-monitor|--deps]"; exit 0 ;;
+  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--calendar|--windows-off|--clicks-on|--clicks-off|--palette NAME|--palette-save NAME|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--check-monitor|--check-notes|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Missing dependencies — install them and try again."; exit 1; }

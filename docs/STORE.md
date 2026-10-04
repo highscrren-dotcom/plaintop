@@ -417,6 +417,14 @@ plainweather — погода для рабочего стола Plasma 6 про
 
 Published 2026-10-04: https://store.kde.org/p/2377077/ (category Plasma 6 Extensions → Date and Time)
 
+**0.2 — not uploaded yet.** What's new: notes by day and calendars. A day with an entry
+takes its own colour; a click on it (the cell is framed under the pointer) opens a sticker
+framed with characters, with the day's events and tasks from the accounts and a note of
+yours; the next entries are printed under the months. Notes are iCalendar files, or go to
+an account's calendar. Accounts on a new page, any number: Yandex and iCloud (CalDAV, app
+password), Google (CalDAV, OAuth login once), any CalDAV server, read-only ICS links. The
+description below needs these two paragraphs added before the upload.
+
 - **File:** `dist/plaincalendar-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Date and Time
 - **License:** GPL-2.0-or-later

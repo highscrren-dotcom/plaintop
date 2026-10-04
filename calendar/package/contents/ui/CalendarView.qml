@@ -19,6 +19,16 @@ Item {
     property bool fillDays: false     // the neighbouring months' days in the empty cells
     property bool weekendAccent: true
 
+    // Notes: the document notes.py prints — days: {date: [entries]}, upcoming: [entries],
+    // accounts: [{id, name, error}] — and whether the grid takes clicks and marks days.
+    property var notes: ({ days: {}, upcoming: [], accounts: [] })
+    property bool notesOn: true
+    property int upcoming: 3          // lines of upcoming entries under the months, 0 none
+    property color colorNote: "#8FB6E0"
+
+    // A day was clicked: its date and its cell, in the view's coordinates.
+    signal dayClicked(string dateKey, real x, real y, real w, real h)
+
     property string fontFamily: "JetBrainsMono Nerd Font Mono"
     property int fontSize: 10
     property color colorFg: "#C8CCD4"
@@ -35,15 +45,30 @@ Item {
     readonly property int shown: months >= 3 ? 3 : 1
     readonly property int columns: (weekNumbers ? 4 : 0) + 7 * cw
     readonly property int linesPerMonth: 8
-    readonly property int lineCount: shown * linesPerMonth + (shown - 1)
+    readonly property int upcomingLines: (notesOn && upcoming > 0) ? upcoming + 1 : 0
+    readonly property int lineCount: shown * linesPerMonth + (shown - 1) + upcomingLines
 
     // ── Today ─────────────────────────────────────────────────────────────────
     // The day as a string, so the grid is rebuilt when the day turns and not every
     // minute: a string compares by value, a Date is a new object each time.
     property string todayKey: dayKey(new Date())
 
+    // ISO, zero-padded: the same key notes.py uses for its days.
     function dayKey(d) {
-        return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+    }
+
+    function hasNote(key) {
+        const days = notes && notes.days ? notes.days : null
+        return days !== null && days[key] !== undefined && days[key].length > 0
+    }
+
+    function accountName(id) {
+        const list = notes && notes.accounts ? notes.accounts : []
+        for (let i = 0; i < list.length; i++)
+            if (list[i].id === id)
+                return list[i].name || id
+        return id
     }
 
     Timer {
@@ -132,9 +157,10 @@ Item {
         return out
     }
 
-    // One month's block: the title, the names, six rows. `month` counts from 0, as Date
-    // does; `today` is a day key, or "" for a month with no today in it.
-    function monthBlock(year, month, today) {
+    // One month's block: the title, the names, six rows — and, into `cells`, the day key
+    // under every cell of the six rows ("" where there is none), for the clicks. `month`
+    // counts from 0, as Date does; `today` is a day key.
+    function monthBlock(year, month, today, cells) {
         const loc = Qt.locale()
         const out = []
 
@@ -166,6 +192,8 @@ Item {
         const offset = (new Date(year, month, 1).getDay() - jsDay(startDay) + 7) % 7
         for (let r = 0; r < 6; r++) {
             const parts = []
+            const keys = ["", "", "", "", "", "", ""]
+            cells.push(keys)
             const rowFirst = r * 7 - offset + 1
             const inside = rowFirst <= daysIn && rowFirst + 6 >= 1
             // A row with nothing of this month in it stays blank — the board keeps its
@@ -189,10 +217,15 @@ Item {
                     continue
                 }
                 const body = String(d.getDate()).padStart(cw - 2)
-                const role = !own ? "dim" : ((weekendAccent && isWeekend(d.getDay())) ? "accent" : "fg")
+                const key = dayKey(d)
+                keys[i] = key
+                // A day with an entry takes the note colour over the weekend's.
+                const role = !own ? "dim"
+                    : ((notesOn && hasNote(key)) ? "note"
+                       : ((weekendAccent && isWeekend(d.getDay())) ? "accent" : "fg"))
                 // Today is in brackets — the ring on the wall calendar — in their own
                 // colour; the number keeps the colour of its day.
-                if (own && dayKey(d) === today) {
+                if (own && key === today) {
                     push(parts, "[", "today")
                     push(parts, body, role)
                     push(parts, "]", "today")
@@ -205,8 +238,27 @@ Item {
         return out
     }
 
-    readonly property var lines: {
+    // An upcoming entry as a line: the day, the time or the task's box, the summary, and
+    // the account it came from.
+    function upcomingLine(e) {
+        const p = String(e.date).split("-").map(Number)
+        const d = new Date(p[0], p[1] - 1, p[2])
+        const when = d.toLocaleDateString(Qt.locale(), "ddd d MMM").toLowerCase()
+        let head = ""
+        if (e.kind === "todo")
+            head = e.done ? "[x] " : "[ ] "
+        else if (e.time && e.time.length > 0)
+            head = e.time + " "
+        const parts = [{ text: when + "  ", role: "dim" }, { text: head + e.summary, role: e.own ? "note" : "fg" }]
+        if (e.account !== "local")
+            parts.push({ text: "  · " + accountName(e.account), role: "dim" })
+        return fit(parts)
+    }
+
+    // The months' lines and the day key under every cell, built together.
+    readonly property var grid: {
         const out = []
+        const cells = []
         // The months are taken from the day key, not from a fresh Date: the key is what
         // the rebuild follows, and the two must name the same day.
         const p = todayKey.split("-").map(Number)
@@ -216,19 +268,112 @@ Item {
             if (k > 0)
                 out.push([])
             const m = new Date(now.getFullYear(), now.getMonth() + span[k], 1)
-            for (const l of monthBlock(m.getFullYear(), m.getMonth(), todayKey))
+            const block = []
+            for (const l of monthBlock(m.getFullYear(), m.getMonth(), todayKey, block))
                 out.push(l)
+            cells.push(block)
         }
-        return out
+        if (upcomingLines > 0) {
+            out.push([])
+            const list = (notes && notes.upcoming) ? notes.upcoming : []
+            for (let i = 0; i < upcoming; i++)
+                out.push(i < list.length ? upcomingLine(list[i]) : [])
+        }
+        return { lines: out, cells: cells }
     }
+    readonly property var lines: grid.lines
+    readonly property var cellMap: grid.cells
 
     function paint(role) {
         switch (role) {
         case "accent": return view.colorAccent
         case "dim": return view.colorDim
         case "today": return view.colorToday
+        case "note": return view.colorNote
         default: return view.colorFg
         }
+    }
+
+    // ── The mouse ─────────────────────────────────────────────────────────────
+    // The day under a point: the row says which month block and which of its six rows,
+    // the column which cell; the key comes from the map built with the lines.
+    TextMetrics {
+        id: cell
+        font.family: view.fontFamily
+        font.pointSize: view.fontSize
+        text: "0"
+    }
+    readonly property real cellWidth: cell.advanceWidth
+    readonly property real leftColumn: (weekNumbers ? 4 : 0) * cellWidth
+
+    function dayAt(x, y) {
+        const row = Math.floor(y / lineHeight)
+        const block = Math.floor(row / (linesPerMonth + 1))
+        const inBlock = row - block * (linesPerMonth + 1)
+        if (block < 0 || block >= shown || inBlock < 2 || inBlock > 7)
+            return ""
+        const col = Math.floor((x - leftColumn) / (cw * cellWidth))
+        if (col < 0 || col > 6)
+            return ""
+        const rows = cellMap[block]
+        return rows && rows[inBlock - 2] ? (rows[inBlock - 2][col] || "") : ""
+    }
+
+    // The cell of a key: for the frame, and for the sticker to open from.
+    function cellRect(key) {
+        if (key.length === 0)
+            return Qt.rect(0, 0, 0, 0)
+        for (let b = 0; b < cellMap.length; b++)
+            for (let r = 0; r < cellMap[b].length; r++)
+                for (let c = 0; c < 7; c++)
+                    if (cellMap[b][r][c] === key)
+                        return Qt.rect(leftColumn + c * cw * cellWidth,
+                                       (b * (linesPerMonth + 1) + 2 + r) * lineHeight,
+                                       cw * cellWidth, lineHeight)
+        return Qt.rect(0, 0, 0, 0)
+    }
+
+    // The rows of day numbers of every month, as one rectangle: what takes the mouse
+    // while the rest of the widget lets clicks through (the host's mask).
+    readonly property rect gridRect: Qt.rect(0, 2 * lineHeight, width, (shown * (linesPerMonth + 1) - 3) * lineHeight)
+
+    // The day under the pointer, and the day whose sticker is open (set by the host):
+    // either is framed, so the eye knows which cell a click lands on.
+    property string hoverKey: ""
+    property string activeKey: ""
+    readonly property string framedKey: hoverKey.length > 0 ? hoverKey : activeKey
+
+    MouseArea {
+        anchors.fill: parent
+        enabled: view.notesOn
+        acceptedButtons: Qt.LeftButton
+        hoverEnabled: true
+        cursorShape: view.hoverKey.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onPositionChanged: mouse => view.hoverKey = view.dayAt(mouse.x, mouse.y)
+        onExited: view.hoverKey = ""
+        onClicked: mouse => {
+            const key = view.dayAt(mouse.x, mouse.y)
+            if (key.length === 0)
+                return
+            const r = view.cellRect(key)
+            view.dayClicked(key, r.x, r.y, r.width, r.height)
+        }
+    }
+
+    // The frame: one pixel, no fill, the note colour — the cell's rectangle a pixel in
+    // from its edges, so two framed neighbours would not touch.
+    Rectangle {
+        readonly property rect r: view.cellRect(view.framedKey)
+        visible: view.notesOn && view.framedKey.length > 0 && r.width > 0
+        x: r.x + 1
+        y: r.y + 1
+        width: Math.max(0, r.width - 2)
+        height: Math.max(0, r.height - 2)
+        color: "transparent"
+        border.width: 1
+        border.color: view.colorNote
+        opacity: view.hoverKey.length > 0 ? 1 : 0.6
+        Behavior on opacity { NumberAnimation { duration: 80 } }
     }
 
     // A widget line: monospace text, colour and size set in place. PlainText: a Text
@@ -245,6 +390,8 @@ Item {
     // One line of the widget's font. A hidden Text, not FontMetrics: NativeRendering
     // rounds the line to whole pixels (docs/GOTCHAS.md). The rows are placed by index,
     // so a blank line takes its place whether or not it has anything to draw.
+    // ⚠️ Every Text here is PlainText: with the default format a Text takes the left
+    // button, and under the host's partial mask that would arm the desktop's edit mode.
     Text {
         id: lineProbe
         visible: false

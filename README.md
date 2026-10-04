@@ -207,11 +207,25 @@ red of a printed calendar; today is in brackets in a colour of its own, the ring
 wall. Everything the grid says comes from the locale — the names, the first day of the
 week, which days are the weekend — so it reads as the calendar on your wall does, in your
 language; the first day can be forced to Monday or Sunday, and the empty cells can be
-filled with the neighbouring months' days. Nothing is fetched and nothing is polled: the
-grid is rebuilt when a setting changes and when the day turns. The widget is as wide as
-seven cells and the week numbers and as tall as the months shown, eight lines each with a
-blank line between, so its size holds whatever month it is. `./install.sh --calendar`
-installs it.
+filled with the neighbouring months' days. The widget is as wide as seven cells and the
+week numbers and as tall as the months shown, eight lines each with a blank line between,
+so its size holds whatever month it is. `./install.sh --calendar` installs it.
+
+**Notes and calendars.** A day with an entry takes a colour of its own, and a click on
+it — the cell is framed under the pointer — opens a sticker: a sheet framed with
+characters (`┌─┐│└┘`, or `+-+|` if you prefer ASCII) in the widget's font, with the day's
+events and tasks grouped by account, read-only, and a note of yours under them, the
+first line its title; Esc closes, an emptied note is deleted; it fades in or unfolds
+line by line. The next few entries are printed under the months. Your notes are all-day
+events in iCalendar: by default files in `~/.local/share/plaincalendar/notes/` (a vdir
+any sync tool can read), or, chosen on the *Notes* page, an account's calendar. The
+accounts, as many as you have and none by default, are set up on the *Accounts* page
+over one protocol, CalDAV: Yandex and iCloud with an app password, Google with its
+OAuth login run once in a terminal, any other CalDAV server, and read-only ICS links.
+The widget never talks to a server itself: `contents/code/notes.py` does — discovery,
+calendar-query, PUT and DELETE with etags, recurrence rules, the time zones — and keeps
+the passwords in its own file, mode 600. `./install.sh --check-notes` runs its stand,
+a fake CalDAV server included.
 
 ## Three layers
 

@@ -172,3 +172,329 @@ msgstr ""
 "Le widget ne prend la souris qu'en mode d'édition du bureau :\n"
 "c'est là que sont ses paramètres, ou ./install.sh avec l'option clicks "
 "off."
+
+#: calendar/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Notes"
+msgstr "Notes"
+
+#: calendar/package/contents/config/config.qml:19
+msgctxt "settings page"
+msgid "Accounts"
+msgstr "Comptes"
+
+#: calendar/package/contents/ui/Sticker.qml:132
+msgctxt "the account's last fetch failed"
+msgid "offline"
+msgstr "hors ligne"
+
+#: calendar/package/contents/ui/Sticker.qml:148
+msgctxt "the sticker's hint line"
+msgid "Esc closes · an empty note deletes it"
+msgstr "Échap ferme · une note vide la supprime"
+
+#: calendar/package/contents/ui/configAccounts.qml:28
+msgctxt "account preset"
+msgid "Yandex (CalDAV)"
+msgstr "Yandex (CalDAV)"
+
+#: calendar/package/contents/ui/configAccounts.qml:29
+msgctxt "account preset"
+msgid "iCloud (CalDAV)"
+msgstr "iCloud (CalDAV)"
+
+#: calendar/package/contents/ui/configAccounts.qml:30
+msgctxt "account preset"
+msgid "Google (CalDAV, OAuth)"
+msgstr "Google (CalDAV, OAuth)"
+
+#: calendar/package/contents/ui/configAccounts.qml:31
+msgctxt "account preset"
+msgid "any CalDAV server"
+msgstr "n'importe quel serveur CalDAV"
+
+#: calendar/package/contents/ui/configAccounts.qml:32
+msgctxt "account preset"
+msgid "ICS link, read-only"
+msgstr "lien ICS, lecture seule"
+
+#: calendar/package/contents/ui/configAccounts.qml:70
+#, kde-format
+msgid "The script did not answer: %1"
+msgstr "Le script n'a pas répondu : %1"
+
+#: calendar/package/contents/ui/configAccounts.qml:70
+msgid "is python3 installed?"
+msgstr "python3 est-il installé ?"
+
+#: calendar/package/contents/ui/configAccounts.qml:103
+msgid "The account needs an id — a short word, say “yandex”."
+msgstr "Le compte a besoin d'un id — un mot court, par exemple « yandex »."
+
+#: calendar/package/contents/ui/configAccounts.qml:113
+msgid "Saved."
+msgstr "Enregistré."
+
+#: calendar/package/contents/ui/configAccounts.qml:127
+msgid "Removed."
+msgstr "Supprimé."
+
+#: calendar/package/contents/ui/configAccounts.qml:138
+msgid "Asking the server…"
+msgstr "Interrogation du serveur…"
+
+#: calendar/package/contents/ui/configAccounts.qml:147
+#, kde-format
+msgid "The link answers: %1 entry."
+msgid_plural "The link answers: %1 entries."
+msgstr[0] "Le lien répond : %1 entrée."
+msgstr[1] "Le lien répond : %1 entrées."
+
+#: calendar/package/contents/ui/configAccounts.qml:149
+msgid "The server answers, but lists no calendar."
+msgstr "Le serveur répond, mais ne liste aucun calendrier."
+
+#: calendar/package/contents/ui/configAccounts.qml:188
+msgid ""
+"Calendars the widget reads, and the one it writes your notes to (chosen on the Notes page). Yandex and iCloud take an app password from your account's settings; Google signs in once through the browser."
+msgstr ""
+"Les calendriers que le widget lit, et celui où il écrit vos notes (choisi sur la page Notes). Yandex et iCloud prennent un mot de passe d'application depuis les réglages de votre compte ; Google se connecte une fois par le navigateur."
+
+#: calendar/package/contents/ui/configAccounts.qml:217
+msgctxt "Google account state"
+msgid "signed in"
+msgstr "connecté"
+
+#: calendar/package/contents/ui/configAccounts.qml:217
+msgctxt "Google account state"
+msgid "not signed in yet"
+msgstr "pas encore connecté"
+
+#: calendar/package/contents/ui/configAccounts.qml:218
+msgctxt "CalDAV account state"
+msgid "no password"
+msgstr "pas de mot de passe"
+
+#: calendar/package/contents/ui/configAccounts.qml:232
+msgid "New"
+msgstr "Nouveau"
+
+#: calendar/package/contents/ui/configAccounts.qml:238
+msgid "Remove"
+msgstr "Supprimer"
+
+#: calendar/package/contents/ui/configAccounts.qml:269
+msgid "Provider:"
+msgstr "Fournisseur :"
+
+#: calendar/package/contents/ui/configAccounts.qml:281
+msgid "Id:"
+msgstr "Id :"
+
+#: calendar/package/contents/ui/configAccounts.qml:282
+msgctxt "placeholder for an account id"
+msgid "yandex"
+msgstr "yandex"
+
+#: calendar/package/contents/ui/configAccounts.qml:288
+msgid "Name:"
+msgstr "Nom :"
+
+#: calendar/package/contents/ui/configAccounts.qml:289
+msgctxt "placeholder for an account's name"
+msgid "as it is shown on the sticker"
+msgstr "tel qu'affiché sur le pense-bête"
+
+#: calendar/package/contents/ui/configAccounts.qml:294
+msgid "Link:"
+msgstr "Lien :"
+
+#: calendar/package/contents/ui/configAccounts.qml:294
+msgid "Server:"
+msgstr "Serveur :"
+
+#: calendar/package/contents/ui/configAccounts.qml:301
+msgid "Google account:"
+msgstr "Compte Google :"
+
+#: calendar/package/contents/ui/configAccounts.qml:301
+msgid "Login:"
+msgstr "Identifiant :"
+
+#: calendar/package/contents/ui/configAccounts.qml:303
+msgctxt "placeholder for a login"
+msgid "your login on the server"
+msgstr "votre identifiant sur le serveur"
+
+#: calendar/package/contents/ui/configAccounts.qml:308
+msgid "App password:"
+msgstr "Mot de passe d'application :"
+
+#: calendar/package/contents/ui/configAccounts.qml:311
+msgctxt "placeholder: a password is stored"
+msgid "stored — type to replace"
+msgstr "enregistré — saisir pour remplacer"
+
+#: calendar/package/contents/ui/configAccounts.qml:316
+msgid ""
+"Yandex: id.yandex.ru → Security → App passwords → Calendar.\n"
+"iCloud: appleid.apple.com → Sign-in and security → App-specific passwords."
+msgstr ""
+"Yandex : id.yandex.ru → Sécurité → Mots de passe d'application → Calendrier.\n"
+"iCloud : appleid.apple.com → Connexion et sécurité → Mots de passe pour application."
+
+#: calendar/package/contents/ui/configAccounts.qml:323
+msgid "OAuth client id:"
+msgstr "Id client OAuth :"
+
+#: calendar/package/contents/ui/configAccounts.qml:330
+msgid "OAuth client secret:"
+msgstr "Secret client OAuth :"
+
+#: calendar/package/contents/ui/configAccounts.qml:333
+msgctxt "placeholder: a secret is stored"
+msgid "stored — type to replace"
+msgstr "enregistré — saisir pour remplacer"
+
+#: calendar/package/contents/ui/configAccounts.qml:338
+#, kde-format
+msgid ""
+"A “Desktop app” OAuth client from console.cloud.google.com, with the Calendar API\n"
+"enabled. Save, then sign in once from a terminal:\n"
+"python3 %1 google-auth %2"
+msgstr ""
+"Un client OAuth « Desktop app » de console.cloud.google.com, avec l'API Calendar\n"
+"activée. Enregistrez, puis connectez-vous une fois depuis un terminal :\n"
+"python3 %1 google-auth %2"
+
+#: calendar/package/contents/ui/configAccounts.qml:347
+msgid "Calendar:"
+msgstr "Calendrier :"
+
+#: calendar/package/contents/ui/configAccounts.qml:350
+msgctxt "placeholder for the calendar href"
+msgid "empty — the first one on the server"
+msgstr "vide — le premier sur le serveur"
+
+#: calendar/package/contents/ui/configAccounts.qml:355
+msgid "Found:"
+msgstr "Trouvés :"
+
+#: calendar/package/contents/ui/configAccounts.qml:358
+msgctxt "pick list placeholder"
+msgid "pick…"
+msgstr "choisir…"
+
+#: calendar/package/contents/ui/configAccounts.qml:365
+msgid "Save"
+msgstr "Enregistrer"
+
+#: calendar/package/contents/ui/configAccounts.qml:370
+msgid "Check"
+msgstr "Vérifier"
+
+#: calendar/package/contents/ui/configNotes.qml:30
+msgctxt "the account of the widget's own notes: a folder of files"
+msgid "local — this machine"
+msgstr "local — cette machine"
+
+#: calendar/package/contents/ui/configNotes.qml:66
+msgctxt "settings section"
+msgid "Notes"
+msgstr "Notes"
+
+#: calendar/package/contents/ui/configNotes.qml:70
+msgid "Notes:"
+msgstr "Notes :"
+
+#: calendar/package/contents/ui/configNotes.qml:71
+msgid "mark the days that have entries, open a sticker on click"
+msgstr "marquer les jours ayant des entrées, ouvrir un pense-bête au clic"
+
+#: calendar/package/contents/ui/configNotes.qml:75
+msgid ""
+"A click on a day opens its sticker: the day's events and tasks from the accounts,\n"
+"and a note of yours — the first line is its title. Off, the calendar is the plain grid\n"
+"and takes no clicks at all."
+msgstr ""
+"Un clic sur un jour ouvre son pense-bête : les événements et tâches du jour venant des\n"
+"comptes, et une note à vous — la première ligne en est le titre. Désactivé, le calendrier\n"
+"n'est que la grille et ne prend aucun clic."
+
+#: calendar/package/contents/ui/configNotes.qml:82
+msgid "Write notes to:"
+msgstr "Écrire les notes dans :"
+
+#: calendar/package/contents/ui/configNotes.qml:90
+msgid ""
+"“local” keeps them as .ics files in ~/.local/share/plaincalendar/notes;\n"
+"an account from the Accounts page sends them to that calendar as all-day events."
+msgstr ""
+"« local » les garde en fichiers .ics dans ~/.local/share/plaincalendar/notes ;\n"
+"un compte de la page Comptes les envoie dans ce calendrier comme événements d'une journée."
+
+#: calendar/package/contents/ui/configNotes.qml:97
+msgid "Upcoming lines:"
+msgstr "Lignes « à venir » :"
+
+#: calendar/package/contents/ui/configNotes.qml:104
+msgid "The next entries, one per line under the months; 0 hides them."
+msgstr "Les prochaines entrées, une par ligne sous les mois ; 0 les masque."
+
+#: calendar/package/contents/ui/configNotes.qml:111
+msgid "Fetch the accounts every, min:"
+msgstr "Interroger les comptes toutes les, min :"
+
+#: calendar/package/contents/ui/configNotes.qml:117
+msgctxt "settings section"
+msgid "Sticker"
+msgstr "Pense-bête"
+
+#: calendar/package/contents/ui/configNotes.qml:121
+msgid "Frame characters:"
+msgstr "Caractères du cadre :"
+
+#: calendar/package/contents/ui/configNotes.qml:128
+msgid ""
+"Eight characters: the corners, the horizontal, the vertical and the two\n"
+"junctions of a separator — “┌─┐│└┘├┤”, or “+-+|+++” in plain ASCII."
+msgstr ""
+"Huit caractères : les coins, l'horizontale, la verticale et les deux\n"
+"jonctions d'un séparateur — « ┌─┐│└┘├┤ », ou « +-+|+++ » en ASCII simple."
+
+#: calendar/package/contents/ui/configNotes.qml:135
+msgid "Sticker width, characters:"
+msgstr "Largeur du pense-bête, caractères :"
+
+#: calendar/package/contents/ui/configNotes.qml:143
+msgid "Opening:"
+msgstr "Ouverture :"
+
+#: calendar/package/contents/ui/configNotes.qml:145
+msgctxt "sticker animation"
+msgid "at once"
+msgstr "d'un coup"
+
+#: calendar/package/contents/ui/configNotes.qml:145
+msgctxt "sticker animation"
+msgid "fade in"
+msgstr "fondu"
+
+#: calendar/package/contents/ui/configNotes.qml:145
+msgctxt "sticker animation"
+msgid "unfold line by line"
+msgstr "déplier ligne par ligne"
+
+#: calendar/package/contents/ui/configNotes.qml:150
+msgid "Sheet opacity, %:"
+msgstr "Opacité de la feuille, % :"
+
+#: calendar/package/contents/ui/configNotes.qml:160
+msgctxt "palette: colour of"
+msgid "Days with entries:"
+msgstr "Jours avec entrées :"
+
+#: calendar/package/contents/ui/configNotes.qml:166
+msgctxt "palette: colour of"
+msgid "Sticker sheet:"
+msgstr "Feuille du pense-bête :"
