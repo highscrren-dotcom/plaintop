@@ -1073,7 +1073,10 @@ The plugin reads `~/.config/plasma_calendar_holiday_regions` (`[General] selecte
 hard-coded; none chosen, it takes the locale's region. The digital clock's calendar and every
 widget in plasmashell share it — a per-widget choice is not possible in-process. Plasma's
 helper `org.kde.plasma.private.holidayevents.HolidayRegionsConfig` (`selectedRegions`,
-`addRegion`, `removeRegion`, `saveConfig`) edits it. 2026-10-04.
+`addRegion`, `removeRegion`, `saveConfig`) edits it. The plugin reloads on KConfig's change
+notice, not on the file: `saveConfig()` sends one and every open grid gets `agendaUpdated`
+with the new regions; a plain write of the file (an editor, `kwriteconfig6` without
+`--notify`) goes unseen until the shell restarts. Tried in a bare host. 2026-10-04.
 
 ## KHolidays' plans are Qt resources, readable only where file reads are allowed
 
