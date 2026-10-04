@@ -500,8 +500,9 @@ until you answer it. A reminder is a VALARM in the note, so the account's calend
 and a phone synced to it can ring too. Optionally a system notification and a sound — five
 plain tones of the widget's own, or a file of yours.
 
-Holidays: Plasma's own list of 170 countries and regions — tick as many as you like (the
-choice is shared with the calendar of Plasma's clock). A day off takes the weekends' colour;
+Holidays: Plasma's own list of 170 countries and regions, named in your language — tick as
+many as you like, with a search; the chosen ones are listed above (the choice is shared with
+the calendar of Plasma's clock). A day off takes the weekends' colour;
 with "every holiday" the other days of the plans take a colour of their own, and so can the
 best known world days of the UN and UNESCO. The sticker names them.
 
@@ -545,8 +546,9 @@ Python 3 (только стандартная библиотека) из пак�
 хранит, и синхронизированный с ним телефон тоже может позвонить. По желанию — системное
 уведомление и звук: пять простых сигналов самого виджета или свой файл.
 
-Праздники: собственный список Plasma из 170 стран и регионов — отметьте сколько угодно (выбор
-общий с календарём часов Plasma). Выходной красится цветом выходных; с «всеми праздниками»
+Праздники: собственный список Plasma из 170 стран и регионов, названия на вашем языке —
+отметьте сколько угодно, есть поиск; выбранные перечислены сверху (выбор общий с календарём
+часов Plasma). Выходной красится цветом выходных; с «всеми праздниками»
 остальные дни из планов получают свой цвет, как и самые известные мировые дни ООН и ЮНЕСКО.
 Стикер их называет.
 

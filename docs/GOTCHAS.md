@@ -1098,3 +1098,29 @@ count on such bindings — the world days list was checked on the desktop. 2026-
 It takes the sources from `git ls-files`, so the strings of a new QML file reach the
 template only after `git add`. A new page translated before that comes out with a single new
 string — its title from config.qml — and nothing else. 2026-10-04.
+
+## A ListView in a Kirigami.FormLayout comes out zero pixels high
+
+The form gives an item its implicit height and does not ask `Layout.preferredHeight`; a
+`ListView` has no implicit height of its own. The calendar's region list was there — 170
+rows, the right width — and 0 pixels high: the page showed a search field over nothing.
+Give the list a parent with an `implicitHeight` (a `Frame`), or set it on the list.
+Seen in an offscreen render of the page; Plasma's own holidays page avoids it by being a
+`ScrollViewKCM` with the list as its `view`. 2026-10-04, KF 6.30.
+
+## Country names in the interface's language: `org.kde.i18n.localeData`, with two traps
+
+`LocaleData.Country.fromAlpha2("DE").name` gives "Германия" in a Russian session and
+`CountrySubdivision.fromCode("DE-BY").name` "Бавария" — ISO 3166 names, so "Российская
+Федерация", not "Россия". For a code it does not know it returns `undefined`, not an invalid
+object: `.name` on it throws. `Qt.locale("ru_UZ")`, a locale Qt lacks, silently answers
+`ru_RU` — its `nativeTerritoryName` is then "Россия" for Uzbekistan; check that `name` ends
+with the territory asked for. 2026-10-04.
+
+## A C++ model's rows from QML: neither `roleNames()` nor `roleForName()` is callable
+
+On `HolidayRegionsModel` (a `QAbstractListModel`) `roleNames()` is "not a function", and so
+is `roleForName()` on a `KSortFilterProxyModel` over it, KF 6.30. `data(index, 257)` works,
+but the number is the model's private business. An `Instantiator` over the model with a
+`QtObject` delegate of `required property` roles reads every row by name; collect after
+`objectAdded` (with `Qt.callLater`, once). 2026-10-04.

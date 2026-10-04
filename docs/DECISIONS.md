@@ -783,8 +783,9 @@ month, the regions chosen on our *Holidays* page through Plasma's own helper
 holiday its own (`colorHoliday`), and the sticker names the day's holidays. "Days off only"
 is the default. Which names are days off comes from the plans themselves: KHolidays marks a
 line `public`, and `calendar/holidays.py` reads every plan out of the library and writes
-`HolidayKinds.js` (the day-off names, and the name days to leave out). The world days — the
-UN's and UNESCO's best known — are a short list of our own.
+`HolidayKinds.js` (the day-off names, and the name days — left out of "every holiday but
+name days", shown with "name days too"). The world days — the UN's and UNESCO's best
+known — are a short list of our own.
 
 **Why.** The data are already on every Plasma desktop, kept by KDE, with the Easter,
 Hijri, Hebrew and lunar rules a home-made list could not carry. KHolidays' QML module lists
@@ -812,7 +813,10 @@ days off of October–December 2026 are exactly the German and Russian ones, "ev
 adds the observances (День учителя), name days stay out; on the desktop with nothing chosen
 (the locale's ru_ru) the 4th of November is in the weekends' colour, and with world days on
 the 5th and the 24th of October are in the holiday colour; the sticker lists a day's
-holidays under its title.
+holidays under its title. The page, with real clicks in `qmltestrunner`: a tick writes the
+region to the shared file and into the chosen list, its button drops it and clears the
+tick; with Greece's name days and Russia chosen, November 2026 has 1, 11 and 33 entries
+for the three choices.
 
 **Revisit when:** KHolidays' QML module learns to give holidays for a date, or the plugin
 marks the kind of a holiday — then the generator goes; or a per-widget choice is asked for.
