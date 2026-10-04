@@ -128,7 +128,7 @@ PlasmoidItem {
     function saveNote(dateKey, text) {
         const account = root.cfg.noteAccount.length > 0 ? root.cfg.noteAccount : "local"
         const cmd = text.trim().length > 0
-            ? "set '" + account + "' '" + dateKey + "' '" + Qt.btoa(unescape(encodeURIComponent(text))) + "'" + root.alarmOptions
+            ? "set '" + account + "' '" + dateKey + "' '" + Qt.btoa(text) + "'" + root.alarmOptions
             : "delete '" + account + "' '" + dateKey + "'" + root.alarmOptions
         notesWriter.connectSource(command(cmd))
     }

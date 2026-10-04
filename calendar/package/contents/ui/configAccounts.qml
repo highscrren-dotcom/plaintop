@@ -58,8 +58,10 @@ KCM.SimpleKCM {
         return "python3 '" + page.script + "' " + args
     }
 
+    // Qt.btoa encodes the string as UTF-8 itself: wrapping it in
+    // unescape(encodeURIComponent()) would encode the bytes twice.
     function b64(obj) {
-        return Qt.btoa(unescape(encodeURIComponent(JSON.stringify(obj))))
+        return Qt.btoa(JSON.stringify(obj))
     }
 
     // A secret never goes on a command line, where anyone on the machine reads it in
