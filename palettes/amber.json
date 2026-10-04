@@ -22,5 +22,11 @@
     "playerColorFg": "#B87D00",
     "playerColorAccent": "#FFD27A",
     "playerColorDim": "#8A5F00"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#B87D00",
+    "colorAccent": "#FFD27A",
+    "colorDim": "#8A5F00",
+    "colorToday": "#FFB000"
   }
 }

@@ -16,8 +16,8 @@
     "colorDim": "#566A7C"
   },
   "org.s1dd1.plainspectrum": {
-    "color": "#566A7C",
-    "colorHigh": "#5CCFF2",
+    "color": "#ff8a3d",
+    "colorHigh": "#953b00",
     "opacityPercent": 80,
     "playerColorFg": "#A9C0CF",
     "playerColorAccent": "#FF8A3D",

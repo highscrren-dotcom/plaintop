@@ -539,7 +539,7 @@ print(n);" 2>/dev/null | tr -dc '0-9')
     fi
 }
 
-# Palettes: palettes/<name>.json holds the colour keys of all four widgets, "stock" is
+# Palettes: palettes/<name>.json holds the colour keys of all five widgets, "stock" is
 # their main.xml defaults. The keys are checked against main.xml before anything is written.
 palette() {
     local command=$1 name=$2

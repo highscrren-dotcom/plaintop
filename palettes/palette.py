@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Colour palettes for the four widgets: put one on the desktop, or keep the current one.
+"""Colour palettes for the five widgets: put one on the desktop, or keep the current one.
 
 A palette is palettes/<name>.json: each widget's plugin id mapped to its colour keys, the
 same keys its settings dialog writes. "stock" is not a file: it is read from the widgets'
@@ -31,6 +31,7 @@ KEYS = {
     "org.s1dd1.plainspectrum": ("spectrum/package", ["color", "colorHigh", "opacityPercent",
                                                      "playerColorFg", "playerColorAccent",
                                                      "playerColorDim"]),
+    "org.s1dd1.plaincalendar": ("calendar/package", ["colorFg", "colorAccent", "colorDim", "colorToday"]),
 }
 COLOUR = re.compile(r"^#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
 KCFG = "{http://www.kde.org/standards/kcfg/1.0}"

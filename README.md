@@ -260,9 +260,10 @@ controls row, so those buttons keep working and everything else passes (decision
 the button go, and the mask.
 
 **Palettes.** `./install.sh --palette NAME` writes a palette into every instance of the
-four widgets at once, and `--palette-save NAME` keeps the desktop's current colours as
+five widgets at once, and `--palette-save NAME` keeps the desktop's current colours as
 `palettes/NAME.json`. `stock` is the defaults, read from each widget's `main.xml`; the
-repo also has `amber` and `warm-ash`, both amber on a dark wallpaper. A palette is plain
+repo also has `amber` and `warm-ash`, both amber on a dark wallpaper, and `tachikoma` and
+`tachikoma-rooftops`, orange and cyan on blue-grey, the second with an orange ring. A palette is plain
 JSON — each widget's id mapped to the colour keys its settings dialog writes — and the
 keys are checked before anything is written.
 
