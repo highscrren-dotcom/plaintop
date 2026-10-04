@@ -306,30 +306,47 @@ Item {
     readonly property real charWidth: cell.advanceWidth
     readonly property real leftColumn: (weekNumbers ? 4 : 0) * charWidth
 
-    function dayAt(x, y) {
+    // The cell under a point: its month block, row, column and day key, or null.
+    function cellAt(x, y) {
         const row = Math.floor(y / lineHeight)
         const block = Math.floor(row / (linesPerMonth + 1))
         const inBlock = row - block * (linesPerMonth + 1)
         if (block < 0 || block >= shown || inBlock < 2 || inBlock > 7)
-            return ""
+            return null
         const col = Math.floor((x - leftColumn) / (cw * charWidth))
         if (col < 0 || col > 6)
-            return ""
+            return null
         const rows = cellMap[block]
-        return rows && rows[inBlock - 2] ? (rows[inBlock - 2][col] || "") : ""
+        const key = rows && rows[inBlock - 2] ? (rows[inBlock - 2][col] || "") : ""
+        return key.length > 0 ? { block: block, key: key } : null
     }
 
-    // The cell of a key: for the frame, and for the sticker to open from.
-    function cellRect(key) {
+    function dayAt(x, y) {
+        const c = cellAt(x, y)
+        return c ? c.key : ""
+    }
+
+    // The cell of a key: for the frame, and for the sticker to open from. With the
+    // neighbouring months shown a day stands in two blocks — the 1st of October also in
+    // September's last row — so the block the pointer is in comes first; without one,
+    // the first block that has the day.
+    function cellRect(key, block) {
         if (key.length === 0)
             return Qt.rect(0, 0, 0, 0)
+        const at = (b, r, c) => Qt.rect(leftColumn + c * cw * charWidth,
+                                         (b * (linesPerMonth + 1) + 2 + r) * lineHeight,
+                                         cw * charWidth, lineHeight)
+        const order = []
+        if (block !== undefined && block >= 0 && block < cellMap.length)
+            order.push(block)
         for (let b = 0; b < cellMap.length; b++)
+            if (b !== block)
+                order.push(b)
+        for (const b of order)
             for (let r = 0; r < cellMap[b].length; r++)
                 for (let c = 0; c < 7; c++)
                     if (cellMap[b][r][c] === key)
-                        return Qt.rect(leftColumn + c * cw * charWidth,
-                                       (b * (linesPerMonth + 1) + 2 + r) * lineHeight,
-                                       cw * charWidth, lineHeight)
+                        return at(b, r, c)
         return Qt.rect(0, 0, 0, 0)
     }
 
@@ -341,6 +358,9 @@ Item {
     // either is framed, so the eye knows which cell a click lands on.
     property string hoverKey: ""
     property string activeKey: ""
+    // The blocks they were taken in: a day of a neighbouring month stands in two.
+    property int hoverBlock: -1
+    property int activeBlock: -1
     readonly property string framedKey: hoverKey.length > 0 ? hoverKey : activeKey
 
     MouseArea {
@@ -349,21 +369,26 @@ Item {
         acceptedButtons: Qt.LeftButton
         hoverEnabled: true
         cursorShape: view.hoverKey.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onPositionChanged: mouse => view.hoverKey = view.dayAt(mouse.x, mouse.y)
+        onPositionChanged: mouse => {
+            const c = view.cellAt(mouse.x, mouse.y)
+            view.hoverBlock = c ? c.block : -1
+            view.hoverKey = c ? c.key : ""
+        }
         onExited: view.hoverKey = ""
         onClicked: mouse => {
-            const key = view.dayAt(mouse.x, mouse.y)
-            if (key.length === 0)
+            const c = view.cellAt(mouse.x, mouse.y)
+            if (!c)
                 return
-            const r = view.cellRect(key)
-            view.dayClicked(key, r.x, r.y, r.width, r.height)
+            view.activeBlock = c.block
+            const r = view.cellRect(c.key, c.block)
+            view.dayClicked(c.key, r.x, r.y, r.width, r.height)
         }
     }
 
     // The frame: one pixel, no fill, the note colour — the cell's rectangle a pixel in
     // from its edges, so two framed neighbours would not touch.
     Rectangle {
-        readonly property rect r: view.cellRect(view.framedKey)
+        readonly property rect r: view.cellRect(view.framedKey, view.hoverKey.length > 0 ? view.hoverBlock : view.activeBlock)
         visible: view.notesOn && view.framedKey.length > 0 && r.width > 0
         x: r.x + 1
         y: r.y + 1
