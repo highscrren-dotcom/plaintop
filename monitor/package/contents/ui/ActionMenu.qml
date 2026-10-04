@@ -165,6 +165,11 @@ PlasmaCore.Dialog {
         id: sheet
         implicitWidth: column.width
         implicitHeight: column.height
+        // PlasmaCore.Dialog sizes its window from the sheet's width and height and, on
+        // its resize, sets them back: a binding to the implicit size would be broken and
+        // the window would keep its first size. Re-apply it on every change instead.
+        onImplicitWidthChanged: width = implicitWidth
+        onImplicitHeightChanged: height = implicitHeight
         focus: true
 
         Keys.onEscapePressed: menu.visible = false
