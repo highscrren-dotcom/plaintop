@@ -77,7 +77,7 @@ PlasmaCore.Dialog {
         return out
     }
 
-    readonly property string title: {
+    readonly property string heading: {
         const t = (action && action.title) ? String(action.title) : ""
         if (mode === 1 && pending)
             return (t.length > 0 ? t + ": " : "") + String(pending.text) + "?"
@@ -115,7 +115,7 @@ PlasmaCore.Dialog {
     }
     // Wide enough for the title and the longest option, within reason.
     readonly property int width_: {
-        let w = Array.from(title).length + 2
+        let w = Array.from(heading).length + 2
         for (let i = 0; i < options.length; i++) w = Math.max(w, Array.from(options[i]).length + 2)
         const lines = noticeLines
         for (let i = 0; i < lines.length; i++) w = Math.max(w, Array.from(lines[i]).length)
@@ -134,7 +134,7 @@ PlasmaCore.Dialog {
     function framed(text) { return f[3] + " " + pad(text, width_) + " " + f[3] }
     // The title sits in the top border: "┌─ nginx.service ─────┐".
     readonly property string top: {
-        const t = Array.from(title).length > 0 ? " " + pad(title, Math.min(Array.from(title).length, width_ - 2)) + " " : ""
+        const t = Array.from(heading).length > 0 ? " " + pad(heading, Math.min(Array.from(heading).length, width_ - 2)) + " " : ""
         return f[0] + f[1] + t + f[1].repeat(Math.max(0, width_ + 1 - Array.from(t).length)) + f[2]
     }
     readonly property string bottom: f[4] + f[1].repeat(width_ + 2) + f[5]
