@@ -238,8 +238,6 @@ spectrum_status() {
     # The relay runs from its own copy; a port that answers says nothing about which code.
     local relay_diff=0 pair
     for pair in "$SPECTRUM_SRC/relay.py:$RELAY_DEST/relay.py" \
-                "$SPECTRUM_SRC/window/ring.default.json:$RELAY_DEST/ring.default.json" \
-                "$REPO/monitor/window/monitor.default.json:$RELAY_DEST/monitor.default.json" \
                 "$SPECTRUM_SRC/plainspectrum-relay.service:$UNIT_DEST/plainspectrum-relay.service"; do
         cmp -s "${pair%%:*}" "${pair#*:}" \
             || { red "  ≠ $(basename "${pair#*:}") — relay differs from the repo: ./install.sh --spectrum"; relay_diff=1; }

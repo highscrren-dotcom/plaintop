@@ -611,10 +611,12 @@ def test_reminders():
     state = json.loads((Path(TMP) / "plaincalendar" / "reminders.json").read_text())
     ok(key in state["snoozed"] and key not in state["acked"], "the state file: " + repr(state))
     # "Done" belongs to one ring: the same note rewritten to another time rings again.
+    # Earlier, not later: the alarms reach 36 hours ahead, and tomorrow's 12:50 is out of
+    # them until 00:50 tonight — the stand failed when run just after midnight.
     code, doc = run("ack", key)
-    code, doc = run("set", "local", tomorrow, base64.b64encode("13:00 Созвон".encode()).decode(), "--lead", "10")
+    code, doc = run("set", "local", tomorrow, base64.b64encode("11:30 Созвон".encode()).decode(), "--lead", "10")
     again = [a for a in doc["alarms"] if a["own"]]
-    ok(len(again) == 1 and again[0]["at"] == tomorrow + "T12:50" and again[0]["key"] != key, "a rewritten note rings again after an old done: " + repr(again))
+    ok(len(again) == 1 and again[0]["at"] == tomorrow + "T11:20" and again[0]["key"] != key, "a rewritten note rings again after an old done: " + repr(again))
     run("set", "local", tomorrow, base64.b64encode("12:00 Созвон".encode()).decode(), "--lead", "10")
     run("delete", "local", tomorrow)
 
