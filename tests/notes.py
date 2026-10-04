@@ -487,8 +487,10 @@ def test_reminders():
     st = {"acked": {}, "snoozed": {}}
     due = notes.alarms_for(sources, now, notes.alarm_options(12, "09:00", True, 12, True), st)
     ok([a["at"] for a in due] == ["2026-10-10T08:45", "2026-10-10T09:00", "2026-10-10T10:05", "2026-10-10T18:00"], "four alarms in the window, sorted: " + repr([(a["at"], a["uid"]) for a in due]))
-    ok(due[0]["key"] == "acc|al1|2026-10-10|0" and due[1]["key"] == "acc|al2|2026-10-11|1" and due[0]["summary"] == "Встреча", "keys name the account, the uid, the day and the alarm: " + due[0]["key"])
-    st = {"acked": {"acc|al1|2026-10-10|0": "2026-10-10T08:46"}, "snoozed": {"acc|al2|2026-10-11|1": "2026-10-10T12:00"}}
+    stamp = lambda d: d["at"].replace("-", "").replace(":", "")
+    ok(due[0]["key"] == "acc|al1|2026-10-10|0|" + stamp(due[0]) and due[1]["key"] == "acc|al2|2026-10-11|1|" + stamp(due[1]) and due[0]["summary"] == "Встреча",
+       "keys name the account, the uid, the day, the alarm and its time: " + due[0]["key"])
+    st = {"acked": {due[0]["key"]: "2026-10-10T08:46"}, "snoozed": {due[1]["key"]: "2026-10-10T12:00"}}
     due = notes.alarms_for(sources, now, notes.alarm_options(12, "09:00", True, 12, True), st)
     ok([a["at"] for a in due] == ["2026-10-10T10:05", "2026-10-10T12:00", "2026-10-10T18:00"], "acknowledged gone, snoozed moved: " + repr([a["at"] for a in due]))
     ok(due[1]["snoozed"] is True and due[0]["snoozed"] is False, "the snoozed one says so")
@@ -555,6 +557,12 @@ def test_reminders():
     ok(got["claimed"] is False, "the second does not")
     state = json.loads((Path(TMP) / "plaincalendar" / "reminders.json").read_text())
     ok(key in state["snoozed"] and key not in state["acked"], "the state file: " + repr(state))
+    # "Done" belongs to one ring: the same note rewritten to another time rings again.
+    code, doc = run("ack", key)
+    code, doc = run("set", "local", tomorrow, base64.b64encode("13:00 Созвон".encode()).decode(), "--lead", "10")
+    again = [a for a in doc["alarms"] if a["own"]]
+    ok(len(again) == 1 and again[0]["at"] == tomorrow + "T12:50" and again[0]["key"] != key, "a rewritten note rings again after an old done: " + repr(again))
+    run("set", "local", tomorrow, base64.b64encode("12:00 Созвон".encode()).decode(), "--lead", "10")
     run("delete", "local", tomorrow)
 
     # Completing a task on the server: GET, STATUS:COMPLETED, PUT with If-Match.

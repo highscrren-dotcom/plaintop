@@ -985,8 +985,11 @@ def alarm_times(e, day, opts):
     return out
 
 
-def alarm_key(account_id, e, day, i):
-    return f"{account_id}|{e.get('uid', '')}|{day.isoformat()}|{i}"
+def alarm_key(account_id, e, day, i, when):
+    """An alarm as acknowledged, snoozed and claimed: the entry, the occurrence, the
+    alarm's index — and the time it is due by the data, so a note rewritten to another
+    time (the day's first note keeps its uid) rings again after an old "done"."""
+    return f"{account_id}|{e.get('uid', '')}|{day.isoformat()}|{i}|{when.strftime('%Y%m%dT%H%M')}"
 
 
 def alarms_for(sources, now, opts, st):
@@ -1004,7 +1007,7 @@ def alarms_for(sources, now, opts, st):
             # An alarm may precede its day (-P1D) or follow a snooze into the next one.
             for o in occurrences(e, lo.date() - dt.timedelta(days=2), hi.date() + dt.timedelta(days=1)):
                 for i, when in enumerate(alarm_times(e, o, opts)):
-                    key = alarm_key(account_id, e, o, i)
+                    key = alarm_key(account_id, e, o, i, when)
                     if key in st["acked"]:
                         continue
                     if key in st["snoozed"]:
