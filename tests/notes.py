@@ -373,7 +373,10 @@ def test_caldav():
     acc = {"id": "yandex", "name": "Яндекс", "kind": "caldav", "url": base, "user": USER, "password": PASSWORD, "calendar": ""}
     code, listed = run("account-save", base64.b64encode(json.dumps(acc).encode()).decode())
     ok(code == 0 and listed[0]["id"] == "yandex" and "password" not in listed[0] and listed[0]["has_password"], "saved without leaking the secret: " + repr(listed))
-    ok(oct(os.stat(Path(TMP) / "plaincalendar" / "accounts.json").st_mode & 0o777) == "0o600", "accounts.json is mode 600")
+    # Mode bits are POSIX: on Windows chmod sets only the read-only flag, and %APPDATA% is
+    # the user's own folder — the stand runs there too (the Windows CI job).
+    posix = os.name != "nt"
+    ok(not posix or oct(os.stat(Path(TMP) / "plaincalendar" / "accounts.json").st_mode & 0o777) == "0o600", "accounts.json is mode 600")
 
     # The settings page's way: the secret in the inbox, hex, the command line without it.
     inbox = Path(TMP) / "plaincalendar" / "inbox.ini"
@@ -384,7 +387,7 @@ def test_caldav():
     stored = json.loads((Path(TMP) / "plaincalendar" / "accounts.json").read_text(encoding="utf-8"))
     ok(code == 0 and next(x for x in stored if x["id"] == "icloud").get("password") == secret, "the secret came from the inbox, not the command line")
     ok(not inbox.exists(), "the inbox is deleted once read")
-    ok(oct(os.stat(Path(TMP) / "plaincalendar").st_mode & 0o777) == "0o700", "the folder of the secrets is mode 700")
+    ok(not posix or oct(os.stat(Path(TMP) / "plaincalendar").st_mode & 0o777) == "0o700", "the folder of the secrets is mode 700")
     run("account-remove", "icloud")
 
     code, found = run("check", "yandex")
