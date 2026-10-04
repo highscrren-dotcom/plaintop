@@ -3,10 +3,14 @@
 # (and once a week), not on every push. Advisory until it has proved itself: the container
 # is a moving target and the desktop run on s1dPC stays the verification that counts.
 # First run 2026-10-05: the container built in 40 s and the click-through stand passed 20/20;
-# the monitor's stand wanted plasma5support, which plasma-workspace does not pull in.
+# the monitor's stand wanted plasma5support, which plasma-workspace does not pull in. Second
+# run, with it: all three stands green in 80 s — so it runs on every push to main as well,
+# still advisory (continue-on-error) until a week of green.
 name: qml stands
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: "0 6 * * 1"
