@@ -896,3 +896,40 @@ tall: 1.8 × 3 px) no longer holds — discs come out tall. So the icon packs it
 exactly `iconSize` — `lineHeightMode: Text.FixedHeight` with `lineHeight` equal to the
 pixel size — and is 24 × `iconSize` pixels tall: 72 at the default, four lines at 10 pt.
 Measured the same way, 2026-09-24.
+
+## cava's stereo frame is a mirror: the left channel backwards, then the right
+
+With `channels` left at its default, stereo, a frame of N bars is the left channel from
+the highest band down to the lowest, then the right channel from the lowest up. Drawn
+around a ring, that is one spectrum folded about the middle: both ends are the treble,
+the bass meets at the centre. Measured with a null sink and raw ASCII output, 16 bars: a
+120 Hz tone in the left channel only lights bar 6, the same tone in the right only bar 9
+(15 − 6). The relay therefore folds the frame into one spectrum when the widget asks for
+`?mono=1` (the "Channels" switch) and leaves cava in stereo. cava 1.0.0, 2026-10-04.
+
+## cava reads `noise_reduction` from `[smoothing]` only
+
+The binary knows the key as `smoothing:noise_reduction` and nowhere else (`strings
+/usr/bin/cava`, cava 1.0.0); its embedded example config lists it under `[smoothing]`
+with a default of 77. The relay used to write it under `[general]`, so
+`PLAINSPECTRUM_NOISE` changed nothing and cava smoothed at 77 whatever it said.
+2026-10-04.
+
+## QML's `Locale` counts months from 0 and Sunday as 0
+
+`Qt.locale().standaloneMonthName(9)` is October, as `Date.getMonth()` would have it — not
+September, as Qt's C++ `QLocale` (1–12) would. `firstDayOfWeek` is 0 for Sunday (en_US) and
+1 for Monday (ru_RU), and `weekDays` lists the working days the same way: he_IL and ar_SA
+give `[1,2,3,4,0]`. `dayName()` takes both 0 and 7 for Sunday, which hides the difference
+until something compares day numbers. The calendar passed `month + 1` and titled every
+month with the next one's name, and looked for Sunday as 7 among the working days.
+`/usr/lib/qt6/bin/qml`, Qt 6.11, 2026-10-04.
+
+## A string literal broken across source lines reaches the catalog cut in half
+
+QML accepts a `"…"` literal with a raw line break in it, so the page runs and shows the
+text. `xgettext -L JavaScript` keeps only the first line as the msgid, so the template has
+half a sentence, no catalog can translate the string `i18n()` asks for, and the hint stays
+English in every language. Write one-line literals with `\n` instead, as the rest of the
+project does. Found by `po/extract.py` on two hints of the monitor's General page,
+2026-10-04.
