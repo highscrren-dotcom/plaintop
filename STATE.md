@@ -10,8 +10,8 @@
 **Пошаговая инструкция — `docs/VERIFY-2026-10-04.md`**: команды, ожидаемый вывод, допущения
 и что делать при отказе; после прохождения файл удалить. Ниже — краткий список того же.
 
-Ветка `claude/sleepy-hopper-pzxp2i`, четыре коммита поверх `main`: bd8ae39 календарь,
-dd21a63 каналы спектра, 80dd477 `noise_reduction`, 5887626 монитор 0.4. Влить после проверки.
+Всё влито в `main` 2026-10-04 (bd8ae39 календарь, dd21a63 каналы спектра, 80dd477
+`noise_reduction`, 5887626 монитор 0.4, 9e8c306 инструкция). Работать в `main`.
 
 1. `/usr/lib/qt6/bin/qmllint -I /usr/lib/qt6/qml` по новому: `calendar/package/contents/ui/*.qml`,
    `monitor/shared/MonitorData.qml`, `MonitorView.qml`, `monitor/package/contents/ui/configBlocks.qml`,
