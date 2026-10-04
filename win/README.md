@@ -61,10 +61,25 @@ click lands on the desktop, as the Plasma widgets were before their active lines
 off, the left button drags the widget, the right opens its menu — settings, the mouse
 switch, *behind the desktop icons*, close. The place is remembered.
 
-**Behind the desktop icons** parents the window under the wallpaper's `WorkerW`, the way
-wallpaper engines do; off, the window is a tool window kept at the bottom of the stack,
-which Windows may raise above the icons. Not yet seen on a desktop: try it, and say what
-happened.
+**Where the window sits.** A tool window kept at the bottom of the stack — Rainmeter's
+"Bottom" position; Qt holds it there itself. Two things follow: *Show desktop* (Win+D) hides
+the widgets until the desktop is un-shown, and the desktop icons draw over them where they
+overlap. **Behind the desktop icons** (experimental, off) parents the window under the
+wallpaper's `WorkerW` the way wallpaper engines do; it depends on the Windows build (24H2
+moved that layer inside Progman) and dies with an Explorer restart. **`softwareRender`**
+(in the ini, off) starts a widget on Qt Quick's software backend: such a window is painted
+with per-pixel alpha, and Windows is documented to pass the mouse through its transparent
+pixels — the candidate for clicks that reach the text and nothing else. None of the three
+has been seen on a desktop: try them, and say what happened
+([../docs/research/windows-widgets.ru.md](../docs/research/windows-widgets.ru.md) has the
+sources and a checklist).
+
+**The reminder's notification** is a Windows toast raised under PowerShell's own id (a
+desktop app without a Start-menu shortcut cannot raise one), so it says "Windows
+PowerShell" above the text. **Defender** will show "Windows protected your PC" for an
+unsigned zip: *More info → Run anyway*. **LibreHardwareMonitor** needs administrator rights
+for the sensors, so it cannot sit in the Startup folder; start it from Task Scheduler with
+the highest privileges.
 
 **The zip.** Every green CI run keeps `plaintop-win.zip` as the artifact `plaintop-win`
 (*Actions → checks → the run → Artifacts*): `plaintop.exe` with the frozen service, `host/`,

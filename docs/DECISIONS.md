@@ -971,6 +971,23 @@ JSON on a live machine, the window flags on a real desktop (transparency, keep-b
 input transparency toggled at run time), the `WorkerW` parenting, the tray icon, the toast,
 the zip started by hand — the user's desktop is the first place these run.
 
+⚠️ **Note, 2026-10-05 (research, `docs/research/windows-widgets.ru.md`).** Windows has
+nothing for a widget *on the desktop*: its Widgets live in the Win+W board as Adaptive
+Cards from packaged apps, and the Gadgets are gone — a Win32 window with the right styles,
+Rainmeter's path, is the only one, and it is this one. Rainmeter's "On desktop" is not
+WorkerW but a layered tool window held at `HWND_BOTTOM`, with `WS_EX_TRANSPARENT` for
+click-through — exactly what Qt's three flags set, and Qt keeps the bottom in
+`WM_WINDOWPOSCHANGING` itself; what the port lacks is Rainmeter's handling of *Show
+desktop* (Win+D), after which a bottom window is hidden until the desktop is un-shown.
+Three consequences taken: the `WorkerW` parenting is demoted to an experimental setting
+(on 24H2 the layer sits inside Progman and wants other parameters; a child dies with an
+Explorer restart); the toast is raised under PowerShell's AppUserModelID, since a desktop
+app without a Start-menu shortcut cannot raise one at all; and the second-stage candidate
+for a partial click-through changes: the transparent pixels of a D3D11 `QQuickWindow` are
+solid to the mouse, but Qt Quick's software backend paints a layered window with per-pixel
+alpha, which Windows hit-tests by alpha — the `softwareRender` setting starts a host that
+way, to be measured on the desk before the cursor polling above is built.
+
 **Revisit if:** the second-stage hit test turns out to need more than the polled cursor —
 then a small C++ host (one `QWindow` subclass answering `WM_NCHITTEST`) replaces
 `qml.exe`, and nothing else changes; or Plasma's private modules change their surface

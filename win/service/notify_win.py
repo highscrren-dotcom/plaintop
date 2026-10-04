@@ -2,8 +2,13 @@
 and `pw-play` do on the Plasma side (calendar/package/contents/ui/main.qml, announce()).
 
 The toast goes through PowerShell and the WinRT toast API: a few hundred milliseconds
-once in a while, and no dependency. The sound is the standard library's winsound. Both
-degrade to nothing where they cannot run, and nothing here raises into the server.
+once in a while, and no dependency. A desktop app may raise a toast only under an
+AppUserModelID that a Start-menu shortcut carries ("Without a valid shortcut installed in
+the Start screen … you cannot raise a toast notification from a desktop app"), and this
+program installs no shortcut — so the toast is raised under PowerShell's own id, which
+every Windows has a shortcut for: it shows as "Windows PowerShell" with our title and
+text. The sound is the standard library's winsound. Both degrade to nothing where they
+cannot run, and nothing here raises into the server.
 """
 import os
 import subprocess
@@ -19,7 +24,7 @@ $template = @"
 $xml = New-Object Windows.Data.Xml.Dom.XmlDocument
 $xml.LoadXml($template)
 $toast = New-Object Windows.UI.Notifications.ToastNotification $xml
-[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("plaintop").Show($toast)
+[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe").Show($toast)
 """
 
 

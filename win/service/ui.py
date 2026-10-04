@@ -110,7 +110,7 @@ class Manager:
         cmd += list(extra)
         return cmd
 
-    def spawn(self, name, cmd):
+    def spawn(self, name, cmd, extra_env=None):
         if not self.qml:
             raise RuntimeError("qml.exe not found: set PLAINTOP_QML or put Qt's bin on PATH")
         kwargs = {}
@@ -125,6 +125,7 @@ class Manager:
         env.setdefault("QT_QPA_PLATFORM", os.environ.get("PLAINTOP_QPA", "windows" if os.name == "nt" else env.get("QT_QPA_PLATFORM", "")))
         if not env["QT_QPA_PLATFORM"]:
             del env["QT_QPA_PLATFORM"]
+        env.update(extra_env or {})
         proc = subprocess.Popen(cmd, stdout=sys.stderr, stderr=subprocess.STDOUT, env=env, **kwargs)
         with self.lock:
             self.procs[name] = proc
@@ -140,11 +141,15 @@ class Manager:
             raise KeyError(widget)
         if on:
             if not self.running(widget):
-                self.spawn(widget, self.command(f"{widget}.qml", widget))
-                if self.store is not None:
-                    behind = self.store.get(widget)[1].get("behindIcons") is True
-                    if behind:
-                        threading.Thread(target=self.behind_icons, args=(widget,), daemon=True).start()
+                values = self.store.get(widget)[1] if self.store is not None else {}
+                # The software backend makes the window a layered one with per-pixel alpha,
+                # which Windows hit-tests by alpha: clicks pass where nothing is drawn
+                # (documented for UpdateLayeredWindow; the D3D11 path is a solid window).
+                # Unverified on a desktop; a setting, off by default.
+                extra = {"QT_QUICK_BACKEND": "software"} if values.get("softwareRender") is True else None
+                self.spawn(widget, self.command(f"{widget}.qml", widget), extra_env=extra)
+                if values.get("behindIcons") is True:
+                    threading.Thread(target=self.behind_icons, args=(widget,), daemon=True).start()
         else:
             self.stop(widget)
         if self.store is not None:
@@ -220,12 +225,18 @@ class Manager:
             return {"error": "unknown request"}
         return {"ok": True, **self.status()}
 
-    # ── behind the desktop icons ──────────────────────────────────────────────
+    # ── behind the desktop icons (experimental) ───────────────────────────────
     # The desktop is Progman; told 0x052C it spawns a WorkerW behind the icon view
     # (SHELLDLL_DefView), and a window parented under that WorkerW draws between the
-    # wallpaper and the icons. On Windows 11 24H2 the WorkerW became a child of Progman
-    # rather than its sibling, so both places are searched. Nothing here is verified on a
-    # desktop yet: the user's check — win/README.md.
+    # wallpaper and the icons — the wallpaper engines' way. On Windows 11 24H2 (build
+    # 26100) SHELLDLL_DefView and the WorkerW became children of Progman, the message with
+    # zero parameters spawns nothing, and the engines send wParam 0xD, lParam 0x1 and want
+    # a layered child of Progman placed between the two; what the search below finds there
+    # may be Explorer's own layer. A child window also dies with Explorer when it restarts,
+    # and a cross-process SetParent can reset the child's DPI mode. Hence a setting off by
+    # default, and not the primary mode: the primary one is the tool window kept at the
+    # bottom of the stack, Rainmeter's "Bottom" — docs/research/windows-widgets.ru.md.
+    # Nothing here is verified on a desktop yet: the user's check — win/README.md.
     def window_of(self, pid):
         if os.name != "nt":
             return 0
@@ -251,6 +262,7 @@ class Manager:
             return 0
         result = ctypes.c_ulong()
         user32.SendMessageTimeoutW(progman, 0x052C, 0, 0, 0, 1000, ctypes.byref(result))
+        user32.SendMessageTimeoutW(progman, 0x052C, 0xD, 0x1, 0, 1000, ctypes.byref(result))   # 24H2
         # The sibling arrangement: the WorkerW right after the window holding the icons.
         hwnd = 0
         proto = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_void_p, ctypes.c_void_p)

@@ -31,7 +31,11 @@ WINDOW_KEYS = {
     "winX": ("Int", 60),
     "winY": ("Int", 60),
     "screen": ("Int", 0),
-    "behindIcons": ("Bool", False),  # parented under the wallpaper's WorkerW
+    "behindIcons": ("Bool", False),  # parented under the wallpaper's WorkerW (experimental)
+    # Qt Quick's software backend: the window is then a layered window painted with
+    # per-pixel alpha, and Windows passes the mouse through its transparent pixels — the
+    # candidate for a partial click-through without C++ (docs/research/windows-widgets.ru.md).
+    "softwareRender": ("Bool", False),
 }
 
 # Where the Plasma default names something Windows has not.
