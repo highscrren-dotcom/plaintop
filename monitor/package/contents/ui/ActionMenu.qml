@@ -161,6 +161,13 @@ PlasmaCore.Dialog {
         }
     }
 
+    component Piece: Text {
+        font.family: menu.fontFamily
+        font.pointSize: menu.fontSize
+        renderType: Text.NativeRendering
+        textFormat: Text.PlainText
+    }
+
     mainItem: Item {
         id: sheet
         implicitWidth: column.width
@@ -202,14 +209,25 @@ PlasmaCore.Dialog {
                     width: rowText.width
                     height: rowText.height
 
-                    Text {
+                    // A framed row, "│ text │", keeps its sides in the frame's colour; only
+                    // the text between them takes the row's (the marked option's colour).
+                    readonly property var chars: Array.from(String(row.spec.text))
+                    readonly property bool sided: chars.length >= 4 && chars[0] === menu.f[3]
+                                                  && chars[chars.length - 1] === menu.f[3]
+                    Row {
                         id: rowText
-                        text: row.spec.text
-                        color: menu.paint(row.spec.role)
-                        font.family: menu.fontFamily
-                        font.pointSize: menu.fontSize
-                        renderType: Text.NativeRendering
-                        textFormat: Text.PlainText
+                        Piece {
+                            text: row.sided ? row.chars.slice(0, 2).join("") : ""
+                            color: menu.colorDim
+                        }
+                        Piece {
+                            text: row.sided ? row.chars.slice(2, -2).join("") : row.chars.join("")
+                            color: menu.paint(row.spec.role)
+                        }
+                        Piece {
+                            text: row.sided ? row.chars.slice(-2).join("") : ""
+                            color: menu.colorDim
+                        }
                     }
 
                     MouseArea {

@@ -242,11 +242,26 @@ PlasmaCore.Dialog {
                     // The unfold: rows below the counter are laid out but not yet drawn.
                     opacity: index < sticker.revealed ? 1 : 0
 
-                    Line {
+                    // A framed row, "│ text │", keeps its sides in the frame's colour; only
+                    // the text between them takes the row's.
+                    readonly property var chars: row.isEditor ? [] : Array.from(String(row.spec.text))
+                    readonly property bool sided: chars.length >= 4 && chars[0] === sticker.f[3]
+                                                  && chars[chars.length - 1] === sticker.f[3]
+                    Row {
                         id: lineText
                         visible: !row.isEditor
-                        text: row.isEditor ? "" : row.spec.text
-                        color: sticker.paint(row.isEditor ? "dim" : row.spec.role)
+                        Line {
+                            text: row.sided ? row.chars.slice(0, 2).join("") : ""
+                            color: sticker.colorDim
+                        }
+                        Line {
+                            text: row.sided ? row.chars.slice(2, -2).join("") : row.chars.join("")
+                            color: sticker.paint(row.isEditor ? "dim" : row.spec.role)
+                        }
+                        Line {
+                            text: row.sided ? row.chars.slice(-2).join("") : ""
+                            color: sticker.colorDim
+                        }
                     }
 
                     // The editor row: the frame's sides stand beside the text field, one
