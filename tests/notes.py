@@ -353,6 +353,18 @@ def test_caldav():
     ok(code == 0 and listed[0]["id"] == "yandex" and "password" not in listed[0] and listed[0]["has_password"], "saved without leaking the secret: " + repr(listed))
     ok(oct(os.stat(Path(TMP) / "plaincalendar" / "accounts.json").st_mode & 0o777) == "0o600", "accounts.json is mode 600")
 
+    # The settings page's way: the secret in the inbox, hex, the command line without it.
+    inbox = Path(TMP) / "plaincalendar" / "inbox.ini"
+    secret = 'пароль;="x'
+    inbox.write_text("[icloud]\npassword=" + secret.encode().hex() + "\n", encoding="utf-8")
+    bare = {"id": "icloud", "name": "iCloud", "kind": "caldav", "url": base, "user": USER, "calendar": ""}
+    code, listed = run("account-save", base64.b64encode(json.dumps(bare).encode()).decode())
+    stored = json.loads((Path(TMP) / "plaincalendar" / "accounts.json").read_text(encoding="utf-8"))
+    ok(code == 0 and next(x for x in stored if x["id"] == "icloud").get("password") == secret, "the secret came from the inbox, not the command line")
+    ok(not inbox.exists(), "the inbox is deleted once read")
+    ok(oct(os.stat(Path(TMP) / "plaincalendar").st_mode & 0o777) == "0o700", "the folder of the secrets is mode 700")
+    run("account-remove", "icloud")
+
     code, found = run("check", "yandex")
     ok(code == 0 and found["ok"] and [c["name"] for c in found["calendars"]] == ["Задачи", "Мои события"], "discovery through the redirect: " + repr(found))
     ok(found["calendars"][1]["href"] == base + "calendars/login/events-default/", "hrefs made absolute: " + found["calendars"][1]["href"])

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtCore
 
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
@@ -61,6 +62,36 @@ KCM.SimpleKCM {
         return Qt.btoa(unescape(encodeURIComponent(JSON.stringify(obj))))
     }
 
+    // A secret never goes on a command line, where anyone on the machine reads it in
+    // /proc: it goes into notes.py's inbox, hex-encoded so QSettings' INI quoting cannot
+    // touch it, under the account's id; account-save takes it from there and deletes the
+    // file. The script keeps the folder at 700.
+    Settings {
+        id: inbox
+        location: StandardPaths.writableLocation(StandardPaths.ConfigLocation) + "/plaincalendar/inbox.ini"
+    }
+    function hex(text) {
+        const bytes = unescape(encodeURIComponent(text))
+        let out = ""
+        for (let i = 0; i < bytes.length; i++)
+            out += ("0" + bytes.charCodeAt(i).toString(16)).slice(-2)
+        return out
+    }
+    // The account without its secrets, the secrets left in the inbox.
+    function stash(a) {
+        const out = {}
+        for (const k in a)
+            out[k] = a[k]
+        const section = String(a.id).replace(/[^A-Za-z0-9_.-]/g, "_")
+        for (const k of ["password", "client_secret"]) {
+            if (out[k])
+                inbox.setValue(section + "/" + k, hex(out[k]))
+            delete out[k]
+        }
+        inbox.sync()
+        return out
+    }
+
     function reload() {
         runner.run(cmd("accounts"), function(out) {
             try {
@@ -107,7 +138,7 @@ KCM.SimpleKCM {
         const a = { id: form.id.trim(), name: form.name.trim() || form.id.trim(), kind: form.kind,
                     url: form.url.trim(), user: form.user.trim(), password: form.password,
                     calendar: form.calendar.trim(), client_id: form.clientId.trim(), client_secret: form.clientSecret }
-        runner.run(cmd("account-save " + b64(a)), function(out) {
+        runner.run(cmd("account-save " + b64(stash(a))), function(out) {
             page.answer(out, function(list) {
                 page.accounts = list
                 page.status = i18n("Saved.")
@@ -137,7 +168,7 @@ KCM.SimpleKCM {
                     calendar: form.calendar.trim(), client_id: form.clientId.trim(), client_secret: form.clientSecret }
         status = i18n("Asking the server…")
         failed = false
-        runner.run(cmd("account-save " + b64(a)), function(out) {
+        runner.run(cmd("account-save " + b64(stash(a))), function(out) {
             page.answer(out, function(list) {
                 page.accounts = list
                 runner.run(cmd("check '" + a.id + "'"), function(out2) {

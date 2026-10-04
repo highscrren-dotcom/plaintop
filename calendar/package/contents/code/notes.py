@@ -27,7 +27,7 @@ text is the SUMMARY, the rest the DESCRIPTION.
     notes.py set ACCOUNT DATE B64TEXT                                          create or update the note
     notes.py delete ACCOUNT DATE
     notes.py accounts                       the accounts without their secrets
-    notes.py account-save B64JSON           add or replace one (by id)
+    notes.py account-save B64JSON           add or replace one (by id); its secrets from inbox.ini
     notes.py account-remove ID
     notes.py check ID                       reach the server, list its calendars
     notes.py google-auth ID                 the browser login; stores the refresh token
@@ -35,6 +35,7 @@ text is the SUMMARY, the rest the DESCRIPTION.
 import argparse
 import base64
 import binascii
+import configparser
 import datetime as dt
 import http.client
 import http.server
@@ -59,6 +60,10 @@ CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / 
 CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "plaincalendar"
 LOCAL_DIR = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")) / "plaincalendar" / "notes"
 ACCOUNTS = CONFIG_DIR / "accounts.json"
+# The settings page cannot hand a secret over on a command line — anyone on the machine
+# reads /proc/*/cmdline — so it writes it here (QtCore.Settings, hex), in a folder kept
+# at 700, and account-save takes it and deletes the file.
+INBOX = CONFIG_DIR / "inbox.ini"
 PRODID = "-//s1dd1//plaincalendar//EN"
 TIMEOUT = 15
 DAV = "DAV:"
@@ -358,6 +363,36 @@ def save_accounts(accounts):
     tmp.write_text(json.dumps(accounts, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     os.chmod(tmp, 0o600)
     tmp.replace(ACCOUNTS)
+
+
+def take_inbox(account_id):
+    """The secrets the settings page left for one account, hex-encoded; then forgotten."""
+    if not INBOX.exists():
+        return {}
+    cp = configparser.ConfigParser(interpolation=None)
+    cp.optionxform = str
+    try:
+        cp.read(INBOX, encoding="utf-8")
+    except (configparser.Error, OSError):
+        INBOX.unlink(missing_ok=True)
+        return {}
+    found = {}
+    if cp.has_section(account_id):
+        for k in SECRET_KEYS:
+            value = cp.get(account_id, k, fallback="")
+            try:
+                if value:
+                    found[k] = bytes.fromhex(value).decode("utf-8")
+            except ValueError:
+                pass
+        cp.remove_section(account_id)
+    if cp.sections():
+        with open(INBOX, "w", encoding="utf-8") as f:
+            cp.write(f)
+        os.chmod(INBOX, 0o600)
+    else:
+        INBOX.unlink(missing_ok=True)
+    return found
 
 
 def public(account):
@@ -846,6 +881,9 @@ def main(argv):
     p = sub.add_parser("check"); p.add_argument("id")
     p = sub.add_parser("google-auth"); p.add_argument("id")
     args = ap.parse_args(argv)
+    # The folder holds the passwords and the page's inbox: 700, whoever created it.
+    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    os.chmod(CONFIG_DIR, 0o700)
     accounts = load_accounts()
 
     try:
@@ -873,6 +911,7 @@ def main(argv):
             if not isinstance(new, dict) or not new.get("id") or new["id"] == "local":
                 raise DavError("an account needs an id other than local")
             new["id"] = re.sub(r"[^A-Za-z0-9_.-]", "_", new["id"])
+            new.update(take_inbox(new["id"]))
             old = next((a for a in accounts if a.get("id") == new["id"]), None)
             if old:
                 # A secret left empty in the form keeps the stored one.
