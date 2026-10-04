@@ -1053,3 +1053,45 @@ base64`, while the wrapped form gives `w5HCgsOQwrXDkcKBw5HCgg==` — every byte 
 The calendar saved a note typed in Russian as "ÑÐµÑÑ" until the wrapper went; the
 Accounts page would have done the same to an account named "Яндекс". Use `Qt.btoa(text)`
 alone (and `Qt.atob` gives the string back). `/usr/lib/qt6/bin/qml`, Qt 6.11.2, 2026-10-04.
+
+## KHolidays' QML module lists the regions and gives no holidays; the calendar plugin does
+
+`org.kde.kholidays` exposes `HolidayRegionsModel` (170 rows: `region`, `name`,
+`description`), `Lunar` and `SunRiseSet` — nothing that returns a date's holidays. The way is
+Plasma's calendar plugin: `PlasmaCalendar.EventPluginsManager { enabledPlugins:
+["holidaysevents"] }`, a `PlasmaCalendar.Calendar` whose `daysModel.setPluginsManager()` gets
+it, `goToYearAndMonth()`, then `daysModel.eventsForDate(new Date(y, m - 1, d))` after
+`agendaUpdated`. A `Calendar` holds only the month it shows, so one per month; the
+`dataReady` argument arrives in JS as an empty object; dates must be built and printed in
+local time (`toISOString()` shifts a day). The events carry `title` and nothing that tells a
+day off from a professional day — `isMinor` is false for all. Works in a bare `qml` host.
+2026-10-04, KF 6.30.
+
+## The holiday regions are one file for the whole shell
+
+The plugin reads `~/.config/plasma_calendar_holiday_regions` (`[General] selectedRegions=`),
+hard-coded; none chosen, it takes the locale's region. The digital clock's calendar and every
+widget in plasmashell share it — a per-widget choice is not possible in-process. Plasma's
+helper `org.kde.plasma.private.holidayevents.HolidayRegionsConfig` (`selectedRegions`,
+`addRegion`, `removeRegion`, `saveConfig`) edits it. 2026-10-04.
+
+## KHolidays' plans are Qt resources, readable only where file reads are allowed
+
+The plan files are `qrc:/org.kde.kholidays/plan2/holiday_<code>` inside libKF6Holidays, not
+files under /usr/share. A QML `XMLHttpRequest` reads them only with
+`QML_XHR_ALLOW_FILE_READ=1`, which plasmashell does not set — so `calendar/holidays.py`
+reads them at build time in a throwaway `/usr/lib/qt6/bin/qml` host and commits what it
+needs. A line is `"Name" public religious on …`; `public` marks a day off. 2026-10-04.
+
+## A bare `qml` host has no `i18nc`
+
+KDE's `i18nc()` comes from the context plasmashell sets up. In `/usr/lib/qt6/bin/qml` it is
+undefined: a binding that calls it throws "ReferenceError: i18nc is not defined", leaves the
+property undefined, and whatever iterates it then throws a TypeError. Test hosts must not
+count on such bindings — the world days list was checked on the desktop. 2026-10-04.
+
+## `po/extract.py` reads only files git knows
+
+It takes the sources from `git ls-files`, so the strings of a new QML file reach the
+template only after `git add`. A new page translated before that comes out with a single new
+string — its title from config.qml — and nothing else. 2026-10-04.

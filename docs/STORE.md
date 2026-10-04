@@ -454,13 +454,16 @@ an hour, tomorrow, done, and "task done" for tasks; missed ones come one by one.
 system notification and a sound — five plain tones of its own or a file of yours. As many notes a day as you like, each with its own reminder.
 A missed reminder stays at the top of the upcoming lines in red until you answer it; a click
 opens it again; an event leaves those lines once it is over.
+Holidays: Plasma's own 170 regions (the choice shared with the clock's calendar), days off in
+the weekends' colour, other holidays and optional world days in a colour of their own, named
+in the sticker.
 Checked on the desktop 2026-10-04, Yandex included.
 
 - **File:** `dist/plaincalendar-<version>.plasmoid`
 - **Category:** Plasma 6 Calendars (as set on the store page)
 - **License:** GPL-2.0-or-later
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
-- **Tags:** calendar, month, week numbers, text, monospace, notes, reminders, caldav
+- **Tags:** calendar, month, week numbers, text, monospace, notes, reminders, caldav, holidays
 - **Images:** three months one under another, the week numbers, a weekend in red, today
   in brackets — needs no data, any machine renders it. Rendered 2026-10-04: a logo (the
   October block) and a gallery picture (three months), English locale, stock colours
@@ -497,10 +500,15 @@ until you answer it. A reminder is a VALARM in the note, so the account's calend
 and a phone synced to it can ring too. Optionally a system notification and a sound — five
 plain tones of the widget's own, or a file of yours.
 
+Holidays: Plasma's own list of 170 countries and regions — tick as many as you like (the
+choice is shared with the calendar of Plasma's clock). A day off takes the weekends' colour;
+with "every holiday" the other days of the plans take a colour of their own, and so can the
+best known world days of the UN and UNESCO. The sticker names them.
+
 Right-click → Configure: months (one or three), week numbers, the first day of the
 week, the weekends' colour, the neighbouring months; font, size, cell width, the colours;
 the Notes page — on or off, where a note goes, how often accounts are read, the sticker's
-frame and paper; the Accounts page; the Mouse page lets clicks through to the desktop
+frame and paper; the Holidays page; the Accounts page; the Mouse page lets clicks through to the desktop
 everywhere but on the days, like the other plaintop widgets. The default font is JetBrainsMono Nerd Font Mono; any monospace font works. The
 interface follows Plasma's language — ten languages, all but English and Russian
 machine-translated, corrections welcome.
@@ -537,10 +545,15 @@ Python 3 (только стандартная библиотека) из пак�
 хранит, и синхронизированный с ним телефон тоже может позвонить. По желанию — системное
 уведомление и звук: пять простых сигналов самого виджета или свой файл.
 
+Праздники: собственный список Plasma из 170 стран и регионов — отметьте сколько угодно (выбор
+общий с календарём часов Plasma). Выходной красится цветом выходных; с «всеми праздниками»
+остальные дни из планов получают свой цвет, как и самые известные мировые дни ООН и ЮНЕСКО.
+Стикер их называет.
+
 Правый клик → Настроить: месяцы (один или три), номера недель, первый день недели, цвет
 выходных, соседние месяцы; шрифт, кегль, ширина ячейки, цвета; страница «Заметки» —
 включить или выключить, куда писать заметку, как часто читать аккаунты, рамка и бумага
-стикера; страница «Аккаунты»; страница «Мышь» пропускает клики на стол везде, кроме дней,
+стикера; страница «Праздники»; страница «Аккаунты»; страница «Мышь» пропускает клики на стол везде, кроме дней,
 как у других виджетов plaintop. Шрифт по умолчанию —
 JetBrainsMono Nerd Font Mono; подойдёт любой моноширинный. Интерфейс говорит на языке
 Plasma — десять языков, всё, кроме английского и русского, переведено машинно,

@@ -1047,3 +1047,45 @@ kpackagetool6 ставит; `--status` отметил его как файл, о
 сохранял заметку, набранную по-русски, как «ÑÐµÑÑ», пока обёртку не убрали; страница
 «Аккаунты» сделала бы то же с аккаунтом по имени «Яндекс». Писать просто `Qt.btoa(text)`
 (а `Qt.atob` возвращает строку). `/usr/lib/qt6/bin/qml`, Qt 6.11.2, 04.10.2026.
+
+## QML-модуль KHolidays перечисляет регионы и не даёт праздников; это делает плагин календаря
+
+`org.kde.kholidays` отдаёт `HolidayRegionsModel` (170 строк: `region`, `name`, `description`),
+`Lunar` и `SunRiseSet` — ничего, что вернуло бы праздники на дату. Путь — календарный плагин
+Plasma: `PlasmaCalendar.EventPluginsManager { enabledPlugins: ["holidaysevents"] }`,
+`PlasmaCalendar.Calendar`, чей `daysModel.setPluginsManager()` его получает,
+`goToYearAndMonth()`, затем `daysModel.eventsForDate(new Date(y, m - 1, d))` после
+`agendaUpdated`. `Calendar` держит только показанный месяц, поэтому по одному на месяц;
+аргумент `dataReady` приходит в JS пустым объектом; даты строить и печатать в местном времени
+(`toISOString()` сдвигает день). У событий есть `title` и ничего, что отличало бы выходной от
+профессионального дня — `isMinor` ложен у всех. Работает в голом хосте `qml`. 04.10.2026,
+KF 6.30.
+
+## Регионы праздников — один файл на всю оболочку
+
+Плагин читает `~/.config/plasma_calendar_holiday_regions` (`[General] selectedRegions=`),
+имя зашито; если ничего не выбрано — регион локали. Календарь часов и все виджеты в
+plasmashell делят его — выбор на виджет внутри процесса невозможен. Его правит помощник
+самой Plasma `org.kde.plasma.private.holidayevents.HolidayRegionsConfig` (`selectedRegions`,
+`addRegion`, `removeRegion`, `saveConfig`). 04.10.2026.
+
+## Планы KHolidays — Qt-ресурсы, их читают только там, где разрешено читать файлы
+
+Файлы планов — `qrc:/org.kde.kholidays/plan2/holiday_<код>` внутри libKF6Holidays, а не файлы в
+/usr/share. QML-`XMLHttpRequest` читает их только с `QML_XHR_ALLOW_FILE_READ=1`, а plasmashell
+его не ставит — поэтому `calendar/holidays.py` читает их при сборке в одноразовом хосте
+`/usr/lib/qt6/bin/qml` и кладёт в репозиторий нужное. Строка — `"Название" public religious on
+…`; `public` значит выходной. 04.10.2026.
+
+## В голом хосте `qml` нет `i18nc`
+
+`i18nc()` KDE приходит из контекста, который настраивает plasmashell. В `/usr/lib/qt6/bin/qml`
+его нет: привязка, которая его зовёт, бросает «ReferenceError: i18nc is not defined», свойство
+остаётся undefined, и то, что по нему проходит, бросает TypeError. Тестовые хосты не должны
+рассчитывать на такие привязки — список мировых дней проверялся на столе. 04.10.2026.
+
+## `po/extract.py` читает только файлы, известные git
+
+Источники он берёт из `git ls-files`, поэтому строки нового QML-файла попадают в шаблон
+только после `git add`. Новая страница, переведённая раньше, даёт одну новую строку —
+свой заголовок из config.qml — и больше ничего. 04.10.2026.

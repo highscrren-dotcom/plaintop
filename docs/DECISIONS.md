@@ -773,3 +773,47 @@ instances (the desktop has one), a task closed from the sheet on a real server.
 
 **Revisit when:** the desktop shows the Notification type cannot be placed by an item, or
 the sheet needs the keyboard after all — then PopupMenu with `hideOnWindowDeactivate` off.
+
+## 16. Holidays from Plasma's calendar plugin; which are days off from the plans (2026-10-04)
+
+**Decision:** the calendar marks holidays from Plasma's own calendar plugin
+("holidaysevents", built on KHolidays: 170 countries and regions), one `Calendar` per shown
+month, the regions chosen on our *Holidays* page through Plasma's own helper
+(`org.kde.plasma.private.holidayevents`). A day off takes the weekends' colour, any other
+holiday its own (`colorHoliday`), and the sticker names the day's holidays. "Days off only"
+is the default. Which names are days off comes from the plans themselves: KHolidays marks a
+line `public`, and `calendar/holidays.py` reads every plan out of the library and writes
+`HolidayKinds.js` (the day-off names, and the name days to leave out). The world days — the
+UN's and UNESCO's best known — are a short list of our own.
+
+**Why.** The data are already on every Plasma desktop, kept by KDE, with the Easter,
+Hijri, Hebrew and lunar rules a home-made list could not carry. KHolidays' QML module lists
+the regions but gives no holidays for a date; the plugin does, and runs inside plasmashell
+with nothing else to install. Its events say nothing about kind — a day off and a
+professional day look alike, and Russia's plan alone has some two hundred lines — so the
+`public` flag is taken from the plans at build time.
+
+**What we pay.** The region choice is one file for the whole shell
+(`~/.config/plasma_calendar_holiday_regions`): it is the clock calendar's choice too, and the
+page says so. Holiday names arrive as the plans spell them; the day-off test matches names,
+and a dozen names are a day off in one region and not in another. The day-off list must be
+regenerated after a KHolidays update (the plans are Qt resources in the library, read by a
+throwaway QML host allowed to read files). The plans' own gaps stay ours: Russia's day-off
+transfers end in 2024.
+
+**Alternatives considered.** Our helper parsing the plans in Python — the plans are a full
+grammar (Easter, Hijri, Hebrew, conditions); not worth it. A child Qt process per widget
+with its own config — per-widget regions, at the price of a Qt binary called from a stdlib
+helper. A hand-made holiday list — goes stale, and covers few countries.
+
+**Verified by running:** the generator reads all 170 plans (1507 day-off names, 732 name
+days) and gives the same file twice; in a bare QML host with de_de and ru_ru chosen, the
+days off of October–December 2026 are exactly the German and Russian ones, "every holiday"
+adds the observances (День учителя), name days stay out; on the desktop with nothing chosen
+(the locale's ru_ru) the 4th of November is in the weekends' colour, and with world days on
+the 5th and the 24th of October are in the holiday colour; the sticker lists a day's
+holidays under its title.
+
+**Revisit when:** KHolidays' QML module learns to give holidays for a date, or the plugin
+marks the kind of a holiday — then the generator goes; or a per-widget choice is asked for.
+

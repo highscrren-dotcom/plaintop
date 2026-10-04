@@ -250,6 +250,14 @@ notification through `notify-send` and a sound — five short plain tones of the
 you answer it, it heads the upcoming lines under the months in red with a "!", and a click
 on it opens its sheet again; a timed entry leaves those lines once it is over.
 
+**Holidays.** Public holidays are marked in the grid — a day off in the weekends' colour —
+and named in the day's sticker. They come from Plasma itself (KHolidays, 170 countries and
+regions): pick any number of them on the *Holidays* page, by search; the choice is the one
+Plasma's clock calendar uses too, and with none picked it is your locale's region. "Days off
+only" is the default; "every holiday but name days" adds the observances in their own colour,
+and *World days* adds the UN's and UNESCO's best known international days. Which holidays
+are days off comes from KHolidays' own plans, read by `calendar/holidays.py`.
+
 ## Three layers
 
 ```
