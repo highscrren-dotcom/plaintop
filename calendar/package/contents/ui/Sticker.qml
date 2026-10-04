@@ -238,7 +238,7 @@ PlasmaCore.Dialog {
                         spacing: 0
 
                         Line {
-                            text: (sticker.f[3] + " \n").repeat(Math.max(1, editor.lineCount)).trimEnd()
+                            text: (sticker.f[3] + " \n").repeat(Math.max(1, editor.lineCount)).replace(/\s+$/, "")
                             color: sticker.colorDim
                         }
                         TextEdit {
@@ -255,7 +255,7 @@ PlasmaCore.Dialog {
                             Keys.onEscapePressed: sticker.visible = false
                         }
                         Line {
-                            text: (" " + sticker.f[3] + "\n").repeat(Math.max(1, editor.lineCount)).trimEnd()
+                            text: (" " + sticker.f[3] + "\n").repeat(Math.max(1, editor.lineCount)).replace(/\s+$/, "")
                             color: sticker.colorDim
                         }
                     }
