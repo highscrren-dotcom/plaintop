@@ -72,7 +72,8 @@ Widgets*, search for the name:
 - the visualizer, `plainspectrum` — [store.kde.org/p/2372815](https://store.kde.org/p/2372815/);
   it draws nothing until the relay below is installed;
 - the player, `plainplayer` — [store.kde.org/p/2373633](https://store.kde.org/p/2373633/);
-- the weather, `plainweather` — [store.kde.org/p/2373634](https://store.kde.org/p/2373634/).
+- the weather, `plainweather` — [store.kde.org/p/2373634](https://store.kde.org/p/2373634/);
+- the calendar, `plaincalendar` — [store.kde.org/p/2377077](https://store.kde.org/p/2377077/).
 
 **From the repository** — all five widgets and the relay:
 

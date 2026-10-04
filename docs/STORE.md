@@ -415,7 +415,7 @@ plainweather — погода для рабочего стола Plasma 6 про
 
 ## plaincalendar — calendar
 
-Not published yet.
+Published 2026-10-04: https://store.kde.org/p/2377077/ (category Plasma 6 Extensions → Date and Time)
 
 - **File:** `dist/plaincalendar-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Date and Time

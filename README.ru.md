@@ -72,7 +72,8 @@ zypper, flatpak), названные вами юниты systemd, любые в�
 - визуализатор, `plainspectrum` — [store.kde.org/p/2372815](https://store.kde.org/p/2372815/);
   без реле из репозитория (ниже) он ничего не рисует;
 - плеер, `plainplayer` — [store.kde.org/p/2373633](https://store.kde.org/p/2373633/);
-- погода, `plainweather` — [store.kde.org/p/2373634](https://store.kde.org/p/2373634/).
+- погода, `plainweather` — [store.kde.org/p/2373634](https://store.kde.org/p/2373634/);
+- календарь, `plaincalendar` — [store.kde.org/p/2377077](https://store.kde.org/p/2377077/).
 
 **Из репозитория** — все пять виджетов и реле:
 
