@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-29 23:37+0500\n"
+"POT-Creation-Date: 2026-10-04 10:45+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -29,99 +29,179 @@ msgctxt "settings page"
 msgid "Blocks"
 msgstr "区块"
 
-#: monitor/package/contents/ui/configBlocks.qml:134
+#: monitor/package/contents/ui/configBlocks.qml:55
+msgctxt "the block is in the second column"
+msgid "(right column)"
+msgstr "（右栏）"
+
+#: monitor/package/contents/ui/configBlocks.qml:152
+#, kde-format
+msgid "Not valid JSON: %1"
+msgstr "无效的 JSON：%1"
+
+#: monitor/package/contents/ui/configBlocks.qml:156
+msgid "The layout must be a list of blocks"
+msgstr "布局必须是块的列表"
+
+#: monitor/package/contents/ui/configBlocks.qml:163
+#, kde-format
+msgid "Block %1 needs an id and a type"
+msgstr "块 %1 需要 id 和 type"
+
+#: monitor/package/contents/ui/configBlocks.qml:167
+#, kde-format
+msgid "Block %1: unknown type “%2”"
+msgstr "块 %1：未知类型“%2”"
+
+#: monitor/package/contents/ui/configBlocks.qml:171
+#, kde-format
+msgid "Block %1: the id “%2” is used twice"
+msgstr "块 %1：id“%2”重复使用"
+
+#: monitor/package/contents/ui/configBlocks.qml:258
 msgid ""
 "The blocks and their order. The default layout comes from schema/widget.json."
 msgstr "区块及其顺序。默认布局来自 schema/widget.json。"
 
-#: monitor/package/contents/ui/configBlocks.qml:190
+#: monitor/package/contents/ui/configBlocks.qml:314
 #: monitor/window/settings.qml:491
 msgid "Up"
 msgstr "上移"
 
-#: monitor/package/contents/ui/configBlocks.qml:197
+#: monitor/package/contents/ui/configBlocks.qml:321
 #: monitor/window/settings.qml:498
 msgid "Down"
 msgstr "下移"
 
-#: monitor/package/contents/ui/configBlocks.qml:204
+#: monitor/package/contents/ui/configBlocks.qml:328
+msgid "Duplicate"
+msgstr "复制"
+
+#: monitor/package/contents/ui/configBlocks.qml:335
 #: monitor/window/settings.qml:505
 msgid "Remove"
 msgstr "移除"
 
-#: monitor/package/contents/ui/configBlocks.qml:211
+#: monitor/package/contents/ui/configBlocks.qml:342
 msgid "Reset"
 msgstr "重置"
 
-#: monitor/package/contents/ui/configBlocks.qml:229
+#: monitor/package/contents/ui/configBlocks.qml:360
 #: monitor/window/settings.qml:524
 msgid "Add block"
 msgstr "添加区块"
 
-#: monitor/package/contents/ui/configGeneral.qml:33
+#: monitor/package/contents/ui/configBlocks.qml:373
+msgid "Name:"
+msgstr "名称："
+
+#: monitor/package/contents/ui/configBlocks.qml:376
+msgctxt "placeholder for the block's own name"
+msgid "optional, shown in the list"
+msgstr "可选，显示在列表中"
+
+#: monitor/package/contents/ui/configBlocks.qml:381
+msgid "Column:"
+msgstr "栏："
+
+#: monitor/package/contents/ui/configBlocks.qml:382
+msgctxt "the widget's column"
+msgid "left"
+msgstr "左"
+
+#: monitor/package/contents/ui/configBlocks.qml:382
+msgctxt "the widget's column"
+msgid "right"
+msgstr "右"
+
+#: monitor/package/contents/ui/configBlocks.qml:452
+#, kde-format
+msgctxt "pick list: how many the machine offers"
+msgid "pick from %1…"
+msgid_plural "pick from %1…"
+msgstr[0] "从 %1 个中选择…"
+
+#: monitor/package/contents/ui/configBlocks.qml:453
+msgctxt "pick list: the machine offers nothing"
+msgid "nothing found"
+msgstr "未找到"
+
+#: monitor/package/contents/ui/configBlocks.qml:474
+msgid "The layout as JSON — edit here, or paste one from another machine:"
+msgstr "JSON 形式的布局 — 在此编辑，或粘贴来自另一台机器的布局："
+
+#: monitor/package/contents/ui/configBlocks.qml:497
+msgid "Apply JSON"
+msgstr "应用 JSON"
+
+#: monitor/package/contents/ui/configBlocks.qml:503
+msgid "Reload from the list"
+msgstr "从列表重新载入"
+
+#: monitor/package/contents/ui/configGeneral.qml:40
 #: monitor/window/settings.qml:335
 msgid "Font:"
 msgstr "字体："
 
-#: monitor/package/contents/ui/configGeneral.qml:39
+#: monitor/package/contents/ui/configGeneral.qml:46
 #: monitor/window/settings.qml:342
 msgctxt "font size"
 msgid "Size:"
 msgstr "字号："
 
-#: monitor/package/contents/ui/configGeneral.qml:46
+#: monitor/package/contents/ui/configGeneral.qml:53
 #: monitor/window/settings.qml:371
 msgid "Left padding, px:"
 msgstr "左边距 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:54
+#: monitor/package/contents/ui/configGeneral.qml:61
 #: monitor/window/settings.qml:378
 msgid "Top padding, px:"
 msgstr "上边距 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:62
+#: monitor/package/contents/ui/configGeneral.qml:69
 #: monitor/window/settings.qml:385
 msgid "Width, px:"
 msgstr "宽度 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:70
+#: monitor/package/contents/ui/configGeneral.qml:77
 #: monitor/window/settings.qml:392
 msgid "Height, px:"
 msgstr "高度 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:77
+#: monitor/package/contents/ui/configGeneral.qml:84
 #: monitor/window/settings.qml:407
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "主文字："
 
-#: monitor/package/contents/ui/configGeneral.qml:83
+#: monitor/package/contents/ui/configGeneral.qml:90
 #: monitor/window/settings.qml:413
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr "标题和时钟："
 
-#: monitor/package/contents/ui/configGeneral.qml:89
+#: monitor/package/contents/ui/configGeneral.qml:96
 #: monitor/window/settings.qml:419
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "次要文字："
 
-#: monitor/package/contents/ui/configGeneral.qml:95
+#: monitor/package/contents/ui/configGeneral.qml:102
 #: monitor/window/settings.qml:425
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr "数值："
 
-#: monitor/package/contents/ui/configGeneral.qml:102
+#: monitor/package/contents/ui/configGeneral.qml:109
 msgid "Mouse:"
 msgstr "鼠标："
 
-#: monitor/package/contents/ui/configGeneral.qml:103
+#: monitor/package/contents/ui/configGeneral.qml:110
 msgid "let clicks through to the desktop"
 msgstr "让点击穿透到桌面"
 
-#: monitor/package/contents/ui/configGeneral.qml:107
+#: monitor/package/contents/ui/configGeneral.qml:114
 msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
@@ -131,16 +211,73 @@ msgstr ""
 "小部件只在桌面的编辑模式下接管鼠标：\n"
 "设置也在那里，或带 clicks off 开关运行 ./install.sh"
 
-#: monitor/package/contents/ui/configGeneral.qml:114
+#: monitor/package/contents/ui/configGeneral.qml:119
+msgctxt "settings section"
+msgid "Lines"
+msgstr "行"
+
+#: monitor/package/contents/ui/configGeneral.qml:123
+msgid "Bar width, characters:"
+msgstr "条形宽度（字符）："
+
+#: monitor/package/contents/ui/configGeneral.qml:129
+msgid "Bar characters:"
+msgstr "条形字符："
+
+#: monitor/package/contents/ui/configGeneral.qml:142
+msgctxt "placeholder: the empty part of a bar is a space"
+msgid "space"
+msgstr "空格"
+
+#: monitor/package/contents/ui/configGeneral.qml:147
+msgid ""
+"The filled and the empty part of a bar. Empty fields mean the slash and a "
+"space."
+msgstr "条形的已填充和空白部分。留空表示斜杠和空格。"
+
+#: monitor/package/contents/ui/configGeneral.qml:153
+msgid "Separator:"
+msgstr "分隔线："
+
+#: monitor/package/contents/ui/configGeneral.qml:171
+msgid "Sparkline glyphs:"
+msgstr "迷你图字符："
+
+#: monitor/package/contents/ui/configGeneral.qml:177
+msgid ""
+"From lowest to highest, for the “History” parameter of the bar blocks.\n"
+"Any run of characters works, say “ .:-=+*#”."
+msgstr ""
+"从低到高，用于带条形块的“历史”参数。\n"
+"任意一串字符都可以，例如“ .:-=+*#”。"
+
+#: monitor/package/contents/ui/configGeneral.qml:184
+msgid "Second column at, px:"
+msgstr "第二栏起始位置（px）："
+
+#: monitor/package/contents/ui/configGeneral.qml:191
+msgid ""
+"Where the second column starts; 0 is half the width. A block goes\n"
+"there by its “Column” field on the Blocks page."
+msgstr ""
+"第二栏的起始位置；0 表示宽度的一半。区块通过“区块”页面上的\n"
+"“栏”字段放到那里。"
+
+#: monitor/package/contents/ui/configGeneral.qml:196
+msgctxt "settings section"
+msgid "Updates"
+msgstr "更新"
+
+#: monitor/package/contents/ui/configGeneral.qml:200
 msgid "Interval, ms:"
 msgstr "间隔 (毫秒)："
 
-#: monitor/package/contents/ui/configGeneral.qml:122
+#: monitor/package/contents/ui/configGeneral.qml:208
 #: monitor/window/settings.qml:356
 msgid "Top processes, every … s:"
 msgstr "进程排行，每 … 秒："
 
-#: monitor/package/contents/ui/configGeneral.qml:128
+#: monitor/package/contents/ui/configGeneral.qml:214
 #: monitor/window/settings.qml:363
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
@@ -149,125 +286,220 @@ msgstr ""
 "进程列表是采集开销最大的一项：每 2 秒\n"
 "约占一个核心的 3%，每 10 秒约 1.3%"
 
-#: monitor/shared/MonitorData.qml:594
+#: monitor/shared/MonitorData.qml:859
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1天"
 
-#: monitor/shared/MonitorData.qml:595
+#: monitor/shared/MonitorData.qml:860
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1小时"
 
-#: monitor/shared/MonitorData.qml:596
+#: monitor/shared/MonitorData.qml:861
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1分"
 
-#: monitor/shared/MonitorData.qml:603
+#: monitor/shared/MonitorData.qml:868
 #, kde-format
 msgctxt "battery: hours and minutes of an estimate"
 msgid "%1h %2m"
 msgstr "%1小时%2分"
 
-#: monitor/shared/MonitorData.qml:619
+#: monitor/shared/MonitorData.qml:885
 msgctxt "battery: no current flowing, charged"
 msgid "full"
 msgstr "已充满"
 
-#: monitor/shared/MonitorData.qml:620
+#: monitor/shared/MonitorData.qml:886
 msgctxt "battery: no current flowing"
 msgid "idle"
 msgstr "空闲"
 
-#: monitor/shared/MonitorData.qml:623
+#: monitor/shared/MonitorData.qml:889
 #, kde-format
 msgctxt "battery: charging; the power and the time to full"
 msgid "charging  %1 W  %2 to full"
 msgstr "充电中  %1 W  %2 后充满"
 
-#: monitor/shared/MonitorData.qml:627
+#: monitor/shared/MonitorData.qml:893
 #, kde-format
 msgctxt "battery: discharging; the power and the time left"
 msgid "discharging  %1 W  %2 left"
 msgstr "放电中  %1 W  剩余 %2"
 
-#: monitor/shared/MonitorData.qml:630
+#: monitor/shared/MonitorData.qml:896
 #, kde-format
 msgctxt "battery: wear, a percentage"
 msgid "health %1"
 msgstr "健康度 %1"
 
-#: monitor/shared/MonitorData.qml:685
+#: monitor/shared/MonitorData.qml:951
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "需重新登录"
 
-#: monitor/shared/MonitorData.qml:686
+#: monitor/shared/MonitorData.qml:952 monitor/shared/MonitorData.qml:962
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1（共 %2）"
 
-#: monitor/shared/MonitorData.qml:692
+#: monitor/shared/MonitorData.qml:958
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
 msgid_plural "idle, %1 models"
 msgstr[0] "空闲，%1 个模型"
 
-#: monitor/shared/MonitorData.qml:694
+#: monitor/shared/MonitorData.qml:961
+msgctxt "podman: it cannot be reached"
+msgid "no access"
+msgstr "无法访问"
+
+#: monitor/shared/MonitorData.qml:965
+#, kde-format
+msgctxt "libvirt: running virtual machines of all"
+msgid "%1 of %2"
+msgstr "%1 / %2"
+
+#: monitor/shared/MonitorData.qml:972
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
 msgid_plural "%1 updates"
 msgstr[0] "%1 个更新"
 
-#: monitor/shared/MonitorData.qml:730
+#: monitor/shared/MonitorData.qml:981
+msgctxt "systemd unit state"
+msgid "active"
+msgstr "运行中"
+
+#: monitor/shared/MonitorData.qml:982
+msgctxt "systemd unit state"
+msgid "inactive"
+msgstr "已停止"
+
+#: monitor/shared/MonitorData.qml:983
+msgctxt "systemd unit state"
+msgid "failed"
+msgstr "失败"
+
+#: monitor/shared/MonitorData.qml:984
+msgctxt "systemd unit state"
+msgid "starting"
+msgstr "启动中"
+
+#: monitor/shared/MonitorData.qml:985
+msgctxt "systemd unit state"
+msgid "stopping"
+msgstr "停止中"
+
+#: monitor/shared/MonitorData.qml:986
+msgctxt "systemd unit state"
+msgid "reloading"
+msgstr "重载中"
+
+#: monitor/shared/MonitorData.qml:987
+msgctxt "systemd unit state: no answer"
+msgid "unknown"
+msgstr "未知"
+
+#: monitor/shared/MonitorData.qml:1048
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "M'月'd'日' dddd"
 
-#: monitor/shared/MonitorData.qml:781
+#: monitor/shared/MonitorData.qml:1114
+#, kde-format
+msgctxt "load average over 1, 5 and 15 minutes"
+msgid "load %1  %2  %3"
+msgstr "负载 %1  %2  %3"
+
+#: monitor/shared/MonitorData.qml:1132
 #, kde-format
 msgctxt "pressure: time every task stalled, memory and I/O"
 msgid "full  mem %1  io %2"
 msgstr "full  mem %1  io %2"
 
-#: monitor/shared/MonitorData.qml:827
+#: monitor/shared/MonitorData.qml:1197
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "未挂载"
 
-#: monitor/shared/MonitorData.qml:833
+#: monitor/shared/MonitorData.qml:1203
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "运行时间 %1"
 
-#: monitor/shared/MonitorData.qml:869
+#: monitor/shared/MonitorData.qml:1221
+#, kde-format
+msgctxt "network: traffic since boot, down and up"
+msgid "total %1 down, %2 up"
+msgstr "累计下载 %1，上传 %2"
+
+#: monitor/shared/MonitorData.qml:1225
+#, kde-format
+msgctxt "network: Wi-Fi signal strength"
+msgid "signal %1"
+msgstr "信号 %1"
+
+#: monitor/shared/MonitorData.qml:1234
+#, kde-format
+msgctxt "disk I/O: read and write rates"
+msgid "I/O  R %1  W %2"
+msgstr "I/O  读 %1  写 %2"
+
+#: monitor/shared/MonitorData.qml:1291
 msgctxt "health: failed systemd units"
 msgid "failed units"
 msgstr "失败的单元"
 
-#: monitor/shared/MonitorData.qml:871 monitor/shared/MonitorData.qml:878
+#: monitor/shared/MonitorData.qml:1293 monitor/shared/MonitorData.qml:1300
 #, kde-format
 msgctxt "health: a count for the system and one for the user session"
 msgid "%1 system, %2 user"
 msgstr "系统 %1，用户 %2"
 
-#: monitor/shared/MonitorData.qml:874
+#: monitor/shared/MonitorData.qml:1296
 msgctxt "health: journal entries of priority error or worse"
 msgid "errors since boot"
 msgstr "启动以来的错误"
 
-#: monitor/shared/MonitorData.qml:876
+#: monitor/shared/MonitorData.qml:1298
 msgctxt "health: the system journal cannot be read by this user"
 msgid "no access"
 msgstr "无权访问"
+
+#: monitor/shared/MonitorData.qml:1303
+msgctxt "health: a kernel newer than the running one is installed"
+msgid "reboot"
+msgstr "重启"
+
+#: monitor/shared/MonitorData.qml:1304
+msgctxt "health: a reboot is pending"
+msgid "pending"
+msgstr "待处理"
+
+#: monitor/shared/MonitorData.qml:1334
+msgctxt "peripheral battery: charging"
+msgid "charging"
+msgstr "充电中"
+
+#: monitor/shared/MonitorData.qml:1352
+msgctxt "sound: the device is muted"
+msgid "muted"
+msgstr "静音"
+
+#: monitor/shared/MonitorData.qml:1369
+msgctxt "repos: the path is not a git repository"
+msgid "not a repository"
+msgstr "不是仓库"
 
 #: monitor/window/settings.qml:24
 msgid "plaintop — monitor settings"
@@ -463,7 +695,7 @@ msgid ""
 "the hostname"
 msgstr "顶部一行：您的文字和主机名，以“\\”连接；没有文字时只显示主机名"
 
-#: schema/blocks.json:3
+#: schema/blocks.json:3 schema/blocks.json:95
 msgctxt "schema: parameter name"
 msgid "Text"
 msgstr "文字"
@@ -484,51 +716,109 @@ msgid "Seconds in a small size"
 msgstr "秒数用小字号"
 
 #: schema/blocks.json:7
+msgctxt "schema: parameter name"
+msgid "Hours"
+msgstr "小时制"
+
+#: schema/blocks.json:8
+msgctxt "schema: parameter value"
+msgid "24-hour"
+msgstr "24 小时"
+
+#: schema/blocks.json:9
+msgctxt "schema: parameter value"
+msgid "12-hour"
+msgstr "12 小时"
+
+#: schema/blocks.json:10
+msgctxt "schema: parameter value"
+msgid "as the locale says"
+msgstr "按区域设置"
+
+#: schema/blocks.json:11
 msgctxt "schema: block name"
 msgid "Date"
 msgstr "日期"
 
-#: schema/blocks.json:8
+#: schema/blocks.json:12
 msgctxt "schema: block name"
 msgid "System and kernel"
 msgstr "系统和内核"
 
-#: schema/blocks.json:9
+#: schema/blocks.json:13
 msgctxt "schema: block name"
 msgid "Separator"
 msgstr "分隔线"
 
-#: schema/blocks.json:10
+#: schema/blocks.json:14
 msgctxt "schema: block name"
 msgid "Processor"
 msgstr "处理器"
 
-#: schema/blocks.json:11
+#: schema/blocks.json:15
 msgctxt "schema: parameter name"
 msgid "Lines per NUMA node"
 msgstr "每个 NUMA 节点一行"
 
-#: schema/blocks.json:12
+#: schema/blocks.json:16
 msgctxt "schema: parameter name"
 msgid "Model, temperatures, fans"
 msgstr "型号、温度、风扇"
 
-#: schema/blocks.json:13 schema/blocks.json:20
+#: schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Average frequency on the model line"
+msgstr "型号行显示平均频率"
+
+#: schema/blocks.json:18 schema/blocks.json:33
 msgctxt "schema: parameter name"
 msgid "Processes in the top list"
 msgstr "排行中的进程数"
 
-#: schema/blocks.json:14
+#: schema/blocks.json:19
 msgctxt "schema: parameter name"
 msgid "Fan sensors (empty — find them)"
 msgstr "风扇传感器（留空则自动查找）"
 
-#: schema/blocks.json:15
+#: schema/blocks.json:20 schema/blocks.json:29 schema/blocks.json:34
+#: schema/blocks.json:39 schema/blocks.json:43 schema/blocks.json:50
+msgctxt "schema: parameter name"
+msgid "Alert from, % (0 — never)"
+msgstr "告警阈值，%（0 — 从不）"
+
+#: schema/blocks.json:21 schema/blocks.json:44 schema/blocks.json:68
+msgctxt "schema: parameter name"
+msgid "Alert from, °C (0 — never)"
+msgstr "告警阈值，°C（0 — 从不）"
+
+#: schema/blocks.json:22 schema/blocks.json:30 schema/blocks.json:35
+#: schema/blocks.json:40 schema/blocks.json:45 schema/blocks.json:54
+#: schema/blocks.json:61 schema/blocks.json:122
+msgctxt "schema: parameter name"
+msgid "History: sparkline of the last N ticks (0 — none)"
+msgstr "历史：最近 N 次采样的迷你图（0 — 无）"
+
+#: schema/blocks.json:23
+msgctxt "schema: block name"
+msgid "Load average"
+msgstr "平均负载"
+
+#: schema/blocks.json:24
+msgctxt "schema: block hint"
+msgid "The 1, 5 and 15-minute load averages, one line"
+msgstr "1、5、15 分钟平均负载，一行"
+
+#: schema/blocks.json:25
+msgctxt "schema: parameter name"
+msgid "Alert from, % of the core count (0 — never)"
+msgstr "告警阈值，占核心数的 %（0 — 从不）"
+
+#: schema/blocks.json:26
 msgctxt "schema: block name"
 msgid "Pressure (PSI)"
 msgstr "资源压力 (PSI)"
 
-#: schema/blocks.json:16
+#: schema/blocks.json:27
 msgctxt "schema: block hint"
 msgid ""
 "Kernel pressure stall information: share of time tasks waited for CPU, "
@@ -536,639 +826,374 @@ msgid ""
 msgstr ""
 "内核压力停滞信息 (PSI)：任务等待 CPU、内存或 I/O 的时间占比（10 秒平均）"
 
-#: schema/blocks.json:17
+#: schema/blocks.json:28
 msgctxt "schema: parameter name"
 msgid "Full stalls for memory and I/O"
 msgstr "内存和 I/O 的完全停滞 (full)"
 
-#: schema/blocks.json:18
+#: schema/blocks.json:31
 msgctxt "schema: block name"
 msgid "Memory"
 msgstr "内存"
 
-#: schema/blocks.json:19
+#: schema/blocks.json:32 schema/blocks.json:38
 msgctxt "schema: parameter name"
 msgid "The “used / total” line"
 msgstr "“已用 / 总计”行"
 
-#: schema/blocks.json:21
+#: schema/blocks.json:36
+msgctxt "schema: block name"
+msgid "Swap"
+msgstr "交换空间"
+
+#: schema/blocks.json:37
+msgctxt "schema: block hint"
+msgid "Swap usage; shown only when the machine has swap"
+msgstr "交换空间使用；仅在有交换空间时显示"
+
+#: schema/blocks.json:41
 msgctxt "schema: block name"
 msgid "Graphics card"
 msgstr "显卡"
 
-#: schema/blocks.json:22
+#: schema/blocks.json:42
 msgctxt "schema: parameter name"
 msgid "VRAM, temperature and power line"
 msgstr "VRAM、温度和功耗行"
 
-#: schema/blocks.json:23
+#: schema/blocks.json:46
 msgctxt "schema: block name"
 msgid "Disks"
 msgstr "磁盘"
 
-#: schema/blocks.json:24
+#: schema/blocks.json:47
 msgctxt "schema: parameter name"
 msgid "Mount points"
 msgstr "挂载点"
 
-#: schema/blocks.json:25
+#: schema/blocks.json:48
 msgctxt "schema: parameter name"
 msgid "NVMe temperature on the root line"
 msgstr "在根分区行显示 NVMe 温度"
 
-#: schema/blocks.json:26
+#: schema/blocks.json:49
 msgctxt "schema: parameter name"
 msgid "NVMe temperature sensor (empty — find it)"
 msgstr "NVMe 温度传感器（留空则自动查找）"
 
-#: schema/blocks.json:27
+#: schema/blocks.json:51
+msgctxt "schema: block name"
+msgid "Disk I/O"
+msgstr "磁盘 I/O"
+
+#: schema/blocks.json:52
+msgctxt "schema: block hint"
+msgid "Read and write rates of all disks, or of one"
+msgstr "全部磁盘或单个磁盘的读写速率"
+
+#: schema/blocks.json:53
+msgctxt "schema: parameter name"
+msgid "Read-rate sensor (empty — all disks)"
+msgstr "读取速率传感器（留空 — 全部磁盘）"
+
+#: schema/blocks.json:55
 msgctxt "schema: block name"
 msgid "Uptime"
 msgstr "运行时间"
 
-#: schema/blocks.json:28
+#: schema/blocks.json:56
 msgctxt "schema: block name"
 msgid "Network"
 msgstr "网络"
 
-#: schema/blocks.json:29
+#: schema/blocks.json:57
 msgctxt "schema: parameter name"
 msgid "Interface (empty — find it)"
 msgstr "网络接口（留空则自动查找）"
 
-#: schema/blocks.json:30
+#: schema/blocks.json:58
+msgctxt "schema: parameter name"
+msgid "IPv4 address line"
+msgstr "IPv4 地址行"
+
+#: schema/blocks.json:59
+msgctxt "schema: parameter name"
+msgid "Traffic since boot"
+msgstr "开机以来的流量"
+
+#: schema/blocks.json:60
+msgctxt "schema: parameter name"
+msgid "Wi-Fi signal strength"
+msgstr "Wi-Fi 信号强度"
+
+#: schema/blocks.json:62
 msgctxt "schema: block name"
 msgid "Battery"
 msgstr "电池"
 
-#: schema/blocks.json:31
+#: schema/blocks.json:63
 msgctxt "schema: block hint"
 msgid "Charge, rate and estimated time; shown only when a battery is found"
 msgstr "电量、功率和预计时间；仅在检测到电池时显示"
 
-#: schema/blocks.json:32
+#: schema/blocks.json:64 schema/blocks.json:71
+msgctxt "schema: parameter name"
+msgid "Alert below, % (0 — never)"
+msgstr "低于此值告警，%（0 — 从不）"
+
+#: schema/blocks.json:65
+msgctxt "schema: block name"
+msgid "Temperatures"
+msgstr "温度"
+
+#: schema/blocks.json:66
+msgctxt "schema: block hint"
+msgid ""
+"Any temperature sensors, one line each: “label=id”, or just the id to use "
+"the sensor's own name"
+msgstr "任意温度传感器，每个一行：“标签=id”，或仅 id 以使用传感器自身名称"
+
+#: schema/blocks.json:67
+msgctxt "schema: parameter name"
+msgid "Sensors"
+msgstr "传感器"
+
+#: schema/blocks.json:69
+msgctxt "schema: block name"
+msgid "Peripheral batteries"
+msgstr "外设电池"
+
+#: schema/blocks.json:70
+msgctxt "schema: block hint"
+msgid ""
+"Mice, keyboards, headsets and phones over Bluetooth, from upower; the system "
+"battery has its own block"
+msgstr "来自 upower 的蓝牙鼠标、键盘、耳机和手机；系统电池有单独的块"
+
+#: schema/blocks.json:72 schema/blocks.json:77 schema/blocks.json:84
+#: schema/blocks.json:107 schema/blocks.json:112
+msgctxt "schema: parameter name"
+msgid "Interval, s"
+msgstr "间隔 (秒)"
+
+#: schema/blocks.json:73
+msgctxt "schema: block name"
+msgid "Sound"
+msgstr "声音"
+
+#: schema/blocks.json:74
+msgctxt "schema: block hint"
+msgid ""
+"The default output's volume and name through wpctl (PipeWire), and the "
+"input's if asked"
+msgstr "通过 wpctl（PipeWire）显示默认输出的音量和名称，可选显示输入"
+
+#: schema/blocks.json:75
+msgctxt "schema: parameter name"
+msgid "The input device too"
+msgstr "同时显示输入设备"
+
+#: schema/blocks.json:76
+msgctxt "schema: parameter name"
+msgid "The device's name under the bar"
+msgstr "条形下方显示设备名称"
+
+#: schema/blocks.json:78
 msgctxt "schema: block name"
 msgid "Services"
 msgstr "服务"
 
-#: schema/blocks.json:33
+#: schema/blocks.json:79
 msgctxt "schema: block hint"
 msgid "docker, ollama, pending updates — a script inside the package"
 msgstr "docker、ollama、待安装更新——由包内的脚本提供"
 
-#: schema/blocks.json:34
+#: schema/blocks.json:80
+msgctxt "schema: block name"
+msgid "systemd units"
+msgstr "systemd 单元"
+
+#: schema/blocks.json:81
+msgctxt "schema: block hint"
+msgid ""
+"The state of the units you name — active, inactive, failed — from the system "
+"manager or your own"
+msgstr "所列单元的状态 — 运行中、已停止、失败 — 来自系统管理器或您自己的"
+
+#: schema/blocks.json:82
+msgctxt "schema: parameter name"
+msgid "Units"
+msgstr "单元"
+
+#: schema/blocks.json:83
+msgctxt "schema: parameter name"
+msgid "User units (systemctl --user)"
+msgstr "用户单元（systemctl --user）"
+
+#: schema/blocks.json:85
 msgctxt "schema: block name"
 msgid "System health"
 msgstr "系统健康"
 
-#: schema/blocks.json:35
+#: schema/blocks.json:86
 msgctxt "schema: block hint"
 msgid ""
 "Failed systemd units, error count since boot and the last error lines from "
 "the journal"
 msgstr "失败的 systemd 单元、启动以来的错误数和日志中最近的错误行"
 
-#: schema/blocks.json:36
+#: schema/blocks.json:87
 msgctxt "schema: parameter name"
 msgid "Failed units"
 msgstr "失败的单元"
 
-#: schema/blocks.json:37
+#: schema/blocks.json:88
 msgctxt "schema: parameter name"
 msgid "Error count since boot"
 msgstr "启动以来的错误数"
 
-#: schema/blocks.json:38
+#: schema/blocks.json:89
 msgctxt "schema: parameter name"
 msgid "Last error lines"
 msgstr "最近的错误行"
 
-#: schema/blocks.json:39
-msgctxt "schema: block name"
-msgid "Hardware spec sheet"
-msgstr "硬件规格"
-
-#: schema/blocks.json:40
-msgctxt "schema: block hint"
-msgid "Static lines: processor, graphics card, board"
-msgstr "静态行：处理器、显卡、主板"
-
-#: schema/blocks.json:41
-msgctxt "schema: block name"
-msgid "Custom command"
-msgstr "自定义命令"
-
-#: schema/blocks.json:42
-msgctxt "schema: block hint"
-msgid "A line from the output of any command"
-msgstr "任意命令输出中的一行"
-
-#: schema/blocks.json:43 schema/blocks.json:49
-msgctxt "schema: parameter name"
-msgid "Label"
-msgstr "标签"
-
-#: schema/blocks.json:44
-msgctxt "schema: parameter name"
-msgid "Command"
-msgstr "命令"
-
-#: schema/blocks.json:45
-msgctxt "schema: parameter name"
-msgid "Interval, s"
-msgstr "间隔 (秒)"
-
-#: schema/blocks.json:46
-msgctxt "schema: parameter name"
-msgid "Lines to show"
-msgstr "显示行数"
-
-#: schema/blocks.json:47
-msgctxt "schema: block name"
-msgid "Custom sensor"
-msgstr "自定义传感器"
-
-#: schema/blocks.json:48
-msgctxt "schema: block hint"
-msgid "Any ksystemstats sensor by its id"
-msgstr "按 ID 指定的任意 ksystemstats 传感器"
-
-#: schema/blocks.json:50
-msgctxt "schema: parameter name"
-msgid "Sensor id"
-msgstr "传感器 ID"
-
-#: schema/blocks.json:51
-msgctxt "schema: parameter name"
-msgid "Draw a bar"
-msgstr "绘制进度条"
-
-#: schema/blocks.json:52
-msgctxt "schema: parameter name"
-msgid "Suffix after the value"
-msgstr "数值后缀"
-
-#: schema/blocks.json:53
-msgctxt "schema: parameter name"
-msgid "Decimal places"
-msgstr "小数位数"
-
-#: monitor/package/contents/ui/configBlocks.qml:55
-msgctxt "the block is in the second column"
-msgid "(right column)"
-msgstr "（右栏）"
-
-#: monitor/package/contents/ui/configBlocks.qml:152
-#, kde-format
-msgid "Not valid JSON: %1"
-msgstr "无效的 JSON：%1"
-
-#: monitor/package/contents/ui/configBlocks.qml:156
-msgid "The layout must be a list of blocks"
-msgstr "布局必须是块的列表"
-
-#: monitor/package/contents/ui/configBlocks.qml:163
-#, kde-format
-msgid "Block %1 needs an id and a type"
-msgstr "块 %1 需要 id 和 type"
-
-#: monitor/package/contents/ui/configBlocks.qml:167
-#, kde-format
-msgid "Block %1: unknown type “%2”"
-msgstr "块 %1：未知类型“%2”"
-
-#: monitor/package/contents/ui/configBlocks.qml:171
-#, kde-format
-msgid "Block %1: the id “%2” is used twice"
-msgstr "块 %1：id“%2”重复使用"
-
-#: monitor/package/contents/ui/configBlocks.qml:328
-msgid "Duplicate"
-msgstr "复制"
-
-#: monitor/package/contents/ui/configBlocks.qml:373
-msgid "Name:"
-msgstr "名称："
-
-#: monitor/package/contents/ui/configBlocks.qml:376
-msgctxt "placeholder for the block's own name"
-msgid "optional, shown in the list"
-msgstr "可选，显示在列表中"
-
-#: monitor/package/contents/ui/configBlocks.qml:381
-msgid "Column:"
-msgstr "栏："
-
-#: monitor/package/contents/ui/configBlocks.qml:382
-msgctxt "the widget's column"
-msgid "left"
-msgstr "左"
-
-#: monitor/package/contents/ui/configBlocks.qml:382
-msgctxt "the widget's column"
-msgid "right"
-msgstr "右"
-
-#: monitor/package/contents/ui/configBlocks.qml:452
-#, kde-format
-msgctxt "pick list: how many the machine offers"
-msgid "pick from %1…"
-msgid_plural "pick from %1…"
-msgstr[0] "从 %1 个中选择…"
-
-#: monitor/package/contents/ui/configBlocks.qml:453
-msgctxt "pick list: the machine offers nothing"
-msgid "nothing found"
-msgstr "未找到"
-
-#: monitor/package/contents/ui/configBlocks.qml:474
-msgid "The layout as JSON — edit here, or paste one from another machine:"
-msgstr "JSON 形式的布局 — 在此编辑，或粘贴来自另一台机器的布局："
-
-#: monitor/package/contents/ui/configBlocks.qml:497
-msgid "Apply JSON"
-msgstr "应用 JSON"
-
-#: monitor/package/contents/ui/configBlocks.qml:503
-msgid "Reload from the list"
-msgstr "从列表重新载入"
-
-#: monitor/package/contents/ui/configGeneral.qml:119
-msgctxt "settings section"
-msgid "Lines"
-msgstr "行"
-
-#: monitor/package/contents/ui/configGeneral.qml:123
-msgid "Bar width, characters:"
-msgstr "条形宽度（字符）："
-
-#: monitor/package/contents/ui/configGeneral.qml:129
-msgid "Bar characters:"
-msgstr "条形字符："
-
-#: monitor/package/contents/ui/configGeneral.qml:142
-msgctxt "placeholder: the empty part of a bar is a space"
-msgid "space"
-msgstr "空格"
-
-#: monitor/package/contents/ui/configGeneral.qml:147
-msgid ""
-"The filled and the empty part of a bar. Empty fields mean the slash and a space."
-msgstr "条形的已填充和空白部分。留空表示斜杠和空格。"
-
-#: monitor/package/contents/ui/configGeneral.qml:153
-msgid "Separator:"
-msgstr "分隔线："
-
-#: monitor/package/contents/ui/configGeneral.qml:171
-msgid "Sparkline glyphs:"
-msgstr "迷你图字符："
-
-#: monitor/package/contents/ui/configGeneral.qml:185
-msgid "Second column at, px:"
-msgstr "第二栏起始位置（px）："
-
-#: monitor/package/contents/ui/configGeneral.qml:198
-msgctxt "settings section"
-msgid "Updates"
-msgstr "更新"
-
-#: monitor/shared/MonitorData.qml:924
-msgctxt "podman: it cannot be reached"
-msgid "no access"
-msgstr "无法访问"
-
-#: monitor/shared/MonitorData.qml:928
-#, kde-format
-msgctxt "libvirt: running virtual machines of all"
-msgid "%1 of %2"
-msgstr "%1 / %2"
-
-#: monitor/shared/MonitorData.qml:944
-msgctxt "systemd unit state"
-msgid "active"
-msgstr "运行中"
-
-#: monitor/shared/MonitorData.qml:945
-msgctxt "systemd unit state"
-msgid "inactive"
-msgstr "已停止"
-
-#: monitor/shared/MonitorData.qml:946
-msgctxt "systemd unit state"
-msgid "failed"
-msgstr "失败"
-
-#: monitor/shared/MonitorData.qml:947
-msgctxt "systemd unit state"
-msgid "starting"
-msgstr "启动中"
-
-#: monitor/shared/MonitorData.qml:948
-msgctxt "systemd unit state"
-msgid "stopping"
-msgstr "停止中"
-
-#: monitor/shared/MonitorData.qml:949
-msgctxt "systemd unit state"
-msgid "reloading"
-msgstr "重载中"
-
-#: monitor/shared/MonitorData.qml:950
-msgctxt "systemd unit state: no answer"
-msgid "unknown"
-msgstr "未知"
-
-#: monitor/shared/MonitorData.qml:1064
-#, kde-format
-msgctxt "load average over 1, 5 and 15 minutes"
-msgid "load %1  %2  %3"
-msgstr "负载 %1  %2  %3"
-
-#: monitor/shared/MonitorData.qml:1171
-#, kde-format
-msgctxt "network: traffic since boot, down and up"
-msgid "total %1 down, %2 up"
-msgstr "累计下载 %1，上传 %2"
-
-#: monitor/shared/MonitorData.qml:1175
-#, kde-format
-msgctxt "network: Wi-Fi signal strength"
-msgid "signal %1"
-msgstr "信号 %1"
-
-#: monitor/shared/MonitorData.qml:1184
-#, kde-format
-msgctxt "disk I/O: read and write rates"
-msgid "I/O  R %1  W %2"
-msgstr "I/O  读 %1  写 %2"
-
-#: monitor/shared/MonitorData.qml:1253
-msgctxt "health: a kernel newer than the running one is installed"
-msgid "reboot"
-msgstr "重启"
-
-#: monitor/shared/MonitorData.qml:1254
-msgctxt "health: a reboot is pending"
-msgid "pending"
-msgstr "待处理"
-
-#: monitor/shared/MonitorData.qml:1284
-msgctxt "peripheral battery: charging"
-msgid "charging"
-msgstr "充电中"
-
-#: monitor/shared/MonitorData.qml:1302
-msgctxt "sound: the device is muted"
-msgid "muted"
-msgstr "静音"
-
-#: monitor/shared/MonitorData.qml:1319
-msgctxt "repos: the path is not a git repository"
-msgid "not a repository"
-msgstr "不是仓库"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Hours"
-msgstr "小时制"
-
-#: schema/blocks.json
-msgctxt "schema: parameter value"
-msgid "24-hour"
-msgstr "24 小时"
-
-#: schema/blocks.json
-msgctxt "schema: parameter value"
-msgid "12-hour"
-msgstr "12 小时"
-
-#: schema/blocks.json
-msgctxt "schema: parameter value"
-msgid "as the locale says"
-msgstr "按区域设置"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Average frequency on the model line"
-msgstr "型号行显示平均频率"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert from, % (0 — never)"
-msgstr "告警阈值，%（0 — 从不）"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert from, °C (0 — never)"
-msgstr "告警阈值，°C（0 — 从不）"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "History: sparkline of the last N ticks (0 — none)"
-msgstr "历史：最近 N 次采样的迷你图（0 — 无）"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Load average"
-msgstr "平均负载"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid "The 1, 5 and 15-minute load averages, one line"
-msgstr "1、5、15 分钟平均负载，一行"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert from, % of the core count (0 — never)"
-msgstr "告警阈值，占核心数的 %（0 — 从不）"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Swap"
-msgstr "交换空间"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid "Swap usage; shown only when the machine has swap"
-msgstr "交换空间使用；仅在有交换空间时显示"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Disk I/O"
-msgstr "磁盘 I/O"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid "Read and write rates of all disks, or of one"
-msgstr "全部磁盘或单个磁盘的读写速率"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Read-rate sensor (empty — all disks)"
-msgstr "读取速率传感器（留空 — 全部磁盘）"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "IPv4 address line"
-msgstr "IPv4 地址行"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Traffic since boot"
-msgstr "开机以来的流量"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Wi-Fi signal strength"
-msgstr "Wi-Fi 信号强度"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert below, % (0 — never)"
-msgstr "低于此值告警，%（0 — 从不）"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Temperatures"
-msgstr "温度"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"Any temperature sensors, one line each: “label=id”, or just the id to use the sensor's own name"
-msgstr "任意温度传感器，每个一行：“标签=id”，或仅 id 以使用传感器自身名称"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Sensors"
-msgstr "传感器"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Peripheral batteries"
-msgstr "外设电池"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"Mice, keyboards, headsets and phones over Bluetooth, from upower; the system battery has its own block"
-msgstr "来自 upower 的蓝牙鼠标、键盘、耳机和手机；系统电池有单独的块"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Sound"
-msgstr "声音"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"The default output's volume and name through wpctl (PipeWire), and the input's if asked"
-msgstr "通过 wpctl（PipeWire）显示默认输出的音量和名称，可选显示输入"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "The input device too"
-msgstr "同时显示输入设备"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "The device's name under the bar"
-msgstr "条形下方显示设备名称"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "systemd units"
-msgstr "systemd 单元"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"The state of the units you name — active, inactive, failed — from the system manager or your own"
-msgstr "所列单元的状态 — 运行中、已停止、失败 — 来自系统管理器或您自己的"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Units"
-msgstr "单元"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "User units (systemctl --user)"
-msgstr "用户单元（systemctl --user）"
-
-#: schema/blocks.json
+#: schema/blocks.json:90
 msgctxt "schema: parameter name"
 msgid "Pending reboot (a newer kernel installed)"
 msgstr "待重启（已安装更新的内核）"
 
-#: schema/blocks.json
+#: schema/blocks.json:91
+msgctxt "schema: block name"
+msgid "Hardware spec sheet"
+msgstr "硬件规格"
+
+#: schema/blocks.json:92
+msgctxt "schema: block hint"
+msgid "Static lines: processor, graphics card, board"
+msgstr "静态行：处理器、显卡、主板"
+
+#: schema/blocks.json:93
 msgctxt "schema: block name"
 msgid "Text"
 msgstr "文本"
 
-#: schema/blocks.json
+#: schema/blocks.json:94
 msgctxt "schema: block hint"
 msgid "A line of your own"
 msgstr "自定义的一行"
 
-#: schema/blocks.json
+#: schema/blocks.json:96
 msgctxt "schema: parameter name"
 msgid "Colour"
 msgstr "颜色"
 
-#: schema/blocks.json
+#: schema/blocks.json:97
 msgctxt "schema: parameter value"
 msgid "main text"
 msgstr "主文本"
 
-#: schema/blocks.json
+#: schema/blocks.json:98
 msgctxt "schema: parameter value"
 msgid "secondary"
 msgstr "次要"
 
-#: schema/blocks.json
+#: schema/blocks.json:99
 msgctxt "schema: parameter value"
 msgid "header"
 msgstr "标题"
 
-#: schema/blocks.json
+#: schema/blocks.json:100
 msgctxt "schema: parameter value"
 msgid "values"
 msgstr "数值"
 
-#: schema/blocks.json
+#: schema/blocks.json:101
 msgctxt "schema: block name"
 msgid "Blank lines"
 msgstr "空行"
 
-#: schema/blocks.json
+#: schema/blocks.json:102
 msgctxt "schema: block hint"
 msgid "Empty space between blocks"
 msgstr "块之间的空白"
 
-#: schema/blocks.json
+#: schema/blocks.json:103
 msgctxt "schema: parameter name"
 msgid "Lines"
 msgstr "行数"
 
-#: schema/blocks.json
+#: schema/blocks.json:104
 msgctxt "schema: block name"
 msgid "Git repositories"
 msgstr "Git 仓库"
 
-#: schema/blocks.json
+#: schema/blocks.json:105
 msgctxt "schema: block hint"
 msgid ""
 "Branch, uncommitted changes and commits ahead or behind, one line per path"
 msgstr "分支、未提交的更改以及领先或落后的提交数，每个路径一行"
 
-#: schema/blocks.json
+#: schema/blocks.json:106
 msgctxt "schema: parameter name"
 msgid "Paths (~ allowed)"
 msgstr "路径（可用 ~）"
 
-#: schema/blocks.json
+#: schema/blocks.json:108
+msgctxt "schema: block name"
+msgid "Custom command"
+msgstr "自定义命令"
+
+#: schema/blocks.json:109
+msgctxt "schema: block hint"
+msgid "A line from the output of any command"
+msgstr "任意命令输出中的一行"
+
+#: schema/blocks.json:110 schema/blocks.json:116
+msgctxt "schema: parameter name"
+msgid "Label"
+msgstr "标签"
+
+#: schema/blocks.json:111
+msgctxt "schema: parameter name"
+msgid "Command"
+msgstr "命令"
+
+#: schema/blocks.json:113
+msgctxt "schema: parameter name"
+msgid "Lines to show"
+msgstr "显示行数"
+
+#: schema/blocks.json:114
+msgctxt "schema: block name"
+msgid "Custom sensor"
+msgstr "自定义传感器"
+
+#: schema/blocks.json:115
+msgctxt "schema: block hint"
+msgid "Any ksystemstats sensor by its id"
+msgstr "按 ID 指定的任意 ksystemstats 传感器"
+
+#: schema/blocks.json:117
+msgctxt "schema: parameter name"
+msgid "Sensor id"
+msgstr "传感器 ID"
+
+#: schema/blocks.json:118
+msgctxt "schema: parameter name"
+msgid "Draw a bar"
+msgstr "绘制进度条"
+
+#: schema/blocks.json:119
+msgctxt "schema: parameter name"
+msgid "Suffix after the value"
+msgstr "数值后缀"
+
+#: schema/blocks.json:120
+msgctxt "schema: parameter name"
+msgid "Decimal places"
+msgstr "小数位数"
+
+#: schema/blocks.json:121
 msgctxt "schema: parameter name"
 msgid "Alert from (0 — never)"
 msgstr "告警阈值（0 — 从不）"

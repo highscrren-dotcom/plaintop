@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 20:05+0500\n"
+"POT-Creation-Date: 2026-10-04 09:26+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -48,246 +48,262 @@ msgctxt "settings page"
 msgid "Player"
 msgstr "播放器"
 
-#: spectrum/package/contents/ui/configGeneral.qml:50
+#: spectrum/package/contents/ui/configGeneral.qml:51
 #: spectrum/window/settings.qml:122
 msgctxt "settings section"
 msgid "Shape"
 msgstr "形状"
 
-#: spectrum/package/contents/ui/configGeneral.qml:54
+#: spectrum/package/contents/ui/configGeneral.qml:55
 #: spectrum/window/settings.qml:125
 msgid "Layout:"
 msgstr "布局："
 
-#: spectrum/package/contents/ui/configGeneral.qml:55
+#: spectrum/package/contents/ui/configGeneral.qml:56
 #: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Ring"
 msgstr "环形"
 
-#: spectrum/package/contents/ui/configGeneral.qml:55
+#: spectrum/package/contents/ui/configGeneral.qml:56
 #: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Line"
 msgstr "直线"
 
-#: spectrum/package/contents/ui/configGeneral.qml:60
+#: spectrum/package/contents/ui/configGeneral.qml:61
 #: spectrum/window/settings.qml:132
 msgid "Bars:"
 msgstr "条数："
 
-#: spectrum/package/contents/ui/configGeneral.qml:68
+#: spectrum/package/contents/ui/configGeneral.qml:69
 #: spectrum/window/settings.qml:139
 msgid "Radius, px:"
 msgstr "半径 (px)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:77
+#: spectrum/package/contents/ui/configGeneral.qml:78
 #: spectrum/window/settings.qml:146
 msgid "Span, °:"
 msgstr "覆盖角度 (°)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:86
+#: spectrum/package/contents/ui/configGeneral.qml:87
 #: spectrum/window/settings.qml:153
 msgid "Start angle, °:"
 msgstr "起始角度 (°)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:95
+#: spectrum/package/contents/ui/configGeneral.qml:96
 msgid "Gap between bars, px:"
 msgstr "条间距 (px)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:103
+#: spectrum/package/contents/ui/configGeneral.qml:104
 #: spectrum/window/settings.qml:160
 msgid "Bar thickness, px:"
 msgstr "条粗细 (px)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:110
+#: spectrum/package/contents/ui/configGeneral.qml:111
 #: spectrum/window/settings.qml:174
 msgid "Length at silence, px:"
 msgstr "静音时长度 (px)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:118
+#: spectrum/package/contents/ui/configGeneral.qml:119
 #: spectrum/window/settings.qml:181
 msgid "Extra length at maximum, px:"
 msgstr "最大时附加长度 (px)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:126
+#: spectrum/package/contents/ui/configGeneral.qml:127
 #: spectrum/window/settings.qml:188
 msgid "Growth:"
 msgstr "生长方向："
 
-#: spectrum/package/contents/ui/configGeneral.qml:128
+#: spectrum/package/contents/ui/configGeneral.qml:129
 #: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "outward"
 msgstr "向外"
 
-#: spectrum/package/contents/ui/configGeneral.qml:128
+#: spectrum/package/contents/ui/configGeneral.qml:129
 #: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "inward"
 msgstr "向内"
 
-#: spectrum/package/contents/ui/configGeneral.qml:128
 #: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
 #: spectrum/window/settings.qml:193 spectrum/window/settings.qml:195
 msgctxt "growth"
 msgid "both ways"
 msgstr "双向"
 
-#: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
 #: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "up"
 msgstr "向上"
 
-#: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
 #: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "down"
 msgstr "向下"
 
-#: spectrum/package/contents/ui/configGeneral.qml:134
+#: spectrum/package/contents/ui/configGeneral.qml:135
 #: spectrum/window/settings.qml:201
 msgid "Order:"
 msgstr "顺序："
 
-#: spectrum/package/contents/ui/configGeneral.qml:135
+#: spectrum/package/contents/ui/configGeneral.qml:136
 msgid "mirrored (low frequencies at the edges)"
 msgstr "镜像（低频位于两端）"
 
-#: spectrum/package/contents/ui/configGeneral.qml:140
+#: spectrum/package/contents/ui/configGeneral.qml:141
 msgid "reverse band order"
 msgstr "反转频段顺序"
 
-#: spectrum/package/contents/ui/configGeneral.qml:143
+#: spectrum/package/contents/ui/configGeneral.qml:146
+msgid "Channels:"
+msgstr "声道："
+
+#: spectrum/package/contents/ui/configGeneral.qml:147
+msgid "one spectrum around the whole ring, both channels averaged"
+msgstr "整个圆环显示一个频谱，两声道取平均"
+
+#: spectrum/package/contents/ui/configGeneral.qml:151
+msgid ""
+"Off: as cava gives it — the left channel from high to low, then the right\n"
+"from low to high, so the ring is mirrored about its middle."
+msgstr ""
+"关闭：按 cava 原样输出 — 左声道由高频到低频，再右声道由低频到高频，\n"
+"因此圆环关于中点镜像对称。"
+
+#: spectrum/package/contents/ui/configGeneral.qml:156
 #: spectrum/window/settings.qml:213
 msgctxt "settings section"
 msgid "Appearance"
 msgstr "外观"
 
-#: spectrum/package/contents/ui/configGeneral.qml:147
+#: spectrum/package/contents/ui/configGeneral.qml:160
 #: spectrum/window/settings.qml:216
 msgid "Element:"
 msgstr "元素："
 
-#: spectrum/package/contents/ui/configGeneral.qml:148
+#: spectrum/package/contents/ui/configGeneral.qml:161
 #: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Bar"
 msgstr "条形"
 
-#: spectrum/package/contents/ui/configGeneral.qml:148
+#: spectrum/package/contents/ui/configGeneral.qml:161
 #: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Blocks"
 msgstr "方块"
 
-#: spectrum/package/contents/ui/configGeneral.qml:153
+#: spectrum/package/contents/ui/configGeneral.qml:166
 #: spectrum/window/settings.qml:223
 msgid "Block, px:"
 msgstr "方块 (px)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:161
+#: spectrum/package/contents/ui/configGeneral.qml:174
 #: spectrum/window/settings.qml:230
 msgid "Block gap, px:"
 msgstr "方块间距 (px)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:169
+#: spectrum/package/contents/ui/configGeneral.qml:182
 #: spectrum/window/settings.qml:237
 msgid "Ends:"
 msgstr "端点："
 
-#: spectrum/package/contents/ui/configGeneral.qml:170
+#: spectrum/package/contents/ui/configGeneral.qml:183
 #: spectrum/window/settings.qml:238
 msgctxt "bar ends"
 msgid "rounded"
 msgstr "圆角"
 
-#: spectrum/package/contents/ui/configGeneral.qml:175
+#: spectrum/package/contents/ui/configGeneral.qml:188
 #: spectrum/window/settings.qml:244
 msgid "Colour:"
 msgstr "颜色："
 
-#: spectrum/package/contents/ui/configGeneral.qml:181
+#: spectrum/package/contents/ui/configGeneral.qml:194
 msgid "High-frequency colour:"
 msgstr "高频颜色："
 
-#: spectrum/package/contents/ui/configGeneral.qml:192
+#: spectrum/package/contents/ui/configGeneral.qml:205
 #: spectrum/window/settings.qml:261
 msgctxt "high-frequency colour"
 msgid "custom"
 msgstr "自定义"
 
-#: spectrum/package/contents/ui/configGeneral.qml:200
+#: spectrum/package/contents/ui/configGeneral.qml:213
 #: spectrum/window/settings.qml:268
 msgid "Opacity, %:"
 msgstr "不透明度 (%)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:208
+#: spectrum/package/contents/ui/configGeneral.qml:221
 #: spectrum/window/settings.qml:275
 msgid "Circle:"
 msgstr "圆环："
 
-#: spectrum/package/contents/ui/configGeneral.qml:210
+#: spectrum/package/contents/ui/configGeneral.qml:223
 msgid "a thin guide under the bars"
 msgstr "条形下方的细参考线"
 
-#: spectrum/package/contents/ui/configGeneral.qml:213
+#: spectrum/package/contents/ui/configGeneral.qml:226
 #: spectrum/window/settings.qml:281
 msgctxt "settings section"
 msgid "Behaviour"
 msgstr "行为"
 
-#: spectrum/package/contents/ui/configGeneral.qml:217
+#: spectrum/package/contents/ui/configGeneral.qml:230
 #: spectrum/window/settings.qml:284
 msgid "Data frames per second:"
 msgstr "每秒数据帧数："
 
-#: spectrum/package/contents/ui/configGeneral.qml:225
+#: spectrum/package/contents/ui/configGeneral.qml:238
 #: spectrum/window/settings.qml:291
 msgid "Smoothing, ms:"
 msgstr "平滑 (毫秒)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:233
+#: spectrum/package/contents/ui/configGeneral.qml:246
 msgid "Mouse:"
 msgstr "鼠标："
 
-#: spectrum/package/contents/ui/configGeneral.qml:234
+#: spectrum/package/contents/ui/configGeneral.qml:247
 msgid "let clicks through to the desktop"
 msgstr "让点击穿透到桌面"
 
-#: spectrum/package/contents/ui/configGeneral.qml:237
+#: spectrum/package/contents/ui/configGeneral.qml:250
 msgctxt "settings section"
 msgid "Silence"
 msgstr "静音"
 
-#: spectrum/package/contents/ui/configGeneral.qml:241
+#: spectrum/package/contents/ui/configGeneral.qml:254
 #: spectrum/window/settings.qml:298
 msgid "In silence:"
 msgstr "静音时："
 
-#: spectrum/package/contents/ui/configGeneral.qml:242
+#: spectrum/package/contents/ui/configGeneral.qml:255
 msgid "dissolve the ring"
 msgstr "让圆环消散"
 
-#: spectrum/package/contents/ui/configGeneral.qml:247
+#: spectrum/package/contents/ui/configGeneral.qml:260
 #: spectrum/window/settings.qml:305
 msgid "Silence threshold, %:"
 msgstr "静音阈值 (%)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:255
+#: spectrum/package/contents/ui/configGeneral.qml:268
 msgid "Wait before vanishing, ms:"
 msgstr "消失前等待 (毫秒)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:264
+#: spectrum/package/contents/ui/configGeneral.qml:277
 msgid "Fade in and out, ms:"
 msgstr "淡入淡出 (毫秒)："
 
-#: spectrum/package/contents/ui/configGeneral.qml:273
+#: spectrum/package/contents/ui/configGeneral.qml:286
 msgid "Polls per second in silence:"
 msgstr "静音时每秒轮询次数："
 
-#: spectrum/package/contents/ui/configGeneral.qml:280
+#: spectrum/package/contents/ui/configGeneral.qml:293
 msgid ""
 "The bars grow out of the ring itself, so a “length at silence” of 0\n"
 "makes them appear out of literally nothing."
@@ -295,15 +311,15 @@ msgstr ""
 "条形从圆环本身长出，因此“静音时长度”设为 0 时，\n"
 "它们会真正地凭空出现。"
 
-#: spectrum/package/contents/ui/configGeneral.qml:287
+#: spectrum/package/contents/ui/configGeneral.qml:300
 msgid "Relay port:"
 msgstr "中继端口："
 
-#: spectrum/package/contents/ui/configGeneral.qml:294
+#: spectrum/package/contents/ui/configGeneral.qml:307
 msgid "Source:"
 msgstr "来源："
 
-#: spectrum/package/contents/ui/configGeneral.qml:295
+#: spectrum/package/contents/ui/configGeneral.qml:308
 msgid ""
 "the spectrum is computed by cava in the plainspectrum-relay service;\n"
 "the frequencies and the device are set in ~/.config/plainspectrum/relay.env"
@@ -424,7 +440,7 @@ msgstr ""
 "总线上没有播放器时，环的中心保持空白。\n"
 "即使其余部分让点击穿透，控制按钮仍会接收鼠标。"
 
-#: spectrum/package/contents/ui/main.qml:237
+#: spectrum/package/contents/ui/main.qml:238
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"
@@ -523,19 +539,3 @@ msgstr "plainspectrum — 设置"
 msgctxt "menu entry: comment"
 msgid "Shape, colour and behaviour of the spectrum ring"
 msgstr "频谱圆环的形状、颜色和行为"
-
-#: spectrum/package/contents/ui/configGeneral.qml:146
-msgid "Channels:"
-msgstr "声道："
-
-#: spectrum/package/contents/ui/configGeneral.qml:147
-msgid "one spectrum around the whole ring, both channels averaged"
-msgstr "整个圆环显示一个频谱，两声道取平均"
-
-#: spectrum/package/contents/ui/configGeneral.qml:151
-msgid ""
-"Off: as cava gives it — the left channel from high to low, then the right\n"
-"from low to high, so the ring is mirrored about its middle."
-msgstr ""
-"关闭：按 cava 原样输出 — 左声道由高频到低频，再右声道由低频到高频，\n"
-"因此圆环关于中点镜像对称。"

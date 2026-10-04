@@ -174,8 +174,7 @@ KCM.SimpleKCM {
         }
 
         Label {
-            text: i18n("From lowest to highest, for the “History” parameter of the bar blocks.
-Any run of characters works, say “ .:-=+*#”.")
+            text: i18n("From lowest to highest, for the “History” parameter of the bar blocks.\nAny run of characters works, say “ .:-=+*#”.")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }
@@ -189,8 +188,7 @@ Any run of characters works, say “ .:-=+*#”.")
         }
 
         Label {
-            text: i18n("Where the second column starts; 0 is half the width. A block goes
-there by its “Column” field on the Blocks page.")
+            text: i18n("Where the second column starts; 0 is half the width. A block goes\nthere by its “Column” field on the Blocks page.")
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 20:05+0500\n"
+"POT-Creation-Date: 2026-10-04 09:26+0500\n"
 "PO-Revision-Date: 2026-09-22 13:49+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Spanish\n"
@@ -48,246 +48,263 @@ msgctxt "settings page"
 msgid "Player"
 msgstr "Reproductor"
 
-#: spectrum/package/contents/ui/configGeneral.qml:50
+#: spectrum/package/contents/ui/configGeneral.qml:51
 #: spectrum/window/settings.qml:122
 msgctxt "settings section"
 msgid "Shape"
 msgstr "Forma"
 
-#: spectrum/package/contents/ui/configGeneral.qml:54
+#: spectrum/package/contents/ui/configGeneral.qml:55
 #: spectrum/window/settings.qml:125
 msgid "Layout:"
 msgstr "Disposición:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:55
+#: spectrum/package/contents/ui/configGeneral.qml:56
 #: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Ring"
 msgstr "Anillo"
 
-#: spectrum/package/contents/ui/configGeneral.qml:55
+#: spectrum/package/contents/ui/configGeneral.qml:56
 #: spectrum/window/settings.qml:126
 msgctxt "layout"
 msgid "Line"
 msgstr "Línea"
 
-#: spectrum/package/contents/ui/configGeneral.qml:60
+#: spectrum/package/contents/ui/configGeneral.qml:61
 #: spectrum/window/settings.qml:132
 msgid "Bars:"
 msgstr "Barras:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:68
+#: spectrum/package/contents/ui/configGeneral.qml:69
 #: spectrum/window/settings.qml:139
 msgid "Radius, px:"
 msgstr "Radio, px:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:77
+#: spectrum/package/contents/ui/configGeneral.qml:78
 #: spectrum/window/settings.qml:146
 msgid "Span, °:"
 msgstr "Amplitud, °:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:86
+#: spectrum/package/contents/ui/configGeneral.qml:87
 #: spectrum/window/settings.qml:153
 msgid "Start angle, °:"
 msgstr "Ángulo inicial, °:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:95
+#: spectrum/package/contents/ui/configGeneral.qml:96
 msgid "Gap between bars, px:"
 msgstr "Separación entre barras, px:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:103
+#: spectrum/package/contents/ui/configGeneral.qml:104
 #: spectrum/window/settings.qml:160
 msgid "Bar thickness, px:"
 msgstr "Grosor de barra, px:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:110
+#: spectrum/package/contents/ui/configGeneral.qml:111
 #: spectrum/window/settings.qml:174
 msgid "Length at silence, px:"
 msgstr "Longitud en silencio, px:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:118
+#: spectrum/package/contents/ui/configGeneral.qml:119
 #: spectrum/window/settings.qml:181
 msgid "Extra length at maximum, px:"
 msgstr "Longitud extra al máximo, px:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:126
+#: spectrum/package/contents/ui/configGeneral.qml:127
 #: spectrum/window/settings.qml:188
 msgid "Growth:"
 msgstr "Crecimiento:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:128
+#: spectrum/package/contents/ui/configGeneral.qml:129
 #: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "outward"
 msgstr "hacia fuera"
 
-#: spectrum/package/contents/ui/configGeneral.qml:128
+#: spectrum/package/contents/ui/configGeneral.qml:129
 #: spectrum/window/settings.qml:192
 msgctxt "growth"
 msgid "inward"
 msgstr "hacia dentro"
 
-#: spectrum/package/contents/ui/configGeneral.qml:128
 #: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
 #: spectrum/window/settings.qml:193 spectrum/window/settings.qml:195
 msgctxt "growth"
 msgid "both ways"
 msgstr "en ambos sentidos"
 
-#: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
 #: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "up"
 msgstr "hacia arriba"
 
-#: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
 #: spectrum/window/settings.qml:194
 msgctxt "growth"
 msgid "down"
 msgstr "hacia abajo"
 
-#: spectrum/package/contents/ui/configGeneral.qml:134
+#: spectrum/package/contents/ui/configGeneral.qml:135
 #: spectrum/window/settings.qml:201
 msgid "Order:"
 msgstr "Orden:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:135
+#: spectrum/package/contents/ui/configGeneral.qml:136
 msgid "mirrored (low frequencies at the edges)"
 msgstr "en espejo (frecuencias bajas en los extremos)"
 
-#: spectrum/package/contents/ui/configGeneral.qml:140
+#: spectrum/package/contents/ui/configGeneral.qml:141
 msgid "reverse band order"
 msgstr "orden de bandas invertido"
 
-#: spectrum/package/contents/ui/configGeneral.qml:143
+#: spectrum/package/contents/ui/configGeneral.qml:146
+msgid "Channels:"
+msgstr "Canales:"
+
+#: spectrum/package/contents/ui/configGeneral.qml:147
+msgid "one spectrum around the whole ring, both channels averaged"
+msgstr "un solo espectro en todo el anillo, ambos canales promediados"
+
+#: spectrum/package/contents/ui/configGeneral.qml:151
+msgid ""
+"Off: as cava gives it — the left channel from high to low, then the right\n"
+"from low to high, so the ring is mirrored about its middle."
+msgstr ""
+"Desactivado: tal como lo da cava — el canal izquierdo de agudos a graves, "
+"luego el derecho\n"
+"de graves a agudos, así que el anillo queda reflejado respecto a su mitad."
+
+#: spectrum/package/contents/ui/configGeneral.qml:156
 #: spectrum/window/settings.qml:213
 msgctxt "settings section"
 msgid "Appearance"
 msgstr "Apariencia"
 
-#: spectrum/package/contents/ui/configGeneral.qml:147
+#: spectrum/package/contents/ui/configGeneral.qml:160
 #: spectrum/window/settings.qml:216
 msgid "Element:"
 msgstr "Elemento:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:148
+#: spectrum/package/contents/ui/configGeneral.qml:161
 #: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Bar"
 msgstr "Barra"
 
-#: spectrum/package/contents/ui/configGeneral.qml:148
+#: spectrum/package/contents/ui/configGeneral.qml:161
 #: spectrum/window/settings.qml:217
 msgctxt "element shape"
 msgid "Blocks"
 msgstr "Bloques"
 
-#: spectrum/package/contents/ui/configGeneral.qml:153
+#: spectrum/package/contents/ui/configGeneral.qml:166
 #: spectrum/window/settings.qml:223
 msgid "Block, px:"
 msgstr "Bloque, px:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:161
+#: spectrum/package/contents/ui/configGeneral.qml:174
 #: spectrum/window/settings.qml:230
 msgid "Block gap, px:"
 msgstr "Separación de bloques, px:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:169
+#: spectrum/package/contents/ui/configGeneral.qml:182
 #: spectrum/window/settings.qml:237
 msgid "Ends:"
 msgstr "Extremos:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:170
+#: spectrum/package/contents/ui/configGeneral.qml:183
 #: spectrum/window/settings.qml:238
 msgctxt "bar ends"
 msgid "rounded"
 msgstr "redondeados"
 
-#: spectrum/package/contents/ui/configGeneral.qml:175
+#: spectrum/package/contents/ui/configGeneral.qml:188
 #: spectrum/window/settings.qml:244
 msgid "Colour:"
 msgstr "Color:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:181
+#: spectrum/package/contents/ui/configGeneral.qml:194
 msgid "High-frequency colour:"
 msgstr "Color de las frecuencias altas:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:192
+#: spectrum/package/contents/ui/configGeneral.qml:205
 #: spectrum/window/settings.qml:261
 msgctxt "high-frequency colour"
 msgid "custom"
 msgstr "personalizado"
 
-#: spectrum/package/contents/ui/configGeneral.qml:200
+#: spectrum/package/contents/ui/configGeneral.qml:213
 #: spectrum/window/settings.qml:268
 msgid "Opacity, %:"
 msgstr "Opacidad, %:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:208
+#: spectrum/package/contents/ui/configGeneral.qml:221
 #: spectrum/window/settings.qml:275
 msgid "Circle:"
 msgstr "Círculo:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:210
+#: spectrum/package/contents/ui/configGeneral.qml:223
 msgid "a thin guide under the bars"
 msgstr "una guía fina bajo las barras"
 
-#: spectrum/package/contents/ui/configGeneral.qml:213
+#: spectrum/package/contents/ui/configGeneral.qml:226
 #: spectrum/window/settings.qml:281
 msgctxt "settings section"
 msgid "Behaviour"
 msgstr "Comportamiento"
 
-#: spectrum/package/contents/ui/configGeneral.qml:217
+#: spectrum/package/contents/ui/configGeneral.qml:230
 #: spectrum/window/settings.qml:284
 msgid "Data frames per second:"
 msgstr "Fotogramas de datos por segundo:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:225
+#: spectrum/package/contents/ui/configGeneral.qml:238
 #: spectrum/window/settings.qml:291
 msgid "Smoothing, ms:"
 msgstr "Suavizado, ms:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:233
+#: spectrum/package/contents/ui/configGeneral.qml:246
 msgid "Mouse:"
 msgstr "Ratón:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:234
+#: spectrum/package/contents/ui/configGeneral.qml:247
 msgid "let clicks through to the desktop"
 msgstr "dejar pasar los clics al escritorio"
 
-#: spectrum/package/contents/ui/configGeneral.qml:237
+#: spectrum/package/contents/ui/configGeneral.qml:250
 msgctxt "settings section"
 msgid "Silence"
 msgstr "Silencio"
 
-#: spectrum/package/contents/ui/configGeneral.qml:241
+#: spectrum/package/contents/ui/configGeneral.qml:254
 #: spectrum/window/settings.qml:298
 msgid "In silence:"
 msgstr "En silencio:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:242
+#: spectrum/package/contents/ui/configGeneral.qml:255
 msgid "dissolve the ring"
 msgstr "disolver el anillo"
 
-#: spectrum/package/contents/ui/configGeneral.qml:247
+#: spectrum/package/contents/ui/configGeneral.qml:260
 #: spectrum/window/settings.qml:305
 msgid "Silence threshold, %:"
 msgstr "Umbral de silencio, %:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:255
+#: spectrum/package/contents/ui/configGeneral.qml:268
 msgid "Wait before vanishing, ms:"
 msgstr "Espera antes de desaparecer, ms:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:264
+#: spectrum/package/contents/ui/configGeneral.qml:277
 msgid "Fade in and out, ms:"
 msgstr "Fundido de entrada y salida, ms:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:273
+#: spectrum/package/contents/ui/configGeneral.qml:286
 msgid "Polls per second in silence:"
 msgstr "Sondeos por segundo en silencio:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:280
+#: spectrum/package/contents/ui/configGeneral.qml:293
 msgid ""
 "The bars grow out of the ring itself, so a “length at silence” of 0\n"
 "makes them appear out of literally nothing."
@@ -296,15 +313,15 @@ msgstr ""
 "0\n"
 "las hace aparecer literalmente de la nada."
 
-#: spectrum/package/contents/ui/configGeneral.qml:287
+#: spectrum/package/contents/ui/configGeneral.qml:300
 msgid "Relay port:"
 msgstr "Puerto del relé:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:294
+#: spectrum/package/contents/ui/configGeneral.qml:307
 msgid "Source:"
 msgstr "Fuente:"
 
-#: spectrum/package/contents/ui/configGeneral.qml:295
+#: spectrum/package/contents/ui/configGeneral.qml:308
 msgid ""
 "the spectrum is computed by cava in the plainspectrum-relay service;\n"
 "the frequencies and the device are set in ~/.config/plainspectrum/relay.env"
@@ -426,7 +443,7 @@ msgstr ""
 "Sin reproductor en el bus el centro del anillo queda vacío.\n"
 "Los controles toman el ratón aunque el resto deje pasar los clics."
 
-#: spectrum/package/contents/ui/main.qml:237
+#: spectrum/package/contents/ui/main.qml:238
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"
@@ -525,19 +542,3 @@ msgstr "plainspectrum — configuración"
 msgctxt "menu entry: comment"
 msgid "Shape, colour and behaviour of the spectrum ring"
 msgstr "Forma, color y comportamiento del anillo del espectro"
-
-#: spectrum/package/contents/ui/configGeneral.qml:146
-msgid "Channels:"
-msgstr "Canales:"
-
-#: spectrum/package/contents/ui/configGeneral.qml:147
-msgid "one spectrum around the whole ring, both channels averaged"
-msgstr "un solo espectro en todo el anillo, ambos canales promediados"
-
-#: spectrum/package/contents/ui/configGeneral.qml:151
-msgid ""
-"Off: as cava gives it — the left channel from high to low, then the right\n"
-"from low to high, so the ring is mirrored about its middle."
-msgstr ""
-"Desactivado: tal como lo da cava — el canal izquierdo de agudos a graves, luego el derecho\n"
-"de graves a agudos, así que el anillo queda reflejado respecto a su mitad."

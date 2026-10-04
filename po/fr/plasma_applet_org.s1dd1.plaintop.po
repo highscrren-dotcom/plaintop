@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-29 23:37+0500\n"
+"POT-Creation-Date: 2026-10-04 10:45+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: French\n"
@@ -29,101 +29,183 @@ msgctxt "settings page"
 msgid "Blocks"
 msgstr "Blocs"
 
-#: monitor/package/contents/ui/configBlocks.qml:134
+#: monitor/package/contents/ui/configBlocks.qml:55
+msgctxt "the block is in the second column"
+msgid "(right column)"
+msgstr "(colonne de droite)"
+
+#: monitor/package/contents/ui/configBlocks.qml:152
+#, kde-format
+msgid "Not valid JSON: %1"
+msgstr "JSON non valide : %1"
+
+#: monitor/package/contents/ui/configBlocks.qml:156
+msgid "The layout must be a list of blocks"
+msgstr "La disposition doit être une liste de blocs"
+
+#: monitor/package/contents/ui/configBlocks.qml:163
+#, kde-format
+msgid "Block %1 needs an id and a type"
+msgstr "Le bloc %1 a besoin d'un id et d'un type"
+
+#: monitor/package/contents/ui/configBlocks.qml:167
+#, kde-format
+msgid "Block %1: unknown type “%2”"
+msgstr "Bloc %1 : type « %2 » inconnu"
+
+#: monitor/package/contents/ui/configBlocks.qml:171
+#, kde-format
+msgid "Block %1: the id “%2” is used twice"
+msgstr "Bloc %1 : l'id « %2 » est utilisé deux fois"
+
+#: monitor/package/contents/ui/configBlocks.qml:258
 msgid ""
 "The blocks and their order. The default layout comes from schema/widget.json."
 msgstr ""
 "Les blocs et leur ordre. La disposition par défaut provient de schema/"
 "widget.json."
 
-#: monitor/package/contents/ui/configBlocks.qml:190
+#: monitor/package/contents/ui/configBlocks.qml:314
 #: monitor/window/settings.qml:491
 msgid "Up"
 msgstr "Monter"
 
-#: monitor/package/contents/ui/configBlocks.qml:197
+#: monitor/package/contents/ui/configBlocks.qml:321
 #: monitor/window/settings.qml:498
 msgid "Down"
 msgstr "Descendre"
 
-#: monitor/package/contents/ui/configBlocks.qml:204
+#: monitor/package/contents/ui/configBlocks.qml:328
+msgid "Duplicate"
+msgstr "Dupliquer"
+
+#: monitor/package/contents/ui/configBlocks.qml:335
 #: monitor/window/settings.qml:505
 msgid "Remove"
 msgstr "Supprimer"
 
-#: monitor/package/contents/ui/configBlocks.qml:211
+#: monitor/package/contents/ui/configBlocks.qml:342
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: monitor/package/contents/ui/configBlocks.qml:229
+#: monitor/package/contents/ui/configBlocks.qml:360
 #: monitor/window/settings.qml:524
 msgid "Add block"
 msgstr "Ajouter un bloc"
 
-#: monitor/package/contents/ui/configGeneral.qml:33
+#: monitor/package/contents/ui/configBlocks.qml:373
+msgid "Name:"
+msgstr "Nom :"
+
+#: monitor/package/contents/ui/configBlocks.qml:376
+msgctxt "placeholder for the block's own name"
+msgid "optional, shown in the list"
+msgstr "facultatif, affiché dans la liste"
+
+#: monitor/package/contents/ui/configBlocks.qml:381
+msgid "Column:"
+msgstr "Colonne :"
+
+#: monitor/package/contents/ui/configBlocks.qml:382
+msgctxt "the widget's column"
+msgid "left"
+msgstr "gauche"
+
+#: monitor/package/contents/ui/configBlocks.qml:382
+msgctxt "the widget's column"
+msgid "right"
+msgstr "droite"
+
+#: monitor/package/contents/ui/configBlocks.qml:452
+#, kde-format
+msgctxt "pick list: how many the machine offers"
+msgid "pick from %1…"
+msgid_plural "pick from %1…"
+msgstr[0] "choisir parmi %1…"
+msgstr[1] "choisir parmi %1…"
+
+#: monitor/package/contents/ui/configBlocks.qml:453
+msgctxt "pick list: the machine offers nothing"
+msgid "nothing found"
+msgstr "rien trouvé"
+
+#: monitor/package/contents/ui/configBlocks.qml:474
+msgid "The layout as JSON — edit here, or paste one from another machine:"
+msgstr ""
+"La disposition en JSON — modifiez ici, ou collez celle d'une autre machine :"
+
+#: monitor/package/contents/ui/configBlocks.qml:497
+msgid "Apply JSON"
+msgstr "Appliquer le JSON"
+
+#: monitor/package/contents/ui/configBlocks.qml:503
+msgid "Reload from the list"
+msgstr "Recharger depuis la liste"
+
+#: monitor/package/contents/ui/configGeneral.qml:40
 #: monitor/window/settings.qml:335
 msgid "Font:"
 msgstr "Police :"
 
-#: monitor/package/contents/ui/configGeneral.qml:39
+#: monitor/package/contents/ui/configGeneral.qml:46
 #: monitor/window/settings.qml:342
 msgctxt "font size"
 msgid "Size:"
 msgstr "Taille :"
 
-#: monitor/package/contents/ui/configGeneral.qml:46
+#: monitor/package/contents/ui/configGeneral.qml:53
 #: monitor/window/settings.qml:371
 msgid "Left padding, px:"
 msgstr "Marge gauche, px :"
 
-#: monitor/package/contents/ui/configGeneral.qml:54
+#: monitor/package/contents/ui/configGeneral.qml:61
 #: monitor/window/settings.qml:378
 msgid "Top padding, px:"
 msgstr "Marge supérieure, px :"
 
-#: monitor/package/contents/ui/configGeneral.qml:62
+#: monitor/package/contents/ui/configGeneral.qml:69
 #: monitor/window/settings.qml:385
 msgid "Width, px:"
 msgstr "Largeur, px :"
 
-#: monitor/package/contents/ui/configGeneral.qml:70
+#: monitor/package/contents/ui/configGeneral.qml:77
 #: monitor/window/settings.qml:392
 msgid "Height, px:"
 msgstr "Hauteur, px :"
 
-#: monitor/package/contents/ui/configGeneral.qml:77
+#: monitor/package/contents/ui/configGeneral.qml:84
 #: monitor/window/settings.qml:407
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Texte principal :"
 
-#: monitor/package/contents/ui/configGeneral.qml:83
+#: monitor/package/contents/ui/configGeneral.qml:90
 #: monitor/window/settings.qml:413
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr "En-tête et horloge :"
 
-#: monitor/package/contents/ui/configGeneral.qml:89
+#: monitor/package/contents/ui/configGeneral.qml:96
 #: monitor/window/settings.qml:419
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Secondaire :"
 
-#: monitor/package/contents/ui/configGeneral.qml:95
+#: monitor/package/contents/ui/configGeneral.qml:102
 #: monitor/window/settings.qml:425
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr "Valeurs :"
 
-#: monitor/package/contents/ui/configGeneral.qml:102
+#: monitor/package/contents/ui/configGeneral.qml:109
 msgid "Mouse:"
 msgstr "Souris :"
 
-#: monitor/package/contents/ui/configGeneral.qml:103
+#: monitor/package/contents/ui/configGeneral.qml:110
 msgid "let clicks through to the desktop"
 msgstr "laisser passer les clics vers le bureau"
 
-#: monitor/package/contents/ui/configGeneral.qml:107
+#: monitor/package/contents/ui/configGeneral.qml:114
 msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
@@ -134,16 +216,75 @@ msgstr ""
 "Le widget ne prend la souris qu'en mode d'édition du bureau :\n"
 "c'est là que sont ses paramètres, ou ./install.sh avec l'option clicks off"
 
-#: monitor/package/contents/ui/configGeneral.qml:114
+#: monitor/package/contents/ui/configGeneral.qml:119
+msgctxt "settings section"
+msgid "Lines"
+msgstr "Lignes"
+
+#: monitor/package/contents/ui/configGeneral.qml:123
+msgid "Bar width, characters:"
+msgstr "Largeur des barres, caractères :"
+
+#: monitor/package/contents/ui/configGeneral.qml:129
+msgid "Bar characters:"
+msgstr "Caractères des barres :"
+
+#: monitor/package/contents/ui/configGeneral.qml:142
+msgctxt "placeholder: the empty part of a bar is a space"
+msgid "space"
+msgstr "espace"
+
+#: monitor/package/contents/ui/configGeneral.qml:147
+msgid ""
+"The filled and the empty part of a bar. Empty fields mean the slash and a "
+"space."
+msgstr ""
+"La partie pleine et la partie vide d'une barre. Les champs vides signifient "
+"la barre oblique et l'espace."
+
+#: monitor/package/contents/ui/configGeneral.qml:153
+msgid "Separator:"
+msgstr "Séparateur :"
+
+#: monitor/package/contents/ui/configGeneral.qml:171
+msgid "Sparkline glyphs:"
+msgstr "Caractères du sparkline :"
+
+#: monitor/package/contents/ui/configGeneral.qml:177
+msgid ""
+"From lowest to highest, for the “History” parameter of the bar blocks.\n"
+"Any run of characters works, say “ .:-=+*#”."
+msgstr ""
+"Du plus bas au plus haut, pour le paramètre « Historique » des blocs à barre.\n"
+"N’importe quelle suite de caractères convient, par exemple « .:-=+*# »."
+
+#: monitor/package/contents/ui/configGeneral.qml:184
+msgid "Second column at, px:"
+msgstr "Deuxième colonne à, px :"
+
+#: monitor/package/contents/ui/configGeneral.qml:191
+msgid ""
+"Where the second column starts; 0 is half the width. A block goes\n"
+"there by its “Column” field on the Blocks page."
+msgstr ""
+"Où commence la deuxième colonne ; 0 correspond à la moitié de la largeur. Un bloc y va\n"
+"selon son champ « Colonne » sur la page « Blocs »."
+
+#: monitor/package/contents/ui/configGeneral.qml:196
+msgctxt "settings section"
+msgid "Updates"
+msgstr "Mise à jour"
+
+#: monitor/package/contents/ui/configGeneral.qml:200
 msgid "Interval, ms:"
 msgstr "Intervalle, ms :"
 
-#: monitor/package/contents/ui/configGeneral.qml:122
+#: monitor/package/contents/ui/configGeneral.qml:208
 #: monitor/window/settings.qml:356
 msgid "Top processes, every … s:"
 msgstr "Top des processus, toutes les … s :"
 
-#: monitor/package/contents/ui/configGeneral.qml:128
+#: monitor/package/contents/ui/configGeneral.qml:214
 #: monitor/window/settings.qml:363
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
@@ -152,70 +293,70 @@ msgstr ""
 "La liste des processus est la collecte la plus coûteuse : toutes les 2 s\n"
 "environ 3 % d'un cœur, toutes les 10 s environ 1,3 %"
 
-#: monitor/shared/MonitorData.qml:594
+#: monitor/shared/MonitorData.qml:859
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1j"
 
-#: monitor/shared/MonitorData.qml:595
+#: monitor/shared/MonitorData.qml:860
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1h"
 
-#: monitor/shared/MonitorData.qml:596
+#: monitor/shared/MonitorData.qml:861
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1min"
 
-#: monitor/shared/MonitorData.qml:603
+#: monitor/shared/MonitorData.qml:868
 #, kde-format
 msgctxt "battery: hours and minutes of an estimate"
 msgid "%1h %2m"
 msgstr "%1h %2min"
 
-#: monitor/shared/MonitorData.qml:619
+#: monitor/shared/MonitorData.qml:885
 msgctxt "battery: no current flowing, charged"
 msgid "full"
 msgstr "chargée"
 
-#: monitor/shared/MonitorData.qml:620
+#: monitor/shared/MonitorData.qml:886
 msgctxt "battery: no current flowing"
 msgid "idle"
 msgstr "inactive"
 
-#: monitor/shared/MonitorData.qml:623
+#: monitor/shared/MonitorData.qml:889
 #, kde-format
 msgctxt "battery: charging; the power and the time to full"
 msgid "charging  %1 W  %2 to full"
 msgstr "en charge  %1 W  pleine dans %2"
 
-#: monitor/shared/MonitorData.qml:627
+#: monitor/shared/MonitorData.qml:893
 #, kde-format
 msgctxt "battery: discharging; the power and the time left"
 msgid "discharging  %1 W  %2 left"
 msgstr "en décharge  %1 W  reste %2"
 
-#: monitor/shared/MonitorData.qml:630
+#: monitor/shared/MonitorData.qml:896
 #, kde-format
 msgctxt "battery: wear, a percentage"
 msgid "health %1"
 msgstr "santé %1"
 
-#: monitor/shared/MonitorData.qml:685
+#: monitor/shared/MonitorData.qml:951
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "reconnexion requise"
 
-#: monitor/shared/MonitorData.qml:686
+#: monitor/shared/MonitorData.qml:952 monitor/shared/MonitorData.qml:962
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1 sur %2"
 
-#: monitor/shared/MonitorData.qml:692
+#: monitor/shared/MonitorData.qml:958
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
@@ -223,7 +364,18 @@ msgid_plural "idle, %1 models"
 msgstr[0] "inactif, %1 modèle"
 msgstr[1] "inactif, %1 modèles"
 
-#: monitor/shared/MonitorData.qml:694
+#: monitor/shared/MonitorData.qml:961
+msgctxt "podman: it cannot be reached"
+msgid "no access"
+msgstr "pas d'accès"
+
+#: monitor/shared/MonitorData.qml:965
+#, kde-format
+msgctxt "libvirt: running virtual machines of all"
+msgid "%1 of %2"
+msgstr "%1 sur %2"
+
+#: monitor/shared/MonitorData.qml:972
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
@@ -231,48 +383,132 @@ msgid_plural "%1 updates"
 msgstr[0] "%1 mise à jour"
 msgstr[1] "%1 mises à jour"
 
-#: monitor/shared/MonitorData.qml:730
+#: monitor/shared/MonitorData.qml:981
+msgctxt "systemd unit state"
+msgid "active"
+msgstr "actif"
+
+#: monitor/shared/MonitorData.qml:982
+msgctxt "systemd unit state"
+msgid "inactive"
+msgstr "inactif"
+
+#: monitor/shared/MonitorData.qml:983
+msgctxt "systemd unit state"
+msgid "failed"
+msgstr "en échec"
+
+#: monitor/shared/MonitorData.qml:984
+msgctxt "systemd unit state"
+msgid "starting"
+msgstr "démarrage"
+
+#: monitor/shared/MonitorData.qml:985
+msgctxt "systemd unit state"
+msgid "stopping"
+msgstr "arrêt"
+
+#: monitor/shared/MonitorData.qml:986
+msgctxt "systemd unit state"
+msgid "reloading"
+msgstr "rechargement"
+
+#: monitor/shared/MonitorData.qml:987
+msgctxt "systemd unit state: no answer"
+msgid "unknown"
+msgstr "inconnu"
+
+#: monitor/shared/MonitorData.qml:1048
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "dddd d MMMM"
 
-#: monitor/shared/MonitorData.qml:781
+#: monitor/shared/MonitorData.qml:1114
+#, kde-format
+msgctxt "load average over 1, 5 and 15 minutes"
+msgid "load %1  %2  %3"
+msgstr "charge %1  %2  %3"
+
+#: monitor/shared/MonitorData.qml:1132
 #, kde-format
 msgctxt "pressure: time every task stalled, memory and I/O"
 msgid "full  mem %1  io %2"
 msgstr "full  mem %1  io %2"
 
-#: monitor/shared/MonitorData.qml:827
+#: monitor/shared/MonitorData.qml:1197
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "non monté"
 
-#: monitor/shared/MonitorData.qml:833
+#: monitor/shared/MonitorData.qml:1203
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "en marche depuis %1"
 
-#: monitor/shared/MonitorData.qml:869
+#: monitor/shared/MonitorData.qml:1221
+#, kde-format
+msgctxt "network: traffic since boot, down and up"
+msgid "total %1 down, %2 up"
+msgstr "total %1 reçus, %2 envoyés"
+
+#: monitor/shared/MonitorData.qml:1225
+#, kde-format
+msgctxt "network: Wi-Fi signal strength"
+msgid "signal %1"
+msgstr "signal %1"
+
+#: monitor/shared/MonitorData.qml:1234
+#, kde-format
+msgctxt "disk I/O: read and write rates"
+msgid "I/O  R %1  W %2"
+msgstr "E/S  L %1  É %2"
+
+#: monitor/shared/MonitorData.qml:1291
 msgctxt "health: failed systemd units"
 msgid "failed units"
 msgstr "unités en échec"
 
-#: monitor/shared/MonitorData.qml:871 monitor/shared/MonitorData.qml:878
+#: monitor/shared/MonitorData.qml:1293 monitor/shared/MonitorData.qml:1300
 #, kde-format
 msgctxt "health: a count for the system and one for the user session"
 msgid "%1 system, %2 user"
 msgstr "%1 système, %2 utilisateur"
 
-#: monitor/shared/MonitorData.qml:874
+#: monitor/shared/MonitorData.qml:1296
 msgctxt "health: journal entries of priority error or worse"
 msgid "errors since boot"
 msgstr "erreurs depuis boot"
 
-#: monitor/shared/MonitorData.qml:876
+#: monitor/shared/MonitorData.qml:1298
 msgctxt "health: the system journal cannot be read by this user"
 msgid "no access"
 msgstr "pas d'accès"
+
+#: monitor/shared/MonitorData.qml:1303
+msgctxt "health: a kernel newer than the running one is installed"
+msgid "reboot"
+msgstr "redémarrage"
+
+#: monitor/shared/MonitorData.qml:1304
+msgctxt "health: a reboot is pending"
+msgid "pending"
+msgstr "en attente"
+
+#: monitor/shared/MonitorData.qml:1334
+msgctxt "peripheral battery: charging"
+msgid "charging"
+msgstr "en charge"
+
+#: monitor/shared/MonitorData.qml:1352
+msgctxt "sound: the device is muted"
+msgid "muted"
+msgstr "muet"
+
+#: monitor/shared/MonitorData.qml:1369
+msgctxt "repos: the path is not a git repository"
+msgid "not a repository"
+msgstr "pas un dépôt"
 
 #: monitor/window/settings.qml:24
 msgid "plaintop — monitor settings"
@@ -473,7 +709,7 @@ msgstr ""
 "La ligne du haut : votre texte et le nom d'hôte reliés par « \\ » ; sans "
 "texte, le nom d'hôte seul"
 
-#: schema/blocks.json:3
+#: schema/blocks.json:3 schema/blocks.json:95
 msgctxt "schema: parameter name"
 msgid "Text"
 msgstr "Texte"
@@ -494,51 +730,109 @@ msgid "Seconds in a small size"
 msgstr "Secondes en petit"
 
 #: schema/blocks.json:7
+msgctxt "schema: parameter name"
+msgid "Hours"
+msgstr "Heures"
+
+#: schema/blocks.json:8
+msgctxt "schema: parameter value"
+msgid "24-hour"
+msgstr "24 heures"
+
+#: schema/blocks.json:9
+msgctxt "schema: parameter value"
+msgid "12-hour"
+msgstr "12 heures"
+
+#: schema/blocks.json:10
+msgctxt "schema: parameter value"
+msgid "as the locale says"
+msgstr "selon les paramètres régionaux"
+
+#: schema/blocks.json:11
 msgctxt "schema: block name"
 msgid "Date"
 msgstr "Date"
 
-#: schema/blocks.json:8
+#: schema/blocks.json:12
 msgctxt "schema: block name"
 msgid "System and kernel"
 msgstr "Système et noyau"
 
-#: schema/blocks.json:9
+#: schema/blocks.json:13
 msgctxt "schema: block name"
 msgid "Separator"
 msgstr "Séparateur"
 
-#: schema/blocks.json:10
+#: schema/blocks.json:14
 msgctxt "schema: block name"
 msgid "Processor"
 msgstr "Processeur"
 
-#: schema/blocks.json:11
+#: schema/blocks.json:15
 msgctxt "schema: parameter name"
 msgid "Lines per NUMA node"
 msgstr "Lignes par nœud NUMA"
 
-#: schema/blocks.json:12
+#: schema/blocks.json:16
 msgctxt "schema: parameter name"
 msgid "Model, temperatures, fans"
 msgstr "Modèle, températures, ventilateurs"
 
-#: schema/blocks.json:13 schema/blocks.json:20
+#: schema/blocks.json:17
+msgctxt "schema: parameter name"
+msgid "Average frequency on the model line"
+msgstr "Fréquence moyenne sur la ligne du modèle"
+
+#: schema/blocks.json:18 schema/blocks.json:33
 msgctxt "schema: parameter name"
 msgid "Processes in the top list"
 msgstr "Processus dans le top"
 
-#: schema/blocks.json:14
+#: schema/blocks.json:19
 msgctxt "schema: parameter name"
 msgid "Fan sensors (empty — find them)"
 msgstr "Capteurs de ventilateur (vide — détecter automatiquement)"
 
-#: schema/blocks.json:15
+#: schema/blocks.json:20 schema/blocks.json:29 schema/blocks.json:34
+#: schema/blocks.json:39 schema/blocks.json:43 schema/blocks.json:50
+msgctxt "schema: parameter name"
+msgid "Alert from, % (0 — never)"
+msgstr "Alerte à partir de, % (0 — jamais)"
+
+#: schema/blocks.json:21 schema/blocks.json:44 schema/blocks.json:68
+msgctxt "schema: parameter name"
+msgid "Alert from, °C (0 — never)"
+msgstr "Alerte à partir de, °C (0 — jamais)"
+
+#: schema/blocks.json:22 schema/blocks.json:30 schema/blocks.json:35
+#: schema/blocks.json:40 schema/blocks.json:45 schema/blocks.json:54
+#: schema/blocks.json:61 schema/blocks.json:122
+msgctxt "schema: parameter name"
+msgid "History: sparkline of the last N ticks (0 — none)"
+msgstr "Historique : sparkline des N derniers instants (0 — aucun)"
+
+#: schema/blocks.json:23
+msgctxt "schema: block name"
+msgid "Load average"
+msgstr "Charge moyenne"
+
+#: schema/blocks.json:24
+msgctxt "schema: block hint"
+msgid "The 1, 5 and 15-minute load averages, one line"
+msgstr "La charge moyenne sur 1, 5 et 15 minutes, une ligne"
+
+#: schema/blocks.json:25
+msgctxt "schema: parameter name"
+msgid "Alert from, % of the core count (0 — never)"
+msgstr "Alerte à partir de, % du nombre de cœurs (0 — jamais)"
+
+#: schema/blocks.json:26
 msgctxt "schema: block name"
 msgid "Pressure (PSI)"
 msgstr "Pression (PSI)"
 
-#: schema/blocks.json:16
+#: schema/blocks.json:27
 msgctxt "schema: block hint"
 msgid ""
 "Kernel pressure stall information: share of time tasks waited for CPU, "
@@ -547,95 +841,227 @@ msgstr ""
 "Pressure Stall Information du noyau : part du temps où les tâches ont "
 "attendu le CPU, la mémoire ou les E/S (moyenne sur 10 secondes)"
 
-#: schema/blocks.json:17
+#: schema/blocks.json:28
 msgctxt "schema: parameter name"
 msgid "Full stalls for memory and I/O"
 msgstr "Blocages complets pour la mémoire et les E/S"
 
-#: schema/blocks.json:18
+#: schema/blocks.json:31
 msgctxt "schema: block name"
 msgid "Memory"
 msgstr "Mémoire"
 
-#: schema/blocks.json:19
+#: schema/blocks.json:32 schema/blocks.json:38
 msgctxt "schema: parameter name"
 msgid "The “used / total” line"
 msgstr "La ligne « utilisé / total »"
 
-#: schema/blocks.json:21
+#: schema/blocks.json:36
+msgctxt "schema: block name"
+msgid "Swap"
+msgstr "Swap"
+
+#: schema/blocks.json:37
+msgctxt "schema: block hint"
+msgid "Swap usage; shown only when the machine has swap"
+msgstr "Utilisation du swap ; affiché seulement si la machine en a"
+
+#: schema/blocks.json:41
 msgctxt "schema: block name"
 msgid "Graphics card"
 msgstr "Carte graphique"
 
-#: schema/blocks.json:22
+#: schema/blocks.json:42
 msgctxt "schema: parameter name"
 msgid "VRAM, temperature and power line"
 msgstr "Ligne VRAM, température et puissance"
 
-#: schema/blocks.json:23
+#: schema/blocks.json:46
 msgctxt "schema: block name"
 msgid "Disks"
 msgstr "Disques"
 
-#: schema/blocks.json:24
+#: schema/blocks.json:47
 msgctxt "schema: parameter name"
 msgid "Mount points"
 msgstr "Points de montage"
 
-#: schema/blocks.json:25
+#: schema/blocks.json:48
 msgctxt "schema: parameter name"
 msgid "NVMe temperature on the root line"
 msgstr "Température NVMe sur la ligne de la racine"
 
-#: schema/blocks.json:26
+#: schema/blocks.json:49
 msgctxt "schema: parameter name"
 msgid "NVMe temperature sensor (empty — find it)"
 msgstr "Capteur de température NVMe (vide — détecter automatiquement)"
 
-#: schema/blocks.json:27
+#: schema/blocks.json:51
+msgctxt "schema: block name"
+msgid "Disk I/O"
+msgstr "E/S disque"
+
+#: schema/blocks.json:52
+msgctxt "schema: block hint"
+msgid "Read and write rates of all disks, or of one"
+msgstr "Débits de lecture et d'écriture de tous les disques, ou d'un seul"
+
+#: schema/blocks.json:53
+msgctxt "schema: parameter name"
+msgid "Read-rate sensor (empty — all disks)"
+msgstr "Capteur du débit de lecture (vide — tous les disques)"
+
+#: schema/blocks.json:55
 msgctxt "schema: block name"
 msgid "Uptime"
 msgstr "Temps de fonctionnement"
 
-#: schema/blocks.json:28
+#: schema/blocks.json:56
 msgctxt "schema: block name"
 msgid "Network"
 msgstr "Réseau"
 
-#: schema/blocks.json:29
+#: schema/blocks.json:57
 msgctxt "schema: parameter name"
 msgid "Interface (empty — find it)"
 msgstr "Interface (vide — détecter automatiquement)"
 
-#: schema/blocks.json:30
+#: schema/blocks.json:58
+msgctxt "schema: parameter name"
+msgid "IPv4 address line"
+msgstr "Ligne de l'adresse IPv4"
+
+#: schema/blocks.json:59
+msgctxt "schema: parameter name"
+msgid "Traffic since boot"
+msgstr "Trafic depuis le démarrage"
+
+#: schema/blocks.json:60
+msgctxt "schema: parameter name"
+msgid "Wi-Fi signal strength"
+msgstr "Force du signal Wi-Fi"
+
+#: schema/blocks.json:62
 msgctxt "schema: block name"
 msgid "Battery"
 msgstr "Batterie"
 
-#: schema/blocks.json:31
+#: schema/blocks.json:63
 msgctxt "schema: block hint"
 msgid "Charge, rate and estimated time; shown only when a battery is found"
 msgstr ""
 "Charge, puissance et temps estimé ; affiché seulement si une batterie est "
 "détectée"
 
-#: schema/blocks.json:32
+#: schema/blocks.json:64 schema/blocks.json:71
+msgctxt "schema: parameter name"
+msgid "Alert below, % (0 — never)"
+msgstr "Alerte en dessous de, % (0 — jamais)"
+
+#: schema/blocks.json:65
+msgctxt "schema: block name"
+msgid "Temperatures"
+msgstr "Températures"
+
+#: schema/blocks.json:66
+msgctxt "schema: block hint"
+msgid ""
+"Any temperature sensors, one line each: “label=id”, or just the id to use "
+"the sensor's own name"
+msgstr ""
+"N'importe quels capteurs de température, une ligne chacun : "
+"« étiquette=id », ou seulement l'id pour le nom du capteur"
+
+#: schema/blocks.json:67
+msgctxt "schema: parameter name"
+msgid "Sensors"
+msgstr "Capteurs"
+
+#: schema/blocks.json:69
+msgctxt "schema: block name"
+msgid "Peripheral batteries"
+msgstr "Batteries des périphériques"
+
+#: schema/blocks.json:70
+msgctxt "schema: block hint"
+msgid ""
+"Mice, keyboards, headsets and phones over Bluetooth, from upower; the system "
+"battery has its own block"
+msgstr ""
+"Souris, claviers, casques et téléphones en Bluetooth, via upower ; la "
+"batterie système a son propre bloc"
+
+#: schema/blocks.json:72 schema/blocks.json:77 schema/blocks.json:84
+#: schema/blocks.json:107 schema/blocks.json:112
+msgctxt "schema: parameter name"
+msgid "Interval, s"
+msgstr "Intervalle, s"
+
+#: schema/blocks.json:73
+msgctxt "schema: block name"
+msgid "Sound"
+msgstr "Son"
+
+#: schema/blocks.json:74
+msgctxt "schema: block hint"
+msgid ""
+"The default output's volume and name through wpctl (PipeWire), and the "
+"input's if asked"
+msgstr ""
+"Le volume et le nom de la sortie par défaut via wpctl (PipeWire), et de "
+"l'entrée sur demande"
+
+#: schema/blocks.json:75
+msgctxt "schema: parameter name"
+msgid "The input device too"
+msgstr "L'entrée aussi"
+
+#: schema/blocks.json:76
+msgctxt "schema: parameter name"
+msgid "The device's name under the bar"
+msgstr "Le nom de l'appareil sous la barre"
+
+#: schema/blocks.json:78
 msgctxt "schema: block name"
 msgid "Services"
 msgstr "Services"
 
-#: schema/blocks.json:33
+#: schema/blocks.json:79
 msgctxt "schema: block hint"
 msgid "docker, ollama, pending updates — a script inside the package"
 msgstr ""
 "docker, ollama, mises à jour en attente — un script inclus dans le paquet"
 
-#: schema/blocks.json:34
+#: schema/blocks.json:80
+msgctxt "schema: block name"
+msgid "systemd units"
+msgstr "Unités systemd"
+
+#: schema/blocks.json:81
+msgctxt "schema: block hint"
+msgid ""
+"The state of the units you name — active, inactive, failed — from the system "
+"manager or your own"
+msgstr ""
+"L'état des unités nommées — actives, inactives, en échec — du gestionnaire "
+"système ou du vôtre"
+
+#: schema/blocks.json:82
+msgctxt "schema: parameter name"
+msgid "Units"
+msgstr "Unités"
+
+#: schema/blocks.json:83
+msgctxt "schema: parameter name"
+msgid "User units (systemctl --user)"
+msgstr "Unités utilisateur (systemctl --user)"
+
+#: schema/blocks.json:85
 msgctxt "schema: block name"
 msgid "System health"
 msgstr "État du système"
 
-#: schema/blocks.json:35
+#: schema/blocks.json:86
 msgctxt "schema: block hint"
 msgid ""
 "Failed systemd units, error count since boot and the last error lines from "
@@ -644,555 +1070,160 @@ msgstr ""
 "Unités systemd en échec, nombre d'erreurs depuis le démarrage et les "
 "dernières lignes d'erreur du journal"
 
-#: schema/blocks.json:36
+#: schema/blocks.json:87
 msgctxt "schema: parameter name"
 msgid "Failed units"
 msgstr "Unités en échec"
 
-#: schema/blocks.json:37
+#: schema/blocks.json:88
 msgctxt "schema: parameter name"
 msgid "Error count since boot"
 msgstr "Nombre d'erreurs depuis le démarrage"
 
-#: schema/blocks.json:38
+#: schema/blocks.json:89
 msgctxt "schema: parameter name"
 msgid "Last error lines"
 msgstr "Dernières lignes d'erreur"
 
-#: schema/blocks.json:39
-msgctxt "schema: block name"
-msgid "Hardware spec sheet"
-msgstr "Fiche matérielle"
-
-#: schema/blocks.json:40
-msgctxt "schema: block hint"
-msgid "Static lines: processor, graphics card, board"
-msgstr "Lignes fixes : processeur, carte graphique, carte mère"
-
-#: schema/blocks.json:41
-msgctxt "schema: block name"
-msgid "Custom command"
-msgstr "Commande personnalisée"
-
-#: schema/blocks.json:42
-msgctxt "schema: block hint"
-msgid "A line from the output of any command"
-msgstr "Une ligne de la sortie d'une commande quelconque"
-
-#: schema/blocks.json:43 schema/blocks.json:49
-msgctxt "schema: parameter name"
-msgid "Label"
-msgstr "Libellé"
-
-#: schema/blocks.json:44
-msgctxt "schema: parameter name"
-msgid "Command"
-msgstr "Commande"
-
-#: schema/blocks.json:45
-msgctxt "schema: parameter name"
-msgid "Interval, s"
-msgstr "Intervalle, s"
-
-#: schema/blocks.json:46
-msgctxt "schema: parameter name"
-msgid "Lines to show"
-msgstr "Lignes à afficher"
-
-#: schema/blocks.json:47
-msgctxt "schema: block name"
-msgid "Custom sensor"
-msgstr "Capteur personnalisé"
-
-#: schema/blocks.json:48
-msgctxt "schema: block hint"
-msgid "Any ksystemstats sensor by its id"
-msgstr "N'importe quel capteur ksystemstats, par son identifiant"
-
-#: schema/blocks.json:50
-msgctxt "schema: parameter name"
-msgid "Sensor id"
-msgstr "Identifiant du capteur"
-
-#: schema/blocks.json:51
-msgctxt "schema: parameter name"
-msgid "Draw a bar"
-msgstr "Dessiner une barre"
-
-#: schema/blocks.json:52
-msgctxt "schema: parameter name"
-msgid "Suffix after the value"
-msgstr "Suffixe après la valeur"
-
-#: schema/blocks.json:53
-msgctxt "schema: parameter name"
-msgid "Decimal places"
-msgstr "Décimales"
-
-#: monitor/package/contents/ui/configBlocks.qml:55
-msgctxt "the block is in the second column"
-msgid "(right column)"
-msgstr "(colonne de droite)"
-
-#: monitor/package/contents/ui/configBlocks.qml:152
-#, kde-format
-msgid "Not valid JSON: %1"
-msgstr "JSON non valide : %1"
-
-#: monitor/package/contents/ui/configBlocks.qml:156
-msgid "The layout must be a list of blocks"
-msgstr "La disposition doit être une liste de blocs"
-
-#: monitor/package/contents/ui/configBlocks.qml:163
-#, kde-format
-msgid "Block %1 needs an id and a type"
-msgstr "Le bloc %1 a besoin d'un id et d'un type"
-
-#: monitor/package/contents/ui/configBlocks.qml:167
-#, kde-format
-msgid "Block %1: unknown type “%2”"
-msgstr "Bloc %1 : type « %2 » inconnu"
-
-#: monitor/package/contents/ui/configBlocks.qml:171
-#, kde-format
-msgid "Block %1: the id “%2” is used twice"
-msgstr "Bloc %1 : l'id « %2 » est utilisé deux fois"
-
-#: monitor/package/contents/ui/configBlocks.qml:328
-msgid "Duplicate"
-msgstr "Dupliquer"
-
-#: monitor/package/contents/ui/configBlocks.qml:373
-msgid "Name:"
-msgstr "Nom :"
-
-#: monitor/package/contents/ui/configBlocks.qml:376
-msgctxt "placeholder for the block's own name"
-msgid "optional, shown in the list"
-msgstr "facultatif, affiché dans la liste"
-
-#: monitor/package/contents/ui/configBlocks.qml:381
-msgid "Column:"
-msgstr "Colonne :"
-
-#: monitor/package/contents/ui/configBlocks.qml:382
-msgctxt "the widget's column"
-msgid "left"
-msgstr "gauche"
-
-#: monitor/package/contents/ui/configBlocks.qml:382
-msgctxt "the widget's column"
-msgid "right"
-msgstr "droite"
-
-#: monitor/package/contents/ui/configBlocks.qml:452
-#, kde-format
-msgctxt "pick list: how many the machine offers"
-msgid "pick from %1…"
-msgid_plural "pick from %1…"
-msgstr[0] "choisir parmi %1…"
-msgstr[1] "choisir parmi %1…"
-
-#: monitor/package/contents/ui/configBlocks.qml:453
-msgctxt "pick list: the machine offers nothing"
-msgid "nothing found"
-msgstr "rien trouvé"
-
-#: monitor/package/contents/ui/configBlocks.qml:474
-msgid "The layout as JSON — edit here, or paste one from another machine:"
-msgstr ""
-"La disposition en JSON — modifiez ici, ou collez celle d'une autre machine :"
-
-#: monitor/package/contents/ui/configBlocks.qml:497
-msgid "Apply JSON"
-msgstr "Appliquer le JSON"
-
-#: monitor/package/contents/ui/configBlocks.qml:503
-msgid "Reload from the list"
-msgstr "Recharger depuis la liste"
-
-#: monitor/package/contents/ui/configGeneral.qml:119
-msgctxt "settings section"
-msgid "Lines"
-msgstr "Lignes"
-
-#: monitor/package/contents/ui/configGeneral.qml:123
-msgid "Bar width, characters:"
-msgstr "Largeur des barres, caractères :"
-
-#: monitor/package/contents/ui/configGeneral.qml:129
-msgid "Bar characters:"
-msgstr "Caractères des barres :"
-
-#: monitor/package/contents/ui/configGeneral.qml:142
-msgctxt "placeholder: the empty part of a bar is a space"
-msgid "space"
-msgstr "espace"
-
-#: monitor/package/contents/ui/configGeneral.qml:147
-msgid ""
-"The filled and the empty part of a bar. Empty fields mean the slash and a space."
-msgstr ""
-"La partie pleine et la partie vide d'une barre. Les champs vides signifient la barre oblique et l'espace."
-
-#: monitor/package/contents/ui/configGeneral.qml:153
-msgid "Separator:"
-msgstr "Séparateur :"
-
-#: monitor/package/contents/ui/configGeneral.qml:171
-msgid "Sparkline glyphs:"
-msgstr "Caractères du sparkline :"
-
-#: monitor/package/contents/ui/configGeneral.qml:185
-msgid "Second column at, px:"
-msgstr "Deuxième colonne à, px :"
-
-#: monitor/package/contents/ui/configGeneral.qml:198
-msgctxt "settings section"
-msgid "Updates"
-msgstr "Mise à jour"
-
-#: monitor/shared/MonitorData.qml:924
-msgctxt "podman: it cannot be reached"
-msgid "no access"
-msgstr "pas d'accès"
-
-#: monitor/shared/MonitorData.qml:928
-#, kde-format
-msgctxt "libvirt: running virtual machines of all"
-msgid "%1 of %2"
-msgstr "%1 sur %2"
-
-#: monitor/shared/MonitorData.qml:944
-msgctxt "systemd unit state"
-msgid "active"
-msgstr "actif"
-
-#: monitor/shared/MonitorData.qml:945
-msgctxt "systemd unit state"
-msgid "inactive"
-msgstr "inactif"
-
-#: monitor/shared/MonitorData.qml:946
-msgctxt "systemd unit state"
-msgid "failed"
-msgstr "en échec"
-
-#: monitor/shared/MonitorData.qml:947
-msgctxt "systemd unit state"
-msgid "starting"
-msgstr "démarrage"
-
-#: monitor/shared/MonitorData.qml:948
-msgctxt "systemd unit state"
-msgid "stopping"
-msgstr "arrêt"
-
-#: monitor/shared/MonitorData.qml:949
-msgctxt "systemd unit state"
-msgid "reloading"
-msgstr "rechargement"
-
-#: monitor/shared/MonitorData.qml:950
-msgctxt "systemd unit state: no answer"
-msgid "unknown"
-msgstr "inconnu"
-
-#: monitor/shared/MonitorData.qml:1064
-#, kde-format
-msgctxt "load average over 1, 5 and 15 minutes"
-msgid "load %1  %2  %3"
-msgstr "charge %1  %2  %3"
-
-#: monitor/shared/MonitorData.qml:1171
-#, kde-format
-msgctxt "network: traffic since boot, down and up"
-msgid "total %1 down, %2 up"
-msgstr "total %1 reçus, %2 envoyés"
-
-#: monitor/shared/MonitorData.qml:1175
-#, kde-format
-msgctxt "network: Wi-Fi signal strength"
-msgid "signal %1"
-msgstr "signal %1"
-
-#: monitor/shared/MonitorData.qml:1184
-#, kde-format
-msgctxt "disk I/O: read and write rates"
-msgid "I/O  R %1  W %2"
-msgstr "E/S  L %1  É %2"
-
-#: monitor/shared/MonitorData.qml:1253
-msgctxt "health: a kernel newer than the running one is installed"
-msgid "reboot"
-msgstr "redémarrage"
-
-#: monitor/shared/MonitorData.qml:1254
-msgctxt "health: a reboot is pending"
-msgid "pending"
-msgstr "en attente"
-
-#: monitor/shared/MonitorData.qml:1284
-msgctxt "peripheral battery: charging"
-msgid "charging"
-msgstr "en charge"
-
-#: monitor/shared/MonitorData.qml:1302
-msgctxt "sound: the device is muted"
-msgid "muted"
-msgstr "muet"
-
-#: monitor/shared/MonitorData.qml:1319
-msgctxt "repos: the path is not a git repository"
-msgid "not a repository"
-msgstr "pas un dépôt"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Hours"
-msgstr "Heures"
-
-#: schema/blocks.json
-msgctxt "schema: parameter value"
-msgid "24-hour"
-msgstr "24 heures"
-
-#: schema/blocks.json
-msgctxt "schema: parameter value"
-msgid "12-hour"
-msgstr "12 heures"
-
-#: schema/blocks.json
-msgctxt "schema: parameter value"
-msgid "as the locale says"
-msgstr "selon les paramètres régionaux"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Average frequency on the model line"
-msgstr "Fréquence moyenne sur la ligne du modèle"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert from, % (0 — never)"
-msgstr "Alerte à partir de, % (0 — jamais)"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert from, °C (0 — never)"
-msgstr "Alerte à partir de, °C (0 — jamais)"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "History: sparkline of the last N ticks (0 — none)"
-msgstr "Historique : sparkline des N derniers instants (0 — aucun)"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Load average"
-msgstr "Charge moyenne"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid "The 1, 5 and 15-minute load averages, one line"
-msgstr "La charge moyenne sur 1, 5 et 15 minutes, une ligne"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert from, % of the core count (0 — never)"
-msgstr "Alerte à partir de, % du nombre de cœurs (0 — jamais)"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Swap"
-msgstr "Swap"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid "Swap usage; shown only when the machine has swap"
-msgstr "Utilisation du swap ; affiché seulement si la machine en a"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Disk I/O"
-msgstr "E/S disque"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid "Read and write rates of all disks, or of one"
-msgstr "Débits de lecture et d'écriture de tous les disques, ou d'un seul"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Read-rate sensor (empty — all disks)"
-msgstr "Capteur du débit de lecture (vide — tous les disques)"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "IPv4 address line"
-msgstr "Ligne de l'adresse IPv4"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Traffic since boot"
-msgstr "Trafic depuis le démarrage"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Wi-Fi signal strength"
-msgstr "Force du signal Wi-Fi"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Alert below, % (0 — never)"
-msgstr "Alerte en dessous de, % (0 — jamais)"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Temperatures"
-msgstr "Températures"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"Any temperature sensors, one line each: “label=id”, or just the id to use the sensor's own name"
-msgstr ""
-"N'importe quels capteurs de température, une ligne chacun : « étiquette=id », ou seulement l'id pour le nom du capteur"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Sensors"
-msgstr "Capteurs"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Peripheral batteries"
-msgstr "Batteries des périphériques"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"Mice, keyboards, headsets and phones over Bluetooth, from upower; the system battery has its own block"
-msgstr ""
-"Souris, claviers, casques et téléphones en Bluetooth, via upower ; la batterie système a son propre bloc"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "Sound"
-msgstr "Son"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"The default output's volume and name through wpctl (PipeWire), and the input's if asked"
-msgstr ""
-"Le volume et le nom de la sortie par défaut via wpctl (PipeWire), et de l'entrée sur demande"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "The input device too"
-msgstr "L'entrée aussi"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "The device's name under the bar"
-msgstr "Le nom de l'appareil sous la barre"
-
-#: schema/blocks.json
-msgctxt "schema: block name"
-msgid "systemd units"
-msgstr "Unités systemd"
-
-#: schema/blocks.json
-msgctxt "schema: block hint"
-msgid ""
-"The state of the units you name — active, inactive, failed — from the system manager or your own"
-msgstr ""
-"L'état des unités nommées — actives, inactives, en échec — du gestionnaire système ou du vôtre"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "Units"
-msgstr "Unités"
-
-#: schema/blocks.json
-msgctxt "schema: parameter name"
-msgid "User units (systemctl --user)"
-msgstr "Unités utilisateur (systemctl --user)"
-
-#: schema/blocks.json
+#: schema/blocks.json:90
 msgctxt "schema: parameter name"
 msgid "Pending reboot (a newer kernel installed)"
 msgstr "Redémarrage en attente (un noyau plus récent est installé)"
 
-#: schema/blocks.json
+#: schema/blocks.json:91
+msgctxt "schema: block name"
+msgid "Hardware spec sheet"
+msgstr "Fiche matérielle"
+
+#: schema/blocks.json:92
+msgctxt "schema: block hint"
+msgid "Static lines: processor, graphics card, board"
+msgstr "Lignes fixes : processeur, carte graphique, carte mère"
+
+#: schema/blocks.json:93
 msgctxt "schema: block name"
 msgid "Text"
 msgstr "Texte"
 
-#: schema/blocks.json
+#: schema/blocks.json:94
 msgctxt "schema: block hint"
 msgid "A line of your own"
 msgstr "Une ligne à vous"
 
-#: schema/blocks.json
+#: schema/blocks.json:96
 msgctxt "schema: parameter name"
 msgid "Colour"
 msgstr "Couleur"
 
-#: schema/blocks.json
+#: schema/blocks.json:97
 msgctxt "schema: parameter value"
 msgid "main text"
 msgstr "texte principal"
 
-#: schema/blocks.json
+#: schema/blocks.json:98
 msgctxt "schema: parameter value"
 msgid "secondary"
 msgstr "secondaire"
 
-#: schema/blocks.json
+#: schema/blocks.json:99
 msgctxt "schema: parameter value"
 msgid "header"
 msgstr "en-tête"
 
-#: schema/blocks.json
+#: schema/blocks.json:100
 msgctxt "schema: parameter value"
 msgid "values"
 msgstr "valeurs"
 
-#: schema/blocks.json
+#: schema/blocks.json:101
 msgctxt "schema: block name"
 msgid "Blank lines"
 msgstr "Lignes vides"
 
-#: schema/blocks.json
+#: schema/blocks.json:102
 msgctxt "schema: block hint"
 msgid "Empty space between blocks"
 msgstr "De l'espace vide entre les blocs"
 
-#: schema/blocks.json
+#: schema/blocks.json:103
 msgctxt "schema: parameter name"
 msgid "Lines"
 msgstr "Lignes"
 
-#: schema/blocks.json
+#: schema/blocks.json:104
 msgctxt "schema: block name"
 msgid "Git repositories"
 msgstr "Dépôts git"
 
-#: schema/blocks.json
+#: schema/blocks.json:105
 msgctxt "schema: block hint"
 msgid ""
 "Branch, uncommitted changes and commits ahead or behind, one line per path"
 msgstr ""
-"Branche, modifications non validées et commits en avance ou en retard, une ligne par chemin"
+"Branche, modifications non validées et commits en avance ou en retard, une "
+"ligne par chemin"
 
-#: schema/blocks.json
+#: schema/blocks.json:106
 msgctxt "schema: parameter name"
 msgid "Paths (~ allowed)"
 msgstr "Chemins (~ autorisé)"
 
-#: schema/blocks.json
+#: schema/blocks.json:108
+msgctxt "schema: block name"
+msgid "Custom command"
+msgstr "Commande personnalisée"
+
+#: schema/blocks.json:109
+msgctxt "schema: block hint"
+msgid "A line from the output of any command"
+msgstr "Une ligne de la sortie d'une commande quelconque"
+
+#: schema/blocks.json:110 schema/blocks.json:116
+msgctxt "schema: parameter name"
+msgid "Label"
+msgstr "Libellé"
+
+#: schema/blocks.json:111
+msgctxt "schema: parameter name"
+msgid "Command"
+msgstr "Commande"
+
+#: schema/blocks.json:113
+msgctxt "schema: parameter name"
+msgid "Lines to show"
+msgstr "Lignes à afficher"
+
+#: schema/blocks.json:114
+msgctxt "schema: block name"
+msgid "Custom sensor"
+msgstr "Capteur personnalisé"
+
+#: schema/blocks.json:115
+msgctxt "schema: block hint"
+msgid "Any ksystemstats sensor by its id"
+msgstr "N'importe quel capteur ksystemstats, par son identifiant"
+
+#: schema/blocks.json:117
+msgctxt "schema: parameter name"
+msgid "Sensor id"
+msgstr "Identifiant du capteur"
+
+#: schema/blocks.json:118
+msgctxt "schema: parameter name"
+msgid "Draw a bar"
+msgstr "Dessiner une barre"
+
+#: schema/blocks.json:119
+msgctxt "schema: parameter name"
+msgid "Suffix after the value"
+msgstr "Suffixe après la valeur"
+
+#: schema/blocks.json:120
+msgctxt "schema: parameter name"
+msgid "Decimal places"
+msgstr "Décimales"
+
+#: schema/blocks.json:121
 msgctxt "schema: parameter name"
 msgid "Alert from (0 — never)"
 msgstr "Alerte à partir de (0 — jamais)"
