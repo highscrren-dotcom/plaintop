@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+      http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <!-- Click-through: the applet's wrapper in the shell is disabled, so both mouse
+         buttons reach the desktop as if the widget were not there; only the shell's edit
+         mode gives the widget the mouse back. Off by default, as in the weather. XML
+         comments forbid a double hyphen, so the installer's "clicks off" switch is
+         spelled out rather than quoted. -->
+    <entry name="clickThrough" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- Palette and font, the monitor's defaults: the widgets are meant to sit on one
+         wallpaper as one text. Weekdays take the main colour, the weekends the accent
+         (red on a wall calendar), the names, the week numbers and the neighbouring
+         months' days the dim one; today's brackets take the monitor's value colour. -->
+    <entry name="colorFg" type="String">
+      <default>#C8CCD4</default>
+    </entry>
+    <entry name="colorAccent" type="String">
+      <default>#E05561</default>
+    </entry>
+    <entry name="colorDim" type="String">
+      <default>#6B7280</default>
+    </entry>
+    <entry name="colorToday" type="String">
+      <default>#8FB6E0</default>
+    </entry>
+    <entry name="fontFamily" type="String">
+      <default>JetBrainsMono Nerd Font Mono</default>
+    </entry>
+    <entry name="fontSize" type="Int">
+      <default>10</default>
+    </entry>
+    <!-- How many months: 1, the current one, or 3, the previous, the current and the
+         next, one under another as on a quarterly wall calendar. -->
+    <entry name="months" type="Int">
+      <default>3</default>
+    </entry>
+    <!-- A day's column in characters: the number sits in the middle, today's brackets
+         take the outer two, so four is the least that holds "[31]". The applet's width
+         is seven cells plus the week-number column, and its height eight lines per
+         month plus a blank line between months, so the size hint stays constant for
+         the given settings whatever month is shown (see docs/GOTCHAS.md on Layout.*). -->
+    <entry name="cellWidth" type="Int">
+      <default>4</default>
+    </entry>
+    <!-- ISO 8601 week numbers in front of the rows, as on the wall. -->
+    <entry name="weekNumbers" type="Bool">
+      <default>true</default>
+    </entry>
+    <!-- The first column of the grid: 0 follows the locale's first day of the week,
+         otherwise a Qt day, 1 Monday or 7 Sunday. -->
+    <entry name="firstDay" type="Int">
+      <default>0</default>
+    </entry>
+    <!-- The neighbouring months' days in the cells before the 1st and after the last,
+         in the dim colour; off, those cells stay empty, as on the wall. -->
+    <entry name="fillDays" type="Bool">
+      <default>false</default>
+    </entry>
+    <!-- The weekend, as the locale defines it, in the accent colour. -->
+    <entry name="weekendAccent" type="Bool">
+      <default>true</default>
+    </entry>
+  </group>
+
+</kcfg>

@@ -47,6 +47,10 @@ DOMAINS = {
         "sources": ["weather/package/contents"],
         "schema": False,
     },
+    "plasma_applet_org.s1dd1.plaincalendar": {
+        "sources": ["calendar/package/contents"],
+        "schema": False,
+    },
 }
 
 # Must match the contexts the editors pass when they translate vocabulary text.

@@ -28,7 +28,7 @@ reproduction beats a paragraph of reasoning.
 | **A generator for another engine** | the description layer is engine-agnostic on purpose — waybar, eww, AGS, or back to conky |
 | **Hardware and distro portability** | the defaults describe one machine; every hardcoded sensor id you replace with discovery is a win |
 | **A trap you hit** | a PR to `docs/GOTCHAS.md` with a reproduction is worth as much as code |
-| **Translation** | all four widgets speak through gettext catalogs in `po/`: a new language is one command and a `.po` file — see [Translations](#translations) |
+| **Translation** | all five widgets speak through gettext catalogs in `po/`: a new language is one command and a `.po` file — see [Translations](#translations) |
 
 Before adding a block type, check whether the open-ended ones already cover you: `command`
 runs any shell command on its own interval, `sensor` shows any `ksystemstats` sensor by id.
@@ -51,7 +51,8 @@ Neither needs a code change — just a row in the description.
 | `player/package/` | the "now playing" widget as a Plasma 6 widget: host, settings pages, catalogs — no service |
 | `player/shared/` | the player's view — the MPRIS model, the lines, the controls — copied into `player/package/` and into `spectrum/package/` on install: the visualizer draws it in the centre of its ring |
 | `weather/package/` | the weather widget: a Plasma 6 widget that asks one of four sources itself over https — the sources are objects in `contents/ui/Sources.js` — no shared files, no service |
-| `po/` | translation catalogs, one domain per widget, four in all; `extract.py` refreshes them and starts a missing one, `build.py` compiles |
+| `calendar/package/` | the calendar widget: a Plasma 6 widget that draws the month grid from the locale and the clock — no shared files, no service, nothing fetched |
+| `po/` | translation catalogs, one domain per widget, five in all; `extract.py` refreshes them and starts a missing one, `build.py` compiles |
 | `conky/` | the first implementation; frozen and switched off, kept until the plasmoid replaces it |
 | `install.sh` | install, status, `.plasmoid` builds, conky and clicks on/off — all operations idempotent |
 | `docs/` | traps, decisions, the working method, the session journal, the KDE Store texts |
@@ -133,7 +134,8 @@ The generator needs no changes: validation is driven by the vocabulary.
 
 ## Adding a widget
 
-The player and the weather were added this way; copy whichever is closer to yours.
+The player, the weather and the calendar were added this way; copy whichever is closer to
+yours — the calendar is the smallest: no service, no shared files, no requests.
 
 1. **Package** — `<name>/package/`: `metadata.json` (id `org.s1dd1.plain<name>`, category,
    version), `contents/config/main.xml` and `config.qml` (the settings schema and its
@@ -195,7 +197,8 @@ about them (decision 13). A fifth is:
 The widgets use KDE's own ki18n with gettext catalogs, one domain per widget —
 `plasma_applet_org.s1dd1.plaintop` for the monitor, `plasma_applet_org.s1dd1.plainspectrum`
 for the visualizer, `plasma_applet_org.s1dd1.plainplayer` for the player,
-`plasma_applet_org.s1dd1.plainweather` for the weather. The language is Plasma's
+`plasma_applet_org.s1dd1.plainweather` for the weather,
+`plasma_applet_org.s1dd1.plaincalendar` for the calendar. The language is Plasma's
 (System Settings → Region & Language); dates and decimal separators follow its Formats.
 Why this design and what it costs — `docs/DECISIONS.md`, decision 7. There are ten
 languages in `po/`; all but English (the source) and Russian are machine translations

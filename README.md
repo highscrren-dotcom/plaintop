@@ -39,6 +39,7 @@ What is in the repository:
 | **`spectrum/`** | the audio visualizer: a widget plus a relay service that serves cava's bands | works |
 | **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module; its view lives in `shared/`, since the visualizer draws it too | works |
 | **`weather/`** | the weather widget: now and the next days as text, from one of four sources over https — Open-Meteo by default — no service of its own | works |
+| **`calendar/`** | the calendar widget: a wall calendar's page as text — one month or three, week numbers, the weekends and today marked — everything from the locale, no service | works |
 | **`conky/`** | the first implementation on [conky](https://github.com/brndnmtthws/conky) | switched off, kept until the plasmoid fully replaces it |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
@@ -68,7 +69,7 @@ Widgets*, search for the name:
 - the player, `plainplayer` — [store.kde.org/p/2373633](https://store.kde.org/p/2373633/);
 - the weather, `plainweather` — [store.kde.org/p/2373634](https://store.kde.org/p/2373634/).
 
-**From the repository** — all four widgets and the relay:
+**From the repository** — all five widgets and the relay:
 
 ```bash
 git clone https://github.com/highscrren-dotcom/plaintop.git
@@ -77,6 +78,7 @@ cd plaintop
 ./install.sh --spectrum          # the audio visualizer: plasmoid + relay service
 ./install.sh --player            # the "now playing" widget: plasmoid only
 ./install.sh --weather           # the weather widget: plasmoid only
+./install.sh --calendar         # the calendar widget: plasmoid only
 ./install.sh --windows-off       # retire the window hosts of an earlier setup (decision 9)
 ./install.sh --status            # what is installed and what is running
 ```
@@ -102,7 +104,8 @@ scripts and the relay, `msgfmt` from gettext for the translations, and a monospa
 stand, `--check-passthrough`). The visualizer additionally needs `cava`; the player nothing
 extra — the MPRIS module it reads ships with plasma-workspace; the weather needs network
 access to the chosen source's host (`api.open-meteo.com` by default) and to
-`geocoding-api.open-meteo.com` for the place search; the conky implementation needs
+`geocoding-api.open-meteo.com` for the place search; the calendar nothing beyond Plasma; the
+conky implementation needs
 `conky`, `python-xlib` and `lm_sensors`.
 
 ## Adapting it to your hardware
@@ -188,6 +191,22 @@ geolocation service where you are: behind a tunnel that would be the tunnel's ex
 for attribution — the last line names the source in use, on by default.
 `./install.sh --weather` installs it.
 
+## The calendar
+
+`calendar/` is a wall calendar in the same lines: the month's name and year, a row of
+weekday names, and the days in a grid of seven columns with the ISO week number in front
+of every row — one month, or three one under another, the previous, the current and the
+next, as the quarterly calendars on an office wall. Weekends take the accent colour, the
+red of a printed calendar; today is in brackets in a colour of its own, the ring on the
+wall. Everything the grid says comes from the locale — the names, the first day of the
+week, which days are the weekend — so it reads as the calendar on your wall does, in your
+language; the first day can be forced to Monday or Sunday, and the empty cells can be
+filled with the neighbouring months' days. Nothing is fetched and nothing is polled: the
+grid is rebuilt when a setting changes and when the day turns. The widget is as wide as
+seven cells and the week numbers and as tall as the months shown, eight lines each with a
+blank line between, so its size holds whatever month it is. `./install.sh --calendar`
+installs it.
+
 ## Three layers
 
 ```
@@ -241,7 +260,7 @@ So a new reading usually means a new row in the description, not a patch to the 
 
 ## Languages
 
-All four widgets and their settings pages follow Plasma's language (System Settings →
+All five widgets and their settings pages follow Plasma's language (System Settings →
 Region & Language); dates and decimal separators follow its Formats. There are
 ten: English, Russian, Ukrainian, German, French, Spanish, Brazilian Portuguese, Polish,
 Simplified Chinese and Japanese. Everything but English and Russian is a machine
