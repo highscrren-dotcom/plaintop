@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 16:31+0500\n"
+"POT-Creation-Date: 2026-10-04 18:11+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -70,21 +70,51 @@ msgctxt "reminder: it was due earlier"
 msgid "MISSED"
 msgstr "ПРОПУЩЕНО"
 
-#: calendar/package/contents/ui/Sticker.qml:149
+#: calendar/package/contents/ui/Sticker.qml:74
+#: calendar/package/contents/ui/Sticker.qml:79
+msgctxt "the sticker's reminder choice"
+msgid "none"
+msgstr "нет"
+
+#: calendar/package/contents/ui/Sticker.qml:75
+msgctxt "the sticker's reminder choice"
+msgid "an hour before"
+msgstr "за час"
+
+#: calendar/package/contents/ui/Sticker.qml:76
+#, kde-format
+msgctxt "the sticker's reminder choice"
+msgid "%1 min before"
+msgid_plural "%1 min before"
+msgstr[0] "за %1 мин"
+msgstr[1] "за %1 мин"
+msgstr[2] "за %1 мин"
+
+#: calendar/package/contents/ui/Sticker.qml:80
+#, kde-format
+msgctxt "the sticker's reminder choice: at an hour of the note's day"
+msgid "at %1"
+msgstr "в %1"
+
+#: calendar/package/contents/ui/Sticker.qml:109
+msgctxt "the sticker's time field"
+msgid "time:"
+msgstr "время:"
+
+#: calendar/package/contents/ui/Sticker.qml:110
+msgctxt "the sticker's reminder row"
+msgid "remind:"
+msgstr "напомнить:"
+
+#: calendar/package/contents/ui/Sticker.qml:253
 msgctxt "the account's last fetch failed"
 msgid "offline"
 msgstr "офлайн"
 
-#: calendar/package/contents/ui/Sticker.qml:168
+#: calendar/package/contents/ui/Sticker.qml:276
 msgctxt "the sticker's hint line"
 msgid "Esc closes · an empty note deletes it"
 msgstr "Esc закрывает · пустая заметка удаляется"
-
-#: calendar/package/contents/ui/Sticker.qml:171
-#, kde-format
-msgctxt "the sticker's second hint line: the reminders' syntax; %1 is an hour"
-msgid "14:30 text — rings before it · !text — rings at %1"
-msgstr "14:30 текст — звонок перед ним · !текст — звонок в %1"
 
 #: calendar/package/contents/ui/configAccounts.qml:29
 msgctxt "account preset"
@@ -648,3 +678,9 @@ msgstr "Дни с записями:"
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "Лист стикера:"
+
+#, kde-format
+#~ msgctxt ""
+#~ "the sticker's second hint line: the reminders' syntax; %1 is an hour"
+#~ msgid "14:30 text — rings before it · !text — rings at %1"
+#~ msgstr "14:30 текст — звонок перед ним · !текст — звонок в %1"

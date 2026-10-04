@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 16:31+0500\n"
+"POT-Creation-Date: 2026-10-04 18:11+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -69,21 +69,49 @@ msgctxt "reminder: it was due earlier"
 msgid "MISSED"
 msgstr "已错过"
 
-#: calendar/package/contents/ui/Sticker.qml:149
+#: calendar/package/contents/ui/Sticker.qml:74
+#: calendar/package/contents/ui/Sticker.qml:79
+msgctxt "the sticker's reminder choice"
+msgid "none"
+msgstr "不提醒"
+
+#: calendar/package/contents/ui/Sticker.qml:75
+msgctxt "the sticker's reminder choice"
+msgid "an hour before"
+msgstr "提前一小时"
+
+#: calendar/package/contents/ui/Sticker.qml:76
+#, kde-format
+msgctxt "the sticker's reminder choice"
+msgid "%1 min before"
+msgid_plural "%1 min before"
+msgstr[0] "提前 %1 分钟"
+
+#: calendar/package/contents/ui/Sticker.qml:80
+#, kde-format
+msgctxt "the sticker's reminder choice: at an hour of the note's day"
+msgid "at %1"
+msgstr "于 %1"
+
+#: calendar/package/contents/ui/Sticker.qml:109
+msgctxt "the sticker's time field"
+msgid "time:"
+msgstr "时间："
+
+#: calendar/package/contents/ui/Sticker.qml:110
+msgctxt "the sticker's reminder row"
+msgid "remind:"
+msgstr "提醒："
+
+#: calendar/package/contents/ui/Sticker.qml:253
 msgctxt "the account's last fetch failed"
 msgid "offline"
 msgstr "离线"
 
-#: calendar/package/contents/ui/Sticker.qml:168
+#: calendar/package/contents/ui/Sticker.qml:276
 msgctxt "the sticker's hint line"
 msgid "Esc closes · an empty note deletes it"
 msgstr "Esc 关闭 · 清空即删除"
-
-#: calendar/package/contents/ui/Sticker.qml:171
-#, kde-format
-msgctxt "the sticker's second hint line: the reminders' syntax; %1 is an hour"
-msgid "14:30 text — rings before it · !text — rings at %1"
-msgstr "14:30 文本 — 提前提醒 · !文本 — %1 提醒"
 
 #: calendar/package/contents/ui/configAccounts.qml:29
 msgctxt "account preset"
@@ -628,3 +656,9 @@ msgstr "有记录的日期："
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "便签纸面："
+
+#, kde-format
+#~ msgctxt ""
+#~ "the sticker's second hint line: the reminders' syntax; %1 is an hour"
+#~ msgid "14:30 text — rings before it · !text — rings at %1"
+#~ msgstr "14:30 文本 — 提前提醒 · !文本 — %1 提醒"

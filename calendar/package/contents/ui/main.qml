@@ -125,10 +125,13 @@ PlasmoidItem {
         return "python3 '" + root.notesScript + "' " + args + " # " + Date.now()
     }
 
-    function saveNote(dateKey, text) {
+    // `lead`: the sticker's choice for a timed note, minutes before (-1 none); it follows
+    // the settings' options, and the script takes the last --lead it is given.
+    function saveNote(dateKey, text, lead) {
         const account = root.cfg.noteAccount.length > 0 ? root.cfg.noteAccount : "local"
+        const own = (lead !== undefined && lead !== null) ? " --lead " + Math.max(-1, Number(lead)) : ""
         const cmd = text.trim().length > 0
-            ? "set '" + account + "' '" + dateKey + "' '" + Qt.btoa(text) + "'" + root.alarmOptions
+            ? "set '" + account + "' '" + dateKey + "' '" + Qt.btoa(text) + "'" + root.alarmOptions + own
             : "delete '" + account + "' '" + dateKey + "'" + root.alarmOptions
         notesWriter.connectSource(command(cmd))
     }
@@ -377,6 +380,7 @@ PlasmoidItem {
             noteAccount: root.cfg.noteAccount.length > 0 ? root.cfg.noteAccount : "local"
             reminders: root.cfg.reminders
             remindHour: root.remindHour
+            remindLead: root.cfg.remindLead
 
             fontFamily: root.face
             fontSize: root.cfg.fontSize
@@ -390,7 +394,7 @@ PlasmoidItem {
             columns: root.cfg.stickerColumns
             animation: root.cfg.stickerAnimation
 
-            onSave: (key, text) => root.saveNote(key, text)
+            onSave: (key, text, lead) => root.saveNote(key, text, lead)
         }
 
         Reminder {

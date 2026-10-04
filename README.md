@@ -229,10 +229,12 @@ calendar-query, PUT and DELETE with etags, recurrence rules, the time zones — 
 the passwords in its own file, mode 600. `./install.sh --check-notes` runs its stand,
 a fake CalDAV server included.
 
-**Reminders.** The time goes in the text: a note whose first line starts with a time —
-`14:30 Dentist`, or `9.00-10.30 Standup` — becomes a timed event and rings a few minutes
-before it (ten by default); `!Buy milk` stays a note on its day and rings at the hour you
-set (09:00). Both are VALARMs in the iCalendar the note is saved as, so an account's phone
+**Reminders.** Under the note the sticker has two rows: *time* — type `14:30`, or leave
+it empty for an all-day note — and *remind*, where a click picks when it rings: none, a few
+minutes before (ten by default) or an hour before a timed note; none or at the hour you set
+(09:00) for an all-day one. The same can be typed into the note: a first line that starts
+with a time — `14:30 Dentist`, or `9.00-10.30 Standup` — makes a timed event that rings
+before it, `!Buy milk` an all-day note that rings at the hour. Both are VALARMs in the iCalendar the note is saved as, so an account's phone
 rings too; the accounts' own events ring by their alarms, and timed ones without any by
 the same lead if you ask. When one is due, a sheet in the same frame opens from the day's
 cell — the entry, its account, and the ways out marked with `>`: snooze a few minutes, an

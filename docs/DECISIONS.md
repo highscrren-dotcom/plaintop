@@ -718,6 +718,17 @@ and "14:30 Dentist" reads in the grid as it is typed and round-trips through iCa
 time back from DTSTART, the "!" back from the alarm). A field for the time would be the one
 widget in the set with a widget-toolkit control on its face.
 
+⚠️ **Correction, 2026-10-04.** On the desktop the user could not tell how to set a reminder:
+the syntax was named only in a dim hint line. By the user's choice the sticker now has two
+rows under the note — "time:" with a field for HH:MM, and "remind:" with the choices marked
+by `>` (for a timed note none, the settings' lead, an hour before; for an all-day one none
+or at the settings' hour). They write the same data: the time and the "!" go back into the
+text the script reads, the lead into `--lead`, so the iCalendar and the phone's alarm are as
+before, and typing "14:30 …" into the note still works. The field is a `TextInput` with an
+input mask, drawn in the widget's font between the frame's characters — the one control on
+the face, at the user's word. A note of yours without an alarm now stays silent: the
+"events without an alarm" rule counts for the accounts' entries only.
+
 **Why VALARM and not a schedule of our own.** The data already travel to Yandex, iCloud and
 Google over CalDAV; a VALARM in the same resource makes the phone ring with no second
 mechanism, and the desktop reads the servers' alarms by the same rule. UTC in DTSTART
