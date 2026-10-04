@@ -41,22 +41,31 @@ PlasmaCore.Dialog {
 
     // The note as it was when the sheet opened; a changed text is handed back on close.
     property string original: ""
+    // The note as it is: the editor sits in a Repeater delegate — its id is not visible
+    // here, and the delegate is rebuilt when the rows change — so the text lives on the
+    // sticker, and the delegate that is the editor row registers its TextEdit.
+    property string noteText: ""
+    property TextEdit editorItem: null
     signal save(string dateKey, string text)
 
     function open(key, dayEntries, anchor) {
-        dateKey = key
-        entries = dayEntries || []
-        visualParent = anchor
+        const list = dayEntries || []
         let own = ""
-        for (let i = 0; i < entries.length; i++) {
-            const e = entries[i]
+        for (let i = 0; i < list.length; i++) {
+            const e = list[i]
             if (e.own && e.account === noteAccount) {
                 own = e.summary + (e.description.length > 0 ? "\n" + e.description : "")
                 break
             }
         }
+        // The text first: a rebuilt editor row takes it as it is created.
         original = own
-        editor.text = own
+        noteText = own
+        if (editorItem)
+            editorItem.text = own
+        dateKey = key
+        entries = list
+        visualParent = anchor
         revealed = animation === 2 ? 0 : 1000
         visible = true
     }
@@ -65,10 +74,12 @@ PlasmaCore.Dialog {
         if (visible) {
             if (animation === 2)
                 unfold.restart()
-            editor.forceActiveFocus()
-            editor.cursorPosition = editor.length
-        } else if (editor.text !== original) {
-            save(dateKey, editor.text)
+            if (editorItem) {
+                editorItem.forceActiveFocus()
+                editorItem.cursorPosition = editorItem.length
+            }
+        } else if (noteText !== original) {
+            save(dateKey, noteText)
         }
     }
 
@@ -218,6 +229,14 @@ PlasmaCore.Dialog {
                     required property int index
                     readonly property var spec: sticker.rows[index] || ({ text: "", role: "dim" })
                     readonly property bool isEditor: spec.editor === true
+                    function claim() {
+                        if (!isEditor) return
+                        editor.text = sticker.noteText
+                        sticker.editorItem = editor
+                    }
+                    onIsEditorChanged: claim()
+                    Component.onCompleted: claim()
+                    Component.onDestruction: if (sticker.editorItem === editor) sticker.editorItem = null
                     width: isEditor ? editRow.width : lineText.width
                     height: isEditor ? editRow.height : lineText.height
                     // The unfold: rows below the counter are laid out but not yet drawn.
@@ -252,6 +271,7 @@ PlasmaCore.Dialog {
                             renderType: Text.NativeRendering
                             textFormat: TextEdit.PlainText
                             selectByMouse: true
+                            onTextChanged: if (row.isEditor) sticker.noteText = text
                             Keys.onEscapePressed: sticker.visible = false
                         }
                         Line {
