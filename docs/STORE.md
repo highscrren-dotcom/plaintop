@@ -57,7 +57,8 @@ collapse where a block hides, so no double rules. The description below already 
 And a small one: in the disks block the root mount is labelled `root` instead of `/` —
 beside a bar made of slashes, `/` read as part of the bar.
 
-**0.4 — not uploaded yet.** What's new: thresholds — a bar past its "alert from" turns red,
+**0.4 — uploaded 2026-10-04** (06:38 UTC by the store's `changed` field; the listed file's
+MD5 equals the Desktop kit's). What's new: thresholds — a bar past its "alert from" turns red,
 the model line too by temperature; sparklines after the bars (the "history" parameter);
 new blocks — swap, load average, disk I/O, temperatures of any sensors, systemd units,
 peripheral batteries (upower), sound (wpctl), git repositories, text and blank lines; the
@@ -78,7 +79,7 @@ every action in a menu framed with characters in the widget's own font; the line
 pointer gets a frame; a block's lines can be switched off or given a command of your own
 with the row's values filled in; while clicks pass through, only the active lines take the
 mouse. Settings for the terminal and the editor the actions use, the menu's frame and paper.
-⚠️ Not yet run on a desktop at the time of writing — the gallery picture must show a menu.
+Checked on the desktop 2026-10-04; the gallery picture shows the menu.
 
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
@@ -117,9 +118,13 @@ Spanish, Brazilian Portuguese, Polish, Simplified Chinese, Japanese — all but 
 Russian machine-translated, corrections welcome. The updates line reads pacman and
 flatpak; apt, dnf and zypper are read too but not yet tried on those systems.
 
-Out of the box the widget takes clicks like any other; General → Mouse lets both buttons
-through to the desktop, and the widget takes the mouse only in the desktop's edit mode —
-which is also where its settings are. Source and details:
+The lines are active: a left click runs what a line is about — a bar opens System
+Monitor, a disk its folder, a process asks before it is terminated, the sound line toggles
+mute, the header opens the settings — and a right click lists every action of the line in
+a menu framed with characters, in the widget's own font. A block's lines can be switched
+off or given a command of your own. Out of the box the widget takes clicks like any other;
+General → Mouse lets both buttons through to the desktop everywhere but on the active
+lines, and the widget moves and resizes in the desktop's edit mode. Source and details:
 https://github.com/highscrren-dotcom/plaintop, devlog: https://t.me/s1dd1_logs
 
 ———
@@ -147,9 +152,13 @@ NVMe, сетевой интерфейс — находятся на самой �
 приветствуются. Строка обновлений читает pacman и flatpak; apt, dnf и zypper тоже
 читаются, но на этих системах ещё не опробованы.
 
-Сразу после установки виджет ловит клики, как любой другой; «Общее → Мышь» пропускает
-на рабочий стол обе кнопки, а мышь виджет берёт только в режиме правки рабочего стола —
-там же и его настройки. Исходники и подробности:
+Строки активны: левый клик делает то, о чём строка, — полоска открывает «Системный
+монитор», диск — свою папку, процесс спрашивает, прежде чем его завершить, строка звука
+переключает тишину, заголовок открывает настройки, — а правый клик показывает все действия
+строки в меню в рамке из символов, шрифтом виджета. Строки блока можно выключить или дать им
+свою команду. Сразу после установки виджет ловит клики, как любой другой; «Общее → Мышь»
+пропускает на рабочий стол обе кнопки везде, кроме активных строк, а двигается и меняет
+размер виджет в режиме правки рабочего стола. Исходники и подробности:
 https://github.com/highscrren-dotcom/plaintop, дневник разработки: https://t.me/s1dd1_logs
 ```
 
@@ -163,7 +172,8 @@ and colours; on a line it goes along the edge the bars reach last. With *Mouse* 
 the player's controls row takes clicks, the rest of the widget lets them through. The
 description below already says so.
 
-**0.4 — not uploaded yet.** What's new: a *Channels* switch on the *Ring* page, on by
+**0.4 — uploaded 2026-10-04** (06:40 UTC; MD5 equal to the Desktop kit's). What's new: a
+*Channels* switch on the *Ring* page, on by
 default — one spectrum around the whole ring, both channels averaged by the relay; off
 keeps cava's stereo frame, which is mirrored about its middle. Needs the relay from this
 version (`./install.sh --spectrum`): an older relay ignores the request and serves the
@@ -425,7 +435,8 @@ plainweather — погода для рабочего стола Plasma 6 про
 
 ## plaincalendar — calendar
 
-Published 2026-10-04: https://store.kde.org/p/2377077/ (category Plasma 6 Extensions → Date and Time)
+Published 2026-10-04: https://store.kde.org/p/2377077/ (category Plasma 6 Extensions → Date and Time);
+0.1 listed at 06:43 UTC, MD5 equal to the Desktop kit's.
 
 **0.2 — not uploaded yet.** What's new: notes by day and calendars. A day with an entry
 takes its own colour; a click on it (the cell is framed under the pointer) opens a sticker
@@ -433,7 +444,7 @@ framed with characters, with the day's events and tasks from the accounts and a 
 yours; the next entries are printed under the months. Notes are iCalendar files, or go to
 an account's calendar. Accounts on a new page, any number: Yandex and iCloud (CalDAV, app
 password), Google (CalDAV, OAuth login once), any CalDAV server, read-only ICS links. The
-description below needs these two paragraphs added before the upload.
+description below says so; Yandex was tried end to end, the others not yet.
 
 - **File:** `dist/plaincalendar-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Date and Time
@@ -456,13 +467,23 @@ row — one month, or three one under another, the previous, the current and the
 a quarterly calendar on an office wall. Weekends in their own colour, today in brackets
 in another. The names, the first day of the week and the weekend come from your locale;
 the first day can be forced to Monday or Sunday, and the empty cells can show the
-neighbouring months' days. Nothing is fetched and nothing runs beside the widget: it
-needs nothing beyond Plasma.
+neighbouring months' days.
+
+Notes and calendars: a click on a day opens a sticker by the cell — a sheet framed with
+characters with the day's events and tasks and a note of yours; a day with an entry takes
+its own colour, and the next entries are listed under the months. Notes are iCalendar
+files on your disk, or go to an account's calendar. Accounts, any number: Yandex and iCloud
+over CalDAV with an app password, Google over CalDAV with a one-time OAuth login, any CalDAV
+server, read-only ICS links; passwords stay in a file only you can read. Yandex has been
+tried end to end, the others not yet — reports welcome. The notes run a small helper in
+Python 3 (the standard library only) from the widget's package; without notes the calendar
+fetches nothing.
 
 Right-click → Configure: months (one or three), week numbers, the first day of the
-week, the weekends' colour, the neighbouring months; font, size, cell width, four
-colours; the Mouse page lets both buttons through to the desktop like the other plaintop
-widgets. The default font is JetBrainsMono Nerd Font Mono; any monospace font works. The
+week, the weekends' colour, the neighbouring months; font, size, cell width, the colours;
+the Notes page — on or off, where a note goes, how often accounts are read, the sticker's
+frame and paper; the Accounts page; the Mouse page lets clicks through to the desktop
+everywhere but on the days, like the other plaintop widgets. The default font is JetBrainsMono Nerd Font Mono; any monospace font works. The
 interface follows Plasma's language — ten languages, all but English and Russian
 machine-translated, corrections welcome.
 
@@ -478,12 +499,23 @@ plaincalendar — настенный календарь для рабочего 
 стене кабинета. Выходные своим цветом, сегодняшний день в скобках другим. Названия,
 первый день недели и выходные берутся из вашей локали; первый день можно принудительно
 сделать понедельником или воскресеньем, а в пустых ячейках показать дни соседних
-месяцев. Ничего не запрашивается, рядом с виджетом ничего не работает: сверх Plasma ему
-не нужно ничего.
+месяцев.
+
+Заметки и календари: клик по дню открывает стикер у ячейки — лист в рамке из символов с
+событиями и задачами дня и вашей заметкой; день с записью красится своим цветом, а
+ближайшие записи перечислены под месяцами. Заметки — файлы iCalendar на вашем диске или
+записи в календаре аккаунта. Аккаунтов сколько угодно: Яндекс и iCloud по CalDAV с паролем
+приложения, Google по CalDAV с однократным входом OAuth, любой сервер CalDAV, ссылки ICS на
+чтение; пароли лежат в файле, который читаете только вы. Яндекс проверен полностью,
+остальные пока нет — сообщения приветствуются. Заметки запускают небольшой помощник на
+Python 3 (только стандартная библиотека) из пакета виджета; без заметок календарь ничего не
+запрашивает.
 
 Правый клик → Настроить: месяцы (один или три), номера недель, первый день недели, цвет
-выходных, соседние месяцы; шрифт, кегль, ширина ячейки, четыре цвета; страница «Мышь»
-пропускает на стол обе кнопки, как у других виджетов plaintop. Шрифт по умолчанию —
+выходных, соседние месяцы; шрифт, кегль, ширина ячейки, цвета; страница «Заметки» —
+включить или выключить, куда писать заметку, как часто читать аккаунты, рамка и бумага
+стикера; страница «Аккаунты»; страница «Мышь» пропускает клики на стол везде, кроме дней,
+как у других виджетов plaintop. Шрифт по умолчанию —
 JetBrainsMono Nerd Font Mono; подойдёт любой моноширинный. Интерфейс говорит на языке
 Plasma — десять языков, всё, кроме английского и русского, переведено машинно,
 исправления приветствуются.
