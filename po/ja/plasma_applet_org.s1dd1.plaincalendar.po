@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 12:00+0500\n"
+"POT-Creation-Date: 2026-10-04 12:21+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -24,153 +24,6 @@ msgstr "全般"
 
 #: calendar/package/contents/config/config.qml:13
 msgctxt "settings page"
-msgid "Mouse"
-msgstr "マウス"
-
-#: calendar/package/contents/ui/configGeneral.qml:34
-msgctxt "settings section"
-msgid "Calendar"
-msgstr "カレンダー"
-
-#: calendar/package/contents/ui/configGeneral.qml:38
-msgid "Months:"
-msgstr "月:"
-
-#: calendar/package/contents/ui/configGeneral.qml:39
-msgctxt "how many months are shown"
-msgid "one — the current"
-msgstr "1つ — 今月"
-
-#: calendar/package/contents/ui/configGeneral.qml:40
-msgctxt "how many months are shown"
-msgid "three — the previous, the current and the next"
-msgstr "3つ — 先月、今月、来月"
-
-#: calendar/package/contents/ui/configGeneral.qml:47
-msgid "Week numbers:"
-msgstr "週番号:"
-
-#: calendar/package/contents/ui/configGeneral.qml:48
-msgid "ISO week numbers in front of the rows"
-msgstr "各行の前に ISO 週番号を表示"
-
-#: calendar/package/contents/ui/configGeneral.qml:53
-msgid "Week starts on:"
-msgstr "週の始まり:"
-
-#: calendar/package/contents/ui/configGeneral.qml:54
-msgctxt "first day of the week"
-msgid "as the locale says"
-msgstr "ロケールに従う"
-
-#: calendar/package/contents/ui/configGeneral.qml:55
-msgctxt "first day of the week"
-msgid "Monday"
-msgstr "月曜日"
-
-#: calendar/package/contents/ui/configGeneral.qml:56
-msgctxt "first day of the week"
-msgid "Sunday"
-msgstr "日曜日"
-
-#: calendar/package/contents/ui/configGeneral.qml:63
-msgid "Weekends:"
-msgstr "週末:"
-
-#: calendar/package/contents/ui/configGeneral.qml:64
-msgid "in their own colour, as on a wall calendar"
-msgstr "壁掛けカレンダーのように別の色で表示"
-
-#: calendar/package/contents/ui/configGeneral.qml:69
-msgid "Other months:"
-msgstr "他の月:"
-
-#: calendar/package/contents/ui/configGeneral.qml:70
-msgid "fill the empty cells with the neighbouring months' days"
-msgstr "空のマスを前後の月の日付で埋める"
-
-#: calendar/package/contents/ui/configGeneral.qml:74
-msgid ""
-"Today is in brackets. The names of the days and months, the first day\n"
-"of the week and the weekend come from the locale\n"
-"(System Settings → Language and Region → Formats)."
-msgstr ""
-"今日は角括弧で囲まれます。曜日と月の名前、週の始まり、\n"
-"週末はロケールから取られます\n"
-"（システム設定 → 言語と地域 → 書式）。"
-
-#: calendar/package/contents/ui/configGeneral.qml:79
-msgctxt "settings section"
-msgid "Text"
-msgstr "テキスト"
-
-#: calendar/package/contents/ui/configGeneral.qml:83
-msgid "Font:"
-msgstr "フォント:"
-
-#: calendar/package/contents/ui/configGeneral.qml:89
-msgctxt "font size"
-msgid "Size:"
-msgstr "サイズ:"
-
-#: calendar/package/contents/ui/configGeneral.qml:96
-msgid "Day cell, characters:"
-msgstr "日付マスの幅 (文字数):"
-
-#: calendar/package/contents/ui/configGeneral.qml:102
-msgid ""
-"The widget is as wide as seven cells and the week numbers, and as tall as\n"
-"the months shown: eight lines each, with a blank line between them."
-msgstr ""
-"ウィジェットの幅は7つのマスと週番号の分、高さは表示する月の数で決まります。\n"
-"1か月につき8行、月の間に空行が1行入ります。"
-
-#: calendar/package/contents/ui/configGeneral.qml:107
-msgctxt "settings section"
-msgid "Palette"
-msgstr "パレット"
-
-#: calendar/package/contents/ui/configGeneral.qml:110
-msgctxt "palette: colour of"
-msgid "Main text:"
-msgstr "本文:"
-
-#: calendar/package/contents/ui/configGeneral.qml:116
-msgctxt "palette: colour of"
-msgid "Weekends:"
-msgstr "週末:"
-
-#: calendar/package/contents/ui/configGeneral.qml:122
-msgctxt "palette: colour of"
-msgid "Secondary:"
-msgstr "補助テキスト:"
-
-#: calendar/package/contents/ui/configGeneral.qml:128
-msgctxt "palette: colour of"
-msgid "Today:"
-msgstr "今日:"
-
-#: calendar/package/contents/ui/configMouse.qml:19
-msgid "Mouse:"
-msgstr "マウス:"
-
-#: calendar/package/contents/ui/configMouse.qml:20
-msgid "let clicks through to the desktop"
-msgstr "クリックをデスクトップに通す"
-
-#: calendar/package/contents/ui/configMouse.qml:24
-msgid ""
-"While clicks go through, both mouse buttons land on the desktop.\n"
-"The widget takes the mouse only in the desktop's edit mode:\n"
-"that is where its settings are, or ./install.sh with the clicks off "
-"switch."
-msgstr ""
-"クリックを通している間は、マウスの両方のボタンがデスクトップに届きます。\n"
-"ウィジェットがマウスを受け取るのはデスクトップの編集モードのときだけです:\n"
-"設定もそこにあります。または clicks off スイッチ付きの ./install.sh。"
-
-#: calendar/package/contents/config/config.qml:13
-msgctxt "settings page"
 msgid "Notes"
 msgstr "メモ"
 
@@ -178,6 +31,11 @@ msgstr "メモ"
 msgctxt "settings page"
 msgid "Accounts"
 msgstr "アカウント"
+
+#: calendar/package/contents/config/config.qml:25
+msgctxt "settings page"
+msgid "Mouse"
+msgstr "マウス"
 
 #: calendar/package/contents/ui/Sticker.qml:132
 msgctxt "the account's last fetch failed"
@@ -215,13 +73,14 @@ msgid "ICS link, read-only"
 msgstr "ICS リンク、読み取り専用"
 
 #: calendar/package/contents/ui/configAccounts.qml:70
+msgid "is python3 installed?"
+msgstr "python3 はインストールされていますか?"
+
+#: calendar/package/contents/ui/configAccounts.qml:70
+#: calendar/package/contents/ui/configAccounts.qml:168
 #, kde-format
 msgid "The script did not answer: %1"
 msgstr "スクリプトが応答しません: %1"
-
-#: calendar/package/contents/ui/configAccounts.qml:70
-msgid "is python3 installed?"
-msgstr "python3 はインストールされていますか?"
 
 #: calendar/package/contents/ui/configAccounts.qml:103
 msgid "The account needs an id — a short word, say “yandex”."
@@ -249,11 +108,25 @@ msgstr[0] "リンクは応答しています: %1 件。"
 msgid "The server answers, but lists no calendar."
 msgstr "サーバーは応答しますが、カレンダーが見つかりません。"
 
+#: calendar/package/contents/ui/configAccounts.qml:151
+#, kde-format
+msgid ""
+"The server answers: %1 calendar — pick one below, or leave the field empty "
+"for the first."
+msgid_plural ""
+"The server answers: %1 calendars — pick one below, or leave the field empty "
+"for the first."
+msgstr[0] "サーバーは応答しました: カレンダー %1 件 — 下から選ぶか、空欄のままにすると最初のものを使います。"
+
 #: calendar/package/contents/ui/configAccounts.qml:188
 msgid ""
-"Calendars the widget reads, and the one it writes your notes to (chosen on the Notes page). Yandex and iCloud take an app password from your account's settings; Google signs in once through the browser."
+"Calendars the widget reads, and the one it writes your notes to (chosen on "
+"the Notes page). Yandex and iCloud take an app password from your account's "
+"settings; Google signs in once through the browser."
 msgstr ""
-"ウィジェットが読むカレンダーと、メモを書き込むカレンダー（「メモ」ページで選択）。Yandex と iCloud はアカウント設定のアプリパスワードを使い、Google はブラウザで一度サインインします。"
+"ウィジェットが読むカレンダーと、メモを書き込むカレンダー（「メモ」ページで選"
+"択）。Yandex と iCloud はアカウント設定のアプリパスワードを使い、Google はブ"
+"ラウザで一度サインインします。"
 
 #: calendar/package/contents/ui/configAccounts.qml:217
 msgctxt "Google account state"
@@ -354,11 +227,13 @@ msgstr "保存済み — 入力で置き換え"
 #: calendar/package/contents/ui/configAccounts.qml:338
 #, kde-format
 msgid ""
-"A “Desktop app” OAuth client from console.cloud.google.com, with the Calendar API\n"
+"A “Desktop app” OAuth client from console.cloud.google.com, with the "
+"Calendar API\n"
 "enabled. Save, then sign in once from a terminal:\n"
 "python3 %1 google-auth %2"
 msgstr ""
-"console.cloud.google.com の「デスクトップアプリ」OAuth クライアント、Calendar API を有効に。\n"
+"console.cloud.google.com の「デスクトップアプリ」OAuth クライアント、"
+"Calendar API を有効に。\n"
 "保存後、ターミナルから一度サインイン:\n"
 "python3 %1 google-auth %2"
 
@@ -388,6 +263,148 @@ msgstr "保存"
 msgid "Check"
 msgstr "確認"
 
+#: calendar/package/contents/ui/configGeneral.qml:34
+msgctxt "settings section"
+msgid "Calendar"
+msgstr "カレンダー"
+
+#: calendar/package/contents/ui/configGeneral.qml:38
+msgid "Months:"
+msgstr "月:"
+
+#: calendar/package/contents/ui/configGeneral.qml:39
+msgctxt "how many months are shown"
+msgid "one — the current"
+msgstr "1つ — 今月"
+
+#: calendar/package/contents/ui/configGeneral.qml:40
+msgctxt "how many months are shown"
+msgid "three — the previous, the current and the next"
+msgstr "3つ — 先月、今月、来月"
+
+#: calendar/package/contents/ui/configGeneral.qml:47
+msgid "Week numbers:"
+msgstr "週番号:"
+
+#: calendar/package/contents/ui/configGeneral.qml:48
+msgid "ISO week numbers in front of the rows"
+msgstr "各行の前に ISO 週番号を表示"
+
+#: calendar/package/contents/ui/configGeneral.qml:53
+msgid "Week starts on:"
+msgstr "週の始まり:"
+
+#: calendar/package/contents/ui/configGeneral.qml:54
+msgctxt "first day of the week"
+msgid "as the locale says"
+msgstr "ロケールに従う"
+
+#: calendar/package/contents/ui/configGeneral.qml:55
+msgctxt "first day of the week"
+msgid "Monday"
+msgstr "月曜日"
+
+#: calendar/package/contents/ui/configGeneral.qml:56
+msgctxt "first day of the week"
+msgid "Sunday"
+msgstr "日曜日"
+
+#: calendar/package/contents/ui/configGeneral.qml:63
+msgid "Weekends:"
+msgstr "週末:"
+
+#: calendar/package/contents/ui/configGeneral.qml:64
+msgid "in their own colour, as on a wall calendar"
+msgstr "壁掛けカレンダーのように別の色で表示"
+
+#: calendar/package/contents/ui/configGeneral.qml:69
+msgid "Other months:"
+msgstr "他の月:"
+
+#: calendar/package/contents/ui/configGeneral.qml:70
+msgid "fill the empty cells with the neighbouring months' days"
+msgstr "空のマスを前後の月の日付で埋める"
+
+#: calendar/package/contents/ui/configGeneral.qml:74
+msgid ""
+"Today is in brackets. The names of the days and months, the first day\n"
+"of the week and the weekend come from the locale\n"
+"(System Settings → Language and Region → Formats)."
+msgstr ""
+"今日は角括弧で囲まれます。曜日と月の名前、週の始まり、\n"
+"週末はロケールから取られます\n"
+"（システム設定 → 言語と地域 → 書式）。"
+
+#: calendar/package/contents/ui/configGeneral.qml:79
+msgctxt "settings section"
+msgid "Text"
+msgstr "テキスト"
+
+#: calendar/package/contents/ui/configGeneral.qml:83
+msgid "Font:"
+msgstr "フォント:"
+
+#: calendar/package/contents/ui/configGeneral.qml:89
+msgctxt "font size"
+msgid "Size:"
+msgstr "サイズ:"
+
+#: calendar/package/contents/ui/configGeneral.qml:96
+msgid "Day cell, characters:"
+msgstr "日付マスの幅 (文字数):"
+
+#: calendar/package/contents/ui/configGeneral.qml:102
+msgid ""
+"The widget is as wide as seven cells and the week numbers, and as tall as\n"
+"the months shown: eight lines each, with a blank line between them."
+msgstr ""
+"ウィジェットの幅は7つのマスと週番号の分、高さは表示する月の数で決まります。\n"
+"1か月につき8行、月の間に空行が1行入ります。"
+
+#: calendar/package/contents/ui/configGeneral.qml:107
+#: calendar/package/contents/ui/configNotes.qml:157
+msgctxt "settings section"
+msgid "Palette"
+msgstr "パレット"
+
+#: calendar/package/contents/ui/configGeneral.qml:110
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "本文:"
+
+#: calendar/package/contents/ui/configGeneral.qml:116
+msgctxt "palette: colour of"
+msgid "Weekends:"
+msgstr "週末:"
+
+#: calendar/package/contents/ui/configGeneral.qml:122
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "補助テキスト:"
+
+#: calendar/package/contents/ui/configGeneral.qml:128
+msgctxt "palette: colour of"
+msgid "Today:"
+msgstr "今日:"
+
+#: calendar/package/contents/ui/configMouse.qml:19
+msgid "Mouse:"
+msgstr "マウス:"
+
+#: calendar/package/contents/ui/configMouse.qml:20
+msgid "let clicks through to the desktop"
+msgstr "クリックをデスクトップに通す"
+
+#: calendar/package/contents/ui/configMouse.qml:24
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The widget takes the mouse only in the desktop's edit mode:\n"
+"that is where its settings are, or ./install.sh with the clicks off switch."
+msgstr ""
+"クリックを通している間は、マウスの両方のボタンがデスクトップに届きます。\n"
+"ウィジェットがマウスを受け取るのはデスクトップの編集モードのときだけです:\n"
+"設定もそこにあります。または clicks off スイッチ付きの ./install.sh。"
+
 #: calendar/package/contents/ui/configNotes.qml:30
 msgctxt "the account of the widget's own notes: a folder of files"
 msgid "local — this machine"
@@ -408,8 +425,10 @@ msgstr "記録のある日に印を付け、クリックで付箋を開く"
 
 #: calendar/package/contents/ui/configNotes.qml:75
 msgid ""
-"A click on a day opens its sticker: the day's events and tasks from the accounts,\n"
-"and a note of yours — the first line is its title. Off, the calendar is the plain grid\n"
+"A click on a day opens its sticker: the day's events and tasks from the "
+"accounts,\n"
+"and a note of yours — the first line is its title. Off, the calendar is the "
+"plain grid\n"
 "and takes no clicks at all."
 msgstr ""
 "日をクリックするとその付箋が開きます: アカウントからの当日の予定とタスク、\n"
@@ -423,9 +442,11 @@ msgstr "メモの書き込み先:"
 #: calendar/package/contents/ui/configNotes.qml:90
 msgid ""
 "“local” keeps them as .ics files in ~/.local/share/plaincalendar/notes;\n"
-"an account from the Accounts page sends them to that calendar as all-day events."
+"an account from the Accounts page sends them to that calendar as all-day "
+"events."
 msgstr ""
-"「ローカル」は ~/.local/share/plaincalendar/notes に .ics ファイルとして保存し、\n"
+"「ローカル」は ~/.local/share/plaincalendar/notes に .ics ファイルとして保存"
+"し、\n"
 "「アカウント」ページのアカウントはそのカレンダーに終日の予定として送ります。"
 
 #: calendar/package/contents/ui/configNotes.qml:97

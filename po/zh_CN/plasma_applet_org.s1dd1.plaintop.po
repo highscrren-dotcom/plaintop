@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 10:45+0500\n"
+"POT-Creation-Date: 2026-10-04 13:04+0500\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -28,6 +28,21 @@ msgstr "常规"
 msgctxt "settings page"
 msgid "Blocks"
 msgstr "区块"
+
+#: monitor/package/contents/ui/ActionMenu.qml:70
+msgctxt "the question before a destructive action: proceed"
+msgid "yes"
+msgstr "是"
+
+#: monitor/package/contents/ui/ActionMenu.qml:71
+msgctxt "the question before a destructive action: leave it"
+msgid "no"
+msgstr "否"
+
+#: monitor/package/contents/ui/ActionMenu.qml:72
+msgctxt "closes a notice"
+msgid "ok"
+msgstr "好"
 
 #: monitor/package/contents/ui/configBlocks.qml:55
 msgctxt "the block is in the second column"
@@ -114,126 +129,194 @@ msgctxt "the widget's column"
 msgid "right"
 msgstr "右"
 
-#: monitor/package/contents/ui/configBlocks.qml:452
+#: monitor/package/contents/ui/configBlocks.qml:391
+msgid "Active:"
+msgstr "活动："
+
+#: monitor/package/contents/ui/configBlocks.qml:392
+msgid "the block's lines take clicks"
+msgstr "该块的行响应点击"
+
+#: monitor/package/contents/ui/configBlocks.qml:398
+msgid "Click:"
+msgstr "点击："
+
+#: monitor/package/contents/ui/configBlocks.qml:401
+msgctxt "placeholder for the block's own click command"
+msgid "a command of your own; {name} {pid} {path} {unit} {value} are filled in"
+msgstr "自定义命令；{name} {pid} {path} {unit} {value} 会被填入"
+
+#: monitor/package/contents/ui/configBlocks.qml:470
 #, kde-format
 msgctxt "pick list: how many the machine offers"
 msgid "pick from %1…"
 msgid_plural "pick from %1…"
 msgstr[0] "从 %1 个中选择…"
 
-#: monitor/package/contents/ui/configBlocks.qml:453
+#: monitor/package/contents/ui/configBlocks.qml:471
 msgctxt "pick list: the machine offers nothing"
 msgid "nothing found"
 msgstr "未找到"
 
-#: monitor/package/contents/ui/configBlocks.qml:474
+#: monitor/package/contents/ui/configBlocks.qml:492
 msgid "The layout as JSON — edit here, or paste one from another machine:"
 msgstr "JSON 形式的布局 — 在此编辑，或粘贴来自另一台机器的布局："
 
-#: monitor/package/contents/ui/configBlocks.qml:497
+#: monitor/package/contents/ui/configBlocks.qml:515
 msgid "Apply JSON"
 msgstr "应用 JSON"
 
-#: monitor/package/contents/ui/configBlocks.qml:503
+#: monitor/package/contents/ui/configBlocks.qml:521
 msgid "Reload from the list"
 msgstr "从列表重新载入"
 
-#: monitor/package/contents/ui/configGeneral.qml:40
+#: monitor/package/contents/ui/configGeneral.qml:46
 #: monitor/window/settings.qml:335
 msgid "Font:"
 msgstr "字体："
 
-#: monitor/package/contents/ui/configGeneral.qml:46
+#: monitor/package/contents/ui/configGeneral.qml:52
 #: monitor/window/settings.qml:342
 msgctxt "font size"
 msgid "Size:"
 msgstr "字号："
 
-#: monitor/package/contents/ui/configGeneral.qml:53
+#: monitor/package/contents/ui/configGeneral.qml:59
 #: monitor/window/settings.qml:371
 msgid "Left padding, px:"
 msgstr "左边距 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:61
+#: monitor/package/contents/ui/configGeneral.qml:67
 #: monitor/window/settings.qml:378
 msgid "Top padding, px:"
 msgstr "上边距 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:69
+#: monitor/package/contents/ui/configGeneral.qml:75
 #: monitor/window/settings.qml:385
 msgid "Width, px:"
 msgstr "宽度 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:77
+#: monitor/package/contents/ui/configGeneral.qml:83
 #: monitor/window/settings.qml:392
 msgid "Height, px:"
 msgstr "高度 (px)："
 
-#: monitor/package/contents/ui/configGeneral.qml:84
+#: monitor/package/contents/ui/configGeneral.qml:90
 #: monitor/window/settings.qml:407
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "主文字："
 
-#: monitor/package/contents/ui/configGeneral.qml:90
+#: monitor/package/contents/ui/configGeneral.qml:96
 #: monitor/window/settings.qml:413
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr "标题和时钟："
 
-#: monitor/package/contents/ui/configGeneral.qml:96
+#: monitor/package/contents/ui/configGeneral.qml:102
 #: monitor/window/settings.qml:419
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "次要文字："
 
-#: monitor/package/contents/ui/configGeneral.qml:102
+#: monitor/package/contents/ui/configGeneral.qml:108
 #: monitor/window/settings.qml:425
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr "数值："
 
-#: monitor/package/contents/ui/configGeneral.qml:109
+#: monitor/package/contents/ui/configGeneral.qml:115
 msgid "Mouse:"
 msgstr "鼠标："
 
-#: monitor/package/contents/ui/configGeneral.qml:110
+#: monitor/package/contents/ui/configGeneral.qml:116
 msgid "let clicks through to the desktop"
 msgstr "让点击穿透到桌面"
 
-#: monitor/package/contents/ui/configGeneral.qml:119
+#: monitor/package/contents/ui/configGeneral.qml:120
+msgid ""
+"While clicks go through, both buttons land on the desktop everywhere but on\n"
+"the active lines, which keep theirs. With those off too, the widget takes "
+"the\n"
+"mouse only in the desktop's edit mode — where its settings are\n"
+"(or ./install.sh with the clicks off switch)."
+msgstr ""
+"点击穿透时，两个按键在任何位置都落到桌面上，活动行除外，它们保留自己的点"
+"击。\n"
+"若活动行也关闭，部件只在桌面编辑模式下接收鼠标 — 其设置也在那里\n"
+"（或用 ./install.sh 的 clicks-off 开关）。"
+
+#: monitor/package/contents/ui/configGeneral.qml:127
+msgid "Active lines:"
+msgstr "活动行："
+
+#: monitor/package/contents/ui/configGeneral.qml:128
+msgid "a click runs the line's action, the right button lists them"
+msgstr "单击执行该行的操作，右键列出全部操作"
+
+#: monitor/package/contents/ui/configGeneral.qml:132
+msgid ""
+"A bar opens System Monitor, a disk its folder, a unit its status, a process\n"
+"asks before it is ended, the header opens these settings. The Blocks page\n"
+"switches a block's lines off or gives them a command of your own."
+msgstr ""
+"条形打开系统监视器，磁盘打开其文件夹，单元显示其状态，进程在结束前\n"
+"会先询问，标题行打开这些设置。“块”页面可关闭某块的行，或给它们自定义命令。"
+
+#: monitor/package/contents/ui/configGeneral.qml:139
+msgid "Terminal:"
+msgstr "终端："
+
+#: monitor/package/contents/ui/configGeneral.qml:146
+msgid "Editor:"
+msgstr "编辑器："
+
+#: monitor/package/contents/ui/configGeneral.qml:153
+msgid "Menu frame:"
+msgstr "菜单边框："
+
+#: monitor/package/contents/ui/configGeneral.qml:160
+msgctxt "palette: colour of"
+msgid "Menu paper:"
+msgstr "菜单纸面："
+
+#: monitor/package/contents/ui/configGeneral.qml:167
+msgid "Paper opacity, %:"
+msgstr "纸面不透明度，%："
+
+#: monitor/package/contents/ui/configGeneral.qml:172
 msgctxt "settings section"
 msgid "Lines"
 msgstr "行"
 
-#: monitor/package/contents/ui/configGeneral.qml:123
+#: monitor/package/contents/ui/configGeneral.qml:176
 msgid "Bar width, characters:"
 msgstr "条形宽度（字符）："
 
-#: monitor/package/contents/ui/configGeneral.qml:129
+#: monitor/package/contents/ui/configGeneral.qml:182
 msgid "Bar characters:"
 msgstr "条形字符："
 
-#: monitor/package/contents/ui/configGeneral.qml:142
+#: monitor/package/contents/ui/configGeneral.qml:195
 msgctxt "placeholder: the empty part of a bar is a space"
 msgid "space"
 msgstr "空格"
 
-#: monitor/package/contents/ui/configGeneral.qml:147
+#: monitor/package/contents/ui/configGeneral.qml:200
 msgid ""
 "The filled and the empty part of a bar. Empty fields mean the slash and a "
 "space."
 msgstr "条形的已填充和空白部分。留空表示斜杠和空格。"
 
-#: monitor/package/contents/ui/configGeneral.qml:153
+#: monitor/package/contents/ui/configGeneral.qml:206
 msgid "Separator:"
 msgstr "分隔线："
 
-#: monitor/package/contents/ui/configGeneral.qml:171
+#: monitor/package/contents/ui/configGeneral.qml:224
 msgid "Sparkline glyphs:"
 msgstr "迷你图字符："
 
-#: monitor/package/contents/ui/configGeneral.qml:177
+#: monitor/package/contents/ui/configGeneral.qml:230
 msgid ""
 "From lowest to highest, for the “History” parameter of the bar blocks.\n"
 "Any run of characters works, say “ .:-=+*#”."
@@ -241,11 +324,11 @@ msgstr ""
 "从低到高，用于带条形块的“历史”参数。\n"
 "任意一串字符都可以，例如“ .:-=+*#”。"
 
-#: monitor/package/contents/ui/configGeneral.qml:184
+#: monitor/package/contents/ui/configGeneral.qml:237
 msgid "Second column at, px:"
 msgstr "第二栏起始位置（px）："
 
-#: monitor/package/contents/ui/configGeneral.qml:191
+#: monitor/package/contents/ui/configGeneral.qml:244
 msgid ""
 "Where the second column starts; 0 is half the width. A block goes\n"
 "there by its “Column” field on the Blocks page."
@@ -253,21 +336,21 @@ msgstr ""
 "第二栏的起始位置；0 表示宽度的一半。区块通过“区块”页面上的\n"
 "“栏”字段放到那里。"
 
-#: monitor/package/contents/ui/configGeneral.qml:196
+#: monitor/package/contents/ui/configGeneral.qml:249
 msgctxt "settings section"
 msgid "Updates"
 msgstr "更新"
 
-#: monitor/package/contents/ui/configGeneral.qml:200
+#: monitor/package/contents/ui/configGeneral.qml:253
 msgid "Interval, ms:"
 msgstr "间隔 (毫秒)："
 
-#: monitor/package/contents/ui/configGeneral.qml:208
+#: monitor/package/contents/ui/configGeneral.qml:261
 #: monitor/window/settings.qml:356
 msgid "Top processes, every … s:"
 msgstr "进程排行，每 … 秒："
 
-#: monitor/package/contents/ui/configGeneral.qml:214
+#: monitor/package/contents/ui/configGeneral.qml:267
 #: monitor/window/settings.qml:363
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
@@ -276,220 +359,415 @@ msgstr ""
 "进程列表是采集开销最大的一项：每 2 秒\n"
 "约占一个核心的 3%，每 10 秒约 1.3%"
 
-#: monitor/shared/MonitorData.qml:859
+#: monitor/package/contents/ui/main.qml:173
+#, kde-format
+msgctxt "a line action failed: its exit code"
+msgid "exit code %1"
+msgstr "退出码 %1"
+
+#: monitor/shared/MonitorData.qml:874
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1天"
 
-#: monitor/shared/MonitorData.qml:860
+#: monitor/shared/MonitorData.qml:875
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1小时"
 
-#: monitor/shared/MonitorData.qml:861
+#: monitor/shared/MonitorData.qml:876
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1分"
 
-#: monitor/shared/MonitorData.qml:868
+#: monitor/shared/MonitorData.qml:883
 #, kde-format
 msgctxt "battery: hours and minutes of an estimate"
 msgid "%1h %2m"
 msgstr "%1小时%2分"
 
-#: monitor/shared/MonitorData.qml:885
+#: monitor/shared/MonitorData.qml:900
 msgctxt "battery: no current flowing, charged"
 msgid "full"
 msgstr "已充满"
 
-#: monitor/shared/MonitorData.qml:886
+#: monitor/shared/MonitorData.qml:901
 msgctxt "battery: no current flowing"
 msgid "idle"
 msgstr "空闲"
 
-#: monitor/shared/MonitorData.qml:889
+#: monitor/shared/MonitorData.qml:904
 #, kde-format
 msgctxt "battery: charging; the power and the time to full"
 msgid "charging  %1 W  %2 to full"
 msgstr "充电中  %1 W  %2 后充满"
 
-#: monitor/shared/MonitorData.qml:893
+#: monitor/shared/MonitorData.qml:908
 #, kde-format
 msgctxt "battery: discharging; the power and the time left"
 msgid "discharging  %1 W  %2 left"
 msgstr "放电中  %1 W  剩余 %2"
 
-#: monitor/shared/MonitorData.qml:896
+#: monitor/shared/MonitorData.qml:911
 #, kde-format
 msgctxt "battery: wear, a percentage"
 msgid "health %1"
 msgstr "健康度 %1"
 
-#: monitor/shared/MonitorData.qml:951
+#: monitor/shared/MonitorData.qml:983
+#, kde-format
+msgctxt "line action: the block's own command"
+msgid "run %1"
+msgstr "运行 %1"
+
+#: monitor/shared/MonitorData.qml:990
+msgctxt "line action: open Plasma's System Monitor"
+msgid "System Monitor"
+msgstr "系统监视器"
+
+#: monitor/shared/MonitorData.qml:994
+msgctxt "line action: open Plasma's Info Center"
+msgid "system information"
+msgstr "系统信息"
+
+#: monitor/shared/MonitorData.qml:1000
+msgctxt "line action"
+msgid "date and time settings"
+msgstr "日期和时间设置"
+
+#: monitor/shared/MonitorData.qml:1003
+msgctxt "line action"
+msgid "open in a terminal"
+msgstr "在终端中打开"
+
+#: monitor/shared/MonitorData.qml:1007
+msgctxt "line action"
+msgid "open in the file manager"
+msgstr "在文件管理器中打开"
+
+#: monitor/shared/MonitorData.qml:1013
+msgctxt "line action"
+msgid "lock the screen"
+msgstr "锁定屏幕"
+
+#: monitor/shared/MonitorData.qml:1014
+msgctxt "line action"
+msgid "log out"
+msgstr "注销"
+
+#: monitor/shared/MonitorData.qml:1017
+msgctxt "line action"
+msgid "reboot"
+msgstr "重启"
+
+#: monitor/shared/MonitorData.qml:1018
+msgctxt "line action"
+msgid "power off"
+msgstr "关机"
+
+#: monitor/shared/MonitorData.qml:1023
+#, kde-format
+msgctxt "line action: send SIGTERM to the process"
+msgid "terminate %1"
+msgstr "终止 %1"
+
+#: monitor/shared/MonitorData.qml:1025
+#, kde-format
+msgctxt "line action: send SIGKILL to the process"
+msgid "kill %1"
+msgstr "强制结束 %1"
+
+#: monitor/shared/MonitorData.qml:1032
+msgctxt "line action: the package manager's update in a terminal"
+msgid "update in a terminal"
+msgstr "在终端中更新"
+
+#: monitor/shared/MonitorData.qml:1039
+msgctxt "line action: list the containers in a terminal"
+msgid "containers in a terminal"
+msgstr "在终端中查看容器"
+
+#: monitor/shared/MonitorData.qml:1042
+msgctxt "line action: list ollama's models in a terminal"
+msgid "models in a terminal"
+msgstr "在终端中查看模型"
+
+#: monitor/shared/MonitorData.qml:1045
+msgctxt "line action: open virt-manager"
+msgid "Virtual Machine Manager"
+msgstr "虚拟机管理器"
+
+#: monitor/shared/MonitorData.qml:1056
+msgctxt "line action: systemctl status in a terminal"
+msgid "status"
+msgstr "状态"
+
+#: monitor/shared/MonitorData.qml:1057
+msgctxt "line action: systemctl start"
+msgid "start"
+msgstr "启动"
+
+#: monitor/shared/MonitorData.qml:1058
+msgctxt "line action: systemctl stop"
+msgid "stop"
+msgstr "停止"
+
+#: monitor/shared/MonitorData.qml:1059
+msgctxt "line action: systemctl restart"
+msgid "restart"
+msgstr "重启"
+
+#: monitor/shared/MonitorData.qml:1060
+msgctxt "line action: the unit's journal in a terminal"
+msgid "journal"
+msgstr "日志"
+
+#: monitor/shared/MonitorData.qml:1065
+msgctxt "line action"
+msgid "unmute"
+msgstr "取消静音"
+
+#: monitor/shared/MonitorData.qml:1065
+msgctxt "line action"
+msgid "mute"
+msgstr "静音"
+
+#: monitor/shared/MonitorData.qml:1067
+msgctxt "line action"
+msgid "sound settings"
+msgstr "声音设置"
+
+#: monitor/shared/MonitorData.qml:1071
+msgctxt "line action"
+msgid "open in the editor"
+msgstr "在编辑器中打开"
+
+#: monitor/shared/MonitorData.qml:1072
+msgctxt "line action: git pull in a terminal"
+msgid "git pull"
+msgstr "git pull"
+
+#: monitor/shared/MonitorData.qml:1077
+#, kde-format
+msgctxt "line action: this program's journal in a terminal"
+msgid "journal of %1"
+msgstr "%1 的日志"
+
+#: monitor/shared/MonitorData.qml:1079
+msgctxt "line action: the journal's errors in a terminal"
+msgid "errors in a terminal"
+msgstr "在终端中查看错误"
+
+#: monitor/shared/MonitorData.qml:1102
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "需重新登录"
 
-#: monitor/shared/MonitorData.qml:952 monitor/shared/MonitorData.qml:962
+#: monitor/shared/MonitorData.qml:1103 monitor/shared/MonitorData.qml:1113
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1（共 %2）"
 
-#: monitor/shared/MonitorData.qml:958
+#: monitor/shared/MonitorData.qml:1109
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
 msgid_plural "idle, %1 models"
 msgstr[0] "空闲，%1 个模型"
 
-#: monitor/shared/MonitorData.qml:961
+#: monitor/shared/MonitorData.qml:1112
 msgctxt "podman: it cannot be reached"
 msgid "no access"
 msgstr "无法访问"
 
-#: monitor/shared/MonitorData.qml:965
+#: monitor/shared/MonitorData.qml:1116
 #, kde-format
 msgctxt "libvirt: running virtual machines of all"
 msgid "%1 of %2"
 msgstr "%1 / %2"
 
-#: monitor/shared/MonitorData.qml:972
+#: monitor/shared/MonitorData.qml:1123
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
 msgid_plural "%1 updates"
 msgstr[0] "%1 个更新"
 
-#: monitor/shared/MonitorData.qml:981
+#: monitor/shared/MonitorData.qml:1132
 msgctxt "systemd unit state"
 msgid "active"
 msgstr "运行中"
 
-#: monitor/shared/MonitorData.qml:982
+#: monitor/shared/MonitorData.qml:1133
 msgctxt "systemd unit state"
 msgid "inactive"
 msgstr "已停止"
 
-#: monitor/shared/MonitorData.qml:983
+#: monitor/shared/MonitorData.qml:1134
 msgctxt "systemd unit state"
 msgid "failed"
 msgstr "失败"
 
-#: monitor/shared/MonitorData.qml:984
+#: monitor/shared/MonitorData.qml:1135
 msgctxt "systemd unit state"
 msgid "starting"
 msgstr "启动中"
 
-#: monitor/shared/MonitorData.qml:985
+#: monitor/shared/MonitorData.qml:1136
 msgctxt "systemd unit state"
 msgid "stopping"
 msgstr "停止中"
 
-#: monitor/shared/MonitorData.qml:986
+#: monitor/shared/MonitorData.qml:1137
 msgctxt "systemd unit state"
 msgid "reloading"
 msgstr "重载中"
 
-#: monitor/shared/MonitorData.qml:987
+#: monitor/shared/MonitorData.qml:1138
 msgctxt "systemd unit state: no answer"
 msgid "unknown"
 msgstr "未知"
 
-#: monitor/shared/MonitorData.qml:1048
+#: monitor/shared/MonitorData.qml:1179
+msgctxt "line action: open the widget's settings dialog"
+msgid "settings…"
+msgstr "设置…"
+
+#: monitor/shared/MonitorData.qml:1201
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "M'月'd'日' dddd"
 
-#: monitor/shared/MonitorData.qml:1114
+#: monitor/shared/MonitorData.qml:1273
 #, kde-format
 msgctxt "load average over 1, 5 and 15 minutes"
 msgid "load %1  %2  %3"
 msgstr "负载 %1  %2  %3"
 
-#: monitor/shared/MonitorData.qml:1132
+#: monitor/shared/MonitorData.qml:1293
 #, kde-format
 msgctxt "pressure: time every task stalled, memory and I/O"
 msgid "full  mem %1  io %2"
 msgstr "full  mem %1  io %2"
 
-#: monitor/shared/MonitorData.qml:1197
+#: monitor/shared/MonitorData.qml:1369
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "未挂载"
 
-#: monitor/shared/MonitorData.qml:1203
+#: monitor/shared/MonitorData.qml:1377
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "运行时间 %1"
 
-#: monitor/shared/MonitorData.qml:1221
+#: monitor/shared/MonitorData.qml:1385
+msgctxt "line action"
+msgid "network settings"
+msgstr "网络设置"
+
+#: monitor/shared/MonitorData.qml:1386
+msgctxt "line action: ip addr in a terminal"
+msgid "addresses in a terminal"
+msgstr "在终端中查看地址"
+
+#: monitor/shared/MonitorData.qml:1400
 #, kde-format
 msgctxt "network: traffic since boot, down and up"
 msgid "total %1 down, %2 up"
 msgstr "累计下载 %1，上传 %2"
 
-#: monitor/shared/MonitorData.qml:1225
+#: monitor/shared/MonitorData.qml:1404
 #, kde-format
 msgctxt "network: Wi-Fi signal strength"
 msgid "signal %1"
 msgstr "信号 %1"
 
-#: monitor/shared/MonitorData.qml:1234
+#: monitor/shared/MonitorData.qml:1413
 #, kde-format
 msgctxt "disk I/O: read and write rates"
 msgid "I/O  R %1  W %2"
 msgstr "I/O  读 %1  写 %2"
 
-#: monitor/shared/MonitorData.qml:1291
+#: monitor/shared/MonitorData.qml:1457
+msgctxt "line action"
+msgid "energy settings"
+msgstr "电源设置"
+
+#: monitor/shared/MonitorData.qml:1478
 msgctxt "health: failed systemd units"
 msgid "failed units"
 msgstr "失败的单元"
 
-#: monitor/shared/MonitorData.qml:1293 monitor/shared/MonitorData.qml:1300
+#: monitor/shared/MonitorData.qml:1481 monitor/shared/MonitorData.qml:1493
 #, kde-format
 msgctxt "health: a count for the system and one for the user session"
 msgid "%1 system, %2 user"
 msgstr "系统 %1，用户 %2"
 
-#: monitor/shared/MonitorData.qml:1296
+#: monitor/shared/MonitorData.qml:1483
+msgctxt "line action: systemctl --failed in a terminal"
+msgid "failed units in a terminal"
+msgstr "在终端中查看失败的单元"
+
+#: monitor/shared/MonitorData.qml:1488
 msgctxt "health: journal entries of priority error or worse"
 msgid "errors since boot"
 msgstr "启动以来的错误"
 
-#: monitor/shared/MonitorData.qml:1298
+#: monitor/shared/MonitorData.qml:1491
 msgctxt "health: the system journal cannot be read by this user"
 msgid "no access"
 msgstr "无权访问"
 
-#: monitor/shared/MonitorData.qml:1303
+#: monitor/shared/MonitorData.qml:1497
 msgctxt "health: a kernel newer than the running one is installed"
 msgid "reboot"
 msgstr "重启"
 
-#: monitor/shared/MonitorData.qml:1304
+#: monitor/shared/MonitorData.qml:1498
 msgctxt "health: a reboot is pending"
 msgid "pending"
 msgstr "待处理"
 
-#: monitor/shared/MonitorData.qml:1334
+#: monitor/shared/MonitorData.qml:1499
+msgctxt "line action"
+msgid "reboot now"
+msgstr "立即重启"
+
+#: monitor/shared/MonitorData.qml:1504
+msgctxt "line action: menu title for a journal line"
+msgid "journal"
+msgstr "日志"
+
+#: monitor/shared/MonitorData.qml:1533
 msgctxt "peripheral battery: charging"
 msgid "charging"
 msgstr "充电中"
 
-#: monitor/shared/MonitorData.qml:1352
+#: monitor/shared/MonitorData.qml:1536
+msgctxt "line action"
+msgid "Bluetooth settings"
+msgstr "蓝牙设置"
+
+#: monitor/shared/MonitorData.qml:1554
 msgctxt "sound: the device is muted"
 msgid "muted"
 msgstr "静音"
 
-#: monitor/shared/MonitorData.qml:1369
+#: monitor/shared/MonitorData.qml:1577
 msgctxt "repos: the path is not a git repository"
 msgid "not a repository"
 msgstr "不是仓库"
+
+#: monitor/shared/MonitorData.qml:1598
+msgctxt "line action: the block's command, in a terminal"
+msgid "run in a terminal"
+msgstr "在终端中运行"
 
 #: monitor/window/settings.qml:24
 msgid "plaintop — monitor settings"
@@ -1187,283 +1465,3 @@ msgstr "小数位数"
 msgctxt "schema: parameter name"
 msgid "Alert from (0 — never)"
 msgstr "告警阈值（0 — 从不）"
-
-#: monitor/package/contents/ui/ActionMenu.qml:70
-msgctxt "the question before a destructive action: proceed"
-msgid "yes"
-msgstr "是"
-
-#: monitor/package/contents/ui/ActionMenu.qml:71
-msgctxt "the question before a destructive action: leave it"
-msgid "no"
-msgstr "否"
-
-#: monitor/package/contents/ui/ActionMenu.qml:72
-msgctxt "closes a notice"
-msgid "ok"
-msgstr "好"
-
-#: monitor/package/contents/ui/configBlocks.qml:391
-msgid "Active:"
-msgstr "活动："
-
-#: monitor/package/contents/ui/configBlocks.qml:392
-msgid "the block's lines take clicks"
-msgstr "该块的行响应点击"
-
-#: monitor/package/contents/ui/configBlocks.qml:398
-msgid "Click:"
-msgstr "点击："
-
-#: monitor/package/contents/ui/configBlocks.qml:401
-msgctxt "placeholder for the block's own click command"
-msgid ""
-"a command of your own; {name} {pid} {path} {unit} {value} are filled in"
-msgstr "自定义命令；{name} {pid} {path} {unit} {value} 会被填入"
-
-#: monitor/package/contents/ui/configGeneral.qml:120
-msgid ""
-"While clicks go through, both buttons land on the desktop everywhere but "
-"on\n"
-"the active lines, which keep theirs. With those off too, the widget takes "
-"the\n"
-"mouse only in the desktop's edit mode — where its settings are\n"
-"(or ./install.sh with the clicks off switch)."
-msgstr ""
-"点击穿透时，两个按键在任何位置都落到桌面上，活动行除外，它们保留自己的点击。\n"
-"若活动行也关闭，部件只在桌面编辑模式下接收鼠标 — 其设置也在那里\n"
-"（或用 ./install.sh 的 clicks-off 开关）。"
-
-#: monitor/package/contents/ui/configGeneral.qml:127
-msgid "Active lines:"
-msgstr "活动行："
-
-#: monitor/package/contents/ui/configGeneral.qml:128
-msgid "a click runs the line's action, the right button lists them"
-msgstr "单击执行该行的操作，右键列出全部操作"
-
-#: monitor/package/contents/ui/configGeneral.qml:132
-msgid ""
-"A bar opens System Monitor, a disk its folder, a unit its status, a "
-"process\n"
-"asks before it is ended, the header opens these settings. The Blocks page\n"
-"switches a block's lines off or gives them a command of your own."
-msgstr ""
-"条形打开系统监视器，磁盘打开其文件夹，单元显示其状态，进程在结束前\n"
-"会先询问，标题行打开这些设置。“块”页面可关闭某块的行，或给它们自定义命令。"
-
-#: monitor/package/contents/ui/configGeneral.qml:139
-msgid "Terminal:"
-msgstr "终端："
-
-#: monitor/package/contents/ui/configGeneral.qml:146
-msgid "Editor:"
-msgstr "编辑器："
-
-#: monitor/package/contents/ui/configGeneral.qml:153
-msgid "Menu frame:"
-msgstr "菜单边框："
-
-#: monitor/package/contents/ui/configGeneral.qml:160
-msgctxt "palette: colour of"
-msgid "Menu paper:"
-msgstr "菜单纸面："
-
-#: monitor/package/contents/ui/configGeneral.qml:167
-msgid "Paper opacity, %:"
-msgstr "纸面不透明度，%："
-
-#: monitor/package/contents/ui/main.qml:173
-#, kde-format
-msgctxt "a line action failed: its exit code"
-msgid "exit code %1"
-msgstr "退出码 %1"
-
-#: monitor/shared/MonitorData.qml:983
-#, kde-format
-msgctxt "line action: the block's own command"
-msgid "run %1"
-msgstr "运行 %1"
-
-#: monitor/shared/MonitorData.qml:990
-msgctxt "line action: open Plasma's System Monitor"
-msgid "System Monitor"
-msgstr "系统监视器"
-
-#: monitor/shared/MonitorData.qml:994
-msgctxt "line action: open Plasma's Info Center"
-msgid "system information"
-msgstr "系统信息"
-
-#: monitor/shared/MonitorData.qml:1000
-msgctxt "line action"
-msgid "date and time settings"
-msgstr "日期和时间设置"
-
-#: monitor/shared/MonitorData.qml:1003
-msgctxt "line action"
-msgid "open in a terminal"
-msgstr "在终端中打开"
-
-#: monitor/shared/MonitorData.qml:1007
-msgctxt "line action"
-msgid "open in the file manager"
-msgstr "在文件管理器中打开"
-
-#: monitor/shared/MonitorData.qml:1013
-msgctxt "line action"
-msgid "lock the screen"
-msgstr "锁定屏幕"
-
-#: monitor/shared/MonitorData.qml:1014
-msgctxt "line action"
-msgid "log out"
-msgstr "注销"
-
-#: monitor/shared/MonitorData.qml:1017
-msgctxt "line action"
-msgid "reboot"
-msgstr "重启"
-
-#: monitor/shared/MonitorData.qml:1018
-msgctxt "line action"
-msgid "power off"
-msgstr "关机"
-
-#: monitor/shared/MonitorData.qml:1023
-#, kde-format
-msgctxt "line action: send SIGTERM to the process"
-msgid "terminate %1"
-msgstr "终止 %1"
-
-#: monitor/shared/MonitorData.qml:1025
-#, kde-format
-msgctxt "line action: send SIGKILL to the process"
-msgid "kill %1"
-msgstr "强制结束 %1"
-
-#: monitor/shared/MonitorData.qml:1032
-msgctxt "line action: the package manager's update in a terminal"
-msgid "update in a terminal"
-msgstr "在终端中更新"
-
-#: monitor/shared/MonitorData.qml:1039
-msgctxt "line action: list the containers in a terminal"
-msgid "containers in a terminal"
-msgstr "在终端中查看容器"
-
-#: monitor/shared/MonitorData.qml:1042
-msgctxt "line action: list ollama's models in a terminal"
-msgid "models in a terminal"
-msgstr "在终端中查看模型"
-
-#: monitor/shared/MonitorData.qml:1045
-msgctxt "line action: open virt-manager"
-msgid "Virtual Machine Manager"
-msgstr "虚拟机管理器"
-
-#: monitor/shared/MonitorData.qml:1056
-msgctxt "line action: systemctl status in a terminal"
-msgid "status"
-msgstr "状态"
-
-#: monitor/shared/MonitorData.qml:1057
-msgctxt "line action: systemctl start"
-msgid "start"
-msgstr "启动"
-
-#: monitor/shared/MonitorData.qml:1058
-msgctxt "line action: systemctl stop"
-msgid "stop"
-msgstr "停止"
-
-#: monitor/shared/MonitorData.qml:1059
-msgctxt "line action: systemctl restart"
-msgid "restart"
-msgstr "重启"
-
-#: monitor/shared/MonitorData.qml:1060
-msgctxt "line action: the unit's journal in a terminal"
-msgid "journal"
-msgstr "日志"
-
-#: monitor/shared/MonitorData.qml:1065
-msgctxt "line action"
-msgid "unmute"
-msgstr "取消静音"
-
-#: monitor/shared/MonitorData.qml:1065
-msgctxt "line action"
-msgid "mute"
-msgstr "静音"
-
-#: monitor/shared/MonitorData.qml:1067
-msgctxt "line action"
-msgid "sound settings"
-msgstr "声音设置"
-
-#: monitor/shared/MonitorData.qml:1071
-msgctxt "line action"
-msgid "open in the editor"
-msgstr "在编辑器中打开"
-
-#: monitor/shared/MonitorData.qml:1072
-msgctxt "line action: git pull in a terminal"
-msgid "git pull"
-msgstr "git pull"
-
-#: monitor/shared/MonitorData.qml:1077
-#, kde-format
-msgctxt "line action: this program's journal in a terminal"
-msgid "journal of %1"
-msgstr "%1 的日志"
-
-#: monitor/shared/MonitorData.qml:1079
-msgctxt "line action: the journal's errors in a terminal"
-msgid "errors in a terminal"
-msgstr "在终端中查看错误"
-
-#: monitor/shared/MonitorData.qml:1179
-msgctxt "line action: open the widget's settings dialog"
-msgid "settings…"
-msgstr "设置…"
-
-#: monitor/shared/MonitorData.qml:1385
-msgctxt "line action"
-msgid "network settings"
-msgstr "网络设置"
-
-#: monitor/shared/MonitorData.qml:1386
-msgctxt "line action: ip addr in a terminal"
-msgid "addresses in a terminal"
-msgstr "在终端中查看地址"
-
-#: monitor/shared/MonitorData.qml:1457
-msgctxt "line action"
-msgid "energy settings"
-msgstr "电源设置"
-
-#: monitor/shared/MonitorData.qml:1483
-msgctxt "line action: systemctl --failed in a terminal"
-msgid "failed units in a terminal"
-msgstr "在终端中查看失败的单元"
-
-#: monitor/shared/MonitorData.qml:1499
-msgctxt "line action"
-msgid "reboot now"
-msgstr "立即重启"
-
-#: monitor/shared/MonitorData.qml:1504
-msgctxt "line action: menu title for a journal line"
-msgid "journal"
-msgstr "日志"
-
-#: monitor/shared/MonitorData.qml:1536
-msgctxt "line action"
-msgid "Bluetooth settings"
-msgstr "蓝牙设置"
-
-#: monitor/shared/MonitorData.qml:1598
-msgctxt "line action: the block's command, in a terminal"
-msgid "run in a terminal"
-msgstr "在终端中运行"

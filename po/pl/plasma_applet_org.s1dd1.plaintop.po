@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 10:45+0500\n"
+"POT-Creation-Date: 2026-10-04 13:04+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Polish\n"
@@ -29,6 +29,21 @@ msgstr "Ogólne"
 msgctxt "settings page"
 msgid "Blocks"
 msgstr "Bloki"
+
+#: monitor/package/contents/ui/ActionMenu.qml:70
+msgctxt "the question before a destructive action: proceed"
+msgid "yes"
+msgstr "tak"
+
+#: monitor/package/contents/ui/ActionMenu.qml:71
+msgctxt "the question before a destructive action: leave it"
+msgid "no"
+msgstr "nie"
+
+#: monitor/package/contents/ui/ActionMenu.qml:72
+msgctxt "closes a notice"
+msgid "ok"
+msgstr "ok"
 
 #: monitor/package/contents/ui/configBlocks.qml:55
 msgctxt "the block is in the second column"
@@ -116,7 +131,24 @@ msgctxt "the widget's column"
 msgid "right"
 msgstr "prawa"
 
-#: monitor/package/contents/ui/configBlocks.qml:452
+#: monitor/package/contents/ui/configBlocks.qml:391
+msgid "Active:"
+msgstr "Aktywny:"
+
+#: monitor/package/contents/ui/configBlocks.qml:392
+msgid "the block's lines take clicks"
+msgstr "wiersze bloku przyjmują kliknięcia"
+
+#: monitor/package/contents/ui/configBlocks.qml:398
+msgid "Click:"
+msgstr "Kliknięcie:"
+
+#: monitor/package/contents/ui/configBlocks.qml:401
+msgctxt "placeholder for the block's own click command"
+msgid "a command of your own; {name} {pid} {path} {unit} {value} are filled in"
+msgstr "własne polecenie; {name} {pid} {path} {unit} {value} są podstawiane"
+
+#: monitor/package/contents/ui/configBlocks.qml:470
 #, kde-format
 msgctxt "pick list: how many the machine offers"
 msgid "pick from %1…"
@@ -125,119 +157,175 @@ msgstr[0] "wybierz z %1…"
 msgstr[1] "wybierz z %1…"
 msgstr[2] "wybierz z %1…"
 
-#: monitor/package/contents/ui/configBlocks.qml:453
+#: monitor/package/contents/ui/configBlocks.qml:471
 msgctxt "pick list: the machine offers nothing"
 msgid "nothing found"
 msgstr "nic nie znaleziono"
 
-#: monitor/package/contents/ui/configBlocks.qml:474
+#: monitor/package/contents/ui/configBlocks.qml:492
 msgid "The layout as JSON — edit here, or paste one from another machine:"
 msgstr "Układ jako JSON — edytuj tutaj albo wklej z innej maszyny:"
 
-#: monitor/package/contents/ui/configBlocks.qml:497
+#: monitor/package/contents/ui/configBlocks.qml:515
 msgid "Apply JSON"
 msgstr "Zastosuj JSON"
 
-#: monitor/package/contents/ui/configBlocks.qml:503
+#: monitor/package/contents/ui/configBlocks.qml:521
 msgid "Reload from the list"
 msgstr "Wczytaj ponownie z listy"
 
-#: monitor/package/contents/ui/configGeneral.qml:40
+#: monitor/package/contents/ui/configGeneral.qml:46
 #: monitor/window/settings.qml:335
 msgid "Font:"
 msgstr "Czcionka:"
 
-#: monitor/package/contents/ui/configGeneral.qml:46
+#: monitor/package/contents/ui/configGeneral.qml:52
 #: monitor/window/settings.qml:342
 msgctxt "font size"
 msgid "Size:"
 msgstr "Rozmiar:"
 
-#: monitor/package/contents/ui/configGeneral.qml:53
+#: monitor/package/contents/ui/configGeneral.qml:59
 #: monitor/window/settings.qml:371
 msgid "Left padding, px:"
 msgstr "Odstęp z lewej, px:"
 
-#: monitor/package/contents/ui/configGeneral.qml:61
+#: monitor/package/contents/ui/configGeneral.qml:67
 #: monitor/window/settings.qml:378
 msgid "Top padding, px:"
 msgstr "Odstęp od góry, px:"
 
-#: monitor/package/contents/ui/configGeneral.qml:69
+#: monitor/package/contents/ui/configGeneral.qml:75
 #: monitor/window/settings.qml:385
 msgid "Width, px:"
 msgstr "Szerokość, px:"
 
-#: monitor/package/contents/ui/configGeneral.qml:77
+#: monitor/package/contents/ui/configGeneral.qml:83
 #: monitor/window/settings.qml:392
 msgid "Height, px:"
 msgstr "Wysokość, px:"
 
-#: monitor/package/contents/ui/configGeneral.qml:84
+#: monitor/package/contents/ui/configGeneral.qml:90
 #: monitor/window/settings.qml:407
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Tekst główny:"
 
-#: monitor/package/contents/ui/configGeneral.qml:90
+#: monitor/package/contents/ui/configGeneral.qml:96
 #: monitor/window/settings.qml:413
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr "Nagłówek i zegar:"
 
-#: monitor/package/contents/ui/configGeneral.qml:96
+#: monitor/package/contents/ui/configGeneral.qml:102
 #: monitor/window/settings.qml:419
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Drugorzędny:"
 
-#: monitor/package/contents/ui/configGeneral.qml:102
+#: monitor/package/contents/ui/configGeneral.qml:108
 #: monitor/window/settings.qml:425
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr "Wartości:"
 
-#: monitor/package/contents/ui/configGeneral.qml:109
+#: monitor/package/contents/ui/configGeneral.qml:115
 msgid "Mouse:"
 msgstr "Mysz:"
 
-#: monitor/package/contents/ui/configGeneral.qml:110
+#: monitor/package/contents/ui/configGeneral.qml:116
 msgid "let clicks through to the desktop"
 msgstr "przepuszczaj kliknięcia na pulpit"
 
-#: monitor/package/contents/ui/configGeneral.qml:119
+#: monitor/package/contents/ui/configGeneral.qml:120
+msgid ""
+"While clicks go through, both buttons land on the desktop everywhere but on\n"
+"the active lines, which keep theirs. With those off too, the widget takes "
+"the\n"
+"mouse only in the desktop's edit mode — where its settings are\n"
+"(or ./install.sh with the clicks off switch)."
+msgstr ""
+"Gdy kliknięcia przechodzą, oba przyciski trafiają na pulpit wszędzie poza "
+"aktywnymi\n"
+"wierszami, które zachowują swoje. Gdy i one są wyłączone, widżet bierze mysz "
+"tylko\n"
+"w trybie edycji pulpitu — tam też są jego ustawienia\n"
+"(albo ./install.sh z przełącznikiem clicks-off)."
+
+#: monitor/package/contents/ui/configGeneral.qml:127
+msgid "Active lines:"
+msgstr "Aktywne wiersze:"
+
+#: monitor/package/contents/ui/configGeneral.qml:128
+msgid "a click runs the line's action, the right button lists them"
+msgstr "kliknięcie uruchamia działanie wiersza, prawy przycisk je wymienia"
+
+#: monitor/package/contents/ui/configGeneral.qml:132
+msgid ""
+"A bar opens System Monitor, a disk its folder, a unit its status, a process\n"
+"asks before it is ended, the header opens these settings. The Blocks page\n"
+"switches a block's lines off or gives them a command of your own."
+msgstr ""
+"Pasek otwiera Monitor systemu, dysk swój katalog, jednostka swój stan, "
+"proces pyta,\n"
+"zanim zostanie zakończony, nagłówek otwiera te ustawienia. Strona „Bloki” "
+"wyłącza\n"
+"wiersze bloku albo daje im własne polecenie."
+
+#: monitor/package/contents/ui/configGeneral.qml:139
+msgid "Terminal:"
+msgstr "Terminal:"
+
+#: monitor/package/contents/ui/configGeneral.qml:146
+msgid "Editor:"
+msgstr "Edytor:"
+
+#: monitor/package/contents/ui/configGeneral.qml:153
+msgid "Menu frame:"
+msgstr "Ramka menu:"
+
+#: monitor/package/contents/ui/configGeneral.qml:160
+msgctxt "palette: colour of"
+msgid "Menu paper:"
+msgstr "Papier menu:"
+
+#: monitor/package/contents/ui/configGeneral.qml:167
+msgid "Paper opacity, %:"
+msgstr "Nieprzezroczystość papieru, %:"
+
+#: monitor/package/contents/ui/configGeneral.qml:172
 msgctxt "settings section"
 msgid "Lines"
 msgstr "Wiersze"
 
-#: monitor/package/contents/ui/configGeneral.qml:123
+#: monitor/package/contents/ui/configGeneral.qml:176
 msgid "Bar width, characters:"
 msgstr "Szerokość paska, znaków:"
 
-#: monitor/package/contents/ui/configGeneral.qml:129
+#: monitor/package/contents/ui/configGeneral.qml:182
 msgid "Bar characters:"
 msgstr "Znaki paska:"
 
-#: monitor/package/contents/ui/configGeneral.qml:142
+#: monitor/package/contents/ui/configGeneral.qml:195
 msgctxt "placeholder: the empty part of a bar is a space"
 msgid "space"
 msgstr "spacja"
 
-#: monitor/package/contents/ui/configGeneral.qml:147
+#: monitor/package/contents/ui/configGeneral.qml:200
 msgid ""
 "The filled and the empty part of a bar. Empty fields mean the slash and a "
 "space."
 msgstr "Wypełniona i pusta część paska. Puste pola oznaczają ukośnik i spację."
 
-#: monitor/package/contents/ui/configGeneral.qml:153
+#: monitor/package/contents/ui/configGeneral.qml:206
 msgid "Separator:"
 msgstr "Separator:"
 
-#: monitor/package/contents/ui/configGeneral.qml:171
+#: monitor/package/contents/ui/configGeneral.qml:224
 msgid "Sparkline glyphs:"
 msgstr "Znaki wykresu:"
 
-#: monitor/package/contents/ui/configGeneral.qml:177
+#: monitor/package/contents/ui/configGeneral.qml:230
 msgid ""
 "From lowest to highest, for the “History” parameter of the bar blocks.\n"
 "Any run of characters works, say “ .:-=+*#”."
@@ -245,11 +333,11 @@ msgstr ""
 "Od najniższego do najwyższego, dla parametru „Historia” bloków z paskiem.\n"
 "Wystarczy dowolny ciąg znaków, np. „ .:-=+*#”."
 
-#: monitor/package/contents/ui/configGeneral.qml:184
+#: monitor/package/contents/ui/configGeneral.qml:237
 msgid "Second column at, px:"
 msgstr "Druga kolumna od, px:"
 
-#: monitor/package/contents/ui/configGeneral.qml:191
+#: monitor/package/contents/ui/configGeneral.qml:244
 msgid ""
 "Where the second column starts; 0 is half the width. A block goes\n"
 "there by its “Column” field on the Blocks page."
@@ -257,21 +345,21 @@ msgstr ""
 "Gdzie zaczyna się druga kolumna; 0 to połowa szerokości. Blok trafia\n"
 "tam przez swoje pole „Kolumna” na stronie „Bloki”."
 
-#: monitor/package/contents/ui/configGeneral.qml:196
+#: monitor/package/contents/ui/configGeneral.qml:249
 msgctxt "settings section"
 msgid "Updates"
 msgstr "Odświeżanie"
 
-#: monitor/package/contents/ui/configGeneral.qml:200
+#: monitor/package/contents/ui/configGeneral.qml:253
 msgid "Interval, ms:"
 msgstr "Interwał, ms:"
 
-#: monitor/package/contents/ui/configGeneral.qml:208
+#: monitor/package/contents/ui/configGeneral.qml:261
 #: monitor/window/settings.qml:356
 msgid "Top processes, every … s:"
 msgstr "Top procesów, co … s:"
 
-#: monitor/package/contents/ui/configGeneral.qml:214
+#: monitor/package/contents/ui/configGeneral.qml:267
 #: monitor/window/settings.qml:363
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
@@ -280,70 +368,220 @@ msgstr ""
 "Lista procesów to najdroższa ze zbieranych danych: co 2 s\n"
 "około 3% rdzenia, co 10 s około 1,3%"
 
-#: monitor/shared/MonitorData.qml:859
+#: monitor/package/contents/ui/main.qml:173
+#, kde-format
+msgctxt "a line action failed: its exit code"
+msgid "exit code %1"
+msgstr "kod wyjścia %1"
+
+#: monitor/shared/MonitorData.qml:874
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1d"
 
-#: monitor/shared/MonitorData.qml:860
+#: monitor/shared/MonitorData.qml:875
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1h"
 
-#: monitor/shared/MonitorData.qml:861
+#: monitor/shared/MonitorData.qml:876
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1min"
 
-#: monitor/shared/MonitorData.qml:868
+#: monitor/shared/MonitorData.qml:883
 #, kde-format
 msgctxt "battery: hours and minutes of an estimate"
 msgid "%1h %2m"
 msgstr "%1h %2min"
 
-#: monitor/shared/MonitorData.qml:885
+#: monitor/shared/MonitorData.qml:900
 msgctxt "battery: no current flowing, charged"
 msgid "full"
 msgstr "naładowana"
 
-#: monitor/shared/MonitorData.qml:886
+#: monitor/shared/MonitorData.qml:901
 msgctxt "battery: no current flowing"
 msgid "idle"
 msgstr "spoczynek"
 
-#: monitor/shared/MonitorData.qml:889
+#: monitor/shared/MonitorData.qml:904
 #, kde-format
 msgctxt "battery: charging; the power and the time to full"
 msgid "charging  %1 W  %2 to full"
 msgstr "ładowanie  %1 W  %2 do pełna"
 
-#: monitor/shared/MonitorData.qml:893
+#: monitor/shared/MonitorData.qml:908
 #, kde-format
 msgctxt "battery: discharging; the power and the time left"
 msgid "discharging  %1 W  %2 left"
 msgstr "rozładowywanie  %1 W  zostało %2"
 
-#: monitor/shared/MonitorData.qml:896
+#: monitor/shared/MonitorData.qml:911
 #, kde-format
 msgctxt "battery: wear, a percentage"
 msgid "health %1"
 msgstr "kondycja %1"
 
-#: monitor/shared/MonitorData.qml:951
+#: monitor/shared/MonitorData.qml:983
+#, kde-format
+msgctxt "line action: the block's own command"
+msgid "run %1"
+msgstr "uruchom %1"
+
+#: monitor/shared/MonitorData.qml:990
+msgctxt "line action: open Plasma's System Monitor"
+msgid "System Monitor"
+msgstr "Monitor systemu"
+
+#: monitor/shared/MonitorData.qml:994
+msgctxt "line action: open Plasma's Info Center"
+msgid "system information"
+msgstr "informacje o systemie"
+
+#: monitor/shared/MonitorData.qml:1000
+msgctxt "line action"
+msgid "date and time settings"
+msgstr "ustawienia daty i czasu"
+
+#: monitor/shared/MonitorData.qml:1003
+msgctxt "line action"
+msgid "open in a terminal"
+msgstr "otwórz w terminalu"
+
+#: monitor/shared/MonitorData.qml:1007
+msgctxt "line action"
+msgid "open in the file manager"
+msgstr "otwórz w menedżerze plików"
+
+#: monitor/shared/MonitorData.qml:1013
+msgctxt "line action"
+msgid "lock the screen"
+msgstr "zablokuj ekran"
+
+#: monitor/shared/MonitorData.qml:1014
+msgctxt "line action"
+msgid "log out"
+msgstr "wyloguj"
+
+#: monitor/shared/MonitorData.qml:1017
+msgctxt "line action"
+msgid "reboot"
+msgstr "uruchom ponownie"
+
+#: monitor/shared/MonitorData.qml:1018
+msgctxt "line action"
+msgid "power off"
+msgstr "wyłącz"
+
+#: monitor/shared/MonitorData.qml:1023
+#, kde-format
+msgctxt "line action: send SIGTERM to the process"
+msgid "terminate %1"
+msgstr "zakończ %1"
+
+#: monitor/shared/MonitorData.qml:1025
+#, kde-format
+msgctxt "line action: send SIGKILL to the process"
+msgid "kill %1"
+msgstr "zabij %1"
+
+#: monitor/shared/MonitorData.qml:1032
+msgctxt "line action: the package manager's update in a terminal"
+msgid "update in a terminal"
+msgstr "aktualizuj w terminalu"
+
+#: monitor/shared/MonitorData.qml:1039
+msgctxt "line action: list the containers in a terminal"
+msgid "containers in a terminal"
+msgstr "kontenery w terminalu"
+
+#: monitor/shared/MonitorData.qml:1042
+msgctxt "line action: list ollama's models in a terminal"
+msgid "models in a terminal"
+msgstr "modele w terminalu"
+
+#: monitor/shared/MonitorData.qml:1045
+msgctxt "line action: open virt-manager"
+msgid "Virtual Machine Manager"
+msgstr "menedżer maszyn wirtualnych"
+
+#: monitor/shared/MonitorData.qml:1056
+msgctxt "line action: systemctl status in a terminal"
+msgid "status"
+msgstr "stan"
+
+#: monitor/shared/MonitorData.qml:1057
+msgctxt "line action: systemctl start"
+msgid "start"
+msgstr "uruchom"
+
+#: monitor/shared/MonitorData.qml:1058
+msgctxt "line action: systemctl stop"
+msgid "stop"
+msgstr "zatrzymaj"
+
+#: monitor/shared/MonitorData.qml:1059
+msgctxt "line action: systemctl restart"
+msgid "restart"
+msgstr "uruchom ponownie"
+
+#: monitor/shared/MonitorData.qml:1060
+msgctxt "line action: the unit's journal in a terminal"
+msgid "journal"
+msgstr "dziennik"
+
+#: monitor/shared/MonitorData.qml:1065
+msgctxt "line action"
+msgid "unmute"
+msgstr "włącz dźwięk"
+
+#: monitor/shared/MonitorData.qml:1065
+msgctxt "line action"
+msgid "mute"
+msgstr "wycisz"
+
+#: monitor/shared/MonitorData.qml:1067
+msgctxt "line action"
+msgid "sound settings"
+msgstr "ustawienia dźwięku"
+
+#: monitor/shared/MonitorData.qml:1071
+msgctxt "line action"
+msgid "open in the editor"
+msgstr "otwórz w edytorze"
+
+#: monitor/shared/MonitorData.qml:1072
+msgctxt "line action: git pull in a terminal"
+msgid "git pull"
+msgstr "git pull"
+
+#: monitor/shared/MonitorData.qml:1077
+#, kde-format
+msgctxt "line action: this program's journal in a terminal"
+msgid "journal of %1"
+msgstr "dziennik %1"
+
+#: monitor/shared/MonitorData.qml:1079
+msgctxt "line action: the journal's errors in a terminal"
+msgid "errors in a terminal"
+msgstr "błędy w terminalu"
+
+#: monitor/shared/MonitorData.qml:1102
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "wymaga ponownego logowania"
 
-#: monitor/shared/MonitorData.qml:952 monitor/shared/MonitorData.qml:962
+#: monitor/shared/MonitorData.qml:1103 monitor/shared/MonitorData.qml:1113
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1 z %2"
 
-#: monitor/shared/MonitorData.qml:958
+#: monitor/shared/MonitorData.qml:1109
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
@@ -352,18 +590,18 @@ msgstr[0] "bezczynny, %1 model"
 msgstr[1] "bezczynny, %1 modele"
 msgstr[2] "bezczynny, %1 modeli"
 
-#: monitor/shared/MonitorData.qml:961
+#: monitor/shared/MonitorData.qml:1112
 msgctxt "podman: it cannot be reached"
 msgid "no access"
 msgstr "brak dostępu"
 
-#: monitor/shared/MonitorData.qml:965
+#: monitor/shared/MonitorData.qml:1116
 #, kde-format
 msgctxt "libvirt: running virtual machines of all"
 msgid "%1 of %2"
 msgstr "%1 z %2"
 
-#: monitor/shared/MonitorData.qml:972
+#: monitor/shared/MonitorData.qml:1123
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
@@ -372,132 +610,177 @@ msgstr[0] "%1 aktualizacja"
 msgstr[1] "%1 aktualizacje"
 msgstr[2] "%1 aktualizacji"
 
-#: monitor/shared/MonitorData.qml:981
+#: monitor/shared/MonitorData.qml:1132
 msgctxt "systemd unit state"
 msgid "active"
 msgstr "aktywny"
 
-#: monitor/shared/MonitorData.qml:982
+#: monitor/shared/MonitorData.qml:1133
 msgctxt "systemd unit state"
 msgid "inactive"
 msgstr "nieaktywny"
 
-#: monitor/shared/MonitorData.qml:983
+#: monitor/shared/MonitorData.qml:1134
 msgctxt "systemd unit state"
 msgid "failed"
 msgstr "awaria"
 
-#: monitor/shared/MonitorData.qml:984
+#: monitor/shared/MonitorData.qml:1135
 msgctxt "systemd unit state"
 msgid "starting"
 msgstr "uruchamianie"
 
-#: monitor/shared/MonitorData.qml:985
+#: monitor/shared/MonitorData.qml:1136
 msgctxt "systemd unit state"
 msgid "stopping"
 msgstr "zatrzymywanie"
 
-#: monitor/shared/MonitorData.qml:986
+#: monitor/shared/MonitorData.qml:1137
 msgctxt "systemd unit state"
 msgid "reloading"
 msgstr "przeładowanie"
 
-#: monitor/shared/MonitorData.qml:987
+#: monitor/shared/MonitorData.qml:1138
 msgctxt "systemd unit state: no answer"
 msgid "unknown"
 msgstr "nieznany"
 
-#: monitor/shared/MonitorData.qml:1048
+#: monitor/shared/MonitorData.qml:1179
+msgctxt "line action: open the widget's settings dialog"
+msgid "settings…"
+msgstr "ustawienia…"
+
+#: monitor/shared/MonitorData.qml:1201
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "dddd, d MMMM"
 
-#: monitor/shared/MonitorData.qml:1114
+#: monitor/shared/MonitorData.qml:1273
 #, kde-format
 msgctxt "load average over 1, 5 and 15 minutes"
 msgid "load %1  %2  %3"
 msgstr "obciążenie %1  %2  %3"
 
-#: monitor/shared/MonitorData.qml:1132
+#: monitor/shared/MonitorData.qml:1293
 #, kde-format
 msgctxt "pressure: time every task stalled, memory and I/O"
 msgid "full  mem %1  io %2"
 msgstr "full  mem %1  io %2"
 
-#: monitor/shared/MonitorData.qml:1197
+#: monitor/shared/MonitorData.qml:1369
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "nie zamontowano"
 
-#: monitor/shared/MonitorData.qml:1203
+#: monitor/shared/MonitorData.qml:1377
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "czas pracy %1"
 
-#: monitor/shared/MonitorData.qml:1221
+#: monitor/shared/MonitorData.qml:1385
+msgctxt "line action"
+msgid "network settings"
+msgstr "ustawienia sieci"
+
+#: monitor/shared/MonitorData.qml:1386
+msgctxt "line action: ip addr in a terminal"
+msgid "addresses in a terminal"
+msgstr "adresy w terminalu"
+
+#: monitor/shared/MonitorData.qml:1400
 #, kde-format
 msgctxt "network: traffic since boot, down and up"
 msgid "total %1 down, %2 up"
 msgstr "łącznie %1 pobrano, %2 wysłano"
 
-#: monitor/shared/MonitorData.qml:1225
+#: monitor/shared/MonitorData.qml:1404
 #, kde-format
 msgctxt "network: Wi-Fi signal strength"
 msgid "signal %1"
 msgstr "sygnał %1"
 
-#: monitor/shared/MonitorData.qml:1234
+#: monitor/shared/MonitorData.qml:1413
 #, kde-format
 msgctxt "disk I/O: read and write rates"
 msgid "I/O  R %1  W %2"
 msgstr "I/O  O %1  Z %2"
 
-#: monitor/shared/MonitorData.qml:1291
+#: monitor/shared/MonitorData.qml:1457
+msgctxt "line action"
+msgid "energy settings"
+msgstr "ustawienia energii"
+
+#: monitor/shared/MonitorData.qml:1478
 msgctxt "health: failed systemd units"
 msgid "failed units"
 msgstr "jednostki z błędem"
 
-#: monitor/shared/MonitorData.qml:1293 monitor/shared/MonitorData.qml:1300
+#: monitor/shared/MonitorData.qml:1481 monitor/shared/MonitorData.qml:1493
 #, kde-format
 msgctxt "health: a count for the system and one for the user session"
 msgid "%1 system, %2 user"
 msgstr "system %1, użytkownik %2"
 
-#: monitor/shared/MonitorData.qml:1296
+#: monitor/shared/MonitorData.qml:1483
+msgctxt "line action: systemctl --failed in a terminal"
+msgid "failed units in a terminal"
+msgstr "jednostki z awarią w terminalu"
+
+#: monitor/shared/MonitorData.qml:1488
 msgctxt "health: journal entries of priority error or worse"
 msgid "errors since boot"
 msgstr "błędów od rozruchu"
 
-#: monitor/shared/MonitorData.qml:1298
+#: monitor/shared/MonitorData.qml:1491
 msgctxt "health: the system journal cannot be read by this user"
 msgid "no access"
 msgstr "brak dostępu"
 
-#: monitor/shared/MonitorData.qml:1303
+#: monitor/shared/MonitorData.qml:1497
 msgctxt "health: a kernel newer than the running one is installed"
 msgid "reboot"
 msgstr "restart"
 
-#: monitor/shared/MonitorData.qml:1304
+#: monitor/shared/MonitorData.qml:1498
 msgctxt "health: a reboot is pending"
 msgid "pending"
 msgstr "oczekuje"
 
-#: monitor/shared/MonitorData.qml:1334
+#: monitor/shared/MonitorData.qml:1499
+msgctxt "line action"
+msgid "reboot now"
+msgstr "uruchom ponownie teraz"
+
+#: monitor/shared/MonitorData.qml:1504
+msgctxt "line action: menu title for a journal line"
+msgid "journal"
+msgstr "dziennik"
+
+#: monitor/shared/MonitorData.qml:1533
 msgctxt "peripheral battery: charging"
 msgid "charging"
 msgstr "ładowanie"
 
-#: monitor/shared/MonitorData.qml:1352
+#: monitor/shared/MonitorData.qml:1536
+msgctxt "line action"
+msgid "Bluetooth settings"
+msgstr "ustawienia Bluetooth"
+
+#: monitor/shared/MonitorData.qml:1554
 msgctxt "sound: the device is muted"
 msgid "muted"
 msgstr "wyciszony"
 
-#: monitor/shared/MonitorData.qml:1369
+#: monitor/shared/MonitorData.qml:1577
 msgctxt "repos: the path is not a git repository"
 msgid "not a repository"
 msgstr "to nie repozytorium"
+
+#: monitor/shared/MonitorData.qml:1598
+msgctxt "line action: the block's command, in a terminal"
+msgid "run in a terminal"
+msgstr "uruchom w terminalu"
 
 #: monitor/window/settings.qml:24
 msgid "plaintop — monitor settings"
@@ -1211,289 +1494,3 @@ msgstr "Miejsca po przecinku"
 msgctxt "schema: parameter name"
 msgid "Alert from (0 — never)"
 msgstr "Alarm od (0 — nigdy)"
-
-#: monitor/package/contents/ui/ActionMenu.qml:70
-msgctxt "the question before a destructive action: proceed"
-msgid "yes"
-msgstr "tak"
-
-#: monitor/package/contents/ui/ActionMenu.qml:71
-msgctxt "the question before a destructive action: leave it"
-msgid "no"
-msgstr "nie"
-
-#: monitor/package/contents/ui/ActionMenu.qml:72
-msgctxt "closes a notice"
-msgid "ok"
-msgstr "ok"
-
-#: monitor/package/contents/ui/configBlocks.qml:391
-msgid "Active:"
-msgstr "Aktywny:"
-
-#: monitor/package/contents/ui/configBlocks.qml:392
-msgid "the block's lines take clicks"
-msgstr "wiersze bloku przyjmują kliknięcia"
-
-#: monitor/package/contents/ui/configBlocks.qml:398
-msgid "Click:"
-msgstr "Kliknięcie:"
-
-#: monitor/package/contents/ui/configBlocks.qml:401
-msgctxt "placeholder for the block's own click command"
-msgid ""
-"a command of your own; {name} {pid} {path} {unit} {value} are filled in"
-msgstr "własne polecenie; {name} {pid} {path} {unit} {value} są podstawiane"
-
-#: monitor/package/contents/ui/configGeneral.qml:120
-msgid ""
-"While clicks go through, both buttons land on the desktop everywhere but "
-"on\n"
-"the active lines, which keep theirs. With those off too, the widget takes "
-"the\n"
-"mouse only in the desktop's edit mode — where its settings are\n"
-"(or ./install.sh with the clicks off switch)."
-msgstr ""
-"Gdy kliknięcia przechodzą, oba przyciski trafiają na pulpit wszędzie poza "
-"aktywnymi\n"
-"wierszami, które zachowują swoje. Gdy i one są wyłączone, widżet bierze "
-"mysz tylko\n"
-"w trybie edycji pulpitu — tam też są jego ustawienia\n"
-"(albo ./install.sh z przełącznikiem clicks-off)."
-
-#: monitor/package/contents/ui/configGeneral.qml:127
-msgid "Active lines:"
-msgstr "Aktywne wiersze:"
-
-#: monitor/package/contents/ui/configGeneral.qml:128
-msgid "a click runs the line's action, the right button lists them"
-msgstr "kliknięcie uruchamia działanie wiersza, prawy przycisk je wymienia"
-
-#: monitor/package/contents/ui/configGeneral.qml:132
-msgid ""
-"A bar opens System Monitor, a disk its folder, a unit its status, a "
-"process\n"
-"asks before it is ended, the header opens these settings. The Blocks page\n"
-"switches a block's lines off or gives them a command of your own."
-msgstr ""
-"Pasek otwiera Monitor systemu, dysk swój katalog, jednostka swój stan, "
-"proces pyta,\n"
-"zanim zostanie zakończony, nagłówek otwiera te ustawienia. Strona „Bloki” "
-"wyłącza\n"
-"wiersze bloku albo daje im własne polecenie."
-
-#: monitor/package/contents/ui/configGeneral.qml:139
-msgid "Terminal:"
-msgstr "Terminal:"
-
-#: monitor/package/contents/ui/configGeneral.qml:146
-msgid "Editor:"
-msgstr "Edytor:"
-
-#: monitor/package/contents/ui/configGeneral.qml:153
-msgid "Menu frame:"
-msgstr "Ramka menu:"
-
-#: monitor/package/contents/ui/configGeneral.qml:160
-msgctxt "palette: colour of"
-msgid "Menu paper:"
-msgstr "Papier menu:"
-
-#: monitor/package/contents/ui/configGeneral.qml:167
-msgid "Paper opacity, %:"
-msgstr "Nieprzezroczystość papieru, %:"
-
-#: monitor/package/contents/ui/main.qml:173
-#, kde-format
-msgctxt "a line action failed: its exit code"
-msgid "exit code %1"
-msgstr "kod wyjścia %1"
-
-#: monitor/shared/MonitorData.qml:983
-#, kde-format
-msgctxt "line action: the block's own command"
-msgid "run %1"
-msgstr "uruchom %1"
-
-#: monitor/shared/MonitorData.qml:990
-msgctxt "line action: open Plasma's System Monitor"
-msgid "System Monitor"
-msgstr "Monitor systemu"
-
-#: monitor/shared/MonitorData.qml:994
-msgctxt "line action: open Plasma's Info Center"
-msgid "system information"
-msgstr "informacje o systemie"
-
-#: monitor/shared/MonitorData.qml:1000
-msgctxt "line action"
-msgid "date and time settings"
-msgstr "ustawienia daty i czasu"
-
-#: monitor/shared/MonitorData.qml:1003
-msgctxt "line action"
-msgid "open in a terminal"
-msgstr "otwórz w terminalu"
-
-#: monitor/shared/MonitorData.qml:1007
-msgctxt "line action"
-msgid "open in the file manager"
-msgstr "otwórz w menedżerze plików"
-
-#: monitor/shared/MonitorData.qml:1013
-msgctxt "line action"
-msgid "lock the screen"
-msgstr "zablokuj ekran"
-
-#: monitor/shared/MonitorData.qml:1014
-msgctxt "line action"
-msgid "log out"
-msgstr "wyloguj"
-
-#: monitor/shared/MonitorData.qml:1017
-msgctxt "line action"
-msgid "reboot"
-msgstr "uruchom ponownie"
-
-#: monitor/shared/MonitorData.qml:1018
-msgctxt "line action"
-msgid "power off"
-msgstr "wyłącz"
-
-#: monitor/shared/MonitorData.qml:1023
-#, kde-format
-msgctxt "line action: send SIGTERM to the process"
-msgid "terminate %1"
-msgstr "zakończ %1"
-
-#: monitor/shared/MonitorData.qml:1025
-#, kde-format
-msgctxt "line action: send SIGKILL to the process"
-msgid "kill %1"
-msgstr "zabij %1"
-
-#: monitor/shared/MonitorData.qml:1032
-msgctxt "line action: the package manager's update in a terminal"
-msgid "update in a terminal"
-msgstr "aktualizuj w terminalu"
-
-#: monitor/shared/MonitorData.qml:1039
-msgctxt "line action: list the containers in a terminal"
-msgid "containers in a terminal"
-msgstr "kontenery w terminalu"
-
-#: monitor/shared/MonitorData.qml:1042
-msgctxt "line action: list ollama's models in a terminal"
-msgid "models in a terminal"
-msgstr "modele w terminalu"
-
-#: monitor/shared/MonitorData.qml:1045
-msgctxt "line action: open virt-manager"
-msgid "Virtual Machine Manager"
-msgstr "menedżer maszyn wirtualnych"
-
-#: monitor/shared/MonitorData.qml:1056
-msgctxt "line action: systemctl status in a terminal"
-msgid "status"
-msgstr "stan"
-
-#: monitor/shared/MonitorData.qml:1057
-msgctxt "line action: systemctl start"
-msgid "start"
-msgstr "uruchom"
-
-#: monitor/shared/MonitorData.qml:1058
-msgctxt "line action: systemctl stop"
-msgid "stop"
-msgstr "zatrzymaj"
-
-#: monitor/shared/MonitorData.qml:1059
-msgctxt "line action: systemctl restart"
-msgid "restart"
-msgstr "uruchom ponownie"
-
-#: monitor/shared/MonitorData.qml:1060
-msgctxt "line action: the unit's journal in a terminal"
-msgid "journal"
-msgstr "dziennik"
-
-#: monitor/shared/MonitorData.qml:1065
-msgctxt "line action"
-msgid "unmute"
-msgstr "włącz dźwięk"
-
-#: monitor/shared/MonitorData.qml:1065
-msgctxt "line action"
-msgid "mute"
-msgstr "wycisz"
-
-#: monitor/shared/MonitorData.qml:1067
-msgctxt "line action"
-msgid "sound settings"
-msgstr "ustawienia dźwięku"
-
-#: monitor/shared/MonitorData.qml:1071
-msgctxt "line action"
-msgid "open in the editor"
-msgstr "otwórz w edytorze"
-
-#: monitor/shared/MonitorData.qml:1072
-msgctxt "line action: git pull in a terminal"
-msgid "git pull"
-msgstr "git pull"
-
-#: monitor/shared/MonitorData.qml:1077
-#, kde-format
-msgctxt "line action: this program's journal in a terminal"
-msgid "journal of %1"
-msgstr "dziennik %1"
-
-#: monitor/shared/MonitorData.qml:1079
-msgctxt "line action: the journal's errors in a terminal"
-msgid "errors in a terminal"
-msgstr "błędy w terminalu"
-
-#: monitor/shared/MonitorData.qml:1179
-msgctxt "line action: open the widget's settings dialog"
-msgid "settings…"
-msgstr "ustawienia…"
-
-#: monitor/shared/MonitorData.qml:1385
-msgctxt "line action"
-msgid "network settings"
-msgstr "ustawienia sieci"
-
-#: monitor/shared/MonitorData.qml:1386
-msgctxt "line action: ip addr in a terminal"
-msgid "addresses in a terminal"
-msgstr "adresy w terminalu"
-
-#: monitor/shared/MonitorData.qml:1457
-msgctxt "line action"
-msgid "energy settings"
-msgstr "ustawienia energii"
-
-#: monitor/shared/MonitorData.qml:1483
-msgctxt "line action: systemctl --failed in a terminal"
-msgid "failed units in a terminal"
-msgstr "jednostki z awarią w terminalu"
-
-#: monitor/shared/MonitorData.qml:1499
-msgctxt "line action"
-msgid "reboot now"
-msgstr "uruchom ponownie teraz"
-
-#: monitor/shared/MonitorData.qml:1504
-msgctxt "line action: menu title for a journal line"
-msgid "journal"
-msgstr "dziennik"
-
-#: monitor/shared/MonitorData.qml:1536
-msgctxt "line action"
-msgid "Bluetooth settings"
-msgstr "ustawienia Bluetooth"
-
-#: monitor/shared/MonitorData.qml:1598
-msgctxt "line action: the block's command, in a terminal"
-msgid "run in a terminal"
-msgstr "uruchom w terminalu"

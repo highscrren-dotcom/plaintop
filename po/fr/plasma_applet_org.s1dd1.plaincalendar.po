@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 12:00+0500\n"
+"POT-Creation-Date: 2026-10-04 12:21+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -24,157 +24,6 @@ msgstr "Général"
 
 #: calendar/package/contents/config/config.qml:13
 msgctxt "settings page"
-msgid "Mouse"
-msgstr "Souris"
-
-#: calendar/package/contents/ui/configGeneral.qml:34
-msgctxt "settings section"
-msgid "Calendar"
-msgstr "Calendrier"
-
-#: calendar/package/contents/ui/configGeneral.qml:38
-msgid "Months:"
-msgstr "Mois :"
-
-#: calendar/package/contents/ui/configGeneral.qml:39
-msgctxt "how many months are shown"
-msgid "one — the current"
-msgstr "un — le mois courant"
-
-#: calendar/package/contents/ui/configGeneral.qml:40
-msgctxt "how many months are shown"
-msgid "three — the previous, the current and the next"
-msgstr "trois — le précédent, le courant et le suivant"
-
-#: calendar/package/contents/ui/configGeneral.qml:47
-msgid "Week numbers:"
-msgstr "Numéros de semaine :"
-
-#: calendar/package/contents/ui/configGeneral.qml:48
-msgid "ISO week numbers in front of the rows"
-msgstr "numéros de semaine ISO devant les lignes"
-
-#: calendar/package/contents/ui/configGeneral.qml:53
-msgid "Week starts on:"
-msgstr "Début de la semaine :"
-
-#: calendar/package/contents/ui/configGeneral.qml:54
-msgctxt "first day of the week"
-msgid "as the locale says"
-msgstr "selon les paramètres régionaux"
-
-#: calendar/package/contents/ui/configGeneral.qml:55
-msgctxt "first day of the week"
-msgid "Monday"
-msgstr "lundi"
-
-#: calendar/package/contents/ui/configGeneral.qml:56
-msgctxt "first day of the week"
-msgid "Sunday"
-msgstr "dimanche"
-
-#: calendar/package/contents/ui/configGeneral.qml:63
-msgid "Weekends:"
-msgstr "Week-ends :"
-
-#: calendar/package/contents/ui/configGeneral.qml:64
-msgid "in their own colour, as on a wall calendar"
-msgstr "dans leur propre couleur, comme sur un calendrier mural"
-
-#: calendar/package/contents/ui/configGeneral.qml:69
-msgid "Other months:"
-msgstr "Autres mois :"
-
-#: calendar/package/contents/ui/configGeneral.qml:70
-msgid "fill the empty cells with the neighbouring months' days"
-msgstr "remplir les cases vides avec les jours des mois voisins"
-
-#: calendar/package/contents/ui/configGeneral.qml:74
-msgid ""
-"Today is in brackets. The names of the days and months, the first day\n"
-"of the week and the weekend come from the locale\n"
-"(System Settings → Language and Region → Formats)."
-msgstr ""
-"Le jour d'aujourd'hui est entre crochets. Les noms des jours et des mois, "
-"le premier\n"
-"jour de la semaine et le week-end viennent des paramètres régionaux\n"
-"(Configuration du système → Langue et région → Formats)."
-
-#: calendar/package/contents/ui/configGeneral.qml:79
-msgctxt "settings section"
-msgid "Text"
-msgstr "Texte"
-
-#: calendar/package/contents/ui/configGeneral.qml:83
-msgid "Font:"
-msgstr "Police :"
-
-#: calendar/package/contents/ui/configGeneral.qml:89
-msgctxt "font size"
-msgid "Size:"
-msgstr "Taille :"
-
-#: calendar/package/contents/ui/configGeneral.qml:96
-msgid "Day cell, characters:"
-msgstr "Case du jour, caractères :"
-
-#: calendar/package/contents/ui/configGeneral.qml:102
-msgid ""
-"The widget is as wide as seven cells and the week numbers, and as tall as\n"
-"the months shown: eight lines each, with a blank line between them."
-msgstr ""
-"Le widget est aussi large que sept cases et les numéros de semaine, et "
-"aussi haut\n"
-"que les mois affichés : huit lignes chacun, avec une ligne vide entre eux."
-
-#: calendar/package/contents/ui/configGeneral.qml:107
-msgctxt "settings section"
-msgid "Palette"
-msgstr "Palette"
-
-#: calendar/package/contents/ui/configGeneral.qml:110
-msgctxt "palette: colour of"
-msgid "Main text:"
-msgstr "Texte principal :"
-
-#: calendar/package/contents/ui/configGeneral.qml:116
-msgctxt "palette: colour of"
-msgid "Weekends:"
-msgstr "Week-ends :"
-
-#: calendar/package/contents/ui/configGeneral.qml:122
-msgctxt "palette: colour of"
-msgid "Secondary:"
-msgstr "Secondaire :"
-
-#: calendar/package/contents/ui/configGeneral.qml:128
-msgctxt "palette: colour of"
-msgid "Today:"
-msgstr "Aujourd'hui :"
-
-#: calendar/package/contents/ui/configMouse.qml:19
-msgid "Mouse:"
-msgstr "Souris :"
-
-#: calendar/package/contents/ui/configMouse.qml:20
-msgid "let clicks through to the desktop"
-msgstr "laisser passer les clics vers le bureau"
-
-#: calendar/package/contents/ui/configMouse.qml:24
-msgid ""
-"While clicks go through, both mouse buttons land on the desktop.\n"
-"The widget takes the mouse only in the desktop's edit mode:\n"
-"that is where its settings are, or ./install.sh with the clicks off "
-"switch."
-msgstr ""
-"Tant que les clics passent au travers, les deux boutons de la souris "
-"arrivent sur le bureau.\n"
-"Le widget ne prend la souris qu'en mode d'édition du bureau :\n"
-"c'est là que sont ses paramètres, ou ./install.sh avec l'option clicks "
-"off."
-
-#: calendar/package/contents/config/config.qml:13
-msgctxt "settings page"
 msgid "Notes"
 msgstr "Notes"
 
@@ -182,6 +31,11 @@ msgstr "Notes"
 msgctxt "settings page"
 msgid "Accounts"
 msgstr "Comptes"
+
+#: calendar/package/contents/config/config.qml:25
+msgctxt "settings page"
+msgid "Mouse"
+msgstr "Souris"
 
 #: calendar/package/contents/ui/Sticker.qml:132
 msgctxt "the account's last fetch failed"
@@ -219,13 +73,14 @@ msgid "ICS link, read-only"
 msgstr "lien ICS, lecture seule"
 
 #: calendar/package/contents/ui/configAccounts.qml:70
+msgid "is python3 installed?"
+msgstr "python3 est-il installé ?"
+
+#: calendar/package/contents/ui/configAccounts.qml:70
+#: calendar/package/contents/ui/configAccounts.qml:168
 #, kde-format
 msgid "The script did not answer: %1"
 msgstr "Le script n'a pas répondu : %1"
-
-#: calendar/package/contents/ui/configAccounts.qml:70
-msgid "is python3 installed?"
-msgstr "python3 est-il installé ?"
 
 #: calendar/package/contents/ui/configAccounts.qml:103
 msgid "The account needs an id — a short word, say “yandex”."
@@ -254,11 +109,27 @@ msgstr[1] "Le lien répond : %1 entrées."
 msgid "The server answers, but lists no calendar."
 msgstr "Le serveur répond, mais ne liste aucun calendrier."
 
+#: calendar/package/contents/ui/configAccounts.qml:151
+#, kde-format
+msgid ""
+"The server answers: %1 calendar — pick one below, or leave the field empty "
+"for the first."
+msgid_plural ""
+"The server answers: %1 calendars — pick one below, or leave the field empty "
+"for the first."
+msgstr[0] "Le serveur répond : %1 calendrier — choisissez-en un ci-dessous, ou laissez le champ vide pour le premier."
+msgstr[1] "Le serveur répond : %1 calendriers — choisissez-en un ci-dessous, ou laissez le champ vide pour le premier."
+
 #: calendar/package/contents/ui/configAccounts.qml:188
 msgid ""
-"Calendars the widget reads, and the one it writes your notes to (chosen on the Notes page). Yandex and iCloud take an app password from your account's settings; Google signs in once through the browser."
+"Calendars the widget reads, and the one it writes your notes to (chosen on "
+"the Notes page). Yandex and iCloud take an app password from your account's "
+"settings; Google signs in once through the browser."
 msgstr ""
-"Les calendriers que le widget lit, et celui où il écrit vos notes (choisi sur la page Notes). Yandex et iCloud prennent un mot de passe d'application depuis les réglages de votre compte ; Google se connecte une fois par le navigateur."
+"Les calendriers que le widget lit, et celui où il écrit vos notes (choisi "
+"sur la page Notes). Yandex et iCloud prennent un mot de passe d'application "
+"depuis les réglages de votre compte ; Google se connecte une fois par le "
+"navigateur."
 
 #: calendar/package/contents/ui/configAccounts.qml:217
 msgctxt "Google account state"
@@ -340,8 +211,10 @@ msgid ""
 "Yandex: id.yandex.ru → Security → App passwords → Calendar.\n"
 "iCloud: appleid.apple.com → Sign-in and security → App-specific passwords."
 msgstr ""
-"Yandex : id.yandex.ru → Sécurité → Mots de passe d'application → Calendrier.\n"
-"iCloud : appleid.apple.com → Connexion et sécurité → Mots de passe pour application."
+"Yandex : id.yandex.ru → Sécurité → Mots de passe d'application → "
+"Calendrier.\n"
+"iCloud : appleid.apple.com → Connexion et sécurité → Mots de passe pour "
+"application."
 
 #: calendar/package/contents/ui/configAccounts.qml:323
 msgid "OAuth client id:"
@@ -359,11 +232,13 @@ msgstr "enregistré — saisir pour remplacer"
 #: calendar/package/contents/ui/configAccounts.qml:338
 #, kde-format
 msgid ""
-"A “Desktop app” OAuth client from console.cloud.google.com, with the Calendar API\n"
+"A “Desktop app” OAuth client from console.cloud.google.com, with the "
+"Calendar API\n"
 "enabled. Save, then sign in once from a terminal:\n"
 "python3 %1 google-auth %2"
 msgstr ""
-"Un client OAuth « Desktop app » de console.cloud.google.com, avec l'API Calendar\n"
+"Un client OAuth « Desktop app » de console.cloud.google.com, avec l'API "
+"Calendar\n"
 "activée. Enregistrez, puis connectez-vous une fois depuis un terminal :\n"
 "python3 %1 google-auth %2"
 
@@ -393,6 +268,151 @@ msgstr "Enregistrer"
 msgid "Check"
 msgstr "Vérifier"
 
+#: calendar/package/contents/ui/configGeneral.qml:34
+msgctxt "settings section"
+msgid "Calendar"
+msgstr "Calendrier"
+
+#: calendar/package/contents/ui/configGeneral.qml:38
+msgid "Months:"
+msgstr "Mois :"
+
+#: calendar/package/contents/ui/configGeneral.qml:39
+msgctxt "how many months are shown"
+msgid "one — the current"
+msgstr "un — le mois courant"
+
+#: calendar/package/contents/ui/configGeneral.qml:40
+msgctxt "how many months are shown"
+msgid "three — the previous, the current and the next"
+msgstr "trois — le précédent, le courant et le suivant"
+
+#: calendar/package/contents/ui/configGeneral.qml:47
+msgid "Week numbers:"
+msgstr "Numéros de semaine :"
+
+#: calendar/package/contents/ui/configGeneral.qml:48
+msgid "ISO week numbers in front of the rows"
+msgstr "numéros de semaine ISO devant les lignes"
+
+#: calendar/package/contents/ui/configGeneral.qml:53
+msgid "Week starts on:"
+msgstr "Début de la semaine :"
+
+#: calendar/package/contents/ui/configGeneral.qml:54
+msgctxt "first day of the week"
+msgid "as the locale says"
+msgstr "selon les paramètres régionaux"
+
+#: calendar/package/contents/ui/configGeneral.qml:55
+msgctxt "first day of the week"
+msgid "Monday"
+msgstr "lundi"
+
+#: calendar/package/contents/ui/configGeneral.qml:56
+msgctxt "first day of the week"
+msgid "Sunday"
+msgstr "dimanche"
+
+#: calendar/package/contents/ui/configGeneral.qml:63
+msgid "Weekends:"
+msgstr "Week-ends :"
+
+#: calendar/package/contents/ui/configGeneral.qml:64
+msgid "in their own colour, as on a wall calendar"
+msgstr "dans leur propre couleur, comme sur un calendrier mural"
+
+#: calendar/package/contents/ui/configGeneral.qml:69
+msgid "Other months:"
+msgstr "Autres mois :"
+
+#: calendar/package/contents/ui/configGeneral.qml:70
+msgid "fill the empty cells with the neighbouring months' days"
+msgstr "remplir les cases vides avec les jours des mois voisins"
+
+#: calendar/package/contents/ui/configGeneral.qml:74
+msgid ""
+"Today is in brackets. The names of the days and months, the first day\n"
+"of the week and the weekend come from the locale\n"
+"(System Settings → Language and Region → Formats)."
+msgstr ""
+"Le jour d'aujourd'hui est entre crochets. Les noms des jours et des mois, le "
+"premier\n"
+"jour de la semaine et le week-end viennent des paramètres régionaux\n"
+"(Configuration du système → Langue et région → Formats)."
+
+#: calendar/package/contents/ui/configGeneral.qml:79
+msgctxt "settings section"
+msgid "Text"
+msgstr "Texte"
+
+#: calendar/package/contents/ui/configGeneral.qml:83
+msgid "Font:"
+msgstr "Police :"
+
+#: calendar/package/contents/ui/configGeneral.qml:89
+msgctxt "font size"
+msgid "Size:"
+msgstr "Taille :"
+
+#: calendar/package/contents/ui/configGeneral.qml:96
+msgid "Day cell, characters:"
+msgstr "Case du jour, caractères :"
+
+#: calendar/package/contents/ui/configGeneral.qml:102
+msgid ""
+"The widget is as wide as seven cells and the week numbers, and as tall as\n"
+"the months shown: eight lines each, with a blank line between them."
+msgstr ""
+"Le widget est aussi large que sept cases et les numéros de semaine, et aussi "
+"haut\n"
+"que les mois affichés : huit lignes chacun, avec une ligne vide entre eux."
+
+#: calendar/package/contents/ui/configGeneral.qml:107
+#: calendar/package/contents/ui/configNotes.qml:157
+msgctxt "settings section"
+msgid "Palette"
+msgstr "Palette"
+
+#: calendar/package/contents/ui/configGeneral.qml:110
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "Texte principal :"
+
+#: calendar/package/contents/ui/configGeneral.qml:116
+msgctxt "palette: colour of"
+msgid "Weekends:"
+msgstr "Week-ends :"
+
+#: calendar/package/contents/ui/configGeneral.qml:122
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "Secondaire :"
+
+#: calendar/package/contents/ui/configGeneral.qml:128
+msgctxt "palette: colour of"
+msgid "Today:"
+msgstr "Aujourd'hui :"
+
+#: calendar/package/contents/ui/configMouse.qml:19
+msgid "Mouse:"
+msgstr "Souris :"
+
+#: calendar/package/contents/ui/configMouse.qml:20
+msgid "let clicks through to the desktop"
+msgstr "laisser passer les clics vers le bureau"
+
+#: calendar/package/contents/ui/configMouse.qml:24
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The widget takes the mouse only in the desktop's edit mode:\n"
+"that is where its settings are, or ./install.sh with the clicks off switch."
+msgstr ""
+"Tant que les clics passent au travers, les deux boutons de la souris "
+"arrivent sur le bureau.\n"
+"Le widget ne prend la souris qu'en mode d'édition du bureau :\n"
+"c'est là que sont ses paramètres, ou ./install.sh avec l'option clicks off."
+
 #: calendar/package/contents/ui/configNotes.qml:30
 msgctxt "the account of the widget's own notes: a folder of files"
 msgid "local — this machine"
@@ -413,12 +433,16 @@ msgstr "marquer les jours ayant des entrées, ouvrir un pense-bête au clic"
 
 #: calendar/package/contents/ui/configNotes.qml:75
 msgid ""
-"A click on a day opens its sticker: the day's events and tasks from the accounts,\n"
-"and a note of yours — the first line is its title. Off, the calendar is the plain grid\n"
+"A click on a day opens its sticker: the day's events and tasks from the "
+"accounts,\n"
+"and a note of yours — the first line is its title. Off, the calendar is the "
+"plain grid\n"
 "and takes no clicks at all."
 msgstr ""
-"Un clic sur un jour ouvre son pense-bête : les événements et tâches du jour venant des\n"
-"comptes, et une note à vous — la première ligne en est le titre. Désactivé, le calendrier\n"
+"Un clic sur un jour ouvre son pense-bête : les événements et tâches du jour "
+"venant des\n"
+"comptes, et une note à vous — la première ligne en est le titre. Désactivé, "
+"le calendrier\n"
 "n'est que la grille et ne prend aucun clic."
 
 #: calendar/package/contents/ui/configNotes.qml:82
@@ -428,10 +452,13 @@ msgstr "Écrire les notes dans :"
 #: calendar/package/contents/ui/configNotes.qml:90
 msgid ""
 "“local” keeps them as .ics files in ~/.local/share/plaincalendar/notes;\n"
-"an account from the Accounts page sends them to that calendar as all-day events."
+"an account from the Accounts page sends them to that calendar as all-day "
+"events."
 msgstr ""
-"« local » les garde en fichiers .ics dans ~/.local/share/plaincalendar/notes ;\n"
-"un compte de la page Comptes les envoie dans ce calendrier comme événements d'une journée."
+"« local » les garde en fichiers .ics dans ~/.local/share/plaincalendar/"
+"notes ;\n"
+"un compte de la page Comptes les envoie dans ce calendrier comme événements "
+"d'une journée."
 
 #: calendar/package/contents/ui/configNotes.qml:97
 msgid "Upcoming lines:"
