@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 13:04+0500\n"
+"POT-Creation-Date: 2026-10-04 14:22+0500\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Spanish\n"
@@ -370,7 +370,7 @@ msgstr ""
 "La lista de procesos es lo más costoso de recopilar: cada 2 s\n"
 "cerca del 3 % de un núcleo, cada 10 s cerca del 1,3 %"
 
-#: monitor/package/contents/ui/main.qml:173
+#: monitor/package/contents/ui/main.qml:177
 #, kde-format
 msgctxt "a line action failed: its exit code"
 msgid "exit code %1"
