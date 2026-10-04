@@ -1024,3 +1024,22 @@ now writes the secrets there, hex-encoded so the INI quoting cannot touch them, 
 kpackagetool6 installs, and `--status` flagged it as a file that differs from the repo. The
 stand sets `sys.dont_write_bytecode`, and `calendar_prepare` removes the directory before
 an install or a pack. 2026-10-04.
+
+## A `PlasmaCore.Dialog` can keep its sheet's first size
+
+The dialog sizes its window from `mainItem`'s `width` and `height` and sets them back on its
+own resize. The monitor's menu sheet declared only `implicitWidth`/`implicitHeight` (from
+its column), and offscreen (Qt 6.11.2, libplasma 6.7) a one-item menu opened at 155×36 —
+two rows, the bottom border cut — against the 155×54 the sheet wanted; a five-item menu
+opened next stayed 155×36 against 126. Re-applying the implicit size on every change fixes
+it: `onImplicitWidthChanged: width = implicitWidth`, the same for the height — 155×54,
+then 155×126. The calendar's sticker, built the same way, followed its content in the same
+test (126, then 216); what makes the difference was not pinned down, so it is left as it
+is. 2026-10-04.
+
+## A framed line drawn as one `Text` paints its sides in the line's colour
+
+`"│ " + text + " │"` in one `Text` with the row's role puts the frame's sides in that role
+too — red beside a title, bright beside an entry — and the frame looks broken where the
+rows change colour. Draw the sides as their own pieces in the frame's colour; the sticker
+and the menu recognise such a row by its first and last character. 2026-10-04.
