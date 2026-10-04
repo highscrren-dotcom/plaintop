@@ -284,12 +284,17 @@ class Handler(BaseHTTPRequestHandler):
         return self.rfile.read(length) if length else b""
 
     def reply(self, status, body, content_type):
-        self.send_response(status)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        if body:
-            self.wfile.write(body)
+        # A host aborts a request from its watchdog now and then (a slow /exec): the
+        # socket is gone, and there is nobody to tell — on Windows that is WinError 10053.
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            if body:
+                self.wfile.write(body)
+        except (ConnectionError, OSError):
+            self.close_connection = True
 
     def log_message(self, *args):
         pass

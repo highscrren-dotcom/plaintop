@@ -118,6 +118,10 @@ class Manager:
             # No console window for a GUI host; the output still reaches our stderr.
             kwargs["creationflags"] = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         env = dict(os.environ)
+        # A non-native Controls style: the Windows style refuses the customised rows of the
+        # settings window ("does not support customization of this control") and complains
+        # offscreen; Fusion draws the same everywhere.
+        env.setdefault("QT_QUICK_CONTROLS_STYLE", "Fusion")
         env.setdefault("QT_QPA_PLATFORM", os.environ.get("PLAINTOP_QPA", "windows" if os.name == "nt" else env.get("QT_QPA_PLATFORM", "")))
         if not env["QT_QPA_PLATFORM"]:
             del env["QT_QPA_PLATFORM"]

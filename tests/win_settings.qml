@@ -386,7 +386,9 @@ TestCase {
         const w = make(widget)
         w.showPage(i)
         wait(200)
-        const path = StandardPaths.writableLocation(StandardPaths.TempLocation).toString().replace("file://", "")
+        // A file URL on Windows is file:///C:/…: the drive letter follows the third slash.
+        const path = StandardPaths.writableLocation(StandardPaths.TempLocation).toString()
+            .replace(/^file:\/\/\/([A-Za-z]:)/, "$1").replace(/^file:\/\//, "")
                      + "/plaintop-settings-" + name + ".png"
         const before = grabbed
         w.contentItem.grabToImage(function(result) {

@@ -81,7 +81,8 @@ def main(argv):
                 "pragma Singleton\nimport QtQuick\nQtObject { readonly property int port: %d\n"
                 "    readonly property string token: %r }\n" % (port, token), encoding="utf-8")
             qenv = dict(os.environ, QT_QPA_PLATFORM=os.environ.get("QT_QPA_PLATFORM", "offscreen"),
-                        QT_FORCE_STDERR_LOGGING="1")
+                        QT_FORCE_STDERR_LOGGING="1",
+                        QT_QUICK_CONTROLS_STYLE=os.environ.get("QT_QUICK_CONTROLS_STYLE", "Fusion"))
             only = argv[argv.index("--only") + 1] if "--only" in argv else ""
             stands = [n for n in ("win_hosts", "win_settings") if not only or n.endswith(only)]
             for name in stands:
