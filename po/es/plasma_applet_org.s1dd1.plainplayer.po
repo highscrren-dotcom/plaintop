@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 20:05+0500\n"
+"POT-Creation-Date: 2026-10-04 21:01+0000\n"
 "PO-Revision-Date: 2026-09-23 17:52+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,35 +17,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: player/package/contents/config/config.qml:7
+#: player/package/contents/config/config.qml:7 win/host/settings.qml:45
+#: win/host/settings.qml:53 win/host/settings.qml:57 win/host/settings.qml:62
 msgctxt "settings page"
 msgid "General"
 msgstr "General"
 
-#: player/package/contents/config/config.qml:13
+#: player/package/contents/config/config.qml:13 win/host/settings.qml:54
+#: win/host/settings.qml:59 win/host/settings.qml:66
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "Ratón"
 
 #: player/package/contents/ui/configGeneral.qml:28
+#: win/host/settings/PlayerGeneral.qml:8
 msgctxt "settings section"
 msgid "Text"
 msgstr "Texto"
 
 #: player/package/contents/ui/configGeneral.qml:32
+#: win/host/settings/PlayerGeneral.qml:11
 msgid "Font:"
 msgstr "Tipo de letra:"
 
 #: player/package/contents/ui/configGeneral.qml:38
+#: win/host/settings/PlayerGeneral.qml:15
 msgctxt "font size"
 msgid "Size:"
 msgstr "Tamaño:"
 
 #: player/package/contents/ui/configGeneral.qml:45
+#: win/host/settings/PlayerGeneral.qml:19
 msgid "Width, characters:"
 msgstr "Ancho, caracteres:"
 
 #: player/package/contents/ui/configGeneral.qml:51
+#: win/host/settings/PlayerGeneral.qml:23
 msgid ""
 "The widget is this many characters wide and five lines tall;\n"
 "a longer title is cut with an ellipsis."
@@ -54,40 +61,48 @@ msgstr ""
 "un título más largo se corta con puntos suspensivos."
 
 #: player/package/contents/ui/configGeneral.qml:56
+#: win/host/settings/PlayerGeneral.qml:26
 msgctxt "settings section"
 msgid "Palette"
 msgstr "Paleta"
 
 #: player/package/contents/ui/configGeneral.qml:59
+#: win/host/settings/PlayerGeneral.qml:29
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Texto principal:"
 
 #: player/package/contents/ui/configGeneral.qml:65
+#: win/host/settings/PlayerGeneral.qml:33
 msgctxt "palette: colour of"
 msgid "Title:"
 msgstr "Título:"
 
 #: player/package/contents/ui/configGeneral.qml:71
+#: win/host/settings/PlayerGeneral.qml:37
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Secundario:"
 
 #: player/package/contents/ui/configGeneral.qml:76
+#: win/host/settings/PlayerGeneral.qml:41
 msgctxt "settings section"
 msgid "Player"
 msgstr "Reproductor"
 
 #: player/package/contents/ui/configGeneral.qml:80
+#: win/host/settings/PlayerGeneral.qml:44
 msgid "Player:"
 msgstr "Reproductor:"
 
 #: player/package/contents/ui/configGeneral.qml:82
+#: win/host/settings/PlayerGeneral.qml:48
 msgctxt "player field placeholder"
 msgid "whoever is playing"
 msgstr "el que reproduzca"
 
 #: player/package/contents/ui/configGeneral.qml:86
+#: win/host/settings/PlayerGeneral.qml:52
 msgid ""
 "Empty: whoever is playing. Otherwise a part of the player's name\n"
 "or desktop entry — vlc, spotify, strawberry; when no player matches,\n"
@@ -98,26 +113,32 @@ msgstr ""
 "vuelve al que reproduzca."
 
 #: player/package/contents/ui/configGeneral.qml:93
+#: win/host/settings/PlayerGeneral.qml:55
 msgid "Album:"
 msgstr "Álbum:"
 
 #: player/package/contents/ui/configGeneral.qml:94
+#: win/host/settings/PlayerGeneral.qml:56
 msgid "show the album line"
 msgstr "mostrar la línea del álbum"
 
 #: player/package/contents/ui/configGeneral.qml:99
+#: win/host/settings/PlayerGeneral.qml:59
 msgid "Controls:"
 msgstr "Controles:"
 
 #: player/package/contents/ui/configGeneral.qml:100
+#: win/host/settings/PlayerGeneral.qml:60
 msgid "show the previous, play/pause and next row"
 msgstr "mostrar la fila anterior, reproducir/pausa y siguiente"
 
 #: player/package/contents/ui/configMouse.qml:19
+#: win/host/settings/MousePage.qml:15
 msgid "Mouse:"
 msgstr "Ratón:"
 
 #: player/package/contents/ui/configMouse.qml:20
+#: win/host/settings/MousePage.qml:16
 msgid "let clicks through to the desktop"
 msgstr "dejar pasar los clics al escritorio"
 
@@ -155,3 +176,97 @@ msgstr "detenido"
 msgctxt "playback status"
 msgid "paused"
 msgstr "en pausa"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:127
+msgctxt "the widget's window menu"
+msgid "Settings…"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:131
+#, fuzzy
+msgctxt "the widget's window menu"
+msgid "Let clicks through"
+msgstr "dejar pasar los clics al escritorio"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:137
+msgctxt "the widget's window menu"
+msgid "Behind the desktop icons"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:144
+msgctxt "the widget's window menu"
+msgid "Close"
+msgstr ""
+
+#: win/host/settings.qml:46
+msgctxt "settings page"
+msgid "Blocks"
+msgstr ""
+
+#: win/host/settings.qml:49
+msgctxt "settings page"
+msgid "Ring"
+msgstr ""
+
+#: win/host/settings.qml:50
+#, fuzzy
+msgctxt "settings page"
+msgid "Player"
+msgstr "Reproductor"
+
+#: win/host/settings.qml:58
+msgctxt "settings page"
+msgid "Location"
+msgstr ""
+
+#: win/host/settings.qml:63
+msgctxt "settings page"
+msgid "Notes"
+msgstr ""
+
+#: win/host/settings.qml:64
+msgctxt "settings page"
+msgid "Holidays"
+msgstr ""
+
+#: win/host/settings.qml:65
+msgctxt "settings page"
+msgid "Accounts"
+msgstr ""
+
+#: win/host/settings.qml:190
+msgctxt "the settings window: the service does not answer"
+msgid "The plaintop service does not answer — nothing changed here is saved."
+msgstr ""
+
+#: win/host/settings/MousePage.qml:21
+#, fuzzy
+msgctxt "Windows: the player's mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop, the "
+"controls' too.\n"
+"The way back is the tray icon's menu, or the widget's own menu: the right "
+"button\n"
+"on it while clicks are not passing — the controls work then as well."
+msgstr ""
+"Mientras los clics pasan de largo, ambos botones del ratón llegan al "
+"escritorio.\n"
+"El widget solo toma el ratón en el modo de edición del escritorio:\n"
+"ahí está su configuración, o ./install.sh con la opción clicks off.\n"
+"Los controles toman el ratón incluso entonces; el resto del widget lo deja "
+"pasar."
+
+#: win/host/settings/MousePage.qml:22
+#, fuzzy
+msgctxt "Windows: the mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The way back is the tray icon's menu, or the widget's own menu:\n"
+"the right button on it while clicks are not passing."
+msgstr ""
+"Mientras los clics pasan de largo, ambos botones del ratón llegan al "
+"escritorio.\n"
+"El widget solo toma el ratón en el modo de edición del escritorio:\n"
+"ahí está su configuración, o ./install.sh con la opción clicks off.\n"
+"Los controles toman el ratón incluso entonces; el resto del widget lo deja "
+"pasar."

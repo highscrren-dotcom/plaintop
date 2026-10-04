@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 14:22+0500\n"
+"POT-Creation-Date: 2026-10-04 21:01+0000\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Ukrainian\n"
@@ -19,12 +19,13 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: monitor/package/contents/config/config.qml:7
+#: monitor/package/contents/config/config.qml:7 win/host/settings.qml:45
+#: win/host/settings.qml:53 win/host/settings.qml:57 win/host/settings.qml:62
 msgctxt "settings page"
 msgid "General"
 msgstr "Загальне"
 
-#: monitor/package/contents/config/config.qml:13
+#: monitor/package/contents/config/config.qml:13 win/host/settings.qml:46
 msgctxt "settings page"
 msgid "Blocks"
 msgstr "Блоки"
@@ -45,100 +46,122 @@ msgid "ok"
 msgstr "гаразд"
 
 #: monitor/package/contents/ui/configBlocks.qml:55
+#: win/host/settings/MonitorBlocks.qml:72
 msgctxt "the block is in the second column"
 msgid "(right column)"
 msgstr "(права колонка)"
 
 #: monitor/package/contents/ui/configBlocks.qml:152
+#: win/host/settings/MonitorBlocks.qml:170
 #, kde-format
 msgid "Not valid JSON: %1"
 msgstr "Це не JSON: %1"
 
 #: monitor/package/contents/ui/configBlocks.qml:156
+#: win/host/settings/MonitorBlocks.qml:174
 msgid "The layout must be a list of blocks"
 msgstr "Розкладка має бути списком блоків"
 
 #: monitor/package/contents/ui/configBlocks.qml:163
+#: win/host/settings/MonitorBlocks.qml:181
 #, kde-format
 msgid "Block %1 needs an id and a type"
 msgstr "Блоку %1 потрібні id і type"
 
 #: monitor/package/contents/ui/configBlocks.qml:167
+#: win/host/settings/MonitorBlocks.qml:185
 #, kde-format
 msgid "Block %1: unknown type “%2”"
 msgstr "Блок %1: невідомий тип «%2»"
 
 #: monitor/package/contents/ui/configBlocks.qml:171
+#: win/host/settings/MonitorBlocks.qml:189
 #, kde-format
 msgid "Block %1: the id “%2” is used twice"
 msgstr "Блок %1: id «%2» трапляється двічі"
 
 #: monitor/package/contents/ui/configBlocks.qml:258
+#: win/host/settings/MonitorBlocks.qml:246
 msgid ""
 "The blocks and their order. The default layout comes from schema/widget.json."
 msgstr ""
 "Блоки та їхній порядок. Типове компонування береться з schema/widget.json."
 
 #: monitor/package/contents/ui/configBlocks.qml:314
+#: win/host/settings/MonitorBlocks.qml:306
 msgid "Up"
 msgstr "Вище"
 
 #: monitor/package/contents/ui/configBlocks.qml:321
+#: win/host/settings/MonitorBlocks.qml:312
 msgid "Down"
 msgstr "Нижче"
 
 #: monitor/package/contents/ui/configBlocks.qml:328
+#: win/host/settings/MonitorBlocks.qml:318
 msgid "Duplicate"
 msgstr "Дублювати"
 
 #: monitor/package/contents/ui/configBlocks.qml:335
+#: win/host/settings/MonitorBlocks.qml:324
 msgid "Remove"
 msgstr "Вилучити"
 
 #: monitor/package/contents/ui/configBlocks.qml:342
+#: win/host/settings/MonitorBlocks.qml:330
 msgid "Reset"
 msgstr "Скинути"
 
 #: monitor/package/contents/ui/configBlocks.qml:360
+#: win/host/settings/MonitorBlocks.qml:348
 msgid "Add block"
 msgstr "Додати блок"
 
 #: monitor/package/contents/ui/configBlocks.qml:373
+#: win/host/settings/MonitorBlocks.qml:362
 msgid "Name:"
 msgstr "Назва:"
 
 #: monitor/package/contents/ui/configBlocks.qml:376
+#: win/host/settings/MonitorBlocks.qml:366
 msgctxt "placeholder for the block's own name"
 msgid "optional, shown in the list"
 msgstr "необов'язково, видно у списку"
 
 #: monitor/package/contents/ui/configBlocks.qml:381
+#: win/host/settings/MonitorBlocks.qml:371
 msgid "Column:"
 msgstr "Колонка:"
 
 #: monitor/package/contents/ui/configBlocks.qml:382
+#: win/host/settings/MonitorBlocks.qml:373
 msgctxt "the widget's column"
 msgid "left"
 msgstr "ліва"
 
 #: monitor/package/contents/ui/configBlocks.qml:382
+#: win/host/settings/MonitorBlocks.qml:373
 msgctxt "the widget's column"
 msgid "right"
 msgstr "права"
 
 #: monitor/package/contents/ui/configBlocks.qml:391
+#: win/host/settings/MonitorBlocks.qml:382
 msgid "Active:"
 msgstr "Активний:"
 
 #: monitor/package/contents/ui/configBlocks.qml:392
+#: win/host/settings/MonitorBlocks.qml:384
 msgid "the block's lines take clicks"
 msgstr "рядки блоку приймають кліки"
 
 #: monitor/package/contents/ui/configBlocks.qml:398
+#: win/host/settings/MonitorBlocks.qml:390
 msgid "Click:"
 msgstr "Клік:"
 
 #: monitor/package/contents/ui/configBlocks.qml:401
+#: win/host/settings/MonitorBlocks.qml:394
 msgctxt "placeholder for the block's own click command"
 msgid "a command of your own; {name} {pid} {path} {unit} {value} are filled in"
 msgstr "своя команда; {name} {pid} {path} {unit} {value} підставляються"
@@ -158,67 +181,82 @@ msgid "nothing found"
 msgstr "нічого не знайдено"
 
 #: monitor/package/contents/ui/configBlocks.qml:492
+#: win/host/settings/MonitorBlocks.qml:458
 msgid "The layout as JSON — edit here, or paste one from another machine:"
 msgstr "Розкладка як JSON — правте тут або вставте з іншої машини:"
 
 #: monitor/package/contents/ui/configBlocks.qml:515
+#: win/host/settings/MonitorBlocks.qml:482
 msgid "Apply JSON"
 msgstr "Застосувати JSON"
 
 #: monitor/package/contents/ui/configBlocks.qml:521
+#: win/host/settings/MonitorBlocks.qml:486
 msgid "Reload from the list"
 msgstr "Перечитати зі списку"
 
 #: monitor/package/contents/ui/configGeneral.qml:46
+#: win/host/settings/MonitorGeneral.qml:12
 msgid "Font:"
 msgstr "Шрифт:"
 
 #: monitor/package/contents/ui/configGeneral.qml:52
+#: win/host/settings/MonitorGeneral.qml:16
 msgctxt "font size"
 msgid "Size:"
 msgstr "Розмір:"
 
 #: monitor/package/contents/ui/configGeneral.qml:59
+#: win/host/settings/MonitorGeneral.qml:20
 msgid "Left padding, px:"
 msgstr "Відступ зліва, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:67
+#: win/host/settings/MonitorGeneral.qml:24
 msgid "Top padding, px:"
 msgstr "Відступ згори, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:75
+#: win/host/settings/MonitorGeneral.qml:28
 msgid "Width, px:"
 msgstr "Ширина, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:83
+#: win/host/settings/MonitorGeneral.qml:32
 msgid "Height, px:"
 msgstr "Висота, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:90
+#: win/host/settings/MonitorGeneral.qml:37
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Основний текст:"
 
 #: monitor/package/contents/ui/configGeneral.qml:96
+#: win/host/settings/MonitorGeneral.qml:41
 msgctxt "palette: colour of"
 msgid "Header and clock:"
 msgstr "Заголовок і годинник:"
 
 #: monitor/package/contents/ui/configGeneral.qml:102
+#: win/host/settings/MonitorGeneral.qml:45
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Другорядний:"
 
 #: monitor/package/contents/ui/configGeneral.qml:108
+#: win/host/settings/MonitorGeneral.qml:49
 msgctxt "palette: colour of"
 msgid "Values:"
 msgstr "Значення:"
 
 #: monitor/package/contents/ui/configGeneral.qml:115
+#: win/host/settings/MonitorGeneral.qml:54 win/host/settings/MousePage.qml:15
 msgid "Mouse:"
 msgstr "Миша:"
 
 #: monitor/package/contents/ui/configGeneral.qml:116
+#: win/host/settings/MonitorGeneral.qml:55 win/host/settings/MousePage.qml:16
 msgid "let clicks through to the desktop"
 msgstr "пропускати клацання на стільницю"
 
@@ -238,14 +276,17 @@ msgstr ""
 "(або ./install.sh з ключем clicks-off)."
 
 #: monitor/package/contents/ui/configGeneral.qml:127
+#: win/host/settings/MonitorGeneral.qml:62
 msgid "Active lines:"
 msgstr "Активні рядки:"
 
 #: monitor/package/contents/ui/configGeneral.qml:128
+#: win/host/settings/MonitorGeneral.qml:63
 msgid "a click runs the line's action, the right button lists them"
 msgstr "клік виконує дію рядка, права кнопка показує їхній список"
 
 #: monitor/package/contents/ui/configGeneral.qml:132
+#: win/host/settings/MonitorGeneral.qml:66
 msgid ""
 "A bar opens System Monitor, a disk its folder, a unit its status, a process\n"
 "asks before it is ended, the header opens these settings. The Blocks page\n"
@@ -256,45 +297,55 @@ msgstr ""
 "Сторінка «Блоки» вимикає рядки блоку або дає їм власну команду."
 
 #: monitor/package/contents/ui/configGeneral.qml:139
+#: win/host/settings/MonitorGeneral.qml:70
 msgid "Terminal:"
 msgstr "Термінал:"
 
 #: monitor/package/contents/ui/configGeneral.qml:146
+#: win/host/settings/MonitorGeneral.qml:74
 msgid "Editor:"
 msgstr "Редактор:"
 
 #: monitor/package/contents/ui/configGeneral.qml:153
+#: win/host/settings/MonitorGeneral.qml:78
 msgid "Menu frame:"
 msgstr "Рамка меню:"
 
 #: monitor/package/contents/ui/configGeneral.qml:160
+#: win/host/settings/MonitorGeneral.qml:82
 msgctxt "palette: colour of"
 msgid "Menu paper:"
 msgstr "Папір меню:"
 
 #: monitor/package/contents/ui/configGeneral.qml:167
+#: win/host/settings/MonitorGeneral.qml:86
 msgid "Paper opacity, %:"
 msgstr "Непрозорість паперу, %:"
 
 #: monitor/package/contents/ui/configGeneral.qml:172
+#: win/host/settings/MonitorGeneral.qml:90
 msgctxt "settings section"
 msgid "Lines"
 msgstr "Рядки"
 
 #: monitor/package/contents/ui/configGeneral.qml:176
+#: win/host/settings/MonitorGeneral.qml:93
 msgid "Bar width, characters:"
 msgstr "Ширина смужки, знаків:"
 
 #: monitor/package/contents/ui/configGeneral.qml:182
+#: win/host/settings/MonitorGeneral.qml:97
 msgid "Bar characters:"
 msgstr "Символи смужки:"
 
 #: monitor/package/contents/ui/configGeneral.qml:195
+#: win/host/settings/MonitorGeneral.qml:103
 msgctxt "placeholder: the empty part of a bar is a space"
 msgid "space"
 msgstr "пробіл"
 
 #: monitor/package/contents/ui/configGeneral.qml:200
+#: win/host/settings/MonitorGeneral.qml:106
 msgid ""
 "The filled and the empty part of a bar. Empty fields mean the slash and a "
 "space."
@@ -302,14 +353,17 @@ msgstr ""
 "Заповнена й порожня частина смужки. Порожні поля — коса риска і пробіл."
 
 #: monitor/package/contents/ui/configGeneral.qml:206
+#: win/host/settings/MonitorGeneral.qml:109
 msgid "Separator:"
 msgstr "Роздільник:"
 
 #: monitor/package/contents/ui/configGeneral.qml:224
+#: win/host/settings/MonitorGeneral.qml:114
 msgid "Sparkline glyphs:"
 msgstr "Символи спарклайна:"
 
 #: monitor/package/contents/ui/configGeneral.qml:230
+#: win/host/settings/MonitorGeneral.qml:118
 msgid ""
 "From lowest to highest, for the “History” parameter of the bar blocks.\n"
 "Any run of characters works, say “ .:-=+*#”."
@@ -318,10 +372,12 @@ msgstr ""
 "Підійде будь-який ряд символів, наприклад « .:-=+*#»."
 
 #: monitor/package/contents/ui/configGeneral.qml:237
+#: win/host/settings/MonitorGeneral.qml:121
 msgid "Second column at, px:"
 msgstr "Друга колонка від, px:"
 
 #: monitor/package/contents/ui/configGeneral.qml:244
+#: win/host/settings/MonitorGeneral.qml:125
 msgid ""
 "Where the second column starts; 0 is half the width. A block goes\n"
 "there by its “Column” field on the Blocks page."
@@ -330,19 +386,23 @@ msgstr ""
 "туди за полем «Колонка» на сторінці «Блоки»."
 
 #: monitor/package/contents/ui/configGeneral.qml:249
+#: win/host/settings/MonitorGeneral.qml:128
 msgctxt "settings section"
 msgid "Updates"
 msgstr "Оновлення"
 
 #: monitor/package/contents/ui/configGeneral.qml:253
+#: win/host/settings/MonitorGeneral.qml:131
 msgid "Interval, ms:"
 msgstr "Інтервал, мс:"
 
 #: monitor/package/contents/ui/configGeneral.qml:261
+#: win/host/settings/MonitorGeneral.qml:135
 msgid "Top processes, every … s:"
 msgstr "Топ процесів, кожні … с:"
 
 #: monitor/package/contents/ui/configGeneral.qml:267
+#: win/host/settings/MonitorGeneral.qml:139
 msgid ""
 "The process list is the most expensive thing collected: every 2 s\n"
 "about 3% of a core, every 10 s about 1.3%"
@@ -350,7 +410,7 @@ msgstr ""
 "Список процесів — найдорожче з того, що збирається: кожні 2 с\n"
 "близько 3 % ядра, кожні 10 с — близько 1,3 %"
 
-#: monitor/package/contents/ui/main.qml:177
+#: monitor/package/contents/ui/main.qml:177 win/host/monitor.qml:132
 #, kde-format
 msgctxt "a line action failed: its exit code"
 msgid "exit code %1"
@@ -491,79 +551,79 @@ msgctxt "line action: open virt-manager"
 msgid "Virtual Machine Manager"
 msgstr "менеджер віртуальних машин"
 
-#: monitor/shared/MonitorData.qml:1056
+#: monitor/shared/MonitorData.qml:1057
 msgctxt "line action: systemctl status in a terminal"
 msgid "status"
 msgstr "стан"
 
-#: monitor/shared/MonitorData.qml:1057
+#: monitor/shared/MonitorData.qml:1058
 msgctxt "line action: systemctl start"
 msgid "start"
 msgstr "запустити"
 
-#: monitor/shared/MonitorData.qml:1058
+#: monitor/shared/MonitorData.qml:1059
 msgctxt "line action: systemctl stop"
 msgid "stop"
 msgstr "зупинити"
 
-#: monitor/shared/MonitorData.qml:1059
+#: monitor/shared/MonitorData.qml:1060
 msgctxt "line action: systemctl restart"
 msgid "restart"
 msgstr "перезапустити"
 
-#: monitor/shared/MonitorData.qml:1060
+#: monitor/shared/MonitorData.qml:1061
 msgctxt "line action: the unit's journal in a terminal"
 msgid "journal"
 msgstr "журнал"
 
-#: monitor/shared/MonitorData.qml:1065
+#: monitor/shared/MonitorData.qml:1066
 msgctxt "line action"
 msgid "unmute"
 msgstr "увімкнути звук"
 
-#: monitor/shared/MonitorData.qml:1065
+#: monitor/shared/MonitorData.qml:1066
 msgctxt "line action"
 msgid "mute"
 msgstr "вимкнути звук"
 
-#: monitor/shared/MonitorData.qml:1067
+#: monitor/shared/MonitorData.qml:1068
 msgctxt "line action"
 msgid "sound settings"
 msgstr "параметри звуку"
 
-#: monitor/shared/MonitorData.qml:1071
+#: monitor/shared/MonitorData.qml:1072
 msgctxt "line action"
 msgid "open in the editor"
 msgstr "відкрити в редакторі"
 
-#: monitor/shared/MonitorData.qml:1072
+#: monitor/shared/MonitorData.qml:1073
 msgctxt "line action: git pull in a terminal"
 msgid "git pull"
 msgstr "git pull"
 
-#: monitor/shared/MonitorData.qml:1077
+#: monitor/shared/MonitorData.qml:1078
 #, kde-format
 msgctxt "line action: this program's journal in a terminal"
 msgid "journal of %1"
 msgstr "журнал %1"
 
-#: monitor/shared/MonitorData.qml:1079
+#: monitor/shared/MonitorData.qml:1080
 msgctxt "line action: the journal's errors in a terminal"
 msgid "errors in a terminal"
 msgstr "помилки в терміналі"
 
-#: monitor/shared/MonitorData.qml:1102
+#: monitor/shared/MonitorData.qml:1103
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "потрібен повторний вхід"
 
-#: monitor/shared/MonitorData.qml:1103 monitor/shared/MonitorData.qml:1113
+#: monitor/shared/MonitorData.qml:1104 monitor/shared/MonitorData.qml:1114
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1 з %2"
 
-#: monitor/shared/MonitorData.qml:1109
+#: monitor/shared/MonitorData.qml:1110
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
@@ -572,18 +632,18 @@ msgstr[0] "простоює, %1 модель"
 msgstr[1] "простоює, %1 моделі"
 msgstr[2] "простоює, %1 моделей"
 
-#: monitor/shared/MonitorData.qml:1112
+#: monitor/shared/MonitorData.qml:1113
 msgctxt "podman: it cannot be reached"
 msgid "no access"
 msgstr "немає доступу"
 
-#: monitor/shared/MonitorData.qml:1116
+#: monitor/shared/MonitorData.qml:1117
 #, kde-format
 msgctxt "libvirt: running virtual machines of all"
 msgid "%1 of %2"
 msgstr "%1 з %2"
 
-#: monitor/shared/MonitorData.qml:1123
+#: monitor/shared/MonitorData.qml:1125
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
@@ -592,177 +652,329 @@ msgstr[0] "%1 оновлення"
 msgstr[1] "%1 оновлення"
 msgstr[2] "%1 оновлень"
 
-#: monitor/shared/MonitorData.qml:1132
+#: monitor/shared/MonitorData.qml:1134
 msgctxt "systemd unit state"
 msgid "active"
 msgstr "активний"
 
-#: monitor/shared/MonitorData.qml:1133
+#: monitor/shared/MonitorData.qml:1135
 msgctxt "systemd unit state"
 msgid "inactive"
 msgstr "зупинений"
 
-#: monitor/shared/MonitorData.qml:1134
+#: monitor/shared/MonitorData.qml:1136
 msgctxt "systemd unit state"
 msgid "failed"
 msgstr "упав"
 
-#: monitor/shared/MonitorData.qml:1135
+#: monitor/shared/MonitorData.qml:1137
 msgctxt "systemd unit state"
 msgid "starting"
 msgstr "запускається"
 
-#: monitor/shared/MonitorData.qml:1136
+#: monitor/shared/MonitorData.qml:1138
 msgctxt "systemd unit state"
 msgid "stopping"
 msgstr "зупиняється"
 
-#: monitor/shared/MonitorData.qml:1137
+#: monitor/shared/MonitorData.qml:1139
 msgctxt "systemd unit state"
 msgid "reloading"
 msgstr "перечитує"
 
-#: monitor/shared/MonitorData.qml:1138
+#: monitor/shared/MonitorData.qml:1140
 msgctxt "systemd unit state: no answer"
 msgid "unknown"
 msgstr "невідомо"
 
-#: monitor/shared/MonitorData.qml:1179
+#: monitor/shared/MonitorData.qml:1181
 msgctxt "line action: open the widget's settings dialog"
 msgid "settings…"
 msgstr "параметри…"
 
-#: monitor/shared/MonitorData.qml:1201
+#: monitor/shared/MonitorData.qml:1203
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "dddd, d MMMM"
 
-#: monitor/shared/MonitorData.qml:1273
+#: monitor/shared/MonitorData.qml:1275
 #, kde-format
 msgctxt "load average over 1, 5 and 15 minutes"
 msgid "load %1  %2  %3"
 msgstr "навантаження %1  %2  %3"
 
-#: monitor/shared/MonitorData.qml:1293
+#: monitor/shared/MonitorData.qml:1295
 #, kde-format
 msgctxt "pressure: time every task stalled, memory and I/O"
 msgid "full  mem %1  io %2"
 msgstr "full  mem %1  io %2"
 
-#: monitor/shared/MonitorData.qml:1369
+#: monitor/shared/MonitorData.qml:1371
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "не змонтовано"
 
-#: monitor/shared/MonitorData.qml:1377
+#: monitor/shared/MonitorData.qml:1379
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "час роботи %1"
 
-#: monitor/shared/MonitorData.qml:1385
+#: monitor/shared/MonitorData.qml:1387
 msgctxt "line action"
 msgid "network settings"
 msgstr "параметри мережі"
 
-#: monitor/shared/MonitorData.qml:1386
+#: monitor/shared/MonitorData.qml:1388
 msgctxt "line action: ip addr in a terminal"
 msgid "addresses in a terminal"
 msgstr "адреси в терміналі"
 
-#: monitor/shared/MonitorData.qml:1400
+#: monitor/shared/MonitorData.qml:1402
 #, kde-format
 msgctxt "network: traffic since boot, down and up"
 msgid "total %1 down, %2 up"
 msgstr "усього %1 вниз, %2 вгору"
 
-#: monitor/shared/MonitorData.qml:1404
+#: monitor/shared/MonitorData.qml:1406
 #, kde-format
 msgctxt "network: Wi-Fi signal strength"
 msgid "signal %1"
 msgstr "сигнал %1"
 
-#: monitor/shared/MonitorData.qml:1413
+#: monitor/shared/MonitorData.qml:1415
 #, kde-format
 msgctxt "disk I/O: read and write rates"
 msgid "I/O  R %1  W %2"
 msgstr "I/O  Чт %1  Зп %2"
 
-#: monitor/shared/MonitorData.qml:1457
+#: monitor/shared/MonitorData.qml:1459
 msgctxt "line action"
 msgid "energy settings"
 msgstr "параметри живлення"
 
-#: monitor/shared/MonitorData.qml:1478
+#: monitor/shared/MonitorData.qml:1480
 msgctxt "health: failed systemd units"
 msgid "failed units"
 msgstr "збійні юніти"
 
-#: monitor/shared/MonitorData.qml:1481 monitor/shared/MonitorData.qml:1493
+#: monitor/shared/MonitorData.qml:1483 monitor/shared/MonitorData.qml:1495
 #, kde-format
 msgctxt "health: a count for the system and one for the user session"
 msgid "%1 system, %2 user"
 msgstr "система %1, сесія %2"
 
-#: monitor/shared/MonitorData.qml:1483
+#: monitor/shared/MonitorData.qml:1485
 msgctxt "line action: systemctl --failed in a terminal"
 msgid "failed units in a terminal"
 msgstr "юніти з помилками в терміналі"
 
-#: monitor/shared/MonitorData.qml:1488
+#: monitor/shared/MonitorData.qml:1490
 msgctxt "health: journal entries of priority error or worse"
 msgid "errors since boot"
 msgstr "помилок з запуску"
 
-#: monitor/shared/MonitorData.qml:1491
+#: monitor/shared/MonitorData.qml:1493
 msgctxt "health: the system journal cannot be read by this user"
 msgid "no access"
 msgstr "немає доступу"
 
-#: monitor/shared/MonitorData.qml:1497
+#: monitor/shared/MonitorData.qml:1499
 msgctxt "health: a kernel newer than the running one is installed"
 msgid "reboot"
 msgstr "перезавантаження"
 
-#: monitor/shared/MonitorData.qml:1498
+#: monitor/shared/MonitorData.qml:1500
 msgctxt "health: a reboot is pending"
 msgid "pending"
 msgstr "потрібне"
 
-#: monitor/shared/MonitorData.qml:1499
+#: monitor/shared/MonitorData.qml:1501
 msgctxt "line action"
 msgid "reboot now"
 msgstr "перезавантажити зараз"
 
-#: monitor/shared/MonitorData.qml:1504
+#: monitor/shared/MonitorData.qml:1506
 msgctxt "line action: menu title for a journal line"
 msgid "journal"
 msgstr "журнал"
 
-#: monitor/shared/MonitorData.qml:1533
+#: monitor/shared/MonitorData.qml:1535
 msgctxt "peripheral battery: charging"
 msgid "charging"
 msgstr "заряджається"
 
-#: monitor/shared/MonitorData.qml:1536
+#: monitor/shared/MonitorData.qml:1538
 msgctxt "line action"
 msgid "Bluetooth settings"
 msgstr "параметри Bluetooth"
 
-#: monitor/shared/MonitorData.qml:1554
+#: monitor/shared/MonitorData.qml:1556
 msgctxt "sound: the device is muted"
 msgid "muted"
 msgstr "без звуку"
 
-#: monitor/shared/MonitorData.qml:1577
+#: monitor/shared/MonitorData.qml:1579
 msgctxt "repos: the path is not a git repository"
 msgid "not a repository"
 msgstr "не репозиторій"
 
-#: monitor/shared/MonitorData.qml:1598
+#: monitor/shared/MonitorData.qml:1600
 msgctxt "line action: the block's command, in a terminal"
 msgid "run in a terminal"
 msgstr "виконати в терміналі"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:127
+#, fuzzy
+msgctxt "the widget's window menu"
+msgid "Settings…"
+msgstr "параметри…"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:131
+#, fuzzy
+msgctxt "the widget's window menu"
+msgid "Let clicks through"
+msgstr "пропускати клацання на стільницю"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:137
+msgctxt "the widget's window menu"
+msgid "Behind the desktop icons"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:144
+msgctxt "the widget's window menu"
+msgid "Close"
+msgstr ""
+
+#: win/host/monitor.qml:110
+#, kde-format
+msgid ""
+"no data: the plaintop service does not answer\n"
+"port %1"
+msgstr ""
+
+#: win/host/settings.qml:49
+msgctxt "settings page"
+msgid "Ring"
+msgstr ""
+
+#: win/host/settings.qml:50
+msgctxt "settings page"
+msgid "Player"
+msgstr ""
+
+#: win/host/settings.qml:54 win/host/settings.qml:59 win/host/settings.qml:66
+#, fuzzy
+msgctxt "settings page"
+msgid "Mouse"
+msgstr "Миша:"
+
+#: win/host/settings.qml:58
+msgctxt "settings page"
+msgid "Location"
+msgstr ""
+
+#: win/host/settings.qml:63
+msgctxt "settings page"
+msgid "Notes"
+msgstr ""
+
+#: win/host/settings.qml:64
+msgctxt "settings page"
+msgid "Holidays"
+msgstr ""
+
+#: win/host/settings.qml:65
+msgctxt "settings page"
+msgid "Accounts"
+msgstr ""
+
+#: win/host/settings.qml:190
+msgctxt "the settings window: the service does not answer"
+msgid "The plaintop service does not answer — nothing changed here is saved."
+msgstr ""
+
+#: win/host/settings/MonitorBlocks.qml:441
+msgctxt "Windows: placeholder of a sensor, interface or mount field"
+msgid "empty — found on this machine"
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml:58
+#, fuzzy
+msgctxt "Windows: the monitor's mouse hint"
+msgid ""
+"While clicks go through, both buttons land on the desktop everywhere but on\n"
+"the active lines, which keep theirs. With those off too, the way back is "
+"the\n"
+"tray icon's menu, or the widget's own menu: the right button on it while\n"
+"clicks are not passing."
+msgstr ""
+"Поки кліки проходять крізь, обидві кнопки потрапляють на стіл усюди, крім "
+"активних\n"
+"рядків — ті свої кліки залишають. Якщо вимкнені й вони, віджет бере мишу "
+"лише\n"
+"в режимі редагування стільниці — там же і його параметри\n"
+"(або ./install.sh з ключем clicks-off)."
+
+#: win/host/settings/MousePage.qml:21
+msgctxt "Windows: the player's mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop, the "
+"controls' too.\n"
+"The way back is the tray icon's menu, or the widget's own menu: the right "
+"button\n"
+"on it while clicks are not passing — the controls work then as well."
+msgstr ""
+
+#: win/host/settings/MousePage.qml:22
+msgctxt "Windows: the mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The way back is the tray icon's menu, or the widget's own menu:\n"
+"the right button on it while clicks are not passing."
+msgstr ""
+
+#: win/host/tray.qml:14
+#, fuzzy
+msgctxt "tray: the widget"
+msgid "Monitor"
+msgstr "Системний монітор"
+
+#: win/host/tray.qml:15
+msgctxt "tray: the widget"
+msgid "Visualizer"
+msgstr ""
+
+#: win/host/tray.qml:16
+msgctxt "tray: the widget"
+msgid "Player"
+msgstr ""
+
+#: win/host/tray.qml:17
+msgctxt "tray: the widget"
+msgid "Weather"
+msgstr ""
+
+#: win/host/tray.qml:18
+msgctxt "tray: the widget"
+msgid "Calendar"
+msgstr ""
+
+#: win/host/tray.qml:55
+msgctxt "tray menu"
+msgid "Widgets"
+msgstr ""
+
+#: win/host/tray.qml:80
+#, fuzzy
+msgctxt "tray menu"
+msgid "Settings"
+msgstr "параметри…"
+
+#: win/host/tray.qml:89
+msgctxt "tray menu"
+msgid "Quit plaintop"
+msgstr ""
 
 #: schema/blocks.json:1
 msgctxt "schema: block name"

@@ -26,32 +26,43 @@ BUGS = "https://github.com/highscrren-dotcom/plaintop/issues"
 KEYWORDS = ["-ki18n:1", "-ki18nc:1c,2", "-ki18np:1,2", "-ki18ncp:1c,2,3"]
 
 # The Windows hosts (win/host/) load one catalog each — the widget's own — so what every
-# host shows (the base window's menu, the settings window's chrome) is listed under all five
-# domains, like player/shared below; the tray loads the monitor's catalog (ui.py, DOMAINS).
-WIN_COMMON = ["win/host/imports/plaintop", "win/host/settings.qml", "win/host/settings"]
+# host shows (the base window's menu, the settings window's chrome and its generic
+# controls) is listed under all five domains, like player/shared below, and a widget's own
+# settings pages under its domain alone; the tray loads the monitor's catalog (ui.py).
+WIN_COMMON = ["win/host/imports/plaintop", "win/host/settings.qml",
+              "win/host/settings/SettingsPage.qml", "win/host/settings/MousePage.qml",
+              "win/host/settings/Form.js", "win/host/settings/FormRow.qml", "win/host/settings/Section.qml",
+              "win/host/settings/Hint.qml", "win/host/settings/SettingCheck.qml", "win/host/settings/SettingColor.qml",
+              "win/host/settings/SettingCombo.qml", "win/host/settings/SettingSpin.qml", "win/host/settings/SettingText.qml"]
 
 DOMAINS = {
     "plasma_applet_org.s1dd1.plaintop": {
-        "sources": ["monitor/shared", "monitor/package/contents", "win/host/monitor.qml", "win/host/tray.qml"] + WIN_COMMON,
+        "sources": ["monitor/shared", "monitor/package/contents", "win/host/monitor.qml", "win/host/tray.qml",
+                    "win/host/settings/MonitorGeneral.qml", "win/host/settings/MonitorBlocks.qml"] + WIN_COMMON,
         "schema": True,
     },
     # player/shared is listed under two domains on purpose: the visualizer draws the
     # player's view inside its own package, where i18n() resolves to the visualizer's
     # domain — so its strings must exist in both catalogs.
     "plasma_applet_org.s1dd1.plainspectrum": {
-        "sources": ["spectrum/shared", "spectrum/package/contents", "player/shared", "win/host/spectrum.qml"] + WIN_COMMON,
+        "sources": ["spectrum/shared", "spectrum/package/contents", "player/shared", "win/host/spectrum.qml",
+                    "win/host/settings/SpectrumGeneral.qml", "win/host/settings/SpectrumPlayer.qml"] + WIN_COMMON,
         "schema": False,
     },
     "plasma_applet_org.s1dd1.plainplayer": {
-        "sources": ["player/shared", "player/package/contents", "win/host/player.qml"] + WIN_COMMON,
+        "sources": ["player/shared", "player/package/contents", "win/host/player.qml",
+                    "win/host/settings/PlayerGeneral.qml"] + WIN_COMMON,
         "schema": False,
     },
     "plasma_applet_org.s1dd1.plainweather": {
-        "sources": ["weather/package/contents", "win/host/weather.qml"] + WIN_COMMON,
+        "sources": ["weather/package/contents", "win/host/weather.qml",
+                    "win/host/settings/WeatherGeneral.qml", "win/host/settings/WeatherLocation.qml"] + WIN_COMMON,
         "schema": False,
     },
     "plasma_applet_org.s1dd1.plaincalendar": {
-        "sources": ["calendar/package/contents", "win/host/calendar.qml", "win/host/calendar"] + WIN_COMMON,
+        "sources": ["calendar/package/contents", "win/host/calendar.qml", "win/host/calendar",
+                    "win/host/settings/CalendarGeneral.qml", "win/host/settings/CalendarNotes.qml",
+                    "win/host/settings/CalendarHolidays.qml", "win/host/settings/CalendarAccounts.qml"] + WIN_COMMON,
         "schema": False,
     },
 }

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 23:28+0500\n"
+"POT-Creation-Date: 2026-10-04 21:01+0000\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,82 +17,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: calendar/package/contents/config/config.qml:7
+#: calendar/package/contents/config/config.qml:7 win/host/settings.qml:45
+#: win/host/settings.qml:53 win/host/settings.qml:57 win/host/settings.qml:62
 msgctxt "settings page"
 msgid "General"
 msgstr "Allgemein"
 
-#: calendar/package/contents/config/config.qml:13
+#: calendar/package/contents/config/config.qml:13 win/host/settings.qml:63
 msgctxt "settings page"
 msgid "Notes"
 msgstr "Notizen"
 
-#: calendar/package/contents/config/config.qml:19
+#: calendar/package/contents/config/config.qml:19 win/host/settings.qml:64
 msgctxt "settings page"
 msgid "Holidays"
 msgstr "Feiertage"
 
-#: calendar/package/contents/config/config.qml:25
+#: calendar/package/contents/config/config.qml:25 win/host/settings.qml:65
 msgctxt "settings page"
 msgid "Accounts"
 msgstr "Konten"
 
-#: calendar/package/contents/config/config.qml:31
+#: calendar/package/contents/config/config.qml:31 win/host/settings.qml:54
+#: win/host/settings.qml:59 win/host/settings.qml:66
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "Maus"
 
 #: calendar/package/contents/ui/Holidays.qml:40
+#: win/host/calendar/Holidays.qml:27
 msgctxt "a world day"
 msgid "International Mother Language Day"
 msgstr "Internationaler Tag der Muttersprache"
 
 #: calendar/package/contents/ui/Holidays.qml:41
+#: win/host/calendar/Holidays.qml:28
 msgctxt "a world day"
 msgid "International Women's Day"
 msgstr "Internationaler Frauentag"
 
 #: calendar/package/contents/ui/Holidays.qml:42
+#: win/host/calendar/Holidays.qml:29
 msgctxt "a world day"
 msgid "World Health Day"
 msgstr "Weltgesundheitstag"
 
 #: calendar/package/contents/ui/Holidays.qml:43
+#: win/host/calendar/Holidays.qml:30
 msgctxt "a world day"
 msgid "International Mother Earth Day"
 msgstr "Internationaler Tag der Mutter Erde"
 
 #: calendar/package/contents/ui/Holidays.qml:44
+#: win/host/calendar/Holidays.qml:31
 msgctxt "a world day"
 msgid "International Workers' Day"
 msgstr "Tag der Arbeit"
 
 #: calendar/package/contents/ui/Holidays.qml:45
+#: win/host/calendar/Holidays.qml:32
 msgctxt "a world day"
 msgid "International Children's Day"
 msgstr "Internationaler Kindertag"
 
 #: calendar/package/contents/ui/Holidays.qml:46
+#: win/host/calendar/Holidays.qml:33
 msgctxt "a world day"
 msgid "World Environment Day"
 msgstr "Weltumwelttag"
 
 #: calendar/package/contents/ui/Holidays.qml:47
+#: win/host/calendar/Holidays.qml:34
 msgctxt "a world day"
 msgid "International Day of Peace"
 msgstr "Internationaler Tag des Friedens"
 
 #: calendar/package/contents/ui/Holidays.qml:48
+#: win/host/calendar/Holidays.qml:35
 msgctxt "a world day"
 msgid "World Teachers' Day"
 msgstr "Weltlehrertag"
 
 #: calendar/package/contents/ui/Holidays.qml:49
+#: win/host/calendar/Holidays.qml:36
 msgctxt "a world day"
 msgid "United Nations Day"
 msgstr "Tag der Vereinten Nationen"
 
 #: calendar/package/contents/ui/Holidays.qml:50
+#: win/host/calendar/Holidays.qml:37
 msgctxt "a world day"
 msgid "Human Rights Day"
 msgstr "Tag der Menschenrechte"
@@ -185,26 +198,31 @@ msgid "new note"
 msgstr "neue Notiz"
 
 #: calendar/package/contents/ui/configAccounts.qml:29
+#: win/host/settings/CalendarAccounts.qml:29
 msgctxt "account preset"
 msgid "Yandex (CalDAV)"
 msgstr "Yandex (CalDAV)"
 
 #: calendar/package/contents/ui/configAccounts.qml:30
+#: win/host/settings/CalendarAccounts.qml:30
 msgctxt "account preset"
 msgid "iCloud (CalDAV)"
 msgstr "iCloud (CalDAV)"
 
 #: calendar/package/contents/ui/configAccounts.qml:31
+#: win/host/settings/CalendarAccounts.qml:31
 msgctxt "account preset"
 msgid "Google (CalDAV, OAuth)"
 msgstr "Google (CalDAV, OAuth)"
 
 #: calendar/package/contents/ui/configAccounts.qml:32
+#: win/host/settings/CalendarAccounts.qml:32
 msgctxt "account preset"
 msgid "any CalDAV server"
 msgstr "beliebiger CalDAV-Server"
 
 #: calendar/package/contents/ui/configAccounts.qml:33
+#: win/host/settings/CalendarAccounts.qml:33
 msgctxt "account preset"
 msgid "ICS link, read-only"
 msgstr "ICS-Link, nur lesend"
@@ -215,27 +233,34 @@ msgstr "ist python3 installiert?"
 
 #: calendar/package/contents/ui/configAccounts.qml:103
 #: calendar/package/contents/ui/configAccounts.qml:201
+#: win/host/settings/CalendarAccounts.qml:69
+#: win/host/settings/CalendarAccounts.qml:182
 #, kde-format
 msgid "The script did not answer: %1"
 msgstr "Das Skript hat nicht geantwortet: %1"
 
 #: calendar/package/contents/ui/configAccounts.qml:136
+#: win/host/settings/CalendarAccounts.qml:116
 msgid "The account needs an id — a short word, say “yandex”."
 msgstr "Das Konto braucht eine id — ein kurzes Wort, etwa „yandex“."
 
 #: calendar/package/contents/ui/configAccounts.qml:146
+#: win/host/settings/CalendarAccounts.qml:128
 msgid "Saved."
 msgstr "Gespeichert."
 
 #: calendar/package/contents/ui/configAccounts.qml:160
+#: win/host/settings/CalendarAccounts.qml:139
 msgid "Removed."
 msgstr "Entfernt."
 
 #: calendar/package/contents/ui/configAccounts.qml:171
+#: win/host/settings/CalendarAccounts.qml:148
 msgid "Asking the server…"
 msgstr "Frage den Server…"
 
 #: calendar/package/contents/ui/configAccounts.qml:180
+#: win/host/settings/CalendarAccounts.qml:157
 #, kde-format
 msgid "The link answers: %1 entry."
 msgid_plural "The link answers: %1 entries."
@@ -243,10 +268,12 @@ msgstr[0] "Der Link antwortet: %1 Eintrag."
 msgstr[1] "Der Link antwortet: %1 Einträge."
 
 #: calendar/package/contents/ui/configAccounts.qml:182
+#: win/host/settings/CalendarAccounts.qml:159
 msgid "The server answers, but lists no calendar."
 msgstr "Der Server antwortet, nennt aber keinen Kalender."
 
 #: calendar/package/contents/ui/configAccounts.qml:184
+#: win/host/settings/CalendarAccounts.qml:161
 #, kde-format
 msgid ""
 "The server answers: %1 calendar — pick one below, or leave the field empty "
@@ -262,6 +289,7 @@ msgstr[1] ""
 "lassen für den ersten."
 
 #: calendar/package/contents/ui/configAccounts.qml:221
+#: win/host/settings/CalendarAccounts.qml:197
 msgid ""
 "Calendars the widget reads, and the one it writes your notes to (chosen on "
 "the Notes page). Yandex and iCloud take an app password from your account's "
@@ -273,81 +301,99 @@ msgstr ""
 "Browser an."
 
 #: calendar/package/contents/ui/configAccounts.qml:250
+#: win/host/settings/CalendarAccounts.qml:228
 msgctxt "Google account state"
 msgid "signed in"
 msgstr "angemeldet"
 
 #: calendar/package/contents/ui/configAccounts.qml:250
+#: win/host/settings/CalendarAccounts.qml:228
 msgctxt "Google account state"
 msgid "not signed in yet"
 msgstr "noch nicht angemeldet"
 
 #: calendar/package/contents/ui/configAccounts.qml:251
+#: win/host/settings/CalendarAccounts.qml:229
 msgctxt "CalDAV account state"
 msgid "no password"
 msgstr "kein Passwort"
 
 #: calendar/package/contents/ui/configAccounts.qml:265
+#: win/host/settings/CalendarAccounts.qml:244
 msgid "New"
 msgstr "Neu"
 
 #: calendar/package/contents/ui/configAccounts.qml:271
+#: win/host/settings/CalendarAccounts.qml:249
 msgid "Remove"
 msgstr "Entfernen"
 
 #: calendar/package/contents/ui/configAccounts.qml:302
+#: win/host/settings/CalendarAccounts.qml:258
 msgid "Provider:"
 msgstr "Anbieter:"
 
 #: calendar/package/contents/ui/configAccounts.qml:314
+#: win/host/settings/CalendarAccounts.qml:272
 msgid "Id:"
 msgstr "Id:"
 
 #: calendar/package/contents/ui/configAccounts.qml:315
+#: win/host/settings/CalendarAccounts.qml:275
 msgctxt "placeholder for an account id"
 msgid "yandex"
 msgstr "yandex"
 
 #: calendar/package/contents/ui/configAccounts.qml:321
+#: win/host/settings/CalendarAccounts.qml:280
 msgid "Name:"
 msgstr "Name:"
 
 #: calendar/package/contents/ui/configAccounts.qml:322
+#: win/host/settings/CalendarAccounts.qml:284
 msgctxt "placeholder for an account's name"
 msgid "as it is shown on the sticker"
 msgstr "wie auf dem Zettel gezeigt"
 
 #: calendar/package/contents/ui/configAccounts.qml:327
+#: win/host/settings/CalendarAccounts.qml:288
 msgid "Link:"
 msgstr "Link:"
 
 #: calendar/package/contents/ui/configAccounts.qml:327
+#: win/host/settings/CalendarAccounts.qml:288
 msgid "Server:"
 msgstr "Server:"
 
 #: calendar/package/contents/ui/configAccounts.qml:334
+#: win/host/settings/CalendarAccounts.qml:296
 msgid "Google account:"
 msgstr "Google-Konto:"
 
 #: calendar/package/contents/ui/configAccounts.qml:334
+#: win/host/settings/CalendarAccounts.qml:296
 msgid "Login:"
 msgstr "Benutzername:"
 
 #: calendar/package/contents/ui/configAccounts.qml:336
+#: win/host/settings/CalendarAccounts.qml:301
 msgctxt "placeholder for a login"
 msgid "your login on the server"
 msgstr "Ihr Benutzername auf dem Server"
 
 #: calendar/package/contents/ui/configAccounts.qml:341
+#: win/host/settings/CalendarAccounts.qml:305
 msgid "App password:"
 msgstr "App-Passwort:"
 
 #: calendar/package/contents/ui/configAccounts.qml:344
+#: win/host/settings/CalendarAccounts.qml:311
 msgctxt "placeholder: a password is stored"
 msgid "stored — type to replace"
 msgstr "gespeichert — tippen zum Ersetzen"
 
 #: calendar/package/contents/ui/configAccounts.qml:349
+#: win/host/settings/CalendarAccounts.qml:316
 msgid ""
 "Yandex: id.yandex.ru → Security → App passwords → Calendar.\n"
 "iCloud: appleid.apple.com → Sign-in and security → App-specific passwords."
@@ -357,14 +403,17 @@ msgstr ""
 "Passwörter."
 
 #: calendar/package/contents/ui/configAccounts.qml:356
+#: win/host/settings/CalendarAccounts.qml:319
 msgid "OAuth client id:"
 msgstr "OAuth-Client-ID:"
 
 #: calendar/package/contents/ui/configAccounts.qml:363
+#: win/host/settings/CalendarAccounts.qml:327
 msgid "OAuth client secret:"
 msgstr "OAuth-Client-Secret:"
 
 #: calendar/package/contents/ui/configAccounts.qml:366
+#: win/host/settings/CalendarAccounts.qml:333
 msgctxt "placeholder: a secret is stored"
 msgid "stored — type to replace"
 msgstr "gespeichert — tippen zum Ersetzen"
@@ -383,90 +432,110 @@ msgstr ""
 "python3 %1 google-auth %2"
 
 #: calendar/package/contents/ui/configAccounts.qml:380
+#: win/host/settings/CalendarAccounts.qml:343
 msgid "Calendar:"
 msgstr "Kalender:"
 
 #: calendar/package/contents/ui/configAccounts.qml:383
+#: win/host/settings/CalendarAccounts.qml:348
 msgctxt "placeholder for the calendar href"
 msgid "empty — the first one on the server"
 msgstr "leer — der erste auf dem Server"
 
 #: calendar/package/contents/ui/configAccounts.qml:388
+#: win/host/settings/CalendarAccounts.qml:352
 msgid "Found:"
 msgstr "Gefunden:"
 
 #: calendar/package/contents/ui/configAccounts.qml:391
+#: win/host/settings/CalendarAccounts.qml:358
 msgctxt "pick list placeholder"
 msgid "pick…"
 msgstr "wählen…"
 
 #: calendar/package/contents/ui/configAccounts.qml:398
+#: win/host/settings/CalendarAccounts.qml:364
 msgid "Save"
 msgstr "Speichern"
 
 #: calendar/package/contents/ui/configAccounts.qml:403
+#: win/host/settings/CalendarAccounts.qml:368
 msgid "Check"
 msgstr "Prüfen"
 
 #: calendar/package/contents/ui/configGeneral.qml:34
+#: win/host/settings/CalendarGeneral.qml:11
 msgctxt "settings section"
 msgid "Calendar"
 msgstr "Kalender"
 
 #: calendar/package/contents/ui/configGeneral.qml:38
+#: win/host/settings/CalendarGeneral.qml:14
 msgid "Months:"
 msgstr "Monate:"
 
 #: calendar/package/contents/ui/configGeneral.qml:39
+#: win/host/settings/CalendarGeneral.qml:18
 msgctxt "how many months are shown"
 msgid "one — the current"
 msgstr "einer — der aktuelle"
 
 #: calendar/package/contents/ui/configGeneral.qml:40
+#: win/host/settings/CalendarGeneral.qml:19
 msgctxt "how many months are shown"
 msgid "three — the previous, the current and the next"
 msgstr "drei — der vorige, der aktuelle und der nächste"
 
 #: calendar/package/contents/ui/configGeneral.qml:47
+#: win/host/settings/CalendarGeneral.qml:23
 msgid "Week numbers:"
 msgstr "Wochennummern:"
 
 #: calendar/package/contents/ui/configGeneral.qml:48
+#: win/host/settings/CalendarGeneral.qml:24
 msgid "ISO week numbers in front of the rows"
 msgstr "ISO-Wochennummern vor den Zeilen"
 
 #: calendar/package/contents/ui/configGeneral.qml:53
+#: win/host/settings/CalendarGeneral.qml:27
 msgid "Week starts on:"
 msgstr "Wochenbeginn:"
 
 #: calendar/package/contents/ui/configGeneral.qml:54
+#: win/host/settings/CalendarGeneral.qml:31
 msgctxt "first day of the week"
 msgid "as the locale says"
 msgstr "laut Gebietsschema"
 
 #: calendar/package/contents/ui/configGeneral.qml:55
+#: win/host/settings/CalendarGeneral.qml:32
 msgctxt "first day of the week"
 msgid "Monday"
 msgstr "Montag"
 
 #: calendar/package/contents/ui/configGeneral.qml:56
+#: win/host/settings/CalendarGeneral.qml:33
 msgctxt "first day of the week"
 msgid "Sunday"
 msgstr "Sonntag"
 
 #: calendar/package/contents/ui/configGeneral.qml:63
+#: win/host/settings/CalendarGeneral.qml:37
 msgid "Weekends:"
 msgstr "Wochenenden:"
 
 #: calendar/package/contents/ui/configGeneral.qml:64
+#: win/host/settings/CalendarGeneral.qml:38
 msgid "in their own colour, as on a wall calendar"
 msgstr "in eigener Farbe, wie auf einem Wandkalender"
 
 #: calendar/package/contents/ui/configGeneral.qml:69
+#: win/host/settings/CalendarGeneral.qml:41
 msgid "Other months:"
 msgstr "Andere Monate:"
 
 #: calendar/package/contents/ui/configGeneral.qml:70
+#: win/host/settings/CalendarGeneral.qml:42
 msgid "fill the empty cells with the neighbouring months' days"
 msgstr "leere Zellen mit den Tagen der Nachbarmonate füllen"
 
@@ -481,24 +550,29 @@ msgstr ""
 "(Systemeinstellungen → Sprache und Region → Formate)."
 
 #: calendar/package/contents/ui/configGeneral.qml:79
+#: win/host/settings/CalendarGeneral.qml:48
 msgctxt "settings section"
 msgid "Text"
 msgstr "Text"
 
 #: calendar/package/contents/ui/configGeneral.qml:83
+#: win/host/settings/CalendarGeneral.qml:51
 msgid "Font:"
 msgstr "Schriftart:"
 
 #: calendar/package/contents/ui/configGeneral.qml:89
+#: win/host/settings/CalendarGeneral.qml:55
 msgctxt "font size"
 msgid "Size:"
 msgstr "Größe:"
 
 #: calendar/package/contents/ui/configGeneral.qml:96
+#: win/host/settings/CalendarGeneral.qml:59
 msgid "Day cell, characters:"
 msgstr "Tageszelle, Zeichen:"
 
 #: calendar/package/contents/ui/configGeneral.qml:102
+#: win/host/settings/CalendarGeneral.qml:63
 msgid ""
 "The widget is as wide as seven cells and the week numbers, and as tall as\n"
 "the months shown: eight lines each, with a blank line between them."
@@ -509,26 +583,32 @@ msgstr ""
 
 #: calendar/package/contents/ui/configGeneral.qml:107
 #: calendar/package/contents/ui/configNotes.qml:302
+#: win/host/settings/CalendarGeneral.qml:66
+#: win/host/settings/CalendarNotes.qml:215
 msgctxt "settings section"
 msgid "Palette"
 msgstr "Palette"
 
 #: calendar/package/contents/ui/configGeneral.qml:110
+#: win/host/settings/CalendarGeneral.qml:69
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Haupttext:"
 
 #: calendar/package/contents/ui/configGeneral.qml:116
+#: win/host/settings/CalendarGeneral.qml:73
 msgctxt "palette: colour of"
 msgid "Weekends:"
 msgstr "Wochenenden:"
 
 #: calendar/package/contents/ui/configGeneral.qml:122
+#: win/host/settings/CalendarGeneral.qml:77
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Sekundär:"
 
 #: calendar/package/contents/ui/configGeneral.qml:128
+#: win/host/settings/CalendarGeneral.qml:81
 msgctxt "palette: colour of"
 msgid "Today:"
 msgstr "Heute:"
@@ -549,46 +629,56 @@ msgid "Catholic holidays"
 msgstr "katholische Feiertage"
 
 #: calendar/package/contents/ui/configHolidays.qml:120
+#: win/host/settings/CalendarHolidays.qml:76
 msgid "Holidays:"
 msgstr "Feiertage:"
 
 #: calendar/package/contents/ui/configHolidays.qml:121
+#: win/host/settings/CalendarHolidays.qml:77
 msgid "mark them in the grid and name them in the sticker"
 msgstr "im Raster markieren und im Zettel nennen"
 
 #: calendar/package/contents/ui/configHolidays.qml:126
+#: win/host/settings/CalendarHolidays.qml:80
 msgid "Which:"
 msgstr "Welche:"
 
 #: calendar/package/contents/ui/configHolidays.qml:128
+#: win/host/settings/CalendarHolidays.qml:84
 msgctxt "which holidays to mark"
 msgid "days off only"
 msgstr "nur arbeitsfreie Tage"
 
 #: calendar/package/contents/ui/configHolidays.qml:129
+#: win/host/settings/CalendarHolidays.qml:85
 msgctxt "which holidays to mark"
 msgid "every holiday but name days"
 msgstr "alle Feiertage außer Namenstagen"
 
 #: calendar/package/contents/ui/configHolidays.qml:130
+#: win/host/settings/CalendarHolidays.qml:86
 msgctxt "which holidays to mark"
 msgid "every holiday, name days too"
 msgstr "alle Feiertage, auch Namenstage"
 
 #: calendar/package/contents/ui/configHolidays.qml:135
+#: win/host/settings/CalendarHolidays.qml:90
 msgid "World days:"
 msgstr "Welttage:"
 
 #: calendar/package/contents/ui/configHolidays.qml:137
+#: win/host/settings/CalendarHolidays.qml:92
 msgid "the UN's and UNESCO's best known international days"
 msgstr "die bekanntesten internationalen Tage der UNO und UNESCO"
 
 #: calendar/package/contents/ui/configHolidays.qml:141
+#: win/host/settings/CalendarHolidays.qml:95
 msgctxt "palette: colour of"
 msgid "Other holidays:"
 msgstr "Andere Feiertage:"
 
 #: calendar/package/contents/ui/configHolidays.qml:148
+#: win/host/settings/CalendarHolidays.qml:99
 msgid ""
 "A day off takes the weekends' colour; other holidays and world days this one."
 msgstr ""
@@ -596,20 +686,24 @@ msgstr ""
 "Welttage diese."
 
 #: calendar/package/contents/ui/configHolidays.qml:153
+#: win/host/settings/CalendarHolidays.qml:101
 msgctxt "settings section"
 msgid "Regions"
 msgstr "Regionen"
 
 #: calendar/package/contents/ui/configHolidays.qml:157
+#: win/host/settings/CalendarHolidays.qml:105
 msgid "Chosen:"
 msgstr "Gewählt:"
 
 #: calendar/package/contents/ui/configHolidays.qml:180
+#: win/host/settings/CalendarHolidays.qml:125
 msgctxt "@action:button drop a holiday region"
 msgid "Remove"
 msgstr "Entfernen"
 
 #: calendar/package/contents/ui/configHolidays.qml:193
+#: win/host/settings/CalendarHolidays.qml:134
 msgid ""
 "none — your locale's own region. Once you tick one, only the ticked ones "
 "count: tick yours too."
@@ -626,14 +720,17 @@ msgstr ""
 "Plasma-Uhr, sie wird sofort gespeichert."
 
 #: calendar/package/contents/ui/configHolidays.qml:257
+#: win/host/settings/CalendarHolidays.qml:194
 msgid "Nothing found"
 msgstr "Nichts gefunden"
 
 #: calendar/package/contents/ui/configMouse.qml:19
+#: win/host/settings/MousePage.qml:15
 msgid "Mouse:"
 msgstr "Maus:"
 
 #: calendar/package/contents/ui/configMouse.qml:20
+#: win/host/settings/MousePage.qml:16
 msgid "let clicks through to the desktop"
 msgstr "Klicks zur Arbeitsfläche durchlassen"
 
@@ -650,24 +747,29 @@ msgstr ""
 "dort sind seine Einstellungen, oder ./install.sh mit dem Schalter clicks off."
 
 #: calendar/package/contents/ui/configNotes.qml:57
+#: win/host/settings/CalendarNotes.qml:25
 msgctxt "the account of the widget's own notes: a folder of files"
 msgid "local — this machine"
 msgstr "lokal — dieser Rechner"
 
 #: calendar/package/contents/ui/configNotes.qml:93
+#: win/host/settings/CalendarNotes.qml:58
 msgctxt "settings section"
 msgid "Notes"
 msgstr "Notizen"
 
 #: calendar/package/contents/ui/configNotes.qml:97
+#: win/host/settings/CalendarNotes.qml:61
 msgid "Notes:"
 msgstr "Notizen:"
 
 #: calendar/package/contents/ui/configNotes.qml:98
+#: win/host/settings/CalendarNotes.qml:62
 msgid "mark the days that have entries, open a sticker on click"
 msgstr "Tage mit Einträgen markieren, per Klick einen Zettel öffnen"
 
 #: calendar/package/contents/ui/configNotes.qml:102
+#: win/host/settings/CalendarNotes.qml:65
 msgid ""
 "A click on a day opens its sticker: the day's events and tasks from the "
 "accounts,\n"
@@ -682,6 +784,7 @@ msgstr ""
 "bloße Raster und nimmt keine Klicks an."
 
 #: calendar/package/contents/ui/configNotes.qml:109
+#: win/host/settings/CalendarNotes.qml:68
 msgid "Write notes to:"
 msgstr "Notizen schreiben nach:"
 
@@ -696,32 +799,39 @@ msgstr ""
 "diesen Kalender."
 
 #: calendar/package/contents/ui/configNotes.qml:124
+#: win/host/settings/CalendarNotes.qml:81
 msgid "Upcoming lines:"
 msgstr "Zeilen „Demnächst“:"
 
 #: calendar/package/contents/ui/configNotes.qml:131
+#: win/host/settings/CalendarNotes.qml:85
 msgid "The next entries, one per line under the months; 0 hides them."
 msgstr ""
 "Die nächsten Einträge, je eine Zeile unter den Monaten; 0 blendet sie aus."
 
 #: calendar/package/contents/ui/configNotes.qml:138
+#: win/host/settings/CalendarNotes.qml:87
 msgid "Fetch the accounts every, min:"
 msgstr "Konten abrufen alle, min:"
 
 #: calendar/package/contents/ui/configNotes.qml:144
+#: win/host/settings/CalendarNotes.qml:92
 msgctxt "settings section"
 msgid "Reminders"
 msgstr "Erinnerungen"
 
 #: calendar/package/contents/ui/configNotes.qml:148
+#: win/host/settings/CalendarNotes.qml:95
 msgid "Reminders:"
 msgstr "Erinnerungen:"
 
 #: calendar/package/contents/ui/configNotes.qml:150
+#: win/host/settings/CalendarNotes.qml:97
 msgid "a sheet by the day's cell when an entry is due"
 msgstr "ein Blatt an der Zelle des Tages, wenn ein Eintrag fällig ist"
 
 #: calendar/package/contents/ui/configNotes.qml:154
+#: win/host/settings/CalendarNotes.qml:100
 msgid ""
 "A note whose first line starts with a time — “14:30 Dentist” — becomes a "
 "timed\n"
@@ -740,40 +850,49 @@ msgstr ""
 "das Konto. Das Blatt bietet Schlummern, Verschieben auf morgen oder Erledigt."
 
 #: calendar/package/contents/ui/configNotes.qml:161
+#: win/host/settings/CalendarNotes.qml:103
 msgid "Before a timed entry, min:"
 msgstr "Vor einem Termin, Min.:"
 
 #: calendar/package/contents/ui/configNotes.qml:165
+#: win/host/settings/CalendarNotes.qml:109
 msgctxt "no reminder before timed notes"
 msgid "none"
 msgstr "keine"
 
 #: calendar/package/contents/ui/configNotes.qml:171
+#: win/host/settings/CalendarNotes.qml:114
 msgid "“!” notes ring at:"
 msgstr "Notizen mit „!“ klingeln um:"
 
 #: calendar/package/contents/ui/configNotes.qml:180
+#: win/host/settings/CalendarNotes.qml:119
 msgid "Events without an alarm:"
 msgstr "Termine ohne Wecker:"
 
 #: calendar/package/contents/ui/configNotes.qml:182
+#: win/host/settings/CalendarNotes.qml:121
 msgid "ring before them too, as for a timed note"
 msgstr "auch vor ihnen klingeln, wie vor einer Notiz mit Uhrzeit"
 
 #: calendar/package/contents/ui/configNotes.qml:187
+#: win/host/settings/CalendarNotes.qml:124
 msgid "Snooze for, min:"
 msgstr "Schlummern für, Min.:"
 
 #: calendar/package/contents/ui/configNotes.qml:195
+#: win/host/settings/CalendarNotes.qml:129
 msgid "Show missed ones from the last, h:"
 msgstr "Verpasste der letzten … Stunden zeigen:"
 
 #: calendar/package/contents/ui/configNotes.qml:202
+#: win/host/settings/CalendarNotes.qml:133
 msgid "While the machine was off: alarms older than this are dropped quietly."
 msgstr ""
 "Während der Rechner aus war: ältere Wecker werden stillschweigend verworfen."
 
 #: calendar/package/contents/ui/configNotes.qml:209
+#: win/host/settings/CalendarNotes.qml:135
 msgid "System notification:"
 msgstr "Systembenachrichtigung:"
 
@@ -783,63 +902,76 @@ msgid ""
 msgstr "auch über notify-send — in Plasmas Verlauf, stumm bei „Nicht stören“"
 
 #: calendar/package/contents/ui/configNotes.qml:215
+#: win/host/settings/CalendarNotes.qml:143
 msgid "Sound:"
 msgstr "Ton:"
 
 #: calendar/package/contents/ui/configNotes.qml:219
+#: win/host/settings/CalendarNotes.qml:147
 msgctxt "reminder sound"
 msgid "none"
 msgstr "keiner"
 
 #: calendar/package/contents/ui/configNotes.qml:219
+#: win/host/settings/CalendarNotes.qml:147
 msgctxt "reminder sound: a terminal's bell"
 msgid "bell"
 msgstr "Glocke"
 
 #: calendar/package/contents/ui/configNotes.qml:220
+#: win/host/settings/CalendarNotes.qml:148
 msgctxt "reminder sound: two short beeps"
 msgid "blip"
 msgstr "Piep"
 
 #: calendar/package/contents/ui/configNotes.qml:220
+#: win/host/settings/CalendarNotes.qml:148
 msgctxt "reminder sound: two tones ringing out"
 msgid "chime"
 msgstr "Gong"
 
 #: calendar/package/contents/ui/configNotes.qml:221
+#: win/host/settings/CalendarNotes.qml:149
 msgctxt "reminder sound: three quick beeps"
 msgid "pager"
 msgstr "Pager"
 
 #: calendar/package/contents/ui/configNotes.qml:221
+#: win/host/settings/CalendarNotes.qml:149
 msgctxt "reminder sound: two dry ticks"
 msgid "tick"
 msgstr "Ticken"
 
 #: calendar/package/contents/ui/configNotes.qml:222
+#: win/host/settings/CalendarNotes.qml:150
 msgctxt "reminder sound"
 msgid "your own file…"
 msgstr "eigene Datei…"
 
 #: calendar/package/contents/ui/configNotes.qml:241
+#: win/host/settings/CalendarNotes.qml:169
 msgctxt "play the chosen reminder sound"
 msgid "Listen"
 msgstr "Anhören"
 
 #: calendar/package/contents/ui/configNotes.qml:253
+#: win/host/settings/CalendarNotes.qml:175
 msgid "Sound file:"
 msgstr "Klangdatei:"
 
 #: calendar/package/contents/ui/configNotes.qml:262
+#: win/host/settings/CalendarNotes.qml:186
 msgctxt "settings section"
 msgid "Sticker"
 msgstr "Zettel"
 
 #: calendar/package/contents/ui/configNotes.qml:266
+#: win/host/settings/CalendarNotes.qml:189
 msgid "Frame characters:"
 msgstr "Rahmenzeichen:"
 
 #: calendar/package/contents/ui/configNotes.qml:273
+#: win/host/settings/CalendarNotes.qml:194
 msgid ""
 "Eight characters: the corners, the horizontal, the vertical and the two\n"
 "junctions of a separator — “┌─┐│└┘├┤”, or “+-+|+++” in plain ASCII."
@@ -848,38 +980,203 @@ msgstr ""
 "Anschlüsse einer Trennlinie — „┌─┐│└┘├┤“ oder „+-+|+++“ in reinem ASCII."
 
 #: calendar/package/contents/ui/configNotes.qml:280
+#: win/host/settings/CalendarNotes.qml:197
 msgid "Sticker width, characters:"
 msgstr "Zettelbreite, Zeichen:"
 
 #: calendar/package/contents/ui/configNotes.qml:288
+#: win/host/settings/CalendarNotes.qml:202
 msgid "Opening:"
 msgstr "Öffnen:"
 
 #: calendar/package/contents/ui/configNotes.qml:290
+#: win/host/settings/CalendarNotes.qml:206
 msgctxt "sticker animation"
 msgid "at once"
 msgstr "sofort"
 
 #: calendar/package/contents/ui/configNotes.qml:290
+#: win/host/settings/CalendarNotes.qml:206
 msgctxt "sticker animation"
 msgid "fade in"
 msgstr "einblenden"
 
 #: calendar/package/contents/ui/configNotes.qml:290
+#: win/host/settings/CalendarNotes.qml:206
 msgctxt "sticker animation"
 msgid "unfold line by line"
 msgstr "Zeile für Zeile entfalten"
 
 #: calendar/package/contents/ui/configNotes.qml:295
+#: win/host/settings/CalendarNotes.qml:210
 msgid "Sheet opacity, %:"
 msgstr "Deckkraft des Blatts, %:"
 
 #: calendar/package/contents/ui/configNotes.qml:305
+#: win/host/settings/CalendarNotes.qml:218
 msgctxt "palette: colour of"
 msgid "Days with entries:"
 msgstr "Tage mit Einträgen:"
 
 #: calendar/package/contents/ui/configNotes.qml:311
+#: win/host/settings/CalendarNotes.qml:222
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "Zettelblatt:"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:127
+msgctxt "the widget's window menu"
+msgid "Settings…"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:131
+#, fuzzy
+msgctxt "the widget's window menu"
+msgid "Let clicks through"
+msgstr "Klicks zur Arbeitsfläche durchlassen"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:137
+msgctxt "the widget's window menu"
+msgid "Behind the desktop icons"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:144
+msgctxt "the widget's window menu"
+msgid "Close"
+msgstr ""
+
+#: win/host/settings.qml:46
+msgctxt "settings page"
+msgid "Blocks"
+msgstr ""
+
+#: win/host/settings.qml:49
+msgctxt "settings page"
+msgid "Ring"
+msgstr ""
+
+#: win/host/settings.qml:50
+msgctxt "settings page"
+msgid "Player"
+msgstr ""
+
+#: win/host/settings.qml:58
+msgctxt "settings page"
+msgid "Location"
+msgstr ""
+
+#: win/host/settings.qml:190
+msgctxt "the settings window: the service does not answer"
+msgid "The plaintop service does not answer — nothing changed here is saved."
+msgstr ""
+
+#: win/host/settings/CalendarAccounts.qml:70
+#, fuzzy
+msgctxt "Windows: /notes gave nothing back"
+msgid "the service does not answer"
+msgstr "Das Skript hat nicht geantwortet: %1"
+
+#: win/host/settings/CalendarAccounts.qml:340
+#, fuzzy, kde-format
+msgctxt "Windows: how to sign in to Google"
+msgid ""
+"A “Desktop app” OAuth client from console.cloud.google.com, with the "
+"Calendar API\n"
+"enabled. Save, then sign in once from a terminal with the service's own "
+"notes.py\n"
+"(calendar\\package\\contents\\code\\notes.py in the plaintop folder):\n"
+"python notes.py google-auth %1"
+msgstr ""
+"Ein OAuth-Client „Desktop app“ von console.cloud.google.com mit aktivierter "
+"Calendar API.\n"
+"Speichern, dann einmal im Terminal anmelden:\n"
+"python3 %1 google-auth %2"
+
+#: win/host/settings/CalendarGeneral.qml:45
+#, fuzzy
+msgctxt "Windows: where the calendar's locale is set"
+msgid ""
+"Today is in brackets. The names of the days and months, the first day\n"
+"of the week and the weekend come from the locale\n"
+"(Settings → Time & language → Language & region)."
+msgstr ""
+"Der heutige Tag steht in Klammern. Die Namen der Tage und Monate, der erste\n"
+"Wochentag und das Wochenende kommen aus dem Gebietsschema\n"
+"(Systemeinstellungen → Sprache und Region → Formate)."
+
+#: win/host/settings/CalendarHolidays.qml:140
+#, fuzzy
+msgctxt "Windows: the holiday regions"
+msgid ""
+"Tick as many as you like: a country, or one of its parts for its own days "
+"off.\n"
+"Saved at once."
+msgstr ""
+"Kreuzen Sie beliebig viele an. Die Auswahl teilt sich der Kalender der "
+"Plasma-Uhr, sie wird sofort gespeichert."
+
+#: win/host/settings/CalendarHolidays.qml:144
+msgctxt "Windows: the holiday regions list is empty"
+msgid ""
+"The service lists no regions: the holidays package is not installed where it "
+"runs."
+msgstr ""
+
+#: win/host/settings/CalendarHolidays.qml:148
+msgctxt "the holiday regions' search field"
+msgid "Search:"
+msgstr ""
+
+#: win/host/settings/CalendarHolidays.qml:153
+msgctxt "placeholder of the holiday regions' search field"
+msgid "a country or a code"
+msgstr ""
+
+#: win/host/settings/CalendarNotes.qml:78
+#, fuzzy
+msgctxt "Windows: where the local notes are kept"
+msgid ""
+"“local” keeps them as .ics files in %APPDATA%\\plaincalendar\\notes;\n"
+"an account from the Accounts page sends them to that calendar as all-day "
+"events."
+msgstr ""
+"„lokal“ hält sie als .ics-Dateien in ~/.local/share/plaincalendar/notes;\n"
+"ein Konto von der Seite „Konten“ schickt sie als ganztägige Termine in "
+"diesen Kalender."
+
+#: win/host/settings/CalendarNotes.qml:139
+msgctxt "Windows: the reminder's system notification"
+msgid ""
+"also as a Windows notification — in the notification centre, silenced by "
+"focus assist"
+msgstr ""
+
+#: win/host/settings/MousePage.qml:21
+#, fuzzy
+msgctxt "Windows: the player's mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop, the "
+"controls' too.\n"
+"The way back is the tray icon's menu, or the widget's own menu: the right "
+"button\n"
+"on it while clicks are not passing — the controls work then as well."
+msgstr ""
+"Solange Klicks durchgelassen werden, gehen beide Maustasten an die "
+"Arbeitsfläche.\n"
+"Das Widget nimmt die Maus nur im Bearbeitungsmodus der Arbeitsfläche "
+"entgegen:\n"
+"dort sind seine Einstellungen, oder ./install.sh mit dem Schalter clicks off."
+
+#: win/host/settings/MousePage.qml:22
+#, fuzzy
+msgctxt "Windows: the mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The way back is the tray icon's menu, or the widget's own menu:\n"
+"the right button on it while clicks are not passing."
+msgstr ""
+"Solange Klicks durchgelassen werden, gehen beide Maustasten an die "
+"Arbeitsfläche.\n"
+"Das Widget nimmt die Maus nur im Bearbeitungsmodus der Arbeitsfläche "
+"entgegen:\n"
+"dort sind seine Einstellungen, oder ./install.sh mit dem Schalter clicks off."

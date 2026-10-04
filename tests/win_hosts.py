@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Driver for tests/win_hosts.qml: builds the hosts, starts the service, runs the QtTest
-stand offscreen against it, stops the service.
+"""Driver for tests/win_hosts.qml and tests/win_settings.qml: builds the hosts, starts the
+service, runs the two QtTest stands offscreen against it, stops the service.
 
-    python3 tests/win_hosts.py [--qt DIR] [--service PATH] [--keep]
+    python3 tests/win_hosts.py [--qt DIR] [--service PATH] [--keep] [--only hosts|settings]
 
 DIR holds bin/qmltestrunner and bin/lconvert (else QT_DIR, QT_ROOT_DIR, PATH). The service
 is win/service/server.py unless --service names another program that speaks
@@ -82,10 +82,16 @@ def main(argv):
                 "    readonly property string token: %r }\n" % (port, token), encoding="utf-8")
             qenv = dict(os.environ, QT_QPA_PLATFORM=os.environ.get("QT_QPA_PLATFORM", "offscreen"),
                         QT_FORCE_STDERR_LOGGING="1")
-            cmd = [runner, "-import", str(ROOT / "win" / "host" / "imports"), "-import", tmp,
-                   "-input", str(ROOT / "tests" / "win_hosts.qml")]
-            print("  →", " ".join(cmd), flush=True)
-            return subprocess.run(cmd, env=qenv, cwd=str(ROOT)).returncode
+            only = argv[argv.index("--only") + 1] if "--only" in argv else ""
+            stands = [n for n in ("win_hosts", "win_settings") if not only or n.endswith(only)]
+            for name in stands:
+                cmd = [runner, "-import", str(ROOT / "win" / "host" / "imports"), "-import", tmp,
+                       "-input", str(ROOT / "tests" / f"{name}.qml")]
+                print("  →", " ".join(cmd), flush=True)
+                code = subprocess.run(cmd, env=qenv, cwd=str(ROOT)).returncode
+                if code != 0:
+                    return code
+            return 0
     finally:
         if "--keep" not in argv:
             proc.terminate()

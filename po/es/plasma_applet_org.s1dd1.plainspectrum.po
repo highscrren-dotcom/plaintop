@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 09:26+0500\n"
+"POT-Creation-Date: 2026-10-04 21:01+0000\n"
 "PO-Revision-Date: 2026-09-22 13:49+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Spanish\n"
@@ -38,117 +38,143 @@ msgctxt "playback status"
 msgid "paused"
 msgstr "en pausa"
 
-#: spectrum/package/contents/config/config.qml:7
+#: spectrum/package/contents/config/config.qml:7 win/host/settings.qml:49
 msgctxt "settings page"
 msgid "Ring"
 msgstr "Anillo"
 
-#: spectrum/package/contents/config/config.qml:13
+#: spectrum/package/contents/config/config.qml:13 win/host/settings.qml:50
 msgctxt "settings page"
 msgid "Player"
 msgstr "Reproductor"
 
 #: spectrum/package/contents/ui/configGeneral.qml:51
+#: win/host/settings/SpectrumGeneral.qml:16
 msgctxt "settings section"
 msgid "Shape"
 msgstr "Forma"
 
 #: spectrum/package/contents/ui/configGeneral.qml:55
+#: win/host/settings/SpectrumGeneral.qml:19
 msgid "Layout:"
 msgstr "Disposición:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:56
+#: win/host/settings/SpectrumGeneral.qml:20
 msgctxt "layout"
 msgid "Ring"
 msgstr "Anillo"
 
 #: spectrum/package/contents/ui/configGeneral.qml:56
+#: win/host/settings/SpectrumGeneral.qml:20
 msgctxt "layout"
 msgid "Line"
 msgstr "Línea"
 
 #: spectrum/package/contents/ui/configGeneral.qml:61
+#: win/host/settings/SpectrumGeneral.qml:23
 msgid "Bars:"
 msgstr "Barras:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:69
+#: win/host/settings/SpectrumGeneral.qml:27
 msgid "Radius, px:"
 msgstr "Radio, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:78
+#: win/host/settings/SpectrumGeneral.qml:32
 msgid "Span, °:"
 msgstr "Amplitud, °:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:87
+#: win/host/settings/SpectrumGeneral.qml:37
 msgid "Start angle, °:"
 msgstr "Ángulo inicial, °:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:96
+#: win/host/settings/SpectrumGeneral.qml:42
 msgid "Gap between bars, px:"
 msgstr "Separación entre barras, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:104
+#: win/host/settings/SpectrumGeneral.qml:47
 msgid "Bar thickness, px:"
 msgstr "Grosor de barra, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:111
+#: win/host/settings/SpectrumGeneral.qml:51
 msgid "Length at silence, px:"
 msgstr "Longitud en silencio, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:119
+#: win/host/settings/SpectrumGeneral.qml:55
 msgid "Extra length at maximum, px:"
 msgstr "Longitud extra al máximo, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:127
+#: win/host/settings/SpectrumGeneral.qml:59
 msgid "Growth:"
 msgstr "Crecimiento:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
+#: win/host/settings/SpectrumGeneral.qml:63
 msgctxt "growth"
 msgid "outward"
 msgstr "hacia fuera"
 
 #: spectrum/package/contents/ui/configGeneral.qml:129
+#: win/host/settings/SpectrumGeneral.qml:63
 msgctxt "growth"
 msgid "inward"
 msgstr "hacia dentro"
 
-#: spectrum/package/contents/ui/configGeneral.qml:129 spectrum/package/contents/ui/configGeneral.qml:130
+#: spectrum/package/contents/ui/configGeneral.qml:129
+#: spectrum/package/contents/ui/configGeneral.qml:130
+#: win/host/settings/SpectrumGeneral.qml:63
+#: win/host/settings/SpectrumGeneral.qml:64
 msgctxt "growth"
 msgid "both ways"
 msgstr "en ambos sentidos"
 
 #: spectrum/package/contents/ui/configGeneral.qml:130
+#: win/host/settings/SpectrumGeneral.qml:64
 msgctxt "growth"
 msgid "up"
 msgstr "hacia arriba"
 
 #: spectrum/package/contents/ui/configGeneral.qml:130
+#: win/host/settings/SpectrumGeneral.qml:64
 msgctxt "growth"
 msgid "down"
 msgstr "hacia abajo"
 
 #: spectrum/package/contents/ui/configGeneral.qml:135
+#: win/host/settings/SpectrumGeneral.qml:68
 msgid "Order:"
 msgstr "Orden:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:136
+#: win/host/settings/SpectrumGeneral.qml:69
 msgid "mirrored (low frequencies at the edges)"
 msgstr "en espejo (frecuencias bajas en los extremos)"
 
 #: spectrum/package/contents/ui/configGeneral.qml:141
+#: win/host/settings/SpectrumGeneral.qml:72
 msgid "reverse band order"
 msgstr "orden de bandas invertido"
 
 #: spectrum/package/contents/ui/configGeneral.qml:146
+#: win/host/settings/SpectrumGeneral.qml:75
 msgid "Channels:"
 msgstr "Canales:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:147
+#: win/host/settings/SpectrumGeneral.qml:76
 msgid "one spectrum around the whole ring, both channels averaged"
 msgstr "un solo espectro en todo el anillo, ambos canales promediados"
 
 #: spectrum/package/contents/ui/configGeneral.qml:151
+#: win/host/settings/SpectrumGeneral.qml:79
 msgid ""
 "Off: as cava gives it — the left channel from high to low, then the right\n"
 "from low to high, so the ring is mirrored about its middle."
@@ -158,117 +184,144 @@ msgstr ""
 "de graves a agudos, así que el anillo queda reflejado respecto a su mitad."
 
 #: spectrum/package/contents/ui/configGeneral.qml:156
+#: win/host/settings/SpectrumGeneral.qml:82
 msgctxt "settings section"
 msgid "Appearance"
 msgstr "Apariencia"
 
 #: spectrum/package/contents/ui/configGeneral.qml:160
+#: win/host/settings/SpectrumGeneral.qml:85
 msgid "Element:"
 msgstr "Elemento:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
+#: win/host/settings/SpectrumGeneral.qml:86
 msgctxt "element shape"
 msgid "Bar"
 msgstr "Barra"
 
 #: spectrum/package/contents/ui/configGeneral.qml:161
+#: win/host/settings/SpectrumGeneral.qml:86
 msgctxt "element shape"
 msgid "Blocks"
 msgstr "Bloques"
 
 #: spectrum/package/contents/ui/configGeneral.qml:166
+#: win/host/settings/SpectrumGeneral.qml:89
 msgid "Block, px:"
 msgstr "Bloque, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:174
+#: win/host/settings/SpectrumGeneral.qml:94
 msgid "Block gap, px:"
 msgstr "Separación de bloques, px:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:182
+#: win/host/settings/SpectrumGeneral.qml:99
 msgid "Ends:"
 msgstr "Extremos:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:183
+#: win/host/settings/SpectrumGeneral.qml:100
 msgctxt "bar ends"
 msgid "rounded"
 msgstr "redondeados"
 
 #: spectrum/package/contents/ui/configGeneral.qml:188
+#: win/host/settings/SpectrumGeneral.qml:103
 msgid "Colour:"
 msgstr "Color:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:194
+#: win/host/settings/SpectrumGeneral.qml:107
 msgid "High-frequency colour:"
 msgstr "Color de las frecuencias altas:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:205
+#: win/host/settings/SpectrumGeneral.qml:116
 msgctxt "high-frequency colour"
 msgid "custom"
 msgstr "personalizado"
 
 #: spectrum/package/contents/ui/configGeneral.qml:213
+#: win/host/settings/SpectrumGeneral.qml:122
 msgid "Opacity, %:"
 msgstr "Opacidad, %:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:221
+#: win/host/settings/SpectrumGeneral.qml:126
 msgid "Circle:"
 msgstr "Círculo:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:223
+#: win/host/settings/SpectrumGeneral.qml:128
 msgid "a thin guide under the bars"
 msgstr "una guía fina bajo las barras"
 
 #: spectrum/package/contents/ui/configGeneral.qml:226
+#: win/host/settings/SpectrumGeneral.qml:131
 msgctxt "settings section"
 msgid "Behaviour"
 msgstr "Comportamiento"
 
 #: spectrum/package/contents/ui/configGeneral.qml:230
+#: win/host/settings/SpectrumGeneral.qml:134
 msgid "Data frames per second:"
 msgstr "Fotogramas de datos por segundo:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:238
+#: win/host/settings/SpectrumGeneral.qml:138
 msgid "Smoothing, ms:"
 msgstr "Suavizado, ms:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:246
+#: win/host/settings/MousePage.qml:15 win/host/settings/SpectrumGeneral.qml:142
 msgid "Mouse:"
 msgstr "Ratón:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:247
+#: win/host/settings/MousePage.qml:16 win/host/settings/SpectrumGeneral.qml:143
 msgid "let clicks through to the desktop"
 msgstr "dejar pasar los clics al escritorio"
 
 #: spectrum/package/contents/ui/configGeneral.qml:250
+#: win/host/settings/SpectrumGeneral.qml:149
 msgctxt "settings section"
 msgid "Silence"
 msgstr "Silencio"
 
 #: spectrum/package/contents/ui/configGeneral.qml:254
+#: win/host/settings/SpectrumGeneral.qml:152
 msgid "In silence:"
 msgstr "En silencio:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:255
+#: win/host/settings/SpectrumGeneral.qml:153
 msgid "dissolve the ring"
 msgstr "disolver el anillo"
 
 #: spectrum/package/contents/ui/configGeneral.qml:260
+#: win/host/settings/SpectrumGeneral.qml:156
 msgid "Silence threshold, %:"
 msgstr "Umbral de silencio, %:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:268
+#: win/host/settings/SpectrumGeneral.qml:161
 msgid "Wait before vanishing, ms:"
 msgstr "Espera antes de desaparecer, ms:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:277
+#: win/host/settings/SpectrumGeneral.qml:166
 msgid "Fade in and out, ms:"
 msgstr "Fundido de entrada y salida, ms:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:286
+#: win/host/settings/SpectrumGeneral.qml:171
 msgid "Polls per second in silence:"
 msgstr "Sondeos por segundo en silencio:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:293
+#: win/host/settings/SpectrumGeneral.qml:176
 msgid ""
 "The bars grow out of the ring itself, so a “length at silence” of 0\n"
 "makes them appear out of literally nothing."
@@ -278,10 +331,12 @@ msgstr ""
 "las hace aparecer literalmente de la nada."
 
 #: spectrum/package/contents/ui/configGeneral.qml:300
+#: win/host/settings/SpectrumGeneral.qml:179
 msgid "Relay port:"
 msgstr "Puerto del relé:"
 
 #: spectrum/package/contents/ui/configGeneral.qml:307
+#: win/host/settings/SpectrumGeneral.qml:183
 msgid "Source:"
 msgstr "Fuente:"
 
@@ -291,19 +346,22 @@ msgid ""
 "the frequencies and the device are set in ~/.config/plainspectrum/relay.env"
 msgstr ""
 "el espectro lo calcula cava en el servicio plainspectrum-relay;\n"
-"las frecuencias y el dispositivo se definen en ~/.config/plainspectrum/"
-"relay.env"
+"las frecuencias y el dispositivo se definen en ~/.config/plainspectrum/relay."
+"env"
 
 #: spectrum/package/contents/ui/configPlayer.qml:34
+#: win/host/settings/SpectrumPlayer.qml:12
 msgctxt "the player drawn inside the visualizer"
 msgid "In the ring:"
 msgstr "En el anillo:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:35
+#: win/host/settings/SpectrumPlayer.qml:13
 msgid "show the player in the centre of the ring"
 msgstr "mostrar el reproductor en el centro del anillo"
 
 #: spectrum/package/contents/ui/configPlayer.qml:39
+#: win/host/settings/SpectrumPlayer.qml:16
 msgid ""
 "The track, the position bar and the controls of the player widget,\n"
 "drawn over the free disc inside the bars. On a line they go along\n"
@@ -314,24 +372,29 @@ msgstr ""
 "el borde que las barras alcanzan al final. El anillo conserva su tamaño."
 
 #: spectrum/package/contents/ui/configPlayer.qml:44
+#: win/host/settings/SpectrumPlayer.qml:19
 msgctxt "settings section"
 msgid "Text"
 msgstr "Texto"
 
 #: spectrum/package/contents/ui/configPlayer.qml:48
+#: win/host/settings/SpectrumPlayer.qml:22
 msgid "Font:"
 msgstr "Tipo de letra:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:55
+#: win/host/settings/SpectrumPlayer.qml:27
 msgctxt "font size"
 msgid "Size:"
 msgstr "Tamaño:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:63
+#: win/host/settings/SpectrumPlayer.qml:32
 msgid "Width, characters:"
 msgstr "Ancho, caracteres:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:70
+#: win/host/settings/SpectrumPlayer.qml:37
 msgid ""
 "The player is this many characters wide and five lines tall;\n"
 "a longer title is cut with an ellipsis."
@@ -340,40 +403,48 @@ msgstr ""
 "un título más largo se corta con puntos suspensivos."
 
 #: spectrum/package/contents/ui/configPlayer.qml:75
+#: win/host/settings/SpectrumPlayer.qml:40
 msgctxt "settings section"
 msgid "Palette"
 msgstr "Paleta"
 
 #: spectrum/package/contents/ui/configPlayer.qml:78
+#: win/host/settings/SpectrumPlayer.qml:43
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Texto principal:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:85
+#: win/host/settings/SpectrumPlayer.qml:48
 msgctxt "palette: colour of"
 msgid "Title:"
 msgstr "Título:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:92
+#: win/host/settings/SpectrumPlayer.qml:53
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Secundario:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:98
+#: win/host/settings/SpectrumPlayer.qml:58
 msgctxt "settings section"
 msgid "Player"
 msgstr "Reproductor"
 
 #: spectrum/package/contents/ui/configPlayer.qml:102
+#: win/host/settings/SpectrumPlayer.qml:61
 msgid "Player:"
 msgstr "Reproductor:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:105
+#: win/host/settings/SpectrumPlayer.qml:66
 msgctxt "player field placeholder"
 msgid "whoever is playing"
 msgstr "el que reproduzca"
 
 #: spectrum/package/contents/ui/configPlayer.qml:109
+#: win/host/settings/SpectrumPlayer.qml:70
 msgid ""
 "Empty: whoever is playing. Otherwise a part of the player's name\n"
 "or desktop entry — vlc, spotify, strawberry; when no player matches,\n"
@@ -384,22 +455,27 @@ msgstr ""
 "vuelve al que reproduzca."
 
 #: spectrum/package/contents/ui/configPlayer.qml:116
+#: win/host/settings/SpectrumPlayer.qml:73
 msgid "Album:"
 msgstr "Álbum:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:118
+#: win/host/settings/SpectrumPlayer.qml:75
 msgid "show the album line"
 msgstr "mostrar la línea del álbum"
 
 #: spectrum/package/contents/ui/configPlayer.qml:123
+#: win/host/settings/SpectrumPlayer.qml:78
 msgid "Controls:"
 msgstr "Controles:"
 
 #: spectrum/package/contents/ui/configPlayer.qml:125
+#: win/host/settings/SpectrumPlayer.qml:80
 msgid "show the previous, play/pause and next row"
 msgstr "mostrar la fila anterior, reproducir/pausa y siguiente"
 
 #: spectrum/package/contents/ui/configPlayer.qml:129
+#: win/host/settings/SpectrumPlayer.qml:83
 msgid ""
 "With no player on the bus the centre of the ring stays empty.\n"
 "The controls take the mouse even while the rest passes clicks through."
@@ -407,7 +483,7 @@ msgstr ""
 "Sin reproductor en el bus el centro del anillo queda vacío.\n"
 "Los controles toman el ratón aunque el resto deje pasar los clics."
 
-#: spectrum/package/contents/ui/main.qml:238
+#: spectrum/package/contents/ui/main.qml:238 win/host/spectrum.qml:125
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"
@@ -415,3 +491,94 @@ msgid ""
 msgstr ""
 "sin datos: el servicio plainspectrum-relay no responde\n"
 "puerto %1"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:127
+msgctxt "the widget's window menu"
+msgid "Settings…"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:131
+#, fuzzy
+msgctxt "the widget's window menu"
+msgid "Let clicks through"
+msgstr "dejar pasar los clics al escritorio"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:137
+msgctxt "the widget's window menu"
+msgid "Behind the desktop icons"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:144
+msgctxt "the widget's window menu"
+msgid "Close"
+msgstr ""
+
+#: win/host/settings.qml:45 win/host/settings.qml:53 win/host/settings.qml:57
+#: win/host/settings.qml:62
+msgctxt "settings page"
+msgid "General"
+msgstr ""
+
+#: win/host/settings.qml:46
+#, fuzzy
+msgctxt "settings page"
+msgid "Blocks"
+msgstr "Bloques"
+
+#: win/host/settings.qml:54 win/host/settings.qml:59 win/host/settings.qml:66
+#, fuzzy
+msgctxt "settings page"
+msgid "Mouse"
+msgstr "Ratón:"
+
+#: win/host/settings.qml:58
+msgctxt "settings page"
+msgid "Location"
+msgstr ""
+
+#: win/host/settings.qml:63
+msgctxt "settings page"
+msgid "Notes"
+msgstr ""
+
+#: win/host/settings.qml:64
+msgctxt "settings page"
+msgid "Holidays"
+msgstr ""
+
+#: win/host/settings.qml:65
+msgctxt "settings page"
+msgid "Accounts"
+msgstr ""
+
+#: win/host/settings.qml:190
+msgctxt "the settings window: the service does not answer"
+msgid "The plaintop service does not answer — nothing changed here is saved."
+msgstr ""
+
+#: win/host/settings/MousePage.qml:21
+msgctxt "Windows: the player's mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop, the "
+"controls' too.\n"
+"The way back is the tray icon's menu, or the widget's own menu: the right "
+"button\n"
+"on it while clicks are not passing — the controls work then as well."
+msgstr ""
+
+#: win/host/settings/MousePage.qml:22 win/host/settings/SpectrumGeneral.qml:146
+msgctxt "Windows: the mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The way back is the tray icon's menu, or the widget's own menu:\n"
+"the right button on it while clicks are not passing."
+msgstr ""
+
+#: win/host/settings/SpectrumGeneral.qml:186
+msgctxt "Windows: where the visualizer's data comes from"
+msgid ""
+"the spectrum is computed by the plaintop service from what the default "
+"output\n"
+"plays (WASAPI loopback); with the port left at 8788 the host asks the "
+"service's own"
+msgstr ""

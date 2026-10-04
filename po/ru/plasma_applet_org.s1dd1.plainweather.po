@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 23:35+0500\n"
+"POT-Creation-Date: 2026-10-04 21:01+0000\n"
 "PO-Revision-Date: 2026-09-23 18:13+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,17 +18,19 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: weather/package/contents/config/config.qml:7
+#: weather/package/contents/config/config.qml:7 win/host/settings.qml:45
+#: win/host/settings.qml:53 win/host/settings.qml:57 win/host/settings.qml:62
 msgctxt "settings page"
 msgid "General"
 msgstr "Общее"
 
-#: weather/package/contents/config/config.qml:13
+#: weather/package/contents/config/config.qml:13 win/host/settings.qml:58
 msgctxt "settings page"
 msgid "Location"
 msgstr "Место"
 
-#: weather/package/contents/config/config.qml:19
+#: weather/package/contents/config/config.qml:19 win/host/settings.qml:54
+#: win/host/settings.qml:59 win/host/settings.qml:66
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "Мышь"
@@ -314,24 +316,29 @@ msgid "wind %1 %2 %3"
 msgstr "ветер %1 %2 %3"
 
 #: weather/package/contents/ui/configGeneral.qml:28
+#: win/host/settings/WeatherGeneral.qml:8
 msgctxt "settings section"
 msgid "Text"
 msgstr "Текст"
 
 #: weather/package/contents/ui/configGeneral.qml:32
+#: win/host/settings/WeatherGeneral.qml:11
 msgid "Font:"
 msgstr "Шрифт:"
 
 #: weather/package/contents/ui/configGeneral.qml:38
+#: win/host/settings/WeatherGeneral.qml:15
 msgctxt "font size"
 msgid "Size:"
 msgstr "Кегль:"
 
 #: weather/package/contents/ui/configGeneral.qml:45
+#: win/host/settings/WeatherGeneral.qml:19
 msgid "Width, characters:"
 msgstr "Ширина, символов:"
 
 #: weather/package/contents/ui/configGeneral.qml:51
+#: win/host/settings/WeatherGeneral.qml:23
 msgid ""
 "The widget is this many characters wide; its height follows the number of\n"
 "forecast days and the attribution line. A longer line is cut with an "
@@ -341,75 +348,90 @@ msgstr ""
 "прогноза и строки с источником. Более длинная строка обрезается многоточием."
 
 #: weather/package/contents/ui/configGeneral.qml:56
+#: win/host/settings/WeatherGeneral.qml:26
 msgctxt "settings section"
 msgid "Icon"
 msgstr "Иконка"
 
 #: weather/package/contents/ui/configGeneral.qml:60
+#: win/host/settings/WeatherGeneral.qml:29
 msgid "Icon:"
 msgstr "Иконка:"
 
 #: weather/package/contents/ui/configGeneral.qml:61
+#: win/host/settings/WeatherGeneral.qml:30
 msgctxt "icon placement"
 msgid "none"
 msgstr "нет"
 
 #: weather/package/contents/ui/configGeneral.qml:61
+#: win/host/settings/WeatherGeneral.qml:30
 msgctxt "icon placement"
 msgid "on the left"
 msgstr "слева"
 
 #: weather/package/contents/ui/configGeneral.qml:66
+#: win/host/settings/WeatherGeneral.qml:33
 msgid "Icon size, px:"
 msgstr "Кегль иконки, px:"
 
 #: weather/package/contents/ui/configGeneral.qml:72
+#: win/host/settings/WeatherGeneral.qml:36
 msgid ""
 "A picture made of characters in the widget's font, left of the current "
 "conditions."
 msgstr "Картинка из знаков шрифта виджета слева от текущей погоды."
 
 #: weather/package/contents/ui/configGeneral.qml:77
+#: win/host/settings/WeatherGeneral.qml:38
 msgctxt "settings section"
 msgid "Palette"
 msgstr "Палитра"
 
 #: weather/package/contents/ui/configGeneral.qml:80
+#: win/host/settings/WeatherGeneral.qml:41
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Основной текст:"
 
 #: weather/package/contents/ui/configGeneral.qml:86
+#: win/host/settings/WeatherGeneral.qml:45
 msgctxt "palette: colour of"
 msgid "Temperature:"
 msgstr "Температура:"
 
 #: weather/package/contents/ui/configGeneral.qml:92
+#: win/host/settings/WeatherGeneral.qml:49
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Второстепенное:"
 
 #: weather/package/contents/ui/configLocation.qml:57
+#: win/host/settings/WeatherLocation.qml:42
 msgctxt "typed coordinates out of range"
 msgid "latitude is −90…90, longitude −180…180"
 msgstr "широта −90…90, долгота −180…180"
 
 #: weather/package/contents/ui/configLocation.qml:73
+#: win/host/settings/WeatherLocation.qml:58
 msgctxt "geocoding in progress"
 msgid "searching…"
 msgstr "поиск…"
 
 #: weather/package/contents/ui/configLocation.qml:92
+#: win/host/settings/WeatherLocation.qml:77
 msgctxt "geocoding: no match"
 msgid "nothing found"
 msgstr "ничего не найдено"
 
 #: weather/package/contents/ui/configLocation.qml:94
+#: win/host/settings/WeatherLocation.qml:79
 msgctxt "geocoding: the request failed"
 msgid "the lookup failed — no network?"
 msgstr "поиск не удался — нет сети?"
 
 #: weather/package/contents/ui/configLocation.qml:129
+#: win/host/settings/WeatherLocation.qml:111
 msgid ""
 "The data is MET Norway's, under CC BY 4.0;\n"
 "its terms ask for the attribution line."
@@ -418,6 +440,7 @@ msgstr ""
 "её условия просят указывать источник."
 
 #: weather/package/contents/ui/configLocation.qml:131
+#: win/host/settings/WeatherLocation.qml:113
 msgid ""
 "The data is WeatherAPI.com's; the free plan gives three forecast days\n"
 "and asks for the attribution line."
@@ -426,6 +449,7 @@ msgstr ""
 "и просит указывать источник."
 
 #: weather/package/contents/ui/configLocation.qml:133
+#: win/host/settings/WeatherLocation.qml:115
 msgid ""
 "The data is Visual Crossing's; the free plan is a thousand records a day,\n"
 "one per forecast day, and its terms ask for the attribution line."
@@ -435,6 +459,7 @@ msgstr ""
 "по одной на день прогноза, а условия сервиса просят указывать источник."
 
 #: weather/package/contents/ui/configLocation.qml:135
+#: win/host/settings/WeatherLocation.qml:117
 msgid ""
 "The data is Open-Meteo's, free for non-commercial use;\n"
 "its terms ask for the attribution line."
@@ -444,123 +469,149 @@ msgstr ""
 "их условия просят указывать источник."
 
 #: weather/package/contents/ui/configLocation.qml:149
+#: win/host/settings/WeatherLocation.qml:121
 msgctxt "settings section"
 msgid "Source"
 msgstr "Источник"
 
 #: weather/package/contents/ui/configLocation.qml:153
+#: win/host/settings/WeatherLocation.qml:124
 msgid "Source:"
 msgstr "Источник:"
 
 #: weather/package/contents/ui/configLocation.qml:154
+#: win/host/settings/WeatherLocation.qml:128
 msgctxt "weather source"
 msgid "Open-Meteo"
 msgstr "Open-Meteo"
 
 #: weather/package/contents/ui/configLocation.qml:154
+#: win/host/settings/WeatherLocation.qml:128
 msgctxt "weather source"
 msgid "MET Norway"
 msgstr "MET Norway"
 
 #: weather/package/contents/ui/configLocation.qml:155
+#: win/host/settings/WeatherLocation.qml:129
 msgctxt "weather source"
 msgid "WeatherAPI.com"
 msgstr "WeatherAPI.com"
 
 #: weather/package/contents/ui/configLocation.qml:155
+#: win/host/settings/WeatherLocation.qml:129
 msgctxt "weather source"
 msgid "Visual Crossing"
 msgstr "Visual Crossing"
 
 #: weather/package/contents/ui/configLocation.qml:162
+#: win/host/settings/WeatherLocation.qml:133
 msgid "API key:"
 msgstr "Ключ API:"
 
 #: weather/package/contents/ui/configLocation.qml:165
+#: win/host/settings/WeatherLocation.qml:138
 msgctxt "API key field placeholder"
 msgid "paste the key here"
 msgstr "вставьте ключ сюда"
 
 #: weather/package/contents/ui/configLocation.qml:171
+#: win/host/settings/WeatherLocation.qml:144
 msgctxt "where the key comes from"
 msgid "A free key: weatherapi.com/signup"
 msgstr "Бесплатный ключ: weatherapi.com/signup"
 
 #: weather/package/contents/ui/configLocation.qml:172
+#: win/host/settings/WeatherLocation.qml:145
 msgctxt "where the key comes from"
 msgid "A free key: visualcrossing.com/sign-up"
 msgstr "Бесплатный ключ: visualcrossing.com/sign-up"
 
 #: weather/package/contents/ui/configLocation.qml:183
+#: win/host/settings/WeatherLocation.qml:148
 msgctxt "settings section"
 msgid "Location"
 msgstr "Место"
 
 #: weather/package/contents/ui/configLocation.qml:186
+#: win/host/settings/WeatherLocation.qml:151
 msgid "Place:"
 msgstr "Место:"
 
 #: weather/package/contents/ui/configLocation.qml:192
+#: win/host/settings/WeatherLocation.qml:155
 msgctxt "search field placeholder"
 msgid "a city, or latitude, longitude"
 msgstr "город или широта, долгота"
 
 #: weather/package/contents/ui/configLocation.qml:198
+#: win/host/settings/WeatherLocation.qml:159
 msgctxt "look the place up"
 msgid "Search"
 msgstr "Найти"
 
 #: weather/package/contents/ui/configLocation.qml:205
+#: win/host/settings/WeatherLocation.qml:165
 msgid "Current:"
 msgstr "Сейчас:"
 
 #: weather/package/contents/ui/configLocation.qml:208
+#: win/host/settings/WeatherLocation.qml:172
 #, kde-format
 msgctxt "stored place: name (latitude, longitude)"
 msgid "%1 (%2, %3)"
 msgstr "%1 (%2, %3)"
 
 #: weather/package/contents/ui/configLocation.qml:210
+#: win/host/settings/WeatherLocation.qml:174
 msgctxt "no place stored"
 msgid "not set — guessed from the time zone"
 msgstr "не задано — угадано по часовому поясу"
 
 #: weather/package/contents/ui/configLocation.qml:215
+#: win/host/settings/WeatherLocation.qml:179
 msgctxt "forget the stored place"
 msgid "Clear"
 msgstr "Очистить"
 
 #: weather/package/contents/ui/configLocation.qml:256
+#: win/host/settings/WeatherLocation.qml:208
 msgctxt "settings section"
 msgid "Forecast"
 msgstr "Прогноз"
 
 #: weather/package/contents/ui/configLocation.qml:260
+#: win/host/settings/WeatherLocation.qml:211
 msgid "Units:"
 msgstr "Единицы:"
 
 #: weather/package/contents/ui/configLocation.qml:261
+#: win/host/settings/WeatherLocation.qml:214
 msgctxt "units: follow the locale's measurement system"
 msgid "by locale"
 msgstr "по локали"
 
 #: weather/package/contents/ui/configLocation.qml:266
+#: win/host/settings/WeatherLocation.qml:218
 msgid "Days:"
 msgstr "Дней:"
 
 #: weather/package/contents/ui/configLocation.qml:273
+#: win/host/settings/WeatherLocation.qml:222
 msgid "Attribution:"
 msgstr "Указание источника:"
 
 #: weather/package/contents/ui/configLocation.qml:274
+#: win/host/settings/WeatherLocation.qml:223
 msgid "show the source's line"
 msgstr "показывать строку с источником"
 
 #: weather/package/contents/ui/configMouse.qml:19
+#: win/host/settings/MousePage.qml:15
 msgid "Mouse:"
 msgstr "Мышь:"
 
 #: weather/package/contents/ui/configMouse.qml:20
+#: win/host/settings/MousePage.qml:16
 msgid "let clicks through to the desktop"
 msgstr "пропускать клики на рабочий стол"
 
@@ -573,3 +624,82 @@ msgstr ""
 "Пока клики проходят насквозь, обе кнопки мыши попадают на рабочий стол.\n"
 "Виджет берёт мышь только в режиме правки рабочего стола:\n"
 "там же его настройки, либо ./install.sh с ключом clicks off."
+
+#: win/host/imports/plaintop/WidgetWindow.qml:127
+msgctxt "the widget's window menu"
+msgid "Settings…"
+msgstr "Настройки…"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:131
+msgctxt "the widget's window menu"
+msgid "Let clicks through"
+msgstr "Пропускать клики"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:137
+msgctxt "the widget's window menu"
+msgid "Behind the desktop icons"
+msgstr "За значками стола"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:144
+msgctxt "the widget's window menu"
+msgid "Close"
+msgstr "Закрыть"
+
+#: win/host/settings.qml:46
+msgctxt "settings page"
+msgid "Blocks"
+msgstr "Блоки"
+
+#: win/host/settings.qml:49
+msgctxt "settings page"
+msgid "Ring"
+msgstr "Кольцо"
+
+#: win/host/settings.qml:50
+msgctxt "settings page"
+msgid "Player"
+msgstr "Плеер"
+
+#: win/host/settings.qml:63
+msgctxt "settings page"
+msgid "Notes"
+msgstr "Заметки"
+
+#: win/host/settings.qml:64
+msgctxt "settings page"
+msgid "Holidays"
+msgstr "Праздники"
+
+#: win/host/settings.qml:65
+msgctxt "settings page"
+msgid "Accounts"
+msgstr "Аккаунты"
+
+#: win/host/settings.qml:190
+msgctxt "the settings window: the service does not answer"
+msgid "The plaintop service does not answer — nothing changed here is saved."
+msgstr "Служба plaintop не отвечает — изменённое здесь не сохраняется."
+
+#: win/host/settings/MousePage.qml:21
+msgctxt "Windows: the player's mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop, the "
+"controls' too.\n"
+"The way back is the tray icon's menu, or the widget's own menu: the right "
+"button\n"
+"on it while clicks are not passing — the controls work then as well."
+msgstr ""
+"Пока клики проходят насквозь, обе кнопки мыши попадают на рабочий стол — и на кнопках плеера тоже.\n"
+"Путь назад — меню значка в трее или собственное меню виджета: правая кнопка на нём,\n"
+"пока клики не проходят; тогда работают и кнопки."
+
+#: win/host/settings/MousePage.qml:22
+msgctxt "Windows: the mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The way back is the tray icon's menu, or the widget's own menu:\n"
+"the right button on it while clicks are not passing."
+msgstr ""
+"Пока клики проходят насквозь, обе кнопки мыши попадают на рабочий стол.\n"
+"Путь назад — меню значка в трее или собственное меню виджета:\n"
+"правая кнопка на нём, пока клики не проходят."

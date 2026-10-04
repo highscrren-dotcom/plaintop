@@ -46,7 +46,9 @@ WINDOWS_DEFAULTS = {
     "spectrum": {"winX": 700, "winY": 120},
     "player": {"winX": 60, "winY": 1040},
     "weather": {"winX": 600, "winY": 60},
-    "calendar": {"winX": 1200, "winY": 60},
+    # holidayRegions has no entry in main.xml: on Plasma the regions live in KHolidays'
+    # own file; here they are a setting, "DE,DE-BY" (win/host/calendar/Holidays.qml).
+    "calendar": {"winX": 1200, "winY": 60, "holidayRegions": ""},
 }
 
 
