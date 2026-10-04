@@ -122,6 +122,8 @@ pack() {
     weather_prepare || return 1
     calendar_prepare || return 1
     mkdir -p "$REPO/dist"
+    # What this run built: dist/ keeps the older versions too, and a release takes only these.
+    PACKED=()
     local src name out root
     for src in "$PLASMOID_SRC" "$SPECTRUM_SRC/package" "$PLAYER_SRC" "$WEATHER_SRC" "$CALENDAR_SRC"; do
         name=$(python3 -c 'import json, sys
@@ -135,6 +137,7 @@ print(k["Name"] + "-" + k["Version"])' "$src/metadata.json") \
         root=$(mktemp -d)
         if kpackagetool6 --type Plasma/Applet --install "$out" --packageroot "$root" >/dev/null 2>&1; then
             grn "  ✓ dist/$name.plasmoid — installs"
+            PACKED+=("$out")
         else
             red "  ✗ dist/$name.plasmoid built, but kpackagetool6 does not install it"; rm -rf "$root"; return 1
         fi
@@ -571,14 +574,14 @@ release() {
     git fetch -q origin main || { red "  ✗ cannot reach origin"; return 1; }
     [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] || { red "  ✗ main is not pushed, or behind origin — push first"; return 1; }
     pack || return 1
-    (cd "$REPO/dist" && sha256sum ./*.plasmoid > SHA256SUMS) || { red "  ✗ no checksums"; return 1; }
+    (cd "$REPO/dist" && sha256sum "${PACKED[@]##*/}" > SHA256SUMS) || { red "  ✗ no checksums"; return 1; }
     local notes="$REPO/dist/RELEASE-v$version.md" f
     {
         echo "plaintop v$version — the five widgets as .plasmoid packages, the same files that go to the KDE Store."
         echo
         echo "| Package | sha256 |"
         echo "|---|---|"
-        for f in "$REPO"/dist/*.plasmoid; do
+        for f in "${PACKED[@]}"; do
             printf '| %s | `%s` |\n' "$(basename "$f")" "$(sha256sum "$f" | cut -c1-64)"
         done
         echo
@@ -587,7 +590,7 @@ release() {
     } > "$notes"
     git tag -a "v$version" -m "plaintop v$version" || return 1
     git push -q origin "v$version" || { red "  ✗ the tag did not push"; return 1; }
-    gh release create "v$version" "$REPO"/dist/*.plasmoid "$REPO/dist/SHA256SUMS" \
+    gh release create "v$version" "${PACKED[@]}" "$REPO/dist/SHA256SUMS" \
         --title "plaintop v$version" --notes-file "$notes" || { red "  ✗ gh release create failed — the tag is pushed, create the release by hand"; return 1; }
     grn "  ✓ released v$version: $(gh release view "v$version" --json url -q .url 2>/dev/null)"
 }
