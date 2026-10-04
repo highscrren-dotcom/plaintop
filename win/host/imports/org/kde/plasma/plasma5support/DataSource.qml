@@ -52,9 +52,11 @@ QtObject {
     }
 
     function run(source) {
+        // An answer may arrive after the source went away with its host (the stands
+        // destroy MonitorData between tests): then `ds` is null and there is nobody to tell.
         if (engine === "time") {
             Service.getJson("/time?zone=" + encodeURIComponent(source === "Local" ? "Local" : source), function(d) {
-                if (!d || ds.active.indexOf(source) < 0) return
+                if (!ds || !d || ds.active.indexOf(source) < 0) return
                 const answer = { "Timezone City": String(d.city || ""), "Offset": Number(d.offset) || 0,
                                  "Timezone": String(d.zone || ""), "DateTime": new Date() }
                 ds.data[source] = answer
@@ -63,7 +65,7 @@ QtObject {
             return
         }
         Service.postJson("/exec", { command: source }, function(d) {
-            if (ds.active.indexOf(source) < 0) return
+            if (!ds || ds.active.indexOf(source) < 0) return
             const answer = d ? d : { stdout: "", stderr: "the service did not answer", "exit code": 127 }
             ds.data[source] = answer
             ds.newData(source, answer)

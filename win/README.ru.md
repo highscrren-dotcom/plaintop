@@ -10,7 +10,7 @@
 [../docs/DECISIONS.ru.md](../docs/DECISIONS.ru.md).
 
 ⚠️ **Состояние.** Порт написан в Linux-контейнере, без машины с Windows, и проверен там на
-голом Qt 6.11 против заменителя службы и Python-стендами самой службы; job CI на
+голом Qt (6.8, 6.10 и 6.11) против заменителя службы и Python-стендами самой службы; job CI на
 `windows-latest` — первое место, где он встретился с Windows. То, что покажет только стол —
 захват звука, медиасессия, датчики из LibreHardwareMonitor, вид флагов окна, трей,
 уведомление, — на столе ещё не видел никто. Отчёты приветствуются.
@@ -22,10 +22,10 @@
   tzlocal`. Необязательно, каждый пакет даёт одну вещь: `winsdk` — плеер (System Media
   Transport Controls); `soundcard` или `pyaudiowpatch` — захват звука для визуализатора
   (WASAPI loopback вывода по умолчанию); `pycaw` — строка звука у монитора.
-- **Qt 6.11** — нужен только `qml.exe` с модулями QML. Онлайн-установщик Qt
-  (`C:\Qt\6.11.3\msvc2022_64`) или `pip install aqtinstall` и
-  `aqt install-qt windows desktop 6.11.3 win64_msvc2022_64`. Не 6.10 и старше: его парсер
-  QML не принимает два общих файла ([../docs/GOTCHAS.ru.md](../docs/GOTCHAS.ru.md)).
+- **Qt 6.8 и новее** — нужен только `qml.exe` с модулями QML. Онлайн-установщик Qt
+  (скажем, `C:\Qt\6.10.3\msvc2022_64`) или `pip install aqtinstall` и
+  `aqt install-qt windows desktop 6.10.3 win64_msvc2022_64`. Хосты проходят свой стенд на
+  6.8, 6.10 и 6.11; CI берёт 6.10.
 - **Шрифт**: *JetBrainsMono Nerd Font Mono* — `JetBrainsMono.zip` с
   [nerdfonts.com](https://www.nerdfonts.com/font-downloads), распаковать и каждый `.ttf`
   установить для пользователя (правая кнопка → *Установить*). Без него виджеты берут
@@ -39,7 +39,7 @@
 ```powershell
 git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
-python win\build.py --qt C:\Qt\6.11.3\msvc2022_64   # копирует общий QML, конвертирует каталоги
+python win\build.py --qt C:\Qt\6.10.3\msvc2022_64   # копирует общий QML, конвертирует каталоги
 python win\plaintop.py                              # служба, виджеты, значок в трее
 ```
 
@@ -84,7 +84,7 @@ python win\plaintop.py                              # служба, виджет
 python tests\win_service.py        # датчики, эмуляция команд, сервер
 python tests\win_bands.py          # анализатор спектра на синтетических сигналах
 python tests\win_media.py          # отображение плеера, notes.py в службе, праздники, пояса
-python tests\win_hosts.py --qt C:\Qt\6.11.3\msvc2022_64   # пять хостов через шимы против настоящей службы
+python tests\win_hosts.py --qt C:\Qt\6.10.3\msvc2022_64   # пять хостов через шимы против настоящей службы
 ```
 
 Последний собирает хосты, запускает службу на свободном порту, гоняет

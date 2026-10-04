@@ -42,9 +42,9 @@ Item {
         for (const k in raw) {
             for (const h of raw[k]) {
                 // The package has no name days; "every holiday but name days" is "every holiday".
-                if (kind === 0 && h.public !== true)
+                if (kind === 0 && h["public"] !== true)
                     continue
-                (out[k] = out[k] || []).push({ title: h.title, public: h.public === true, world: false })
+                (out[k] = out[k] || []).push({ title: h.title, "public": h["public"] === true, world: false })
             }
         }
         if (world) {
@@ -55,7 +55,7 @@ Item {
                     const k = key(ym[0], ym[1], Number(w.md.slice(3)))
                     const list = out[k] = out[k] || []
                     if (!list.some(x => x.title === w.title))
-                        list.push({ title: w.title, public: false, world: true })
+                        list.push({ title: w.title, "public": false, world: true })
                 }
             }
         }

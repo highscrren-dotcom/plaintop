@@ -10,7 +10,7 @@ settings and the calendar's notes. How that was chosen, and what it costs, is de
 in [../docs/DECISIONS.md](../docs/DECISIONS.md).
 
 ⚠️ **Status.** The port was written in a Linux container, without a Windows machine, and
-verified there on a bare Qt 6.11 against a stand-in of the service and with the service's
+verified there on a bare Qt (6.8, 6.10 and 6.11) against a stand-in of the service and with the service's
 own Python stands; the CI job on `windows-latest` is where it first met Windows. The things
 only a desktop can show — the sound capture, the media session, the sensors from
 LibreHardwareMonitor, the look of the window flags, the tray, the toast — have not been
@@ -24,10 +24,10 @@ seen on one yet. Reports welcome.
   thing: `winsdk` — the player (the System Media Transport Controls); `soundcard` or
   `pyaudiowpatch` — the visualizer's sound capture (WASAPI loopback of the default output);
   `pycaw` — the monitor's sound line.
-- **Qt 6.11** — only `qml.exe` and its QML modules are used. The Qt online installer
-  (`C:\Qt\6.11.3\msvc2022_64`), or `pip install aqtinstall` and
-  `aqt install-qt windows desktop 6.11.3 win64_msvc2022_64`. Not 6.10 or older: its QML
-  parser refuses two of the shared files ([../docs/GOTCHAS.md](../docs/GOTCHAS.md)).
+- **Qt 6.8 or newer** — only `qml.exe` and its QML modules are used. The Qt online
+  installer (`C:\Qt\6.10.3\msvc2022_64`, say), or `pip install aqtinstall` and
+  `aqt install-qt windows desktop 6.10.3 win64_msvc2022_64`. The hosts pass their stand on
+  6.8, 6.10 and 6.11; CI uses 6.10.
 - **The font**: *JetBrainsMono Nerd Font Mono* — the `JetBrainsMono.zip` from
   [nerdfonts.com](https://www.nerdfonts.com/font-downloads), unpacked and every `.ttf`
   installed for the user (right-click → *Install*). Without it the widgets fall back to the
@@ -41,7 +41,7 @@ seen on one yet. Reports welcome.
 ```powershell
 git clone https://github.com/highscrren-dotcom/plaintop.git
 cd plaintop
-python win\build.py --qt C:\Qt\6.11.3\msvc2022_64   # copies the shared QML in, converts the catalogs
+python win\build.py --qt C:\Qt\6.10.3\msvc2022_64   # copies the shared QML in, converts the catalogs
 python win\plaintop.py                              # the service, the widgets, the tray icon
 ```
 
@@ -87,7 +87,7 @@ happened.
 python tests\win_service.py        # the sensors, the command emulation, the server
 python tests\win_bands.py          # the spectrum analyzer on synthetic signals
 python tests\win_media.py          # the player mapping, notes.py in the service, holidays, time zones
-python tests\win_hosts.py --qt C:\Qt\6.11.3\msvc2022_64   # the five hosts through the shims, against the real service
+python tests\win_hosts.py --qt C:\Qt\6.10.3\msvc2022_64   # the five hosts through the shims, against the real service
 ```
 
 The last one builds the hosts, starts the service on a free port, runs `tests\win_hosts.qml`

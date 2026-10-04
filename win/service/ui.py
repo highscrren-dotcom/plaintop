@@ -22,7 +22,8 @@ WIDGETS = ("monitor", "spectrum", "player", "weather", "calendar")
 # po/<lang>/ directories the catalogs are built from (win/build.py).
 LANGUAGES = ("de", "es", "fr", "ja", "pl", "pt_BR", "ru", "uk", "zh_CN")
 DOMAINS = {"monitor": "plaintop", "spectrum": "plainspectrum", "player": "plainplayer",
-           "weather": "plainweather", "calendar": "plaincalendar"}
+           "weather": "plainweather", "calendar": "plaincalendar",
+           "tray": "plaintop"}         # the tray's strings live in the monitor's catalog
 
 
 def ui_language():

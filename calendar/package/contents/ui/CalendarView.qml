@@ -230,7 +230,7 @@ Item {
                 const hol = own ? (holidays[key] || []) : []
                 const role = !own ? "dim"
                     : ((notesOn && hasNote(key)) ? "note"
-                       : hol.some(h => h.public) ? "accent"
+                       : hol.some(h => h["public"]) ? "accent"
                        : hol.length > 0 ? "holiday"
                        : ((weekendAccent && isWeekend(d.getDay())) ? "accent" : "fg"))
                 // Today is in brackets — the ring on the wall calendar — in their own

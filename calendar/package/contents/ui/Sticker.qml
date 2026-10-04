@@ -302,7 +302,7 @@ PlasmaCore.Dialog {
         out.push({ text: framed(day.toLocaleDateString(Qt.locale(), "dddd, d MMMM yyyy").toUpperCase()), role: "accent" })
         // The day's holidays under its name: a day off in the weekend's colour.
         for (const h of holidays)
-            out.push({ text: framed("* " + h.title), role: h.public ? "accent" : "holiday" })
+            out.push({ text: framed("* " + h.title), role: h["public"] ? "accent" : "holiday" })
         // The entries by account, the local ones first, the note of yours left to the editor.
         const groups = []
         for (let i = 0; i < entries.length; i++) {

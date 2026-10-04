@@ -75,11 +75,12 @@ jobs:
       - name: the service's dependencies
         run: python -m pip install --quiet numpy psutil holidays tzdata tzlocal
 
-      # Qt 6.11 and not older: Qt 6.10's QML parser refuses `h.public` in the calendar's
-      # shared files (docs/GOTCHAS.md); 6.11 takes it, as the desktop's 6.11.2 does.
+      # 6.10: aqtinstall 3.3 (what the action runs) finds no Windows archives for 6.11 —
+      # "Failed to locate XML data for Qt version '6.11.3'" on 2026-10-04 — and the files
+      # load from 6.8 up since the reserved-word property names were quoted (docs/GOTCHAS.md).
       - uses: jurplel/install-qt-action@v4
         with:
-          version: "6.11.*"
+          version: "6.10.*"
           modules: ""
           cache: true
 
@@ -99,6 +100,16 @@ jobs:
         run: python tests/win_hosts.py --qt "$env:QT_ROOT_DIR"
         env:
           QT_QPA_PLATFORM: offscreen
+
+      # The Plasma widgets' own stands, on a bare Qt: the weather's needs nothing but
+      # QtQuick, the monitor's line stand runs MonitorData through the same shims.
+      - name: the Plasma stands on a bare Qt (weather, monitor lines)
+        run: |
+          & "$env:QT_ROOT_DIR/bin/qmltestrunner.exe" -input tests/weather.qml
+          & "$env:QT_ROOT_DIR/bin/qmltestrunner.exe" -import win/host/imports -input tests/monitor.qml
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QT_FORCE_STDERR_LOGGING: "1"
 
       # Advisory until it has proved itself: the zip with qml.exe, its modules and the
       # frozen service, kept as an artifact so a person can try it on a desktop.

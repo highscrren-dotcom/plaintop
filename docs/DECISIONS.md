@@ -835,7 +835,7 @@ marks the kind of a holiday — then the generator goes; or a per-widget choice 
 **Decision:** the five widgets run on Windows 11 from this repository, with the look and
 the behaviour of the plasmoids, and without a line of C++ of our own:
 
-- **The hosts** are `qml.exe` from Qt 6.11 running `win/host/<widget>.qml` — one process
+- **The hosts** are `qml.exe` from Qt 6 running `win/host/<widget>.qml` — one process
   and one window per widget: frameless, transparent, `Qt.Tool`, `Qt.WindowStaysOnBottomHint`,
   and `Qt.WindowTransparentForInput` while the *Mouse* setting lets clicks through. That is
   the archived window host of decision 5 (`monitor/window/window.qml`, 2026-09-21) on
@@ -931,18 +931,21 @@ reverse this.
   it while passing clicks and drops `Qt.WindowTransparentForInput` while the cursor is over
   an active rectangle — the mask of decision 14, polled instead of asked. Not built, not
   measured.
-- Qt 6.11 or newer: Qt 6.10's QML parser refuses `h.public` in `CalendarView.qml` and
-  `Sticker.qml` (a reserved word after a dot), 6.11 takes it, as the desktop's 6.11.2 does.
+- Qt 6.8 or newer. Qt 6.10's QML parser refused `h.public` in `CalendarView.qml` and
+  `Sticker.qml` (a reserved word after a dot; 6.11 takes it, as the desktop's 6.11.2 does),
+  so those two reads became `h["public"]` — the one edit to the calendar's shared files,
+  identical in meaning — and the hosts pass their stand on 6.8.3, 6.10.1 and 6.11.3. CI
+  runs 6.10: aqtinstall finds no Windows archives for 6.11 yet.
 - A Windows host of its own for the holidays (`win/host/calendar/Holidays.qml`): the
   plasmoid's file classifies a day off by its name against KHolidays' plans, and the
   `holidays` package names its days differently (21 of 29 names match for Russia, Germany
   and the United States) but says itself which is a day off — so the Windows file asks the
   service and repeats the eleven world days of the plasmoid's list, the one duplication in
   the port.
-- Two edits to shared files: `MonitorData.qml` learns the `winget` label for the updates
-  line (two `case`s, inert on Plasma), `notes.py` takes `%APPDATA%` and `%LOCALAPPDATA%`
-  for its folders on Windows and opens the browser without `xdg-open` (the stand's 145
-  checks pass as before).
+- Three edits to shared files: `MonitorData.qml` learns the `winget` label for the updates
+  line (two `case`s, inert on Plasma), the two `h["public"]` reads above, and `notes.py`
+  takes `%APPDATA%` and `%LOCALAPPDATA%` for its folders on Windows and opens the browser
+  without `xdg-open` (the stand's 145 checks pass as before).
 - Two runtimes to ship: Qt's `qml.exe` with its modules (`windeployqt`), and Python with
   numpy, psutil, holidays, tzdata and the optional winsdk, soundcard, pycaw.
 
@@ -957,8 +960,10 @@ a window of the `Dialog` shim — by a day's cell; `tests/win_media.py` 94 check
 mapping through a fake backend, `notes.py` in the service's process, the holidays of
 Bavaria and Russia, the time zones); `tests/win_service.py` and `tests/win_bands.py` for
 the monitor's sensors, the command emulation and the spectrum's analyzer on synthetic
-signals; `tests/notes.py` 145 as before. The CI job on `windows-latest` runs the same stands
-on Windows with the real service. **Not verified anywhere yet:** the WASAPI capture, the
+signals; `tests/notes.py` 145 as before; the hosts' stand on Qt 6.8.3, 6.10.1 and 6.11.3 alike, and
+the Plasma widgets' own `tests/weather.qml` and `tests/monitor.qml` on the same bare Qt
+through the shims (10 and 23 passed) — their first run outside Plasma. The CI job on
+`windows-latest` runs the same stands on Windows with the real service. **Not verified anywhere yet:** the WASAPI capture, the
 WinRT media session, LibreHardwareMonitor's JSON on a live machine, the window flags on a
 real desktop (transparency, keep-below, the input transparency toggled at run time), the
 `WorkerW` parenting, the tray icon, the toast — the user's desktop is the first place these

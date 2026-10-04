@@ -53,8 +53,8 @@
 | `calendar/package/` | виджет календаря: виджет Plasma 6, который строит сетку месяца из локали и часов — без общих файлов, без службы, без запросов |
 | `po/` | каталоги переводов, по домену на виджет, всего пять; `extract.py` обновляет их и заводит недостающий, `build.py` собирает |
 | `install.sh` | установка, состояние, стенды, сборка `.plasmoid`, GitHub-релиз, клики вкл/выкл, палитры — все операции идемпотентны |
-| `tests/` | стенды: `passthrough.qml`, `monitor.qml`, `weather.qml` под QtTest; `notes.py`, `relay.py` на чистом Python |
-| `.github/workflows/` | `check.yml` гоняет всё, чему не нужен Qt, на каждый push; `qml-stands.yml` — стенды QtTest в контейнере Arch по запросу |
+| `tests/` | стенды: `passthrough.qml`, `monitor.qml`, `weather.qml` под QtTest; `notes.py`, `relay.py` на чистом Python; у порта на Windows — `win_service.py`, `win_bands.py`, `win_media.py`, `win_hosts.py` (+ `win_hosts.qml`) |
+| `.github/workflows/` | `check.yml` гоняет всё, чему не нужен Qt, на каждый push, и стенды порта на Windows с голым Qt на `windows-latest`; `qml-stands.yml` — стенды QtTest Plasma в контейнере Arch по запросу |
 | `docs/` | грабли, решения, метод работы, журнал сессий, тексты для KDE Store |
 
 Генерируются и в git не хранятся: `monitor/package/contents/code/description.js` (правьте
@@ -78,6 +78,8 @@ journalctl --user -b --since "-1min" | grep -i plaintop             # ошибк
 ./install.sh --check-notes                                          # скрипт заметок календаря: iCalendar, повторения, будильники, vdir, CalDAV на поддельном сервере
 ./install.sh --check-relay                                          # реле: свёртка, ресемплинг и конфиг cava — Python, без cava
 ./install.sh --check-weather                                        # источники погоды: ответы четырёх API в одну форму для вида
+python3 tests/win_service.py; python3 tests/win_bands.py; python3 tests/win_media.py   # служба Windows, сама Windows не нужна
+python3 tests/win_hosts.py --qt /путь/к/Qt/6.11                     # хосты Windows через шимы против настоящей службы, offscreen
 ./install.sh --release 0.5                                          # тег v0.5, push, GitHub-релиз с пятью пакетами и SHA256SUMS
 ```
 

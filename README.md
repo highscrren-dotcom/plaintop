@@ -258,7 +258,7 @@ are days off comes from KHolidays' own plans, read by `calendar/holidays.py`.
 ## Windows
 
 The same five widgets run on Windows 11 from this repository, drawn by the same shared QML
-files: `qml.exe` from Qt 6.11 hosts each one in a frameless transparent window, QML-only
+files: `qml.exe` from Qt 6 (6.8 or newer) hosts each one in a frameless transparent window, QML-only
 stand-ins under `win/host/imports/` play the Plasma modules those files import, and one
 Python service on `127.0.0.1:8788` serves the readings in ksystemstats' vocabulary, the
 spectrum from a WASAPI loopback, the media session, `notes.py`, the holidays and the

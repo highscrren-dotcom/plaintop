@@ -9,7 +9,7 @@
 // calendar gets its document from /notes and opens the sticker — a window of the Dialog
 // shim — by a day's cell. The i18n shim's plural fallback is checked without a catalog.
 //
-// How to run: python3 tests/win_hosts.py (or ./install.sh --check-win-hosts): it builds the
+// How to run: python3 tests/win_hosts.py [--qt DIR]: it builds the
 // hosts (win/build.py), starts the service on a free port, hands this file the port and
 // the token through a generated `standargs` module — qmltestrunner takes no arguments of
 // its own, and QML has no other way to read them — runs qmltestrunner offscreen and stops

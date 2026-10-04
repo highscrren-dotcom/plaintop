@@ -1336,9 +1336,13 @@ Polish. `%1` is not substituted by Qt; `win/host/imports/plaintop/I18n.js` does 
 `hol.some(h => h.public)` in `CalendarView.qml` and `h.public ? …` in `Sticker.qml` fail to
 load on Qt 6.10.1 with "Expected token `identifier'" at that line, and load on 6.11.3 (and on
 the desktop's 6.11.2, where they were written). JavaScript allows a reserved word as a
-property name after a dot; Qt's parser only learned it in 6.11. The Windows port therefore
-needs Qt 6.11 or newer, and `jurplel/install-qt-action` is pinned to `6.11.*`.
-2026-10-05.
+property name after a dot; Qt's parser only learned it in 6.11. The two reads became
+`h["public"]`, and an object literal's key `public:` is quoted the same way in the Windows
+host's `Holidays.qml` — the plasmoid's `Holidays.qml` still writes `public: pub`, which only
+a Plasma on 6.11 loads. With that the hosts' stand passes on 6.8.3, 6.10.1 and 6.11.3.
+And aqtinstall 3.3 (what `jurplel/install-qt-action` runs) finds no Windows archives for
+6.11 at all — "Failed to locate XML data for Qt version '6.11.3'" — while Linux 6.11.3
+installs; the CI job takes `6.10.*`. 2026-10-05.
 
 ## qmltestrunner passes no arguments to the QML it runs
 
