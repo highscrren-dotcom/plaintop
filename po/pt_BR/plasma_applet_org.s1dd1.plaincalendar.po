@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 21:25+0500\n"
+"POT-Creation-Date: 2026-10-04 22:56+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -29,13 +29,73 @@ msgstr "Notas"
 
 #: calendar/package/contents/config/config.qml:19
 msgctxt "settings page"
-msgid "Accounts"
-msgstr "Contas"
+msgid "Holidays"
+msgstr "Feriados"
 
 #: calendar/package/contents/config/config.qml:25
 msgctxt "settings page"
+msgid "Accounts"
+msgstr "Contas"
+
+#: calendar/package/contents/config/config.qml:31
+msgctxt "settings page"
 msgid "Mouse"
 msgstr "Mouse"
+
+#: calendar/package/contents/ui/Holidays.qml:40
+msgctxt "a world day"
+msgid "International Mother Language Day"
+msgstr "Dia Internacional da Língua Materna"
+
+#: calendar/package/contents/ui/Holidays.qml:41
+msgctxt "a world day"
+msgid "International Women's Day"
+msgstr "Dia Internacional da Mulher"
+
+#: calendar/package/contents/ui/Holidays.qml:42
+msgctxt "a world day"
+msgid "World Health Day"
+msgstr "Dia Mundial da Saúde"
+
+#: calendar/package/contents/ui/Holidays.qml:43
+msgctxt "a world day"
+msgid "International Mother Earth Day"
+msgstr "Dia Internacional da Mãe Terra"
+
+#: calendar/package/contents/ui/Holidays.qml:44
+msgctxt "a world day"
+msgid "International Workers' Day"
+msgstr "Dia do Trabalhador"
+
+#: calendar/package/contents/ui/Holidays.qml:45
+msgctxt "a world day"
+msgid "International Children's Day"
+msgstr "Dia Internacional da Criança"
+
+#: calendar/package/contents/ui/Holidays.qml:46
+msgctxt "a world day"
+msgid "World Environment Day"
+msgstr "Dia Mundial do Meio Ambiente"
+
+#: calendar/package/contents/ui/Holidays.qml:47
+msgctxt "a world day"
+msgid "International Day of Peace"
+msgstr "Dia Internacional da Paz"
+
+#: calendar/package/contents/ui/Holidays.qml:48
+msgctxt "a world day"
+msgid "World Teachers' Day"
+msgstr "Dia Mundial dos Professores"
+
+#: calendar/package/contents/ui/Holidays.qml:49
+msgctxt "a world day"
+msgid "United Nations Day"
+msgstr "Dia das Nações Unidas"
+
+#: calendar/package/contents/ui/Holidays.qml:50
+msgctxt "a world day"
+msgid "Human Rights Day"
+msgstr "Dia dos Direitos Humanos"
 
 #: calendar/package/contents/ui/Reminder.qml:80
 #, kde-format
@@ -69,23 +129,23 @@ msgctxt "reminder: it was due earlier"
 msgid "MISSED"
 msgstr "PERDIDO"
 
-#: calendar/package/contents/ui/Sticker.qml:150
+#: calendar/package/contents/ui/Sticker.qml:152
 msgctxt "the sticker: a note with no text yet"
 msgid "(empty)"
 msgstr "(vazia)"
 
-#: calendar/package/contents/ui/Sticker.qml:162
-#: calendar/package/contents/ui/Sticker.qml:167
+#: calendar/package/contents/ui/Sticker.qml:164
+#: calendar/package/contents/ui/Sticker.qml:169
 msgctxt "the sticker's reminder choice"
 msgid "none"
 msgstr "não"
 
-#: calendar/package/contents/ui/Sticker.qml:163
+#: calendar/package/contents/ui/Sticker.qml:165
 msgctxt "the sticker's reminder choice"
 msgid "an hour before"
 msgstr "uma hora antes"
 
-#: calendar/package/contents/ui/Sticker.qml:164
+#: calendar/package/contents/ui/Sticker.qml:166
 #, kde-format
 msgctxt "the sticker's reminder choice"
 msgid "%1 min before"
@@ -93,33 +153,33 @@ msgid_plural "%1 min before"
 msgstr[0] "%1 min antes"
 msgstr[1] "%1 min antes"
 
-#: calendar/package/contents/ui/Sticker.qml:168
+#: calendar/package/contents/ui/Sticker.qml:170
 #, kde-format
 msgctxt "the sticker's reminder choice: at an hour of the note's day"
 msgid "at %1"
 msgstr "às %1"
 
-#: calendar/package/contents/ui/Sticker.qml:190
+#: calendar/package/contents/ui/Sticker.qml:192
 msgctxt "the sticker's time field"
 msgid "time:"
 msgstr "hora:"
 
-#: calendar/package/contents/ui/Sticker.qml:191
+#: calendar/package/contents/ui/Sticker.qml:193
 msgctxt "the sticker's reminder row"
 msgid "remind:"
 msgstr "lembrar:"
 
-#: calendar/package/contents/ui/Sticker.qml:319
+#: calendar/package/contents/ui/Sticker.qml:324
 msgctxt "the account's last fetch failed"
 msgid "offline"
 msgstr "offline"
 
-#: calendar/package/contents/ui/Sticker.qml:350
+#: calendar/package/contents/ui/Sticker.qml:355
 msgctxt "the sticker's hint line"
 msgid "Esc closes · an empty note deletes it"
 msgstr "Esc fecha · uma nota vazia a apaga"
 
-#: calendar/package/contents/ui/Sticker.qml:513
+#: calendar/package/contents/ui/Sticker.qml:519
 msgctxt "the sticker's line that starts another note"
 msgid "new note"
 msgstr "nova nota"
@@ -471,6 +531,68 @@ msgstr "Secundário:"
 msgctxt "palette: colour of"
 msgid "Today:"
 msgstr "Hoje:"
+
+#: calendar/package/contents/ui/configHolidays.qml:30
+msgid "Holidays:"
+msgstr "Feriados:"
+
+#: calendar/package/contents/ui/configHolidays.qml:31
+msgid "mark them in the grid and name them in the sticker"
+msgstr "marcá-los na grade e nomeá-los no adesivo"
+
+#: calendar/package/contents/ui/configHolidays.qml:36
+msgid "Which:"
+msgstr "Quais:"
+
+#: calendar/package/contents/ui/configHolidays.qml:38
+msgctxt "which holidays to mark"
+msgid "days off only"
+msgstr "apenas feriados"
+
+#: calendar/package/contents/ui/configHolidays.qml:39
+msgctxt "which holidays to mark"
+msgid "every holiday but name days"
+msgstr "todas as datas exceto onomásticos"
+
+#: calendar/package/contents/ui/configHolidays.qml:44
+msgid "World days:"
+msgstr "Dias mundiais:"
+
+#: calendar/package/contents/ui/configHolidays.qml:46
+msgid "the UN's and UNESCO's best known international days"
+msgstr "os dias internacionais mais conhecidos da ONU e da UNESCO"
+
+#: calendar/package/contents/ui/configHolidays.qml:50
+msgctxt "palette: colour of"
+msgid "Other holidays:"
+msgstr "Outras datas:"
+
+#: calendar/package/contents/ui/configHolidays.qml:57
+msgid ""
+"A day off takes the weekends' colour; other holidays and world days this one."
+msgstr "Um feriado usa a cor dos fins de semana; as outras datas e os dias mundiais, esta."
+
+#: calendar/package/contents/ui/configHolidays.qml:62
+msgctxt "settings section"
+msgid "Regions"
+msgstr "Regiões"
+
+#: calendar/package/contents/ui/configHolidays.qml:68
+#, kde-format
+msgid ""
+"%1 region chosen. The choice is shared with the calendar of Plasma's clock "
+"and saved at once."
+msgid_plural ""
+"%1 regions chosen. The choice is shared with the calendar of Plasma's clock "
+"and saved at once."
+msgstr[0] "%1 região escolhida. A escolha é compartilhada com o calendário do relógio do Plasma e salva na hora."
+msgstr[1] "%1 regiões escolhidas. A escolha é compartilhada com o calendário do relógio do Plasma e salva na hora."
+
+#: calendar/package/contents/ui/configHolidays.qml:71
+msgid ""
+"None chosen: your locale's own region. The choice is shared with the "
+"calendar of Plasma's clock and saved at once."
+msgstr "Nenhuma escolhida: a região da sua localidade. A escolha é compartilhada com o calendário do relógio do Plasma e salva na hora."
 
 #: calendar/package/contents/ui/configMouse.qml:19
 msgid "Mouse:"

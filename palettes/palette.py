@@ -32,7 +32,7 @@ KEYS = {
                                                      "playerColorFg", "playerColorAccent",
                                                      "playerColorDim"]),
     "org.s1dd1.plaincalendar": ("calendar/package", ["colorFg", "colorAccent", "colorDim", "colorToday",
-                                                       "colorNote", "colorPaper"]),
+                                                       "colorNote", "colorPaper", "colorHoliday"]),
 }
 COLOUR = re.compile(r"^#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
 KCFG = "{http://www.kde.org/standards/kcfg/1.0}"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 21:25+0500\n"
+"POT-Creation-Date: 2026-10-04 22:56+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -29,13 +29,73 @@ msgstr "メモ"
 
 #: calendar/package/contents/config/config.qml:19
 msgctxt "settings page"
-msgid "Accounts"
-msgstr "アカウント"
+msgid "Holidays"
+msgstr "祝日"
 
 #: calendar/package/contents/config/config.qml:25
 msgctxt "settings page"
+msgid "Accounts"
+msgstr "アカウント"
+
+#: calendar/package/contents/config/config.qml:31
+msgctxt "settings page"
 msgid "Mouse"
 msgstr "マウス"
+
+#: calendar/package/contents/ui/Holidays.qml:40
+msgctxt "a world day"
+msgid "International Mother Language Day"
+msgstr "国際母語デー"
+
+#: calendar/package/contents/ui/Holidays.qml:41
+msgctxt "a world day"
+msgid "International Women's Day"
+msgstr "国際女性デー"
+
+#: calendar/package/contents/ui/Holidays.qml:42
+msgctxt "a world day"
+msgid "World Health Day"
+msgstr "世界保健デー"
+
+#: calendar/package/contents/ui/Holidays.qml:43
+msgctxt "a world day"
+msgid "International Mother Earth Day"
+msgstr "国際母なる地球デー"
+
+#: calendar/package/contents/ui/Holidays.qml:44
+msgctxt "a world day"
+msgid "International Workers' Day"
+msgstr "メーデー"
+
+#: calendar/package/contents/ui/Holidays.qml:45
+msgctxt "a world day"
+msgid "International Children's Day"
+msgstr "国際子供の日"
+
+#: calendar/package/contents/ui/Holidays.qml:46
+msgctxt "a world day"
+msgid "World Environment Day"
+msgstr "世界環境デー"
+
+#: calendar/package/contents/ui/Holidays.qml:47
+msgctxt "a world day"
+msgid "International Day of Peace"
+msgstr "国際平和デー"
+
+#: calendar/package/contents/ui/Holidays.qml:48
+msgctxt "a world day"
+msgid "World Teachers' Day"
+msgstr "世界教師デー"
+
+#: calendar/package/contents/ui/Holidays.qml:49
+msgctxt "a world day"
+msgid "United Nations Day"
+msgstr "国際連合の日"
+
+#: calendar/package/contents/ui/Holidays.qml:50
+msgctxt "a world day"
+msgid "Human Rights Day"
+msgstr "人権デー"
 
 #: calendar/package/contents/ui/Reminder.qml:80
 #, kde-format
@@ -69,56 +129,56 @@ msgctxt "reminder: it was due earlier"
 msgid "MISSED"
 msgstr "見逃し"
 
-#: calendar/package/contents/ui/Sticker.qml:150
+#: calendar/package/contents/ui/Sticker.qml:152
 msgctxt "the sticker: a note with no text yet"
 msgid "(empty)"
 msgstr "(空)"
 
-#: calendar/package/contents/ui/Sticker.qml:162
-#: calendar/package/contents/ui/Sticker.qml:167
+#: calendar/package/contents/ui/Sticker.qml:164
+#: calendar/package/contents/ui/Sticker.qml:169
 msgctxt "the sticker's reminder choice"
 msgid "none"
 msgstr "なし"
 
-#: calendar/package/contents/ui/Sticker.qml:163
+#: calendar/package/contents/ui/Sticker.qml:165
 msgctxt "the sticker's reminder choice"
 msgid "an hour before"
 msgstr "1時間前"
 
-#: calendar/package/contents/ui/Sticker.qml:164
+#: calendar/package/contents/ui/Sticker.qml:166
 #, kde-format
 msgctxt "the sticker's reminder choice"
 msgid "%1 min before"
 msgid_plural "%1 min before"
 msgstr[0] "%1分前"
 
-#: calendar/package/contents/ui/Sticker.qml:168
+#: calendar/package/contents/ui/Sticker.qml:170
 #, kde-format
 msgctxt "the sticker's reminder choice: at an hour of the note's day"
 msgid "at %1"
 msgstr "%1に"
 
-#: calendar/package/contents/ui/Sticker.qml:190
+#: calendar/package/contents/ui/Sticker.qml:192
 msgctxt "the sticker's time field"
 msgid "time:"
 msgstr "時刻:"
 
-#: calendar/package/contents/ui/Sticker.qml:191
+#: calendar/package/contents/ui/Sticker.qml:193
 msgctxt "the sticker's reminder row"
 msgid "remind:"
 msgstr "通知:"
 
-#: calendar/package/contents/ui/Sticker.qml:319
+#: calendar/package/contents/ui/Sticker.qml:324
 msgctxt "the account's last fetch failed"
 msgid "offline"
 msgstr "オフライン"
 
-#: calendar/package/contents/ui/Sticker.qml:350
+#: calendar/package/contents/ui/Sticker.qml:355
 msgctxt "the sticker's hint line"
 msgid "Esc closes · an empty note deletes it"
 msgstr "Esc で閉じる · 空にすると削除"
 
-#: calendar/package/contents/ui/Sticker.qml:513
+#: calendar/package/contents/ui/Sticker.qml:519
 msgctxt "the sticker's line that starts another note"
 msgid "new note"
 msgstr "新しいメモ"
@@ -464,6 +524,67 @@ msgstr "補助テキスト:"
 msgctxt "palette: colour of"
 msgid "Today:"
 msgstr "今日:"
+
+#: calendar/package/contents/ui/configHolidays.qml:30
+msgid "Holidays:"
+msgstr "祝日:"
+
+#: calendar/package/contents/ui/configHolidays.qml:31
+msgid "mark them in the grid and name them in the sticker"
+msgstr "グリッドで色分けし、付箋に名前を表示"
+
+#: calendar/package/contents/ui/configHolidays.qml:36
+msgid "Which:"
+msgstr "対象:"
+
+#: calendar/package/contents/ui/configHolidays.qml:38
+msgctxt "which holidays to mark"
+msgid "days off only"
+msgstr "休日のみ"
+
+#: calendar/package/contents/ui/configHolidays.qml:39
+msgctxt "which holidays to mark"
+msgid "every holiday but name days"
+msgstr "名前の日以外のすべての記念日"
+
+#: calendar/package/contents/ui/configHolidays.qml:44
+msgid "World days:"
+msgstr "国際デー:"
+
+#: calendar/package/contents/ui/configHolidays.qml:46
+msgid "the UN's and UNESCO's best known international days"
+msgstr "国連とユネスコの主な国際デー"
+
+#: calendar/package/contents/ui/configHolidays.qml:50
+msgctxt "palette: colour of"
+msgid "Other holidays:"
+msgstr "その他の記念日:"
+
+#: calendar/package/contents/ui/configHolidays.qml:57
+msgid ""
+"A day off takes the weekends' colour; other holidays and world days this one."
+msgstr "休日は週末の色、その他の記念日と国際デーはこの色になります。"
+
+#: calendar/package/contents/ui/configHolidays.qml:62
+msgctxt "settings section"
+msgid "Regions"
+msgstr "地域"
+
+#: calendar/package/contents/ui/configHolidays.qml:68
+#, kde-format
+msgid ""
+"%1 region chosen. The choice is shared with the calendar of Plasma's clock "
+"and saved at once."
+msgid_plural ""
+"%1 regions chosen. The choice is shared with the calendar of Plasma's clock "
+"and saved at once."
+msgstr[0] "%1 件の地域を選択中。選択は Plasma の時計のカレンダーと共有され、すぐに保存されます。"
+
+#: calendar/package/contents/ui/configHolidays.qml:71
+msgid ""
+"None chosen: your locale's own region. The choice is shared with the "
+"calendar of Plasma's clock and saved at once."
+msgstr "未選択: ロケールの地域を使います。選択は Plasma の時計のカレンダーと共有され、すぐに保存されます。"
 
 #: calendar/package/contents/ui/configMouse.qml:19
 msgid "Mouse:"

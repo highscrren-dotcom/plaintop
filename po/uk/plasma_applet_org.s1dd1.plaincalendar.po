@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 21:25+0500\n"
+"POT-Creation-Date: 2026-10-04 22:56+0500\n"
 "PO-Revision-Date: 2026-10-04 12:00+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -30,13 +30,73 @@ msgstr "Нотатки"
 
 #: calendar/package/contents/config/config.qml:19
 msgctxt "settings page"
-msgid "Accounts"
-msgstr "Облікові записи"
+msgid "Holidays"
+msgstr "Свята"
 
 #: calendar/package/contents/config/config.qml:25
 msgctxt "settings page"
+msgid "Accounts"
+msgstr "Облікові записи"
+
+#: calendar/package/contents/config/config.qml:31
+msgctxt "settings page"
 msgid "Mouse"
 msgstr "Миша"
+
+#: calendar/package/contents/ui/Holidays.qml:40
+msgctxt "a world day"
+msgid "International Mother Language Day"
+msgstr "Міжнародний день рідної мови"
+
+#: calendar/package/contents/ui/Holidays.qml:41
+msgctxt "a world day"
+msgid "International Women's Day"
+msgstr "Міжнародний жіночий день"
+
+#: calendar/package/contents/ui/Holidays.qml:42
+msgctxt "a world day"
+msgid "World Health Day"
+msgstr "Всесвітній день здоров'я"
+
+#: calendar/package/contents/ui/Holidays.qml:43
+msgctxt "a world day"
+msgid "International Mother Earth Day"
+msgstr "Міжнародний день Матері-Землі"
+
+#: calendar/package/contents/ui/Holidays.qml:44
+msgctxt "a world day"
+msgid "International Workers' Day"
+msgstr "Міжнародний день солідарності трудящих"
+
+#: calendar/package/contents/ui/Holidays.qml:45
+msgctxt "a world day"
+msgid "International Children's Day"
+msgstr "Міжнародний день захисту дітей"
+
+#: calendar/package/contents/ui/Holidays.qml:46
+msgctxt "a world day"
+msgid "World Environment Day"
+msgstr "Всесвітній день довкілля"
+
+#: calendar/package/contents/ui/Holidays.qml:47
+msgctxt "a world day"
+msgid "International Day of Peace"
+msgstr "Міжнародний день миру"
+
+#: calendar/package/contents/ui/Holidays.qml:48
+msgctxt "a world day"
+msgid "World Teachers' Day"
+msgstr "Всесвітній день вчителя"
+
+#: calendar/package/contents/ui/Holidays.qml:49
+msgctxt "a world day"
+msgid "United Nations Day"
+msgstr "День Організації Об'єднаних Націй"
+
+#: calendar/package/contents/ui/Holidays.qml:50
+msgctxt "a world day"
+msgid "Human Rights Day"
+msgstr "День прав людини"
 
 #: calendar/package/contents/ui/Reminder.qml:80
 #, kde-format
@@ -70,23 +130,23 @@ msgctxt "reminder: it was due earlier"
 msgid "MISSED"
 msgstr "ПРОПУЩЕНО"
 
-#: calendar/package/contents/ui/Sticker.qml:150
+#: calendar/package/contents/ui/Sticker.qml:152
 msgctxt "the sticker: a note with no text yet"
 msgid "(empty)"
 msgstr "(порожньо)"
 
-#: calendar/package/contents/ui/Sticker.qml:162
-#: calendar/package/contents/ui/Sticker.qml:167
+#: calendar/package/contents/ui/Sticker.qml:164
+#: calendar/package/contents/ui/Sticker.qml:169
 msgctxt "the sticker's reminder choice"
 msgid "none"
 msgstr "ні"
 
-#: calendar/package/contents/ui/Sticker.qml:163
+#: calendar/package/contents/ui/Sticker.qml:165
 msgctxt "the sticker's reminder choice"
 msgid "an hour before"
 msgstr "за годину"
 
-#: calendar/package/contents/ui/Sticker.qml:164
+#: calendar/package/contents/ui/Sticker.qml:166
 #, kde-format
 msgctxt "the sticker's reminder choice"
 msgid "%1 min before"
@@ -95,33 +155,33 @@ msgstr[0] "за %1 хв"
 msgstr[1] "за %1 хв"
 msgstr[2] "за %1 хв"
 
-#: calendar/package/contents/ui/Sticker.qml:168
+#: calendar/package/contents/ui/Sticker.qml:170
 #, kde-format
 msgctxt "the sticker's reminder choice: at an hour of the note's day"
 msgid "at %1"
 msgstr "о %1"
 
-#: calendar/package/contents/ui/Sticker.qml:190
+#: calendar/package/contents/ui/Sticker.qml:192
 msgctxt "the sticker's time field"
 msgid "time:"
 msgstr "час:"
 
-#: calendar/package/contents/ui/Sticker.qml:191
+#: calendar/package/contents/ui/Sticker.qml:193
 msgctxt "the sticker's reminder row"
 msgid "remind:"
 msgstr "нагадати:"
 
-#: calendar/package/contents/ui/Sticker.qml:319
+#: calendar/package/contents/ui/Sticker.qml:324
 msgctxt "the account's last fetch failed"
 msgid "offline"
 msgstr "офлайн"
 
-#: calendar/package/contents/ui/Sticker.qml:350
+#: calendar/package/contents/ui/Sticker.qml:355
 msgctxt "the sticker's hint line"
 msgid "Esc closes · an empty note deletes it"
 msgstr "Esc закриває · порожня нотатка видаляється"
 
-#: calendar/package/contents/ui/Sticker.qml:513
+#: calendar/package/contents/ui/Sticker.qml:519
 msgctxt "the sticker's line that starts another note"
 msgid "new note"
 msgstr "нова нотатка"
@@ -475,6 +535,69 @@ msgstr "Другорядний:"
 msgctxt "palette: colour of"
 msgid "Today:"
 msgstr "Сьогодні:"
+
+#: calendar/package/contents/ui/configHolidays.qml:30
+msgid "Holidays:"
+msgstr "Свята:"
+
+#: calendar/package/contents/ui/configHolidays.qml:31
+msgid "mark them in the grid and name them in the sticker"
+msgstr "позначати в сітці й називати в стікері"
+
+#: calendar/package/contents/ui/configHolidays.qml:36
+msgid "Which:"
+msgstr "Які:"
+
+#: calendar/package/contents/ui/configHolidays.qml:38
+msgctxt "which holidays to mark"
+msgid "days off only"
+msgstr "лише вихідні"
+
+#: calendar/package/contents/ui/configHolidays.qml:39
+msgctxt "which holidays to mark"
+msgid "every holiday but name days"
+msgstr "усі пам'ятні дні, крім іменин"
+
+#: calendar/package/contents/ui/configHolidays.qml:44
+msgid "World days:"
+msgstr "Світові дні:"
+
+#: calendar/package/contents/ui/configHolidays.qml:46
+msgid "the UN's and UNESCO's best known international days"
+msgstr "найвідоміші міжнародні дні ООН і ЮНЕСКО"
+
+#: calendar/package/contents/ui/configHolidays.qml:50
+msgctxt "palette: colour of"
+msgid "Other holidays:"
+msgstr "Інші свята:"
+
+#: calendar/package/contents/ui/configHolidays.qml:57
+msgid ""
+"A day off takes the weekends' colour; other holidays and world days this one."
+msgstr "Вихідний бере колір вихідних днів тижня, інші свята й світові дні — цей."
+
+#: calendar/package/contents/ui/configHolidays.qml:62
+msgctxt "settings section"
+msgid "Regions"
+msgstr "Регіони"
+
+#: calendar/package/contents/ui/configHolidays.qml:68
+#, kde-format
+msgid ""
+"%1 region chosen. The choice is shared with the calendar of Plasma's clock "
+"and saved at once."
+msgid_plural ""
+"%1 regions chosen. The choice is shared with the calendar of Plasma's clock "
+"and saved at once."
+msgstr[0] "Вибрано %1 регіон. Вибір спільний із календарем годинника Plasma і зберігається одразу."
+msgstr[1] "Вибрано %1 регіони. Вибір спільний із календарем годинника Plasma і зберігається одразу."
+msgstr[2] "Вибрано %1 регіонів. Вибір спільний із календарем годинника Plasma і зберігається одразу."
+
+#: calendar/package/contents/ui/configHolidays.qml:71
+msgid ""
+"None chosen: your locale's own region. The choice is shared with the "
+"calendar of Plasma's clock and saved at once."
+msgstr "Нічого не вибрано: регіон вашої локалі. Вибір спільний із календарем годинника Plasma і зберігається одразу."
 
 #: calendar/package/contents/ui/configMouse.qml:19
 msgid "Mouse:"

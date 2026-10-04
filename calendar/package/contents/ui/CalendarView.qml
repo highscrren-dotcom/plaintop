@@ -25,6 +25,10 @@ Item {
     property bool notesOn: true
     property int upcoming: 3          // lines of upcoming entries under the months, 0 none
     property color colorNote: "#8FB6E0"
+    // Holidays: dateKey → [{title, public, world}] (Holidays.qml). A day off takes the
+    // weekend's colour, any other holiday its own.
+    property var holidays: ({})
+    property color colorHoliday: "#C8A35A"
 
     // A day was clicked: its date and its cell, in the view's coordinates.
     signal dayClicked(string dateKey, real x, real y, real w, real h)
@@ -221,9 +225,13 @@ Item {
                 const body = String(d.getDate()).padStart(cw - 2)
                 const key = dayKey(d)
                 keys[i] = key
-                // A day with an entry takes the note colour over the weekend's.
+                // A day with an entry takes the note colour; a holiday that is a day off
+                // the weekend's, any other holiday its own; then the weekend.
+                const hol = own ? (holidays[key] || []) : []
                 const role = !own ? "dim"
                     : ((notesOn && hasNote(key)) ? "note"
+                       : hol.some(h => h.public) ? "accent"
+                       : hol.length > 0 ? "holiday"
                        : ((weekendAccent && isWeekend(d.getDay())) ? "accent" : "fg"))
                 // Today is in brackets — the ring on the wall calendar — in their own
                 // colour; the number keeps the colour of its day.
@@ -296,8 +304,19 @@ Item {
         case "dim": return view.colorDim
         case "today": return view.colorToday
         case "note": return view.colorNote
+        case "holiday": return view.colorHoliday
         default: return view.colorFg
         }
+    }
+
+    // The months the grid shows, as [year, month 1–12] — what the holidays are read for.
+    readonly property var shownMonths: {
+        const p = todayKey.split("-").map(Number)
+        const span = shown === 3 ? [-1, 0, 1] : [0]
+        return span.map(k => {
+            const m = new Date(p[0], p[1] - 1 + k, 1)
+            return [m.getFullYear(), m.getMonth() + 1]
+        })
     }
 
     // ── The mouse ─────────────────────────────────────────────────────────────

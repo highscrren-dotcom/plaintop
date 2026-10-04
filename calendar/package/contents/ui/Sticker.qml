@@ -23,6 +23,7 @@ PlasmaCore.Dialog {
     property string dateKey: ""
     property var entries: []           // the day's entries, as notes.py lists them
     property var accounts: []          // the document's accounts: names and errors
+    property var holidays: []          // the day's holidays, [{title, public, world}], set by the host
     property string noteAccount: "local"
     // The reminder choices: the hour an all-day note rings at, the settings' lead before a
     // timed one.
@@ -36,6 +37,7 @@ PlasmaCore.Dialog {
     property color colorAccent: "#E05561"
     property color colorDim: "#6B7280"
     property color colorNote: "#8FB6E0"
+    property color colorHoliday: "#C8A35A"
     property color colorPaper: "#141820"
     property int paperOpacity: 94
     // Eight characters: top-left, horizontal, top-right, vertical, bottom-left,
@@ -298,6 +300,9 @@ PlasmaCore.Dialog {
         const day = p.length === 3 ? new Date(p[0], p[1] - 1, p[2]) : new Date()
         out.push({ text: top, role: "dim" })
         out.push({ text: framed(day.toLocaleDateString(Qt.locale(), "dddd, d MMMM yyyy").toUpperCase()), role: "accent" })
+        // The day's holidays under its name: a day off in the weekend's colour.
+        for (const h of holidays)
+            out.push({ text: framed("* " + h.title), role: h.public ? "accent" : "holiday" })
         // The entries by account, the local ones first, the note of yours left to the editor.
         const groups = []
         for (let i = 0; i < entries.length; i++) {
@@ -360,6 +365,7 @@ PlasmaCore.Dialog {
         case "accent": return sticker.colorAccent
         case "dim": return sticker.colorDim
         case "note": return sticker.colorNote
+        case "holiday": return sticker.colorHoliday
         default: return sticker.colorFg
         }
     }

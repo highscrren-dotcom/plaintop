@@ -16,6 +16,12 @@ ConfigModel {
     }
 
     ConfigCategory {
+        name: i18nc("settings page", "Holidays")
+        icon: "view-calendar-holiday"
+        source: "configHolidays.qml"
+    }
+
+    ConfigCategory {
         name: i18nc("settings page", "Accounts")
         icon: "preferences-system-users"
         source: "configAccounts.qml"

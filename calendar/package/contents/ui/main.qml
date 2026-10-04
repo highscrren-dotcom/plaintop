@@ -395,6 +395,8 @@ PlasmoidItem {
             colorDim: root.cfg.colorDim
             colorToday: root.cfg.colorToday
             colorNote: root.cfg.colorNote
+            colorHoliday: root.cfg.colorHoliday
+            holidays: holidayDays.days
 
             onMissedClicked: a => {
                 if (rep.reminderOpen()) return
@@ -406,8 +408,18 @@ PlasmoidItem {
                 // The sticker hangs from an invisible item laid over the clicked cell.
                 anchor.x = x; anchor.y = y; anchor.width = w; anchor.height = h
                 const days = root.notesDoc && root.notesDoc.days ? root.notesDoc.days : {}
+                sticker.holidays = holidayDays.days[key] || []
                 sticker.open(key, days[key] || [], anchor)
             }
+        }
+
+        // The shown months' holidays, from Plasma's calendar plugin (Holidays.qml).
+        Holidays {
+            id: holidayDays
+            active: root.cfg.holidays
+            months: view.shownMonths
+            kind: root.cfg.holidayKind
+            world: root.cfg.worldDays
         }
 
         Item { id: anchor; visible: false }
@@ -427,6 +439,7 @@ PlasmoidItem {
             colorAccent: root.cfg.colorAccent
             colorDim: root.cfg.colorDim
             colorNote: root.cfg.colorNote
+            colorHoliday: root.cfg.colorHoliday
             colorPaper: root.cfg.colorPaper
             paperOpacity: root.cfg.paperOpacity
             frame: root.cfg.frame
