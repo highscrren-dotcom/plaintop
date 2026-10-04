@@ -24,6 +24,11 @@ import time
 from pathlib import Path
 from types import SimpleNamespace as NS
 
+# The runner's pipe on Windows is cp1252: the check marks below would raise.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(ROOT / "win" / "service"))

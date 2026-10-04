@@ -22,6 +22,11 @@ import time
 import urllib.request
 from pathlib import Path
 
+# The runner's pipe on Windows is cp1252: the check marks below would raise.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 ROOT = Path(__file__).resolve().parent.parent
 
 

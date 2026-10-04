@@ -65,8 +65,22 @@ jobs:
 
   windows:
     runs-on: windows-latest
+    env:
+      # The runner's console is cp1252; the stands print check marks.
+      PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v4
+
+      # Qt first: install-qt-action leaves its own Python (3.14, for aqt) on PATH, so a
+      # pip install made before it was invisible to the steps after it (run 8, 2026-10-04).
+      # 6.10: aqtinstall 3.3 finds no Windows archives for 6.11 — "Failed to locate XML
+      # data for Qt version '6.11.3'" — and the files load from 6.8 up since the
+      # reserved-word property names were quoted (docs/GOTCHAS.md).
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.10.*"
+          modules: ""
+          cache: true
 
       - uses: actions/setup-python@v5
         with:
@@ -74,15 +88,6 @@ jobs:
 
       - name: the service's dependencies
         run: python -m pip install --quiet numpy psutil holidays tzdata tzlocal
-
-      # 6.10: aqtinstall 3.3 (what the action runs) finds no Windows archives for 6.11 —
-      # "Failed to locate XML data for Qt version '6.11.3'" on 2026-10-04 — and the files
-      # load from 6.8 up since the reserved-word property names were quoted (docs/GOTCHAS.md).
-      - uses: jurplel/install-qt-action@v4
-        with:
-          version: "6.10.*"
-          modules: ""
-          cache: true
 
       - name: Python compiles
         run: python -m py_compile win/build.py win/service/server.py win/service/monitor_win.py win/service/exec_win.py win/service/bands.py win/service/player_win.py win/service/notes_bridge.py win/service/holidays_win.py win/service/timezones.py win/service/settings_store.py win/service/ui.py win/service/notify_win.py tests/win_service.py tests/win_bands.py tests/win_media.py tests/win_hosts.py
