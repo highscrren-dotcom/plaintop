@@ -23,6 +23,21 @@
         "type": "bool",
         "name": "Seconds in a small size",
         "default": true
+      },
+      "format": {
+        "type": "enum",
+        "name": "Hours",
+        "default": "24h",
+        "values": [
+          "24h",
+          "12h",
+          "locale"
+        ],
+        "names": [
+          "24-hour",
+          "12-hour",
+          "as the locale says"
+        ]
       }
     }
   },
@@ -51,6 +66,11 @@
         "name": "Model, temperatures, fans",
         "default": true
       },
+      "frequency": {
+        "type": "bool",
+        "name": "Average frequency on the model line",
+        "default": true
+      },
       "top_processes": {
         "type": "int",
         "name": "Processes in the top list",
@@ -64,6 +84,40 @@
         "default": [],
         "pick": "sensor",
         "pattern": "^lmsensors/[^/]+/fan\\d+$"
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from, % (0 — never)",
+        "default": 90,
+        "min": 0,
+        "max": 100
+      },
+      "warn_temp": {
+        "type": "int",
+        "name": "Alert from, °C (0 — never)",
+        "default": 85,
+        "min": 0,
+        "max": 150
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
+      }
+    }
+  },
+  "load": {
+    "name": "Load average",
+    "hint": "The 1, 5 and 15-minute load averages, one line",
+    "params": {
+      "warn": {
+        "type": "int",
+        "name": "Alert from, % of the core count (0 — never)",
+        "default": 0,
+        "min": 0,
+        "max": 1000
       }
     }
   },
@@ -75,6 +129,20 @@
         "type": "bool",
         "name": "Full stalls for memory and I/O",
         "default": false
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from, % (0 — never)",
+        "default": 50,
+        "min": 0,
+        "max": 100
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
       }
     }
   },
@@ -92,6 +160,45 @@
         "default": 5,
         "min": 0,
         "max": 15
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from, % (0 — never)",
+        "default": 90,
+        "min": 0,
+        "max": 100
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
+      }
+    }
+  },
+  "swap": {
+    "name": "Swap",
+    "hint": "Swap usage; shown only when the machine has swap",
+    "params": {
+      "totals": {
+        "type": "bool",
+        "name": "The “used / total” line",
+        "default": true
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from, % (0 — never)",
+        "default": 50,
+        "min": 0,
+        "max": 100
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
       }
     }
   },
@@ -102,6 +209,27 @@
         "type": "bool",
         "name": "VRAM, temperature and power line",
         "default": true
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from, % (0 — never)",
+        "default": 95,
+        "min": 0,
+        "max": 100
+      },
+      "warn_temp": {
+        "type": "int",
+        "name": "Alert from, °C (0 — never)",
+        "default": 90,
+        "min": 0,
+        "max": 150
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
       }
     }
   },
@@ -127,6 +255,33 @@
         "default": "",
         "pick": "sensor",
         "pattern": "^lmsensors/nvme-[^/]+/temp\\d+$"
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from, % (0 — never)",
+        "default": 90,
+        "min": 0,
+        "max": 100
+      }
+    }
+  },
+  "diskio": {
+    "name": "Disk I/O",
+    "hint": "Read and write rates of all disks, or of one",
+    "params": {
+      "disk": {
+        "type": "string",
+        "name": "Read-rate sensor (empty — all disks)",
+        "default": "",
+        "pick": "sensor",
+        "pattern": "^disk/[^/]+/read$"
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
       }
     }
   },
@@ -142,18 +297,134 @@
         "name": "Interface (empty — find it)",
         "default": "",
         "pick": "iface"
+      },
+      "address": {
+        "type": "bool",
+        "name": "IPv4 address line",
+        "default": false
+      },
+      "totals": {
+        "type": "bool",
+        "name": "Traffic since boot",
+        "default": false
+      },
+      "signal": {
+        "type": "bool",
+        "name": "Wi-Fi signal strength",
+        "default": false
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
       }
     }
   },
   "battery": {
     "name": "Battery",
     "hint": "Charge, rate and estimated time; shown only when a battery is found",
-    "params": {}
+    "params": {
+      "warn_low": {
+        "type": "int",
+        "name": "Alert below, % (0 — never)",
+        "default": 15,
+        "min": 0,
+        "max": 100
+      }
+    }
+  },
+  "temps": {
+    "name": "Temperatures",
+    "hint": "Any temperature sensors, one line each: “label=id”, or just the id to use the sensor's own name",
+    "params": {
+      "sensors": {
+        "type": "stringlist",
+        "name": "Sensors",
+        "default": [],
+        "pick": "sensor",
+        "pattern": "^lmsensors/[^/]+/temp\\d+$"
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from, °C (0 — never)",
+        "default": 85,
+        "min": 0,
+        "max": 150
+      }
+    }
+  },
+  "peripherals": {
+    "name": "Peripheral batteries",
+    "hint": "Mice, keyboards, headsets and phones over Bluetooth, from upower; the system battery has its own block",
+    "params": {
+      "warn_low": {
+        "type": "int",
+        "name": "Alert below, % (0 — never)",
+        "default": 20,
+        "min": 0,
+        "max": 100
+      },
+      "interval": {
+        "type": "int",
+        "name": "Interval, s",
+        "default": 30,
+        "min": 5,
+        "max": 600
+      }
+    }
+  },
+  "sound": {
+    "name": "Sound",
+    "hint": "The default output's volume and name through wpctl (PipeWire), and the input's if asked",
+    "params": {
+      "input": {
+        "type": "bool",
+        "name": "The input device too",
+        "default": false
+      },
+      "device": {
+        "type": "bool",
+        "name": "The device's name under the bar",
+        "default": true
+      },
+      "interval": {
+        "type": "int",
+        "name": "Interval, s",
+        "default": 5,
+        "min": 1,
+        "max": 600
+      }
+    }
   },
   "services": {
     "name": "Services",
     "hint": "docker, ollama, pending updates — a script inside the package",
     "params": {}
+  },
+  "units": {
+    "name": "systemd units",
+    "hint": "The state of the units you name — active, inactive, failed — from the system manager or your own",
+    "params": {
+      "units": {
+        "type": "stringlist",
+        "name": "Units",
+        "default": []
+      },
+      "user": {
+        "type": "bool",
+        "name": "User units (systemctl --user)",
+        "default": false
+      },
+      "interval": {
+        "type": "int",
+        "name": "Interval, s",
+        "default": 15,
+        "min": 2,
+        "max": 600
+      }
+    }
   },
   "health": {
     "name": "System health",
@@ -175,6 +446,11 @@
         "default": 3,
         "min": 0,
         "max": 5
+      },
+      "reboot": {
+        "type": "bool",
+        "name": "Pending reboot (a newer kernel installed)",
+        "default": true
       }
     }
   },
@@ -182,6 +458,65 @@
     "name": "Hardware spec sheet",
     "hint": "Static lines: processor, graphics card, board",
     "params": {}
+  },
+  "text": {
+    "name": "Text",
+    "hint": "A line of your own",
+    "params": {
+      "text": {
+        "type": "string",
+        "name": "Text",
+        "default": ""
+      },
+      "role": {
+        "type": "enum",
+        "name": "Colour",
+        "default": "fg",
+        "values": [
+          "fg",
+          "dim",
+          "accent",
+          "value"
+        ],
+        "names": [
+          "main text",
+          "secondary",
+          "header",
+          "values"
+        ]
+      }
+    }
+  },
+  "spacer": {
+    "name": "Blank lines",
+    "hint": "Empty space between blocks",
+    "params": {
+      "lines": {
+        "type": "int",
+        "name": "Lines",
+        "default": 1,
+        "min": 1,
+        "max": 10
+      }
+    }
+  },
+  "repos": {
+    "name": "Git repositories",
+    "hint": "Branch, uncommitted changes and commits ahead or behind, one line per path",
+    "params": {
+      "paths": {
+        "type": "stringlist",
+        "name": "Paths (~ allowed)",
+        "default": []
+      },
+      "interval": {
+        "type": "int",
+        "name": "Interval, s",
+        "default": 60,
+        "min": 10,
+        "max": 3600
+      }
+    }
   },
   "command": {
     "name": "Custom command",
@@ -245,6 +580,20 @@
         "default": 0,
         "min": 0,
         "max": 3
+      },
+      "warn": {
+        "type": "int",
+        "name": "Alert from (0 — never)",
+        "default": 0,
+        "min": 0,
+        "max": 1000000
+      },
+      "history": {
+        "type": "int",
+        "name": "History: sparkline of the last N ticks (0 — none)",
+        "default": 0,
+        "min": 0,
+        "max": 40
       }
     }
   }

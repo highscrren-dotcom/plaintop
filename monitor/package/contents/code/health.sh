@@ -10,6 +10,8 @@
 #                              neither systemd-journal, adm nor wheel; no errline follows
 #   errline|<ident>|<message>  the last distinct system errors, newest first, at most $1
 #                              of them, each cut at 120 characters
+#   reboot|yes                 a reboot is pending: Debian's flag file, or the running
+#                              kernel's modules directory is gone (a kernel upgrade)
 #
 # ⚠️ The price of a run, as with services.sh: measured on s1dPC 2026-09-23, 34 ms wall
 # for two systemctl and three journalctl calls, with 34 system and 81 user errors since
@@ -32,6 +34,13 @@ if ! se=$(journalctl --system -p err -b -q -o cat --output-fields=PRIORITY 2>/de
 fi
 ue=$(journalctl --user -p err -b -q -o cat --output-fields=PRIORITY 2>/dev/null | wc -l)
 printf 'err|%s|%s\n' "$se" "${ue:-0}"
+
+# A pending reboot: Debian's flag file, or a running kernel whose modules directory is
+# gone — Arch and its kin remove it when the kernel package is upgraded, and modules the
+# running kernel has not loaded yet cannot be loaded any more.
+if [ -f /var/run/reboot-required ] || [ ! -d "/lib/modules/$(uname -r)" ]; then
+    printf 'reboot|yes\n'
+fi
 
 [ "$n" -gt 0 ] 2>/dev/null || exit 0
 

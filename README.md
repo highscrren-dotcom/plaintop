@@ -15,11 +15,16 @@ The look comes from the Rainmeter skin
 
 Clock, date, distro and kernel, total CPU load and load per NUMA node, CPU model with
 per-node temperatures and fan speeds, the kernel's pressure stall information for CPU,
-memory and I/O, top processes by CPU and by memory, RAM, GPU with VRAM, temperature and
-power draw, filesystems with NVMe temperature, uptime, network throughput, the battery
-when the machine has one, the state of docker / ollama / pending updates, system health —
-failed systemd units, errors since boot, the last error lines of the journal — and a
-static hardware passport.
+memory and I/O, load averages, top processes by CPU and by memory, RAM and swap, every
+GPU with VRAM, temperature and power draw, filesystems with NVMe temperature and disk I/O,
+uptime, network throughput with the address, the totals and the Wi-Fi signal if asked,
+the battery when the machine has one and the batteries of the mice and headsets around
+it, the state of docker / podman / libvirt / ollama / pending updates (pacman, apt, dnf,
+zypper, flatpak), the systemd units you name, any temperature sensors you pick, the sound
+output's volume, your git repositories, system health — failed systemd units, errors
+since boot, a pending reboot, the last error lines of the journal — a static hardware
+passport, and lines of your own. A bar past its threshold turns red; a bar can carry a
+sparkline of its last readings; blocks can go into a second column.
 
 Which of those appear, in what order, and with what parameters is **data, not code** —
 see [Three layers](#three-layers) below.
@@ -230,10 +235,13 @@ Details: [schema/README.md](schema/README.md).
 
 Right-click the widget → *Configure plaintop…*. Two pages:
 
-- *General* — font, size, edge padding, widget size, the four palette colours,
-  the mouse, update interval, how often the process list is read.
+- *General* — font, size, edge padding, widget size, the four palette colours, the bars'
+  width and characters, the separator, the sparkline glyphs, where the second column
+  starts, the mouse, update interval, how often the process list is read.
 - *Blocks* — enable, disable, reorder, edit parameters, add a block of any type
-  from the vocabulary, remove one.
+  from the vocabulary, duplicate or remove one, name it, send it to the second column,
+  pick sensors, interfaces and mount points from what the machine has, or edit the whole
+  layout as JSON.
 
 That dialog is the only editor. The window hosts' own editors with a live preview
 (`window/settings.qml` in each widget) retired with them (decision 9);

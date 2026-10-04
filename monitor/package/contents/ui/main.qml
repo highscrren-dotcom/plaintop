@@ -60,11 +60,23 @@ PlasmoidItem {
         blocks: root.blocks
         rate: root.cfg.updateInterval
         processInterval: root.cfg.processInterval
+        barWidth: root.cfg.barWidth
+        barFill: root.cfg.barFill
+        barEmpty: root.cfg.barEmpty
+        separatorChar: root.cfg.separatorChar
+        separatorWidth: root.cfg.separatorWidth
+        sparkGlyphs: root.cfg.sparkGlyphs
         servicesScript: Qt.resolvedUrl("../code/services.sh").toString().replace("file://", "")
         healthScript: Qt.resolvedUrl("../code/health.sh").toString().replace("file://", "")
-        columns: Math.max(20, Math.floor((root.cfg.widgetWidth - root.cfg.padLeft)
+        // Each column is cut at its own right edge: the first at the second column's
+        // left edge while any block sits there, else at the widget's.
+        columns: Math.max(20, Math.floor(((monitorData.twoColumns ? root.secondX : root.cfg.widgetWidth) - root.cfg.padLeft)
                                          / Math.max(1, cell.advanceWidth)))
+        columns2: Math.max(20, Math.floor((root.cfg.widgetWidth - root.secondX) / Math.max(1, cell.advanceWidth)))
     }
+
+    // The second column's left edge: the setting, or half the width.
+    readonly property real secondX: root.cfg.secondColumn > 0 ? root.cfg.secondColumn : Math.round(root.cfg.widgetWidth / 2)
 
     // The shell's edit mode: the one moment a click-through widget must take the mouse.
     readonly property bool shellEditMode: (Plasmoid.containment && Plasmoid.containment.corona)
@@ -109,6 +121,8 @@ PlasmoidItem {
         MonitorView {
             anchors.fill: parent
             lines: monitorData.lines
+            lines2: monitorData.lines2
+            secondColumn: root.secondX
 
             fontFamily: root.cfg.fontFamily
             fontSize: root.cfg.fontSize

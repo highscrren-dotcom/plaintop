@@ -22,6 +22,10 @@ Item {
     property var blocks: []
     property int rate: 1000
     property int processInterval: 2          // seconds between process-list reads
+    // Off, nothing is subscribed and no process list is read: the line stand
+    // (tests/monitor.qml) pushes values in through publish() and must not have the
+    // machine's own readings land on top of them.
+    property bool liveSensors: true
 
     // ⚠️ Path set by the host: the script sits in contents/code/ inside the plasmoid
     // package and next to the QML in the standalone host, so a relative guess here left
@@ -31,9 +35,21 @@ Item {
 
     // Width of the text area in characters, set by the host from its width and font: the
     // one place free text (journal messages) is cut. The tabular lines are built to fit.
+    // With a second column in use, `columns` is the first column's width up to it and
+    // `columns2` the second's to the right edge.
     property int columns: 57
+    property int columns2: 57
 
-    readonly property int barWidth: 18          // bar width in characters, as in the lua
+    // Bars and separators, from the general settings: a bar's width in characters and the
+    // two characters it is made of (PlainExt's slash and a space), the separator's
+    // character and width. An empty character means the default.
+    property int barWidth: 18
+    property string barFill: "/"
+    property string barEmpty: ""
+    property string separatorChar: "-"
+    property int separatorWidth: 35
+    // Sparklines: the glyphs the "history" parameter draws with, lowest to highest.
+    property string sparkGlyphs: "▁▂▃▄▅▆▇█"
 
     // ⚠️ Translations go through a context object, not a bare i18n(): this file runs in
     // the plasmoid, where i18n() exists, and in the bare qml6 window host, where it does
@@ -81,10 +97,48 @@ Item {
         return out
     }
 
+    // The scripts beside services.sh, one source per block with its own interval, read
+    // like the custom commands: the output lands in cmdOut under the block's id.
+    readonly property string codeDir: servicesScript.replace(/\/[^/]*$/, "")
+
+    function quoted(list) {
+        return (list || []).map(x => "'" + String(x).replace(/'/g, "'\\''") + "'").join(" ")
+    }
+
+    readonly property var scriptBlocks: {
+        const out = []
+        for (const b of blocks) {
+            if (b.enabled === false) continue
+            const p = b.params || {}
+            const every = sec => Math.max(1, Number(p.interval) || sec)
+            switch (b.type) {
+            case "units":
+                if ((p.units || []).length > 0)
+                    out.push({ id: b.id, interval: every(15),
+                               command: "bash " + codeDir + "/units.sh " + (p.user === true ? "--user " : "")
+                                        + quoted(p.units) })
+                break
+            case "peripherals":
+                out.push({ id: b.id, interval: every(30), command: "bash " + codeDir + "/peripherals.sh" })
+                break
+            case "sound":
+                out.push({ id: b.id, interval: every(5),
+                           command: "bash " + codeDir + "/sound.sh" + (p.input === true ? " input" : "") })
+                break
+            case "repos":
+                if ((p.paths || []).length > 0)
+                    out.push({ id: b.id, interval: every(60),
+                               command: "bash " + codeDir + "/repos.sh " + quoted(p.paths) })
+                break
+            }
+        }
+        return out
+    }
+
     property var cmdOut: ({})
 
     Instantiator {
-        model: monitor.commandBlocks
+        model: monitor.commandBlocks.concat(monitor.scriptBlocks)
 
         delegate: P5Support.DataSource {
             required property var modelData
@@ -165,10 +219,18 @@ Item {
     // positive value arrives, so the subscription is not rebuilt on every reading.
     property int coreCount: 0
 
+    // The cores' frequencies only when the model line shows them: one more sensor per
+    // core, and the model handles hundreds, but not for a line nobody asked for.
+    readonly property bool wantFrequency: hasBlock("cpu")
+        && blockParam("cpu", "model_line", true) !== false
+        && blockParam("cpu", "frequency", true) !== false
+
     readonly property var coreIds: {
         const a = []
         for (let i = 0; i < coreCount; i++) a.push("cpu/cpu" + i + "/usage")
         for (let i = 0; i < coreCount; i++) a.push("cpu/cpu" + i + "/temperature")
+        if (wantFrequency)
+            for (let i = 0; i < coreCount; i++) a.push("cpu/cpu" + i + "/frequency")
         return a
     }
 
@@ -194,24 +256,114 @@ Item {
     // ⚠️ Reassigning them made every line depend on each sensor: ~25 sensors updating once
     // a second rebuilt all the lines ~25 times a second, 15% of a core for text that
     // changes once. The lines are rebuilt on `tick` alone and read these maps then.
+    // `names` keeps each sensor's own display name — "Tctl", "Composite" — for the blocks
+    // that print a sensor the user picked without a label of their own.
     property var named: ({})
     property var namedReady: ({})
+    property var names: ({})
 
-    function publish(id, value, ready) {
+    function publish(id, value, ready, name) {
         named[id] = value
         namedReady[id] = ready
+        if (name !== undefined && String(name).length > 0)
+            names[id] = String(name)
     }
 
     Instantiator {
-        model: monitor.namedIds
+        model: monitor.liveSensors ? monitor.namedIds : []
 
         delegate: Sensors.Sensor {
             required property var modelData
             sensorId: modelData
             updateRateLimit: monitor.rate
-            onValueChanged: monitor.publish(sensorId, value, status === 2)
-            onStatusChanged: monitor.publish(sensorId, value, status === 2)
+            // ⚠️ A bare `name` here is the sensor's own display name (docs/GOTCHAS.md).
+            onValueChanged: monitor.publish(sensorId, value, status === 2, name)
+            onStatusChanged: monitor.publish(sensorId, value, status === 2, name)
         }
+    }
+
+    // Graphics cards: whatever the gpu plugin lists, sorted so the order holds; none on a
+    // machine without one — a VM, a headless box — and the block hides with them, as the
+    // battery does. The spec sheet needs only their names.
+    readonly property var gpus: (hasBlock("gpu") || hasBlock("passport"))
+        ? registry.match("^gpu/gpu\\d+/usage$").map(id => id.split("/")[1]).sort()
+        : []
+    readonly property var gpuIds: {
+        const out = []
+        const keys = hasBlock("gpu") ? ["usage", "temperature", "usedVram", "totalVram", "power", "name"] : ["name"]
+        for (const g of gpus)
+            for (const k of keys)
+                out.push("gpu/" + g + "/" + k)
+        return out
+    }
+
+    // Swap: the percentage is computed from used and total, so a machine without swap
+    // (total 0) simply shows no lines.
+    readonly property var swapIds: hasBlock("swap") ? ["memory/swap/used", "memory/swap/total"] : []
+
+    // The network block's optional second line: only the sensors it was asked for.
+    readonly property var netExtraIds: {
+        const out = []
+        if (!hasBlock("network") || netIface.length === 0)
+            return out
+        if (blockParam("network", "address", false) === true)
+            out.push("network/" + netIface + "/ipv4address")
+        if (blockParam("network", "totals", false) === true)
+            out.push("network/" + netIface + "/totalDownload", "network/" + netIface + "/totalUpload")
+        if (blockParam("network", "signal", false) === true)
+            out.push("network/" + netIface + "/signal")
+        return out
+    }
+
+    // Load averages: the cpu plugin's, when it has them; else /proc/loadavg below.
+    readonly property bool hasLoadSensors: hasBlock("load") && registry.has("cpu/loadaverages/loadaverage1")
+    readonly property var loadIds: hasLoadSensors
+        ? ["cpu/loadaverages/loadaverage1", "cpu/loadaverages/loadaverage5", "cpu/loadaverages/loadaverage15"]
+        : []
+    property var loadFile: []
+
+    P5Support.DataSource {
+        engine: "executable"
+        interval: 5000
+        connectedSources: (monitor.hasBlock("load") && !monitor.hasLoadSensors) ? ["cat /proc/loadavg"] : []
+        onNewData: function(source, data) {
+            const f = String(data.stdout).trim().split(/\s+/)
+            if (f.length >= 3)
+                monitor.loadFile = [Number(f[0]), Number(f[1]), Number(f[2])]
+        }
+    }
+
+    // Disk I/O: the read/write pair the block follows — the preference when the machine
+    // has it, else the plugin's "all", else the first disk listed. The write id is the
+    // read id's sibling.
+    readonly property string diskReadId: !hasBlock("diskio") ? ""
+        : (registry.resolve(blockParam("diskio", "disk", ""), "^disk/all/read$")
+           || registry.firstMatch("^disk/[^/]+/read$"))
+    readonly property string diskWriteId: diskReadId.replace(/read$/, "write")
+    readonly property var diskIoIds: diskReadId.length > 0 ? [diskReadId, diskWriteId] : []
+
+    // Temperatures: a list of sensor ids, each optionally "label=id"; without a label the
+    // sensor's own name is printed.
+    function tempId(entry) {
+        const t = String(entry), i = t.indexOf("=")
+        return (i >= 0 ? t.slice(i + 1) : t).trim()
+    }
+    function tempLabel(entry) {
+        const t = String(entry), i = t.indexOf("=")
+        return i >= 0 ? t.slice(0, i).trim() : ""
+    }
+    // Every enabled temperatures block's sensors, with duplicates: namedIds removes them.
+    readonly property var tempIds: {
+        const out = []
+        for (const b of blocks) {
+            if (b.type !== "temps" || b.enabled === false) continue
+            const list = (b.params || {}).sensors || []
+            for (let i = 0; i < list.length; i++) {
+                const id = tempId(list[i])
+                if (id.length > 0) out.push(id)
+            }
+        }
+        return out
     }
 
     readonly property var rawSensorIds: [
@@ -219,12 +371,11 @@ Item {
         "memory/physical/usedPercent", "memory/physical/used", "memory/physical/total",
         "os/system/hostname", "os/system/name", "os/kernel/version",
         "cpu/all/cpuCount", "cpu/all/coreCount",
-        "gpu/gpu0/usage", "gpu/gpu0/temperature", "gpu/gpu0/usedVram",
-        "gpu/gpu0/totalVram", "gpu/gpu0/power", "gpu/gpu0/name",
         "network/" + netIface + "/download", "network/" + netIface + "/upload",
         "os/system/uptime"
     ].concat(customSensorIds).concat(fanSensors).concat(
         nvmeSensor.length > 0 ? [nvmeSensor] : []).concat(pressureIds).concat(batteryIds)
+        .concat(gpuIds).concat(swapIds).concat(netExtraIds).concat(loadIds).concat(diskIoIds).concat(tempIds)
 
     // ⚠️ Columns are found by asking the model for each column's SensorId, never by the
     // position in the requested list. SensorDataModel silently drops ids it cannot
@@ -268,7 +419,7 @@ Item {
 
     Sensors.SensorDataModel {
         id: mon
-        sensors: monitor.sensorIds
+        sensors: monitor.liveSensors ? monitor.sensorIds : []
         updateRateLimit: monitor.rate
     }
 
@@ -309,7 +460,7 @@ Item {
     Proc.ProcessDataModel {
         id: procs
         enabledAttributes: ["name", "usage", "memory"]
-        enabled: monitor.needProcesses && (!monitor.processDuty || monitor.processAwake)
+        enabled: monitor.liveSensors && monitor.needProcesses && (!monitor.processDuty || monitor.processAwake)
     }
 
     Timer {
@@ -367,7 +518,9 @@ Item {
         connectedSources: [
             "cat /sys/devices/system/node/node*/cpulist",
             "LC_ALL=C lscpu",
-            "cat /sys/devices/virtual/dmi/id/board_vendor /sys/devices/virtual/dmi/id/board_name /sys/devices/virtual/dmi/id/bios_version"
+            // DMI on a PC; on an ARM board there is no DMI, and the device tree names the
+            // model in one NUL-terminated line.
+            "cat /sys/devices/virtual/dmi/id/board_vendor /sys/devices/virtual/dmi/id/board_name /sys/devices/virtual/dmi/id/bios_version 2>/dev/null || tr -d '\\0' < /proc/device-tree/model 2>/dev/null"
         ]
 
         onNewData: function(source, data) {
@@ -393,8 +546,9 @@ Item {
         }
 
         function parseBoard(out) {
-            const l = out.trim().split("\n")
+            const l = out.trim().split("\n").filter(x => x.trim().length > 0)
             if (l.length >= 3) monitor.boardLine = l[0] + " " + l[1] + "  (BIOS " + l[2] + ")"
+            else if (l.length > 0) monitor.boardLine = l.join(" ")
         }
 
         function parseLscpu(out) {
@@ -428,7 +582,9 @@ Item {
         // ⚠️ Once every 10 s, not on every tick: each run is a fork in the shell process.
         interval: 10000
         connectedSources: [
-            "df -B1 --output=target,size,used,pcent " + monitor.mounts.join(" ") + " 2>/dev/null"
+            // ⚠️ Under a timeout: a network mount that stopped answering hangs df, and with
+            // it this source — the other lines went on, this block froze.
+            "timeout 5 df -B1 --output=target,size,used,pcent " + monitor.mounts.join(" ") + " 2>/dev/null"
         ]
 
         onNewData: function(source, data) {
@@ -494,10 +650,11 @@ Item {
 
         onNewData: function(source, data) {
             // "failed|s|u", "err|s|u" or "err|noaccess", "errline|ident|message".
-            const h = { failed: null, err: null, lines: [] }
+            const h = { failed: null, err: null, lines: [], reboot: false }
             for (const row of String(data.stdout).trim().split("\n")) {
                 const f = row.split("|")
-                if (f[0] === "failed" && f.length >= 3) h.failed = [f[1], f[2]]
+                if (f[0] === "reboot") h.reboot = f[1] === "yes"
+                else if (f[0] === "failed" && f.length >= 3) h.failed = [f[1], f[2]]
                 else if (f[0] === "err" && f.length >= 2) h.err = f.slice(1)
                 else if (f[0] === "errline" && f.length >= 2) {
                     // The message may carry "|" itself: everything after the ident is text.
@@ -518,7 +675,10 @@ Item {
         running: true
         repeat: true
         triggeredOnStart: true
-        onTriggered: monitor.tick++
+        onTriggered: {
+            monitor.sample()
+            monitor.tick++
+        }
     }
 
     function sval(id) {
@@ -549,7 +709,9 @@ Item {
     function bar(pct, width) {
         const w = width || barWidth
         const k = Math.max(0, Math.min(w, Math.round(pct * w / 100)))
-        return "/".repeat(k) + " ".repeat(w - k)
+        const fill = Array.from(barFill)[0] || "/"
+        const empty = Array.from(barEmpty)[0] || " "
+        return fill.repeat(k) + empty.repeat(w - k)
     }
 
     function pct(v) {
@@ -562,7 +724,98 @@ Item {
     // takes its extra characters from the bar, so the percentage column stays aligned.
     function barRow(label, value, labelWidth) {
         const lw = labelWidth || 3
-        return String(label).padEnd(lw).slice(0, lw) + " " + bar(value, barWidth - (lw - 3)) + " " + pct(value)
+        return String(label).padEnd(lw).slice(0, lw) + " " + bar(value, Math.max(4, barWidth - (lw - 3))) + " " + pct(value)
+    }
+
+    // A line that turns accent past its threshold (0: never) — the one place the monitor
+    // says "look here" rather than just reporting.
+    function warnLine(text, value, warn, role) {
+        return line(text, (warn > 0 && value >= warn) ? "accent" : (role || "fg"))
+    }
+
+    // Bytes as a size: GiB with a decimal from a gibibyte up, MiB below, KiB below that.
+    function bytes(n) {
+        if (n >= 1073741824) return gib(n)
+        if (n >= 1048576) return Math.round(n / 1048576) + " MiB"
+        return Math.round(n / 1024) + " KiB"
+    }
+
+    // ── Sparklines ────────────────────────────────────────────────────────────
+    // The last `history` samples of a block's value, one per tick, drawn as glyphs after
+    // its bar. Sampled on the tick, before the rebuild — a binding must not keep state.
+    // The map is mutated in place for the same reason the sensor maps are.
+    property var hist: ({})
+
+    function remember(key, value, keep) {
+        const a = hist[key] || (hist[key] = [])
+        a.push(value)
+        while (a.length > keep) a.shift()
+    }
+
+    // `max` scales the glyphs — 100 for a percentage; 0 scales to the window's own peak,
+    // for rates. Left-padded to `width`, so the line keeps its length while it fills.
+    function spark(key, width, max) {
+        const glyphs = Array.from(sparkGlyphs)
+        const values = hist[key] || []
+        if (glyphs.length === 0 || width <= 0)
+            return ""
+        let top = max
+        if (!(top > 0)) {
+            top = 1
+            for (const v of values) if (v > top) top = v
+        }
+        const shown = values.slice(-width)
+        let out = " ".repeat(Math.max(0, width - shown.length))
+        for (const v of shown)
+            out += glyphs[Math.round(Math.max(0, Math.min(1, v / top)) * (glyphs.length - 1))]
+        return out
+    }
+
+    // "  ▁▂▃▅▇" after a bar, or nothing while the block keeps no history.
+    function sparkTail(key, p, max) {
+        const keep = Math.max(0, Number(p.history) || 0)
+        return keep > 0 ? "  " + spark(key, keep, max) : ""
+    }
+
+    // What each block's history follows; run on every tick before the lines are rebuilt.
+    function sample() {
+        for (const b of blocks) {
+            if (b.enabled === false) continue
+            const p = b.params || {}
+            const keep = Math.max(0, Number(p.history) || 0)
+            if (keep === 0) continue
+            switch (b.type) {
+            case "cpu": remember(b.id, num("cpu/all/usage", 0), keep); break
+            case "memory": remember(b.id, num("memory/physical/usedPercent", 0), keep); break
+            case "swap": remember(b.id, swapPercent(), keep); break
+            case "pressure": remember(b.id, num("pressure/cpu/some10Sec", 0), keep); break
+            case "gpu":
+                for (const g of gpus) remember(b.id + ":" + g, num("gpu/" + g + "/usage", 0), keep)
+                break
+            case "network":
+                remember(b.id, num("network/" + netIface + "/download", 0)
+                               + num("network/" + netIface + "/upload", 0), keep)
+                break
+            case "diskio":
+                remember(b.id, num(diskReadId, 0) + num(diskWriteId, 0), keep)
+                break
+            case "sensor": remember(b.id, num(p.id, 0), keep); break
+            }
+        }
+    }
+
+    function swapPercent() {
+        const total = num("memory/swap/total", 0)
+        return total > 0 ? num("memory/swap/used", 0) * 100 / total : 0
+    }
+
+    function avgFrequency() {
+        let sum = 0, cnt = 0
+        for (let i = 0; i < coreCount; i++) {
+            const f = num("cpu/cpu" + i + "/frequency", 0)
+            if (f > 0) { sum += f; cnt++ }
+        }
+        return cnt > 0 ? sum / cnt / 1000 : 0      // MHz → GHz
     }
 
     // The decimal separator is the locale's: a comma under ru_RU, a point under en_US.
@@ -597,9 +850,10 @@ Item {
                         Math.floor(s / 3600), String(Math.floor(s % 3600 / 60)).padStart(2, "0"))
     }
 
-    // Free text is cut at the widget's width with an ellipsis.
-    function clipText(text) {
-        return text.length > columns ? text.slice(0, Math.max(0, columns - 1)) + "…" : text
+    // Free text is cut at the column's width with an ellipsis.
+    function clipText(text, width) {
+        const w = width || columns
+        return text.length > w ? text.slice(0, Math.max(0, w - 1)) + "…" : text
     }
 
     // The battery's second line, from numbers alone so it can be tested on a machine
@@ -659,10 +913,10 @@ Item {
         return { kind: "parts", parts: [{ text: text, role: role || "fg" }] }
     }
 
-    function kvLine(label, value) {
+    function kvLine(label, value, role) {
         return { kind: "parts", parts: [
             { text: String(label).padEnd(21), role: "dim" },
-            { text: "| " + value, role: "fg" }
+            { text: "| " + value, role: role || "fg" }
         ] }
     }
 
@@ -679,18 +933,63 @@ Item {
                 ? f[1]
                 : tr.i18ncp("ollama: no model loaded; how many are installed",
                             "idle, %1 model", "idle, %1 models", Number(f[1]) || 0)
+        case "podman":
+            return f[0] === "noaccess"
+                ? tr.i18nc("podman: it cannot be reached", "no access")
+                : tr.i18nc("docker: running containers of all containers", "%1 of %2",
+                           f[0], f[1])
+        case "libvirt":
+            return tr.i18nc("libvirt: running virtual machines of all", "%1 of %2", f[0], f[1])
+                + (f[2] ? "  " + f[2] : "")
         case "pacman":
+        case "apt":
+        case "dnf":
+        case "zypper":
+        case "flatpak":
             return tr.i18ncp("pacman: pending updates", "%1 update", "%1 updates",
                              Number(f[0]) || 0)
         }
         return f.join(" ")
     }
 
-    readonly property var lines: {
-        tick
-        const out = []
+    // A systemd unit's state, as a word.
+    function unitState(state) {
+        switch (state) {
+        case "active": return tr.i18nc("systemd unit state", "active")
+        case "inactive": return tr.i18nc("systemd unit state", "inactive")
+        case "failed": return tr.i18nc("systemd unit state", "failed")
+        case "activating": return tr.i18nc("systemd unit state", "starting")
+        case "deactivating": return tr.i18nc("systemd unit state", "stopping")
+        case "reloading": return tr.i18nc("systemd unit state", "reloading")
+        default: return state.length > 0 ? state : tr.i18nc("systemd unit state: no answer", "unknown")
+        }
+    }
 
-        for (const b of blocks) {
+    // Blocks go to the second column by their "column" field; the first takes the rest.
+    // Loops, not Array methods: `blocks` comes from the host and need not be a JS array.
+    function inColumn(second) {
+        const out = []
+        for (const b of blocks)
+            if ((Number(b.column) === 2) === second)
+                out.push(b)
+        return out
+    }
+    readonly property bool twoColumns: {
+        for (const b of blocks)
+            if (b.enabled !== false && Number(b.column) === 2)
+                return true
+        return false
+    }
+    readonly property var lines: { tick; return buildLines(inColumn(false), columns) }
+    readonly property var lines2: { tick; return buildLines(inColumn(true), columns2) }
+
+    // The lines of one column: every property read here is read inside a binding on
+    // `lines` or `lines2`, so the dependencies are tracked as before.
+    function buildLines(list, width) {
+        const out = []
+        const clip = text => clipText(text, width)
+
+        for (const b of list) {
             if (b.enabled === false) continue
             const p = b.params || {}
 
@@ -706,9 +1005,16 @@ Item {
                 break
             }
             case "clock": {
-                const big = Qt.formatTime(new Date(), "HH:mm")
-                if (p.seconds === false) out.push({ kind: "clock", big: big, small: "" })
-                else out.push({ kind: "clock", big: big, small: Qt.formatTime(new Date(), ":ss") })
+                // 24-hour unless asked otherwise; "locale" reads the locale's short time
+                // format and takes an AM/PM marker in it as the twelve-hour clock.
+                const d = new Date()
+                const twelve = p.format === "12h"
+                    || (p.format === "locale" && /ap/i.test(Qt.locale().timeFormat(Locale.ShortFormat)))
+                const big = Qt.formatTime(d, twelve ? "h:mm" : "HH:mm")
+                let small = p.seconds === false ? "" : Qt.formatTime(d, ":ss")
+                if (twelve)
+                    small += " " + Qt.formatTime(d, "AP")
+                out.push({ kind: "clock", big: big, small: small })
                 break
             }
             case "date": {
@@ -729,7 +1035,7 @@ Item {
                 // the top: only between two neighbours that show something. The trailing
                 // one goes after the loop.
                 if (out.length === 0 || out[out.length - 1].separator) break
-                const s = line("-".repeat(35), "dim")
+                const s = line((Array.from(separatorChar)[0] || "-").repeat(Math.max(1, separatorWidth)), "dim")
                 s.separator = true
                 out.push(s)
                 break
@@ -737,33 +1043,66 @@ Item {
 
             case "cpu": {
                 const usage = num("cpu/all/usage", 0)
-                out.push(line(barRow("CPU", usage)))
-                if (p.per_socket !== false) {
-                    for (let n = 0; n < nodeCpus.length; n++)
-                        out.push(line(barRow("S" + n, nodeUsage(n)) + "   node" + n))
+                const warn = Number(p.warn) || 0
+                out.push(warnLine(barRow("CPU", usage) + sparkTail(b.id, p, 100), usage, warn))
+                // One node is the whole machine: its line would only repeat the one above.
+                if (p.per_socket !== false && nodeCpus.length > 1) {
+                    for (let n = 0; n < nodeCpus.length; n++) {
+                        const u = nodeUsage(n)
+                        out.push(warnLine(barRow("S" + n, u) + "   node" + n, u, warn))
+                    }
                 }
                 if (p.model_line !== false) {
                     const name = (cpuSockets > 1 ? cpuSockets + "x " : "") + (cpuModel || "CPU")
-                    const t0 = Math.round(nodeTemp(0)), t1 = Math.round(nodeTemp(1))
+                    // Only the nodes the machine has: with two read unconditionally, a
+                    // one-node machine printed "62/0°C" (fixed 2026-10-04).
+                    const temps = []
+                    for (let n = 0; n < nodeCpus.length; n++) {
+                        const t = Math.round(nodeTemp(n))
+                        if (t > 0) temps.push(t)
+                    }
                     const rpm = []
                     for (const id of fanSensors) {
                         const v = Math.round(num(id, 0))
                         if (v > 0) rpm.push(v)
                     }
-                    out.push(line(name + "  " + cpuCores + "c/" + cpuThreads + "t  "
-                                  + (t0 > 0 ? t0 + "/" + t1 + "°C  " : "")
-                                 + (rpm.length > 0 ? rpm.join("/") + " rpm" : ""), "dim"))
+                    const ghz = p.frequency === false ? 0 : avgFrequency()
+                    const hot = temps.length > 0 ? Math.max(...temps) : 0
+                    out.push(warnLine(name + "  " + cpuCores + "c/" + cpuThreads + "t  "
+                                      + (ghz > 0 ? comma(ghz, 1) + " GHz  " : "")
+                                      + (temps.length > 0 ? temps.join("/") + "°C  " : "")
+                                      + (rpm.length > 0 ? rpm.join("/") + " rpm" : ""),
+                                      hot, Number(p.warn_temp) || 0, "dim"))
                 }
                 for (const r of topRows(byCpu, 1, p.top_processes || 0, v => comma(v, 1) + "%"))
                     out.push(line(r))
                 break
             }
 
+            case "load": {
+                const v = hasLoadSensors
+                    ? [num(loadIds[0], 0), num(loadIds[1], 0), num(loadIds[2], 0)]
+                    : loadFile
+                if (v.length < 3) break
+                // The threshold is a share of the core count: 100 means as many runnable
+                // tasks as cores.
+                const warn = Number(p.warn) || 0
+                const share = coreCount > 0 ? v[0] * 100 / coreCount : 0
+                out.push(warnLine(tr.i18nc("load average over 1, 5 and 15 minutes", "load %1  %2  %3",
+                                           comma(v[0], 2), comma(v[1], 2), comma(v[2], 2)),
+                                  share, warn, "dim"))
+                break
+            }
+
             case "pressure": {
                 if (!hasPressure) break
-                out.push(line(barRow("PSI", num("pressure/cpu/some10Sec", 0))))
-                out.push(line(barRow("mem", num("pressure/memory/some10Sec", 0))))
-                out.push(line(barRow("io ", num("pressure/io/some10Sec", 0))))
+                const warn = Number(p.warn) || 0
+                const psi = num("pressure/cpu/some10Sec", 0)
+                const mem = num("pressure/memory/some10Sec", 0)
+                const io = num("pressure/io/some10Sec", 0)
+                out.push(warnLine(barRow("PSI", psi) + sparkTail(b.id, p, 100), psi, warn))
+                out.push(warnLine(barRow("mem", mem), mem, warn))
+                out.push(warnLine(barRow("io ", io), io, warn))
                 // Full stalls are usually well under 1%, hence one decimal.
                 if (p.full === true)
                     out.push(line(tr.i18nc("pressure: time every task stalled, memory and I/O",
@@ -775,7 +1114,7 @@ Item {
 
             case "memory": {
                 const used = num("memory/physical/usedPercent", 0)
-                out.push(line(barRow("RAM", used)))
+                out.push(warnLine(barRow("RAM", used) + sparkTail(b.id, p, 100), used, Number(p.warn) || 0))
                 if (p.totals !== false)
                     out.push(line(gib(num("memory/physical/used", 0)) + " / "
                                   + gib(num("memory/physical/total", 0)), "dim"))
@@ -784,13 +1123,32 @@ Item {
                 break
             }
 
+            case "swap": {
+                // No swap, no lines — as with no battery.
+                const total = num("memory/swap/total", 0)
+                if (!(total > 0)) break
+                const used = swapPercent()
+                out.push(warnLine(barRow("SWP", used) + sparkTail(b.id, p, 100), used, Number(p.warn) || 0))
+                if (p.totals !== false)
+                    out.push(line(gib(num("memory/swap/used", 0)) + " / " + gib(total), "dim"))
+                break
+            }
+
             case "gpu": {
-                out.push(line(barRow("GPU", num("gpu/gpu0/usage", 0))))
-                if (p.details !== false) {
-                    out.push(line("VRAM " + comma(num("gpu/gpu0/usedVram", 0) / 1073741824, 1)
-                                  + "/" + comma(num("gpu/gpu0/totalVram", 0) / 1073741824, 1)
-                                  + " GB  temp " + Math.round(num("gpu/gpu0/temperature", 0))
-                                  + "°C  pwr " + Math.round(num("gpu/gpu0/power", 0)) + "W", "dim"))
+                // Every card the plugin lists; none, and the block says nothing.
+                const warn = Number(p.warn) || 0, warnTemp = Number(p.warn_temp) || 0
+                for (let i = 0; i < gpus.length; i++) {
+                    const id = "gpu/" + gpus[i] + "/"
+                    const usage = num(id + "usage", 0)
+                    out.push(warnLine(barRow(gpus.length > 1 ? "GP" + i : "GPU", usage)
+                                      + sparkTail(b.id + ":" + gpus[i], p, 100), usage, warn))
+                    if (p.details !== false) {
+                        const t = Math.round(num(id + "temperature", 0))
+                        out.push(warnLine("VRAM " + comma(num(id + "usedVram", 0) / 1073741824, 1)
+                                          + "/" + comma(num(id + "totalVram", 0) / 1073741824, 1)
+                                          + " GB  temp " + t + "°C  pwr " + Math.round(num(id + "power", 0)) + "W",
+                                          t, warnTemp, "dim"))
+                    }
                 }
                 break
             }
@@ -800,7 +1158,7 @@ Item {
                     // The root mount is labelled "root", not "/": the bar beside it is made of slashes too,
                     // and "/   //" read as one thing. Other mounts keep their last path element.
                     const name = d.target === "/" ? "root" : d.target.split("/").pop()
-                    out.push(line(barRow(name, d.pct, 4)))
+                    out.push(warnLine(barRow(name, d.pct, 4), d.pct, Number(p.warn) || 0))
                     let note = "F: " + gib(d.size - d.used) + "  T: " + gib(d.size)
                     if (d.target === "/" && p.nvme_temp !== false) {
                         const t = nvmeSensor.length > 0 ? Math.round(num(nvmeSensor, 0)) : 0
@@ -827,7 +1185,57 @@ Item {
                 // netIface already honours p.interface and falls back to discovery.
                 const iface = netIface
                 out.push(line(iface + "  Dl " + speed(num("network/" + iface + "/download", 0))
-                              + "  Ul " + speed(num("network/" + iface + "/upload", 0)), "dim"))
+                              + "  Ul " + speed(num("network/" + iface + "/upload", 0))
+                              + sparkTail(b.id, p, 0), "dim"))
+                // The second line: the address, the totals since boot, the Wi-Fi signal —
+                // each only when asked for and when the interface reports it.
+                const extra = []
+                if (p.address === true) {
+                    const a = sval("network/" + iface + "/ipv4address")
+                    if (a) extra.push(String(a))
+                }
+                if (p.totals === true)
+                    extra.push(tr.i18nc("network: traffic since boot, down and up", "total %1 down, %2 up",
+                                        bytes(num("network/" + iface + "/totalDownload", 0)),
+                                        bytes(num("network/" + iface + "/totalUpload", 0))))
+                if (p.signal === true && sensorReady("network/" + iface + "/signal"))
+                    extra.push(tr.i18nc("network: Wi-Fi signal strength", "signal %1",
+                                        Math.round(num("network/" + iface + "/signal", 0)) + "%"))
+                if (extra.length > 0)
+                    out.push(line(clip(extra.join("  ")), "dim"))
+                break
+            }
+
+            case "diskio": {
+                if (diskReadId.length === 0) break
+                out.push(line(tr.i18nc("disk I/O: read and write rates", "I/O  R %1  W %2",
+                                       speed(num(diskReadId, 0)), speed(num(diskWriteId, 0)))
+                              + sparkTail(b.id, p, 0), "dim"))
+                break
+            }
+
+            case "temps": {
+                const warn = Number(p.warn) || 0
+                for (const e of (p.sensors || [])) {
+                    const id = tempId(e)
+                    if (id.length === 0 || !sensorReady(id)) continue
+                    const t = num(id, 0)
+                    const label = tempLabel(e) || names[id] || id.split("/").pop()
+                    out.push(kvLine(label, Math.round(t) + "°C", (warn > 0 && t >= warn) ? "accent" : "fg"))
+                }
+                break
+            }
+
+            case "text": {
+                const t = String(p.text || "")
+                if (t.length > 0) out.push(line(clip(t), p.role || "fg"))
+                break
+            }
+
+            case "spacer": {
+                // A space, not an empty string: a blank Text has no height to give.
+                const n = Math.max(1, Math.min(10, Number(p.lines) || 1))
+                for (let i = 0; i < n; i++) out.push(line(" ", "fg"))
                 break
             }
 
@@ -839,7 +1247,9 @@ Item {
                 for (let i = 0; i < real.length; i++) {
                     const id = "power/" + real[i] + "/"
                     const percent = num(id + "chargePercentage", 0)
-                    out.push(line(barRow(real.length > 1 ? "BT" + i : "BAT", percent)))
+                    const low = Number(p.warn_low) || 0
+                    out.push(line(barRow(real.length > 1 ? "BT" + i : "BAT", percent),
+                                  (low > 0 && percent <= low) ? "accent" : "fg"))
                     out.push(line(batteryText(percent, num(id + "chargeRate", 0),
                                               num(id + "charge", 0), num(id + "capacity", 0),
                                               num(id + "health", -1)), "dim"))
@@ -866,9 +1276,83 @@ Item {
                                         : tr.i18nc("health: a count for the system and one for the user session",
                                                    "%1 system, %2 user", h.err[0], h.err[1] || "0")))
                 }
+                if (p.reboot !== false && h.reboot)
+                    out.push(kvLine(tr.i18nc("health: a kernel newer than the running one is installed", "reboot"),
+                                    tr.i18nc("health: a reboot is pending", "pending"), "accent"))
                 const n = p.lines === undefined ? 3 : Math.max(0, Number(p.lines) || 0)
                 for (const l of (h.lines || []).slice(0, n))
-                    out.push(line(clipText((l.ident ? l.ident + "  " : "") + l.text), "dim"))
+                    out.push(line(clip((l.ident ? l.ident + "  " : "") + l.text), "dim"))
+                break
+            }
+
+            case "units": {
+                // "unit|state" per unit; a failed one in the accent colour, an inactive one dim.
+                const text = cmdOut[b.id]
+                if (text === undefined) break
+                for (const row of text.split("\n")) {
+                    const f = row.split("|")
+                    if (f.length < 2) continue
+                    const state = f[1].trim()
+                    out.push(kvLine(f[0].replace(/\.service$/, "").slice(0, 20), unitState(state),
+                                    state === "failed" ? "accent" : (state === "active" ? "fg" : "dim")))
+                }
+                break
+            }
+
+            case "peripherals": {
+                // "model|percentage|state" per device, from upower; low ones in the accent colour.
+                const text = cmdOut[b.id]
+                if (text === undefined) break
+                const low = Number(p.warn_low) || 0
+                for (const row of text.split("\n")) {
+                    const f = row.split("|")
+                    if (f.length < 3) continue
+                    const percent = Number(f[1]) || 0
+                    const note = f[2] === "charging" ? "  " + tr.i18nc("peripheral battery: charging", "charging") : ""
+                    out.push(kvLine(f[0].slice(0, 20), percent + "%" + note,
+                                    (low > 0 && percent <= low) ? "accent" : "fg"))
+                }
+                break
+            }
+
+            case "sound": {
+                // "sink|name|volume|muted" and, when asked, "source|…": a bar for the volume,
+                // the device's name under it.
+                const text = cmdOut[b.id]
+                if (text === undefined) break
+                for (const row of text.split("\n")) {
+                    const f = row.split("|")
+                    if (f.length < 4) continue
+                    const vol = Number(f[2]) || 0
+                    const muted = f[3] === "1"
+                    out.push(line(barRow(f[0] === "source" ? "MIC" : "VOL", vol)
+                                  + (muted ? "  " + tr.i18nc("sound: the device is muted", "muted") : ""),
+                                  muted ? "dim" : "fg"))
+                    if (p.device !== false && f[1].length > 0)
+                        out.push(line(clip(f[1]), "dim"))
+                }
+                break
+            }
+
+            case "repos": {
+                // "name|branch|dirty|ahead|behind" per path; a dirty tree in the accent colour.
+                const text = cmdOut[b.id]
+                if (text === undefined) break
+                for (const row of text.split("\n")) {
+                    const f = row.split("|")
+                    if (f.length < 2) continue
+                    if (f[1] === "notgit") {
+                        out.push(kvLine(f[0].slice(0, 20),
+                                        tr.i18nc("repos: the path is not a git repository", "not a repository"), "dim"))
+                        continue
+                    }
+                    const dirty = Number(f[2]) || 0, ahead = Number(f[3]) || 0, behind = Number(f[4]) || 0
+                    let v = f[1]
+                    if (dirty > 0) v += "  ±" + dirty
+                    if (ahead > 0) v += "  ↑" + ahead
+                    if (behind > 0) v += "  ↓" + behind
+                    out.push(kvLine(f[0].slice(0, 20), v, dirty > 0 ? "accent" : "fg"))
+                }
                 break
             }
 
@@ -882,15 +1366,21 @@ Item {
             case "sensor": {
                 const v = num(p.id, 0)
                 const label = p.label || "SEN"
-                if (p.bar !== false) out.push(line(barRow(label, v) + (p.suffix || "")))
-                else out.push(kvLine(label, comma(v, p.digits || 0) + (p.suffix || "")))
+                const warn = Number(p.warn) || 0
+                if (p.bar !== false)
+                    out.push(warnLine(barRow(label, v) + (p.suffix || "") + sparkTail(b.id, p, 100), v, warn))
+                else
+                    out.push(kvLine(label, comma(v, p.digits || 0) + (p.suffix || "") + sparkTail(b.id, p, 0),
+                                    (warn > 0 && v >= warn) ? "accent" : "fg"))
                 break
             }
 
             case "passport": {
                 if (cpuModel) out.push(line("CPU | " + (cpuSockets > 1 ? cpuSockets + "x " : "") + cpuModel, "dim"))
-                const gpu = sval("gpu/gpu0/name")
-                if (gpu) out.push(line("GPU | " + gpu, "dim"))
+                for (const g of gpus) {
+                    const gpu = sval("gpu/" + g + "/name")
+                    if (gpu) out.push(line("GPU | " + gpu, "dim"))
+                }
                 if (boardLine) out.push(line("MBD | " + boardLine, "dim"))
                 break
             }

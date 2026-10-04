@@ -51,10 +51,23 @@ machine's own list instead of asking for an id:
                 "pattern": "^lmsensors/nvme-[^/]+/temp\\d+$" }
 ```
 
-- **`pick`** — `sensor` (a searchable list of everything ksystemstats reports, with the highlighted
-  sensor's live value), `iface` (the network interfaces found in the sensor tree), or `mount`
-  (the mount points from `/proc/self/mounts`).
+- **`pick`** — `sensor` (everything ksystemstats reports, from the same registry the widget
+  reads), `iface` (the network interfaces found in the sensor tree), or `mount` (the mount
+  points from `df`). The *Blocks* page offers the list beside the field: a choice replaces a
+  string, or is added to a list; the field stays the place to type.
 - **`pattern`** — narrows the list, and is what the widget itself falls back to.
+
+Parameter types: `bool`, `int` (optionally `min`/`max`), `string`, `stringlist`, and `enum` —
+a string from the parameter's own `values`, shown in the dialog by the matching `names`:
+
+```json
+"format": { "type": "enum", "name": "Hours", "default": "24h",
+            "values": ["24h", "12h", "locale"],
+            "names": ["24-hour", "12-hour", "as the locale says"] }
+```
+
+Besides its parameters a block may carry two fields of its own: `name`, a label of yours
+shown in the list, and `column`, 2 for the widget's second column.
 
 A stored value is a **preference**, not a requirement: it wins while the machine has it, and when it
 does not, `pattern` finds the replacement. An empty value means "find it yourself" from the start —
@@ -64,6 +77,8 @@ on. See decision 6 in `../docs/DECISIONS.md`.
 ## Editing from the interface
 
 The *Blocks* page in the widget settings reads that same layout: enable, disable, reorder,
-add a block of any type from the dictionary, remove one, adjust the parameters — and puts the
-result into the plasmoid's settings as a JSON string. As long as that is empty, the layout from the
-package is used; the *Reset* button brings it back.
+add a block of any type from the dictionary, duplicate one, remove one, name it, send it to
+the second column, adjust the parameters — and puts the result into the plasmoid's settings
+as a JSON string. As long as that is empty, the layout from the package is used; the
+*Reset* button brings it back. The same JSON is shown at the bottom of the page to read,
+edit or paste from another machine; *Apply JSON* checks it against the vocabulary first.

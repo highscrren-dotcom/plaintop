@@ -58,6 +58,7 @@ SCHEMA_CONTEXT = {
     "name": "schema: block name",
     "hint": "schema: block hint",
     "param": "schema: parameter name",
+    "value": "schema: parameter value",
 }
 
 
@@ -79,6 +80,8 @@ def schema_calls():
             calls.append((SCHEMA_CONTEXT["hint"], block["hint"]))
         for param in block.get("params", {}).values():
             calls.append((SCHEMA_CONTEXT["param"], param["name"]))
+            for label in param.get("names", []):
+                calls.append((SCHEMA_CONTEXT["value"], label))
     return "".join(f"i18nc({json.dumps(c)}, {json.dumps(t, ensure_ascii=False)});\n"
                    for c, t in calls)
 

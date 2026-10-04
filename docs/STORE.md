@@ -57,6 +57,18 @@ collapse where a block hides, so no double rules. The description below already 
 And a small one: in the disks block the root mount is labelled `root` instead of `/` —
 beside a bar made of slashes, `/` read as part of the bar.
 
+**0.4 — not uploaded yet.** What's new: thresholds — a bar past its "alert from" turns red,
+the model line too by temperature; sparklines after the bars (the "history" parameter);
+new blocks — swap, load average, disk I/O, temperatures of any sensors, systemd units,
+peripheral batteries (upower), sound (wpctl), git repositories, text and blank lines; the
+network block's address, totals and Wi-Fi signal; the CPU's average frequency; podman,
+libvirt and the apt, dnf, zypper and flatpak update counts beside pacman; a pending reboot
+in system health; every GPU, and none on a machine without one; the clock in 12 or 24 hours;
+the bars' width and characters and the separator as settings; a second column; on the
+Blocks page the machine's own sensors, interfaces and mount points to pick from, a
+duplicate button, a name per block, and the layout as JSON to edit or paste. Fixed: the
+model line's "62/0°C" on a one-node machine and the redundant node line there.
+
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
 - **License:** GPL-2.0-or-later

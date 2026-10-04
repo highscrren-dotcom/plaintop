@@ -74,6 +74,7 @@ journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors
 ./install.sh --status                                               # what is installed and running
 ./install.sh --pack                                                 # .plasmoid files for a release → dist/
 ./install.sh --check-passthrough                                    # the click-through stand: 17 tests against the shell's compiled applet wrapper
+./install.sh --check-monitor                                        # the monitor's line stand: every block type's lines from values pushed in by hand
 ```
 
 Four things that will otherwise waste your afternoon — all four are in
@@ -105,7 +106,8 @@ Four things that will otherwise waste your afternoon — all four are in
    }
    ```
 
-   Parameter types are `bool`, `int` (optionally `min`/`max`), `string`, `stringlist`.
+   Parameter types are `bool`, `int` (optionally `min`/`max`), `string`, `stringlist` and
+   `enum` (`values` plus as many `names`; see `schema/README.md`).
    The generator rejects anything else, and the settings page renders an editor per type.
    Names and hints are English source strings: `python3 po/extract.py` puts them into the
    catalogs, and the editors translate them where they are shown.

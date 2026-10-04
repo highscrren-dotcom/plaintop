@@ -572,6 +572,26 @@ check_passthrough() {
     return $rc
 }
 
+# The monitor's line-builder stand: MonitorData with the machine's sensors replaced by
+# values pushed in by hand, every block type's lines read back. Same runner and the same
+# traps as the click-through stand above.
+check_monitor() {
+    echo "== Monitor line stand"
+    local runner=/usr/lib/qt6/bin/qmltestrunner
+    if [ ! -x "$runner" ]; then
+        red "  ✗ $runner is missing (package qt6-declarative)"; return 1
+    fi
+    local out rc
+    out=$(QT_FORCE_STDERR_LOGGING=1 QT_QPA_PLATFORM=offscreen "$runner" -input "$REPO/tests/monitor.qml" 2>&1); rc=$?
+    printf '%s\n' "$out" | grep -vE 'detached root|GC memory statistics|unloaded library|propertyCache' | sed 's/^/  /'
+    if [ $rc -eq 0 ]; then
+        grn "  ✓ the lines come out as the blocks say"
+    else
+        red "  ✗ the stand failed (exit $rc)"
+    fi
+    return $rc
+}
+
 # Idempotent: if the widget is already on the desktop, do nothing; otherwise place it.
 plasmoid_place() {
     local n
@@ -727,6 +747,7 @@ case "${1:-}" in
   --status)      status; exit 0 ;;
   --check-input) input_shape; exit 0 ;;
   --check-passthrough) check_passthrough; exit $? ;;
+  --check-monitor) check_monitor; exit $? ;;
   --deps)        deps; exit $? ;;
   --plasmoid)    plasmoid_install; exit $? ;;
   --pack)        pack; exit $? ;;
@@ -745,7 +766,7 @@ case "${1:-}" in
   --clicks-on)   clicks_set true "clicks pass through to the desktop"; exit $? ;;
   --conky-off)   conky_off; exit 0 ;;
   --conky-on)    conky_on; exit 0 ;;
-  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--calendar|--windows-off|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--deps]"; exit 0 ;;
+  -h|--help)     echo "Usage: $0 [--status|--plasmoid|--pack|--plaintop-window|--plaintop-settings|--plaintop-export|--spectrum|--spectrum-window|--spectrum-settings|--player|--weather|--calendar|--windows-off|--clicks-on|--clicks-off|--conky-files|--conky-off|--conky-on|--check-input|--check-passthrough|--check-monitor|--deps]"; exit 0 ;;
 esac
 
 deps || { echo; red "Missing dependencies — install them and try again."; exit 1; }

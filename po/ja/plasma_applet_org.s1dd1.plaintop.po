@@ -716,3 +716,463 @@ msgstr "値の後に付ける文字"
 msgctxt "schema: parameter name"
 msgid "Decimal places"
 msgstr "小数点以下の桁数"
+
+#: monitor/package/contents/ui/configBlocks.qml:55
+msgctxt "the block is in the second column"
+msgid "(right column)"
+msgstr "(右の列)"
+
+#: monitor/package/contents/ui/configBlocks.qml:152
+#, kde-format
+msgid "Not valid JSON: %1"
+msgstr "JSON が正しくありません: %1"
+
+#: monitor/package/contents/ui/configBlocks.qml:156
+msgid "The layout must be a list of blocks"
+msgstr "レイアウトはブロックのリストでなければなりません"
+
+#: monitor/package/contents/ui/configBlocks.qml:163
+#, kde-format
+msgid "Block %1 needs an id and a type"
+msgstr "ブロック %1 には id と type が必要です"
+
+#: monitor/package/contents/ui/configBlocks.qml:167
+#, kde-format
+msgid "Block %1: unknown type “%2”"
+msgstr "ブロック %1: 不明な種類「%2」"
+
+#: monitor/package/contents/ui/configBlocks.qml:171
+#, kde-format
+msgid "Block %1: the id “%2” is used twice"
+msgstr "ブロック %1: id「%2」が重複しています"
+
+#: monitor/package/contents/ui/configBlocks.qml:328
+msgid "Duplicate"
+msgstr "複製"
+
+#: monitor/package/contents/ui/configBlocks.qml:373
+msgid "Name:"
+msgstr "名前:"
+
+#: monitor/package/contents/ui/configBlocks.qml:376
+msgctxt "placeholder for the block's own name"
+msgid "optional, shown in the list"
+msgstr "任意、リストに表示"
+
+#: monitor/package/contents/ui/configBlocks.qml:381
+msgid "Column:"
+msgstr "列:"
+
+#: monitor/package/contents/ui/configBlocks.qml:382
+msgctxt "the widget's column"
+msgid "left"
+msgstr "左"
+
+#: monitor/package/contents/ui/configBlocks.qml:382
+msgctxt "the widget's column"
+msgid "right"
+msgstr "右"
+
+#: monitor/package/contents/ui/configBlocks.qml:452
+#, kde-format
+msgctxt "pick list: how many the machine offers"
+msgid "pick from %1…"
+msgid_plural "pick from %1…"
+msgstr[0] "%1 件から選ぶ…"
+
+#: monitor/package/contents/ui/configBlocks.qml:453
+msgctxt "pick list: the machine offers nothing"
+msgid "nothing found"
+msgstr "見つかりません"
+
+#: monitor/package/contents/ui/configBlocks.qml:474
+msgid "The layout as JSON — edit here, or paste one from another machine:"
+msgstr "JSON 形式のレイアウト — ここで編集するか、別のマシンのものを貼り付けます:"
+
+#: monitor/package/contents/ui/configBlocks.qml:497
+msgid "Apply JSON"
+msgstr "JSON を適用"
+
+#: monitor/package/contents/ui/configBlocks.qml:503
+msgid "Reload from the list"
+msgstr "リストから再読み込み"
+
+#: monitor/package/contents/ui/configGeneral.qml:119
+msgctxt "settings section"
+msgid "Lines"
+msgstr "行"
+
+#: monitor/package/contents/ui/configGeneral.qml:123
+msgid "Bar width, characters:"
+msgstr "バーの幅 (文字数):"
+
+#: monitor/package/contents/ui/configGeneral.qml:129
+msgid "Bar characters:"
+msgstr "バーの文字:"
+
+#: monitor/package/contents/ui/configGeneral.qml:142
+msgctxt "placeholder: the empty part of a bar is a space"
+msgid "space"
+msgstr "空白"
+
+#: monitor/package/contents/ui/configGeneral.qml:147
+msgid ""
+"The filled and the empty part of a bar. Empty fields mean the slash and a space."
+msgstr "バーの塗り部分と空き部分。空欄はスラッシュと空白を意味します。"
+
+#: monitor/package/contents/ui/configGeneral.qml:153
+msgid "Separator:"
+msgstr "区切り線:"
+
+#: monitor/package/contents/ui/configGeneral.qml:171
+msgid "Sparkline glyphs:"
+msgstr "スパークラインの文字:"
+
+#: monitor/package/contents/ui/configGeneral.qml:185
+msgid "Second column at, px:"
+msgstr "第 2 列の位置 (px):"
+
+#: monitor/package/contents/ui/configGeneral.qml:198
+msgctxt "settings section"
+msgid "Updates"
+msgstr "更新"
+
+#: monitor/shared/MonitorData.qml:924
+msgctxt "podman: it cannot be reached"
+msgid "no access"
+msgstr "アクセス不可"
+
+#: monitor/shared/MonitorData.qml:928
+#, kde-format
+msgctxt "libvirt: running virtual machines of all"
+msgid "%1 of %2"
+msgstr "%1 / %2"
+
+#: monitor/shared/MonitorData.qml:944
+msgctxt "systemd unit state"
+msgid "active"
+msgstr "稼働中"
+
+#: monitor/shared/MonitorData.qml:945
+msgctxt "systemd unit state"
+msgid "inactive"
+msgstr "停止"
+
+#: monitor/shared/MonitorData.qml:946
+msgctxt "systemd unit state"
+msgid "failed"
+msgstr "失敗"
+
+#: monitor/shared/MonitorData.qml:947
+msgctxt "systemd unit state"
+msgid "starting"
+msgstr "起動中"
+
+#: monitor/shared/MonitorData.qml:948
+msgctxt "systemd unit state"
+msgid "stopping"
+msgstr "停止中"
+
+#: monitor/shared/MonitorData.qml:949
+msgctxt "systemd unit state"
+msgid "reloading"
+msgstr "再読み込み中"
+
+#: monitor/shared/MonitorData.qml:950
+msgctxt "systemd unit state: no answer"
+msgid "unknown"
+msgstr "不明"
+
+#: monitor/shared/MonitorData.qml:1064
+#, kde-format
+msgctxt "load average over 1, 5 and 15 minutes"
+msgid "load %1  %2  %3"
+msgstr "負荷 %1  %2  %3"
+
+#: monitor/shared/MonitorData.qml:1171
+#, kde-format
+msgctxt "network: traffic since boot, down and up"
+msgid "total %1 down, %2 up"
+msgstr "合計 受信 %1、送信 %2"
+
+#: monitor/shared/MonitorData.qml:1175
+#, kde-format
+msgctxt "network: Wi-Fi signal strength"
+msgid "signal %1"
+msgstr "信号 %1"
+
+#: monitor/shared/MonitorData.qml:1184
+#, kde-format
+msgctxt "disk I/O: read and write rates"
+msgid "I/O  R %1  W %2"
+msgstr "I/O  読 %1  書 %2"
+
+#: monitor/shared/MonitorData.qml:1253
+msgctxt "health: a kernel newer than the running one is installed"
+msgid "reboot"
+msgstr "再起動"
+
+#: monitor/shared/MonitorData.qml:1254
+msgctxt "health: a reboot is pending"
+msgid "pending"
+msgstr "保留中"
+
+#: monitor/shared/MonitorData.qml:1284
+msgctxt "peripheral battery: charging"
+msgid "charging"
+msgstr "充電中"
+
+#: monitor/shared/MonitorData.qml:1302
+msgctxt "sound: the device is muted"
+msgid "muted"
+msgstr "ミュート"
+
+#: monitor/shared/MonitorData.qml:1319
+msgctxt "repos: the path is not a git repository"
+msgid "not a repository"
+msgstr "リポジトリではありません"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Hours"
+msgstr "時間表記"
+
+#: schema/blocks.json
+msgctxt "schema: parameter value"
+msgid "24-hour"
+msgstr "24 時間"
+
+#: schema/blocks.json
+msgctxt "schema: parameter value"
+msgid "12-hour"
+msgstr "12 時間"
+
+#: schema/blocks.json
+msgctxt "schema: parameter value"
+msgid "as the locale says"
+msgstr "ロケールに従う"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Average frequency on the model line"
+msgstr "モデル行に平均周波数"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Alert from, % (0 — never)"
+msgstr "警告しきい値 % (0 — なし)"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Alert from, °C (0 — never)"
+msgstr "警告しきい値 °C (0 — なし)"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "History: sparkline of the last N ticks (0 — none)"
+msgstr "履歴: 直近 N 回のスパークライン (0 — なし)"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Load average"
+msgstr "平均負荷"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid "The 1, 5 and 15-minute load averages, one line"
+msgstr "1、5、15 分の平均負荷を 1 行で"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Alert from, % of the core count (0 — never)"
+msgstr "警告しきい値、コア数に対する % (0 — なし)"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Swap"
+msgstr "スワップ"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid "Swap usage; shown only when the machine has swap"
+msgstr "スワップの使用量。スワップがあるときだけ表示"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Disk I/O"
+msgstr "ディスク I/O"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid "Read and write rates of all disks, or of one"
+msgstr "全ディスクまたは 1 台の読み書き速度"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Read-rate sensor (empty — all disks)"
+msgstr "読み取り速度センサー (空欄 — 全ディスク)"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "IPv4 address line"
+msgstr "IPv4 アドレスの行"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Traffic since boot"
+msgstr "起動以降の通信量"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Wi-Fi signal strength"
+msgstr "Wi-Fi 信号強度"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Alert below, % (0 — never)"
+msgstr "警告しきい値 (未満) % (0 — なし)"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Temperatures"
+msgstr "温度"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid ""
+"Any temperature sensors, one line each: “label=id”, or just the id to use the sensor's own name"
+msgstr "任意の温度センサーを 1 行ずつ: 「ラベル=id」、または id だけでセンサー名を使用"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Sensors"
+msgstr "センサー"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Peripheral batteries"
+msgstr "周辺機器のバッテリー"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid ""
+"Mice, keyboards, headsets and phones over Bluetooth, from upower; the system battery has its own block"
+msgstr "upower から取る Bluetooth のマウス、キーボード、ヘッドセット、電話。本体のバッテリーは別ブロック"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Sound"
+msgstr "サウンド"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid ""
+"The default output's volume and name through wpctl (PipeWire), and the input's if asked"
+msgstr "wpctl (PipeWire) で既定の出力の音量と名前、必要なら入力も"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "The input device too"
+msgstr "入力デバイスも"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "The device's name under the bar"
+msgstr "バーの下にデバイス名"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "systemd units"
+msgstr "systemd ユニット"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid ""
+"The state of the units you name — active, inactive, failed — from the system manager or your own"
+msgstr "指定したユニットの状態 — 稼働中、停止、失敗 — システムまたは自分のマネージャーから"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Units"
+msgstr "ユニット"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "User units (systemctl --user)"
+msgstr "ユーザーユニット (systemctl --user)"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Pending reboot (a newer kernel installed)"
+msgstr "再起動待ち (新しいカーネルをインストール済み)"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Text"
+msgstr "テキスト"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid "A line of your own"
+msgstr "自分で書く行"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Colour"
+msgstr "色"
+
+#: schema/blocks.json
+msgctxt "schema: parameter value"
+msgid "main text"
+msgstr "本文"
+
+#: schema/blocks.json
+msgctxt "schema: parameter value"
+msgid "secondary"
+msgstr "補助"
+
+#: schema/blocks.json
+msgctxt "schema: parameter value"
+msgid "header"
+msgstr "見出し"
+
+#: schema/blocks.json
+msgctxt "schema: parameter value"
+msgid "values"
+msgstr "値"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Blank lines"
+msgstr "空行"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid "Empty space between blocks"
+msgstr "ブロック間の空き"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Lines"
+msgstr "行数"
+
+#: schema/blocks.json
+msgctxt "schema: block name"
+msgid "Git repositories"
+msgstr "Git リポジトリ"
+
+#: schema/blocks.json
+msgctxt "schema: block hint"
+msgid ""
+"Branch, uncommitted changes and commits ahead or behind, one line per path"
+msgstr "ブランチ、未コミットの変更、先行・遅延コミット数をパスごとに 1 行"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Paths (~ allowed)"
+msgstr "パス (~ 可)"
+
+#: schema/blocks.json
+msgctxt "schema: parameter name"
+msgid "Alert from (0 — never)"
+msgstr "警告しきい値 (0 — なし)"

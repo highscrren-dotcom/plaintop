@@ -47,6 +47,11 @@
       }
     },
     {
+      "id": "load",
+      "type": "load",
+      "enabled": true
+    },
+    {
       "id": "sep2",
       "type": "separator",
       "enabled": true
@@ -58,6 +63,14 @@
       "params": {
         "totals": true,
         "top_processes": 5
+      }
+    },
+    {
+      "id": "swap",
+      "type": "swap",
+      "enabled": true,
+      "params": {
+        "totals": true
       }
     },
     {
@@ -89,6 +102,11 @@
         "nvme_temp": true,
         "nvmeSensor": ""
       }
+    },
+    {
+      "id": "diskio",
+      "type": "diskio",
+      "enabled": true
     },
     {
       "id": "sep5",
