@@ -27,6 +27,8 @@ TMP = tempfile.mkdtemp(prefix="plaincalendar-test-")
 for var in ("XDG_CONFIG_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME"):
     os.environ[var] = TMP
 
+# No __pycache__ beside notes.py: the package directory is what --pack zips.
+sys.dont_write_bytecode = True
 spec = importlib.util.spec_from_file_location("notes", ROOT / "calendar/package/contents/code/notes.py")
 notes = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(notes)

@@ -106,6 +106,8 @@ weather_prepare() {
 calendar_prepare() {
     # As for the weather: no shared QML, only the catalogs (decision 7).
     python3 "$REPO/po/build.py" plasma_applet_org.s1dd1.plaincalendar "$CALENDAR_SRC/contents/locale" || return 1
+    # Bytecode from importing notes.py by hand would ride along into the package.
+    rm -rf "$CALENDAR_SRC/contents/code/__pycache__"
 }
 
 # The plasmoid installs idempotently: kpackagetool6 decides by itself whether this is
