@@ -336,8 +336,17 @@ Item {
         const at = (b, r, c) => Qt.rect(leftColumn + c * cw * charWidth,
                                          (b * (linesPerMonth + 1) + 2 + r) * lineHeight,
                                          cw * charWidth, lineHeight)
+        // No block given (a reminder, say): the block of the day's own month first — the
+        // middle of a block's third row always belongs to it.
+        if (block === undefined || block < 0 || block >= cellMap.length) {
+            block = -1
+            for (let b = 0; b < cellMap.length; b++) {
+                const mid = cellMap[b][2] ? String(cellMap[b][2][3] || "") : ""
+                if (mid.slice(0, 7) === key.slice(0, 7)) { block = b; break }
+            }
+        }
         const order = []
-        if (block !== undefined && block >= 0 && block < cellMap.length)
+        if (block >= 0)
             order.push(block)
         for (let b = 0; b < cellMap.length; b++)
             if (b !== block)
