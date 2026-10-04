@@ -58,9 +58,10 @@ Item {
     }
 
     // ── The week ──────────────────────────────────────────────────────────────
-    // Qt counts the days of the week from Monday as 1 to Sunday as 7; JavaScript's
-    // Date counts from Sunday as 0. The grid's first column is a Qt day, from the
-    // setting or the locale.
+    // The setting counts the days of the week from Monday as 1 to Sunday as 7;
+    // JavaScript's Date, and QML's Locale (firstDayOfWeek, weekDays), count from
+    // Sunday as 0 — dayName() takes both 0 and 7 for Sunday. The grid's first column
+    // is a day from the setting or the locale.
     readonly property int startDay: (firstDay >= 1 && firstDay <= 7) ? firstDay : Qt.locale().firstDayOfWeek
 
     function jsDay(qtDay) {
@@ -78,7 +79,7 @@ Item {
             working[Number(work[i])] = true
         const out = []
         for (let q = 1; q <= 7; q++)
-            if (!working[q])
+            if (!working[q % 7])
                 out.push(q % 7)
         return (out.length === 0 || out.length === 7) ? [6, 0] : out
     }
