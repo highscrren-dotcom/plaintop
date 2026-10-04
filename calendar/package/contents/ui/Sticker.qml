@@ -549,7 +549,10 @@ PlasmaCore.Dialog {
                             Keys.onEscapePressed: sticker.visible = false
                             Keys.onReturnPressed: if (sticker.editorItem) sticker.editorItem.forceActiveFocus()
                         }
-                        Line { text: " ".repeat(Math.max(0, sticker.width_ - sticker.labelWidth - 5)) + " " + sticker.f[3]; color: sticker.colorDim }
+                        // The side on its own, as on every other row: a Text starts on a pixel,
+                        // and glued to the filler the side landed a pixel off.
+                        Line { text: " ".repeat(Math.max(0, sticker.width_ - sticker.labelWidth - 5)); color: sticker.colorDim }
+                        Line { text: " " + sticker.f[3]; color: sticker.colorDim }
                     }
 
                     // "│ remind: > none  10 min before  an hour before │" — a click chooses.
@@ -579,9 +582,10 @@ PlasmaCore.Dialog {
                             }
                         }
                         Line {
-                            text: " ".repeat(Math.max(0, sticker.width_ - sticker.labelWidth - sticker.usedWidth(remindRow.items))) + " " + sticker.f[3]
+                            text: " ".repeat(Math.max(0, sticker.width_ - sticker.labelWidth - sticker.usedWidth(remindRow.items)))
                             color: sticker.colorDim
                         }
+                        Line { text: " " + sticker.f[3]; color: sticker.colorDim }
                     }
                 }
             }
