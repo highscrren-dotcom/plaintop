@@ -21,6 +21,7 @@ KCM.SimpleKCM {
     property alias cfg_growth: growthBox.currentIndex
     property alias cfg_mirror: mirrorBox.checked
     property alias cfg_reverse: reverseBox.checked
+    property alias cfg_monoSpectrum: monoBox.checked
     property alias cfg_element: elementBox.currentIndex
     property alias cfg_blockSize: blockSizeField.value
     property alias cfg_blockGap: blockGapField.value
@@ -138,6 +139,18 @@ KCM.SimpleKCM {
         CheckBox {
             id: reverseBox
             text: i18n("reverse band order")
+        }
+
+        CheckBox {
+            id: monoBox
+            Kirigami.FormData.label: i18n("Channels:")
+            text: i18n("one spectrum around the whole ring, both channels averaged")
+        }
+
+        Label {
+            text: i18n("Off: as cava gives it — the left channel from high to low, then the right\nfrom low to high, so the ring is mirrored about its middle.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
         }
 
         Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Appearance") }

@@ -22,6 +22,13 @@ KCM.SimpleKCM {
     property alias cfg_padLeft: padLeftField.value
     property alias cfg_padTop: padTopField.value
     property alias cfg_widgetHeight: heightField.value
+    property alias cfg_barWidth: barWidthField.value
+    property alias cfg_barFill: barFillField.text
+    property alias cfg_barEmpty: barEmptyField.text
+    property alias cfg_separatorChar: sepCharField.text
+    property alias cfg_separatorWidth: sepWidthField.value
+    property alias cfg_sparkGlyphs: sparkField.text
+    property alias cfg_secondColumn: columnField.value
 
 
     Kirigami.FormLayout {
@@ -108,6 +115,87 @@ KCM.SimpleKCM {
             opacity: 0.7
             font: Kirigami.Theme.smallFont
         }
+
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Lines") }
+
+        SpinBox {
+            id: barWidthField
+            Kirigami.FormData.label: i18n("Bar width, characters:")
+            from: 4
+            to: 60
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Bar characters:")
+
+            TextField {
+                id: barFillField
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
+                maximumLength: 2
+                placeholderText: "/"
+            }
+
+            TextField {
+                id: barEmptyField
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
+                maximumLength: 2
+                placeholderText: i18nc("placeholder: the empty part of a bar is a space", "space")
+            }
+        }
+
+        Label {
+            text: i18n("The filled and the empty part of a bar. Empty fields mean the slash and a space.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Separator:")
+
+            TextField {
+                id: sepCharField
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 3
+                maximumLength: 2
+                placeholderText: "-"
+            }
+
+            SpinBox {
+                id: sepWidthField
+                from: 1
+                to: 200
+            }
+        }
+
+        TextField {
+            id: sparkField
+            Kirigami.FormData.label: i18n("Sparkline glyphs:")
+            Layout.fillWidth: true
+            placeholderText: "▁▂▃▄▅▆▇█"
+        }
+
+        Label {
+            text: i18n("From lowest to highest, for the “History” parameter of the bar blocks.
+Any run of characters works, say “ .:-=+*#”.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
+        }
+
+        SpinBox {
+            id: columnField
+            Kirigami.FormData.label: i18n("Second column at, px:")
+            from: 0
+            to: 2000
+            stepSize: 8
+        }
+
+        Label {
+            text: i18n("Where the second column starts; 0 is half the width. A block goes
+there by its “Column” field on the Blocks page.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
+        }
+
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Updates") }
 
         SpinBox {
             id: intervalField

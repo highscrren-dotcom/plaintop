@@ -4,11 +4,15 @@ import QtQuick
 //
 // Every part of a line carries a role — "fg", "dim", "accent", "value" — and the palette
 // lives here, so the same descriptors serve both hosts and the colours stay one setting
-// rather than four literals scattered through the builder.
+// rather than four literals scattered through the builder. Two columns: the first at the
+// left padding, the second — the blocks whose "column" field says so — at `secondColumn`.
 Item {
     id: view
 
     property var lines: []
+    property var lines2: []
+    // The second column's left edge in pixels; 0 puts it at half the width.
+    property int secondColumn: 0
 
     property string fontFamily: "JetBrainsMono Nerd Font Mono"
     property int fontSize: 10
@@ -40,28 +44,24 @@ Item {
         textFormat: Text.PlainText
     }
 
-    // ⚠️ The padding is drawn INSIDE the widget rather than set through its coordinates:
-    // a place set by a script is reset to the 0,0 corner by plasmashell on the next start
-    // anyway — verified. This way the conky-like gap from the edge holds wherever the host
-    // put the widget.
-    Column {
+    // One column of lines. ⚠️ The model is a count, not the array. `items` is a new array
+    // on every tick, and a Repeater handed an array destroys and recreates every delegate
+    // when it changes: 41 lines rebuilt 1.4 times a second, 3.5% of a core. With a count
+    // the delegates stay, their bindings re-read their line, and a Text whose string did
+    // not change does no work. Measured on s1dPC 2026-09-22, same picture compared by
+    // screenshot.
+    component LineColumn: Column {
         id: column
-        x: view.padLeft
-        y: view.padTop
+        property var items: []
         spacing: 0
 
-        // ⚠️ The model is a count, not the array. `lines` is a new array on every tick, and
-        // a Repeater handed an array destroys and recreates every delegate when it changes:
-        // 41 lines rebuilt 1.4 times a second, 3.5% of a core. With a count the delegates
-        // stay, their bindings re-read their line, and a Text whose string did not change
-        // does no work. Measured on s1dPC 2026-09-22, same picture compared by screenshot.
         Repeater {
-            model: view.lines.length
+            model: column.items.length
 
             Item {
                 id: lineItem
                 required property int index
-                readonly property var modelData: view.lines[index] || ({ kind: "parts", parts: [] })
+                readonly property var modelData: column.items[index] || ({ kind: "parts", parts: [] })
 
                 implicitWidth: modelData.kind === "clock" ? clockRow.implicitWidth : partsRow.implicitWidth
                 implicitHeight: modelData.kind === "clock" ? clockRow.implicitHeight : partsRow.implicitHeight
@@ -108,5 +108,22 @@ Item {
                 }
             }
         }
+    }
+
+    // ⚠️ The padding is drawn INSIDE the widget rather than set through its coordinates:
+    // a place set by a script is reset to the 0,0 corner by plasmashell on the next start
+    // anyway — verified. This way the conky-like gap from the edge holds wherever the host
+    // put the widget.
+    LineColumn {
+        x: view.padLeft
+        y: view.padTop
+        items: view.lines
+    }
+
+    LineColumn {
+        x: view.secondColumn > 0 ? view.secondColumn : Math.round(view.width / 2)
+        y: view.padTop
+        items: view.lines2
+        visible: items.length > 0
     }
 }

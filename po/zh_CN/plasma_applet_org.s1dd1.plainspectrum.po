@@ -523,3 +523,19 @@ msgstr "plainspectrum — 设置"
 msgctxt "menu entry: comment"
 msgid "Shape, colour and behaviour of the spectrum ring"
 msgstr "频谱圆环的形状、颜色和行为"
+
+#: spectrum/package/contents/ui/configGeneral.qml:146
+msgid "Channels:"
+msgstr "声道："
+
+#: spectrum/package/contents/ui/configGeneral.qml:147
+msgid "one spectrum around the whole ring, both channels averaged"
+msgstr "整个圆环显示一个频谱，两声道取平均"
+
+#: spectrum/package/contents/ui/configGeneral.qml:151
+msgid ""
+"Off: as cava gives it — the left channel from high to low, then the right\n"
+"from low to high, so the ring is mirrored about its middle."
+msgstr ""
+"关闭：按 cava 原样输出 — 左声道由高频到低频，再右声道由低频到高频，\n"
+"因此圆环关于中点镜像对称。"

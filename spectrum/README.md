@@ -75,6 +75,7 @@ Right-click → *Configure*. Two pages: *Ring* — shape, appearance, behaviour,
 | Length at silence / at maximum | how far a tick reaches |
 | Growth | from the baseline: outward, inward or both ways on a ring; up, down or both ways on a line |
 | Mirror, reverse | fold the spectrum back on itself, or flip its direction |
+| Channels | one spectrum over the whole ring, both channels averaged; off, cava's frame as it comes — the left channel from high to low, then the right from low to high, mirrored about the middle |
 | Element | a solid bar or a ladder of blocks |
 | Block size and gap | the ladder's step; the number of blocks follows from the reach |
 | Colour, second colour, opacity | flat colour, or a drift toward the second one across the spectrum |
@@ -87,6 +88,15 @@ Right-click → *Configure*. Two pages: *Ring* — shape, appearance, behaviour,
 ⚠️ **Blocks** draw bars × blocks items, so the cost scales with both. **Smoothing** is
 deliberately a Qt animation and not a JavaScript loop: the same interpolation in JS
 measured three times more expensive.
+
+**Channels** is on by default. cava's frame is stereo — the left channel from its highest
+band down to its lowest, then the right from lowest to highest — and drawn as it comes a
+ring shows the same spectrum twice, mirrored about its middle. With the switch on, the
+widget asks the relay (`?mono=1`) to average the two channels into one run of bands from
+low to high over the whole span; the choice is the widget's, and cava is not restarted.
+The fold halves the band count, and the relay interpolates back up to what the ring draws.
+An older relay ignores the request and serves the mirrored frame — reinstall it with
+`./install.sh --spectrum`.
 
 ### The player in the ring
 

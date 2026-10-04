@@ -1,0 +1,170 @@
+# Chinese translations for plaintop package.
+# Copyright (C) 2026 THE plaintop'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the plaintop package.
+# Automatically generated, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plaintop\n"
+"Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
+"POT-Creation-Date: 2026-10-04 12:00+0500\n"
+"PO-Revision-Date: 2026-10-04 12:00+0500\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: calendar/package/contents/config/config.qml:7
+msgctxt "settings page"
+msgid "General"
+msgstr "常规"
+
+#: calendar/package/contents/config/config.qml:13
+msgctxt "settings page"
+msgid "Mouse"
+msgstr "鼠标"
+
+#: calendar/package/contents/ui/configGeneral.qml:34
+msgctxt "settings section"
+msgid "Calendar"
+msgstr "日历"
+
+#: calendar/package/contents/ui/configGeneral.qml:38
+msgid "Months:"
+msgstr "月份："
+
+#: calendar/package/contents/ui/configGeneral.qml:39
+msgctxt "how many months are shown"
+msgid "one — the current"
+msgstr "一个 — 当月"
+
+#: calendar/package/contents/ui/configGeneral.qml:40
+msgctxt "how many months are shown"
+msgid "three — the previous, the current and the next"
+msgstr "三个 — 上月、当月和下月"
+
+#: calendar/package/contents/ui/configGeneral.qml:47
+msgid "Week numbers:"
+msgstr "周数："
+
+#: calendar/package/contents/ui/configGeneral.qml:48
+msgid "ISO week numbers in front of the rows"
+msgstr "在每行前显示 ISO 周数"
+
+#: calendar/package/contents/ui/configGeneral.qml:53
+msgid "Week starts on:"
+msgstr "每周起始日："
+
+#: calendar/package/contents/ui/configGeneral.qml:54
+msgctxt "first day of the week"
+msgid "as the locale says"
+msgstr "按区域设置"
+
+#: calendar/package/contents/ui/configGeneral.qml:55
+msgctxt "first day of the week"
+msgid "Monday"
+msgstr "周一"
+
+#: calendar/package/contents/ui/configGeneral.qml:56
+msgctxt "first day of the week"
+msgid "Sunday"
+msgstr "周日"
+
+#: calendar/package/contents/ui/configGeneral.qml:63
+msgid "Weekends:"
+msgstr "周末："
+
+#: calendar/package/contents/ui/configGeneral.qml:64
+msgid "in their own colour, as on a wall calendar"
+msgstr "以单独的颜色显示，如同挂历"
+
+#: calendar/package/contents/ui/configGeneral.qml:69
+msgid "Other months:"
+msgstr "其他月份："
+
+#: calendar/package/contents/ui/configGeneral.qml:70
+msgid "fill the empty cells with the neighbouring months' days"
+msgstr "用相邻月份的日期填充空白格"
+
+#: calendar/package/contents/ui/configGeneral.qml:74
+msgid ""
+"Today is in brackets. The names of the days and months, the first day\n"
+"of the week and the weekend come from the locale\n"
+"(System Settings → Language and Region → Formats)."
+msgstr ""
+"今天以方括号标出。日期和月份的名称、每周起始日\n"
+"和周末来自区域设置\n"
+"（系统设置 → 语言和区域 → 格式）。"
+
+#: calendar/package/contents/ui/configGeneral.qml:79
+msgctxt "settings section"
+msgid "Text"
+msgstr "文字"
+
+#: calendar/package/contents/ui/configGeneral.qml:83
+msgid "Font:"
+msgstr "字体："
+
+#: calendar/package/contents/ui/configGeneral.qml:89
+msgctxt "font size"
+msgid "Size:"
+msgstr "字号："
+
+#: calendar/package/contents/ui/configGeneral.qml:96
+msgid "Day cell, characters:"
+msgstr "日期格宽度（字符）："
+
+#: calendar/package/contents/ui/configGeneral.qml:102
+msgid ""
+"The widget is as wide as seven cells and the week numbers, and as tall as\n"
+"the months shown: eight lines each, with a blank line between them."
+msgstr ""
+"部件宽度为七个日期格加周数列，高度随显示的月份数：\n"
+"每月八行，月份之间空一行。"
+
+#: calendar/package/contents/ui/configGeneral.qml:107
+msgctxt "settings section"
+msgid "Palette"
+msgstr "调色板"
+
+#: calendar/package/contents/ui/configGeneral.qml:110
+msgctxt "palette: colour of"
+msgid "Main text:"
+msgstr "主文字："
+
+#: calendar/package/contents/ui/configGeneral.qml:116
+msgctxt "palette: colour of"
+msgid "Weekends:"
+msgstr "周末："
+
+#: calendar/package/contents/ui/configGeneral.qml:122
+msgctxt "palette: colour of"
+msgid "Secondary:"
+msgstr "次要文字："
+
+#: calendar/package/contents/ui/configGeneral.qml:128
+msgctxt "palette: colour of"
+msgid "Today:"
+msgstr "今天："
+
+#: calendar/package/contents/ui/configMouse.qml:19
+msgid "Mouse:"
+msgstr "鼠标："
+
+#: calendar/package/contents/ui/configMouse.qml:20
+msgid "let clicks through to the desktop"
+msgstr "让点击穿透到桌面"
+
+#: calendar/package/contents/ui/configMouse.qml:24
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The widget takes the mouse only in the desktop's edit mode:\n"
+"that is where its settings are, or ./install.sh with the clicks off "
+"switch."
+msgstr ""
+"点击穿透时，鼠标左右键都会落到桌面上。\n"
+"小部件只在桌面的编辑模式下接管鼠标：\n"
+"设置也在那里，或带 clicks off 开关运行 ./install.sh。"

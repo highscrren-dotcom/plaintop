@@ -54,6 +54,16 @@
     <entry name="reverse" type="Bool">
       <default>false</default>
     </entry>
+    <!-- One spectrum around the whole ring. cava's frame is stereo by default: the left
+         channel from its highest band down to its lowest, then the right from lowest to
+         highest, so drawn as it comes the ring shows the same spectrum twice, mirrored
+         about its middle. On, the widget asks the relay to average both channels into
+         one run of bands from low to high over the whole span; off keeps cava's frame.
+         The widget's own mirror folds whatever comes, so with this on it mirrors one
+         spectrum rather than making four lobes. -->
+    <entry name="monoSpectrum" type="Bool">
+      <default>true</default>
+    </entry>
 
     <!-- Element. 0 = solid bar, 1 = a stack of blocks.
          ⚠️ Blocks draw bars × blocks items, so the cost scales with both. -->

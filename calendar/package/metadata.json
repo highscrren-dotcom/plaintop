@@ -1,0 +1,25 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "s1dd1"
+            }
+        ],
+        "Category": "Date and Time",
+        "Description": "A wall calendar as plain text: one month or three, week numbers, the weekends and today marked, in the plaintop style",
+        "Description[ru]": "Настенный календарь простым текстом: один месяц или три, номера недель, выходные и сегодняшний день, в стиле plaintop",
+        "EnabledByDefault": true,
+        "FormFactors": [
+            "desktop"
+        ],
+        "Icon": "office-calendar",
+        "Id": "org.s1dd1.plaincalendar",
+        "License": "GPL-2.0+",
+        "Name": "plaincalendar",
+        "Version": "0.1",
+        "Website": "https://github.com/highscrren-dotcom/plaintop",
+        "BugReportUrl": "https://github.com/highscrren-dotcom/plaintop/issues"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

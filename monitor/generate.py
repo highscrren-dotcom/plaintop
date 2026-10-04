@@ -18,6 +18,9 @@ TYPES = {
     "int": lambda v: isinstance(v, int) and not isinstance(v, bool),
     "string": lambda v: isinstance(v, str),
     "stringlist": lambda v: isinstance(v, list) and all(isinstance(x, str) for x in v),
+    # An enum is a string from the parameter's "values"; "names" are its labels in the
+    # dialog, one per value, English like every other string here.
+    "enum": lambda v: isinstance(v, str),
 }
 
 
@@ -54,6 +57,18 @@ def check(widget, vocab):
             want = params[key]["type"]
             if not TYPES[want](value):
                 errors.append(f'{where}: parameter "{key}" must be {want}, got {value!r}')
+            elif want == "enum" and value not in params[key].get("values", []):
+                errors.append(f'{where}: parameter "{key}" must be one of {params[key].get("values")}, got {value!r}')
+    for btype, spec in vocab.items():
+        for key, param in spec.get("params", {}).items():
+            if param["type"] not in TYPES:
+                errors.append(f'type "{btype}": parameter "{key}" has an unknown type "{param["type"]}"')
+            elif param["type"] == "enum":
+                values, names = param.get("values", []), param.get("names", [])
+                if not values or len(values) != len(names):
+                    errors.append(f'type "{btype}": enum "{key}" needs "values" and as many "names"')
+                elif param.get("default") not in values:
+                    errors.append(f'type "{btype}": enum "{key}" has a default outside its values')
     return errors
 
 

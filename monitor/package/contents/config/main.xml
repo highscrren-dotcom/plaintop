@@ -46,6 +46,36 @@
     <entry name="widgetHeight" type="Int">
       <default>950</default>
     </entry>
+    <!-- Bars: their width in characters and the two characters they are made of — the
+         slash of PlainExt and a space. An empty character means that default (a lone
+         space would not survive the config). A label wider than three characters takes
+         its extra from the bar, so the percent column keeps its place. -->
+    <entry name="barWidth" type="Int">
+      <default>18</default>
+    </entry>
+    <entry name="barFill" type="String">
+      <default>/</default>
+    </entry>
+    <entry name="barEmpty" type="String">
+      <default></default>
+    </entry>
+    <!-- The separator line: its character and width. -->
+    <entry name="separatorChar" type="String">
+      <default>-</default>
+    </entry>
+    <entry name="separatorWidth" type="Int">
+      <default>35</default>
+    </entry>
+    <!-- Sparklines, drawn by the "history" parameter of the bar blocks: the glyphs from
+         lowest to highest. Block elements by default; any run of characters works. -->
+    <entry name="sparkGlyphs" type="String">
+      <default>▁▂▃▄▅▆▇█</default>
+    </entry>
+    <!-- The second column's left edge in pixels from the widget's left edge; 0 puts it
+         at half the width. A block goes there by its "column" field on the Blocks page. -->
+    <entry name="secondColumn" type="Int">
+      <default>0</default>
+    </entry>
     <entry name="updateInterval" type="Int">
       <default>1000</default>
     </entry>

@@ -8,7 +8,7 @@ is not split into an `.ru.md` pair.
 The files to upload are built by:
 
 ```bash
-./install.sh --pack     # → dist/{plaintop,plainspectrum,plainplayer,plainweather}-<version>.plasmoid
+./install.sh --pack     # → dist/{plaintop,plainspectrum,plainplayer,plainweather,plaincalendar}-<version>.plasmoid
 ```
 
 `--pack` installs each archive into a throwaway package root before reporting success,
@@ -56,6 +56,18 @@ failed systemd units, errors since boot and the last error lines of the journal.
 collapse where a block hides, so no double rules. The description below already says so.
 And a small one: in the disks block the root mount is labelled `root` instead of `/` —
 beside a bar made of slashes, `/` read as part of the bar.
+
+**0.4 — not uploaded yet.** What's new: thresholds — a bar past its "alert from" turns red,
+the model line too by temperature; sparklines after the bars (the "history" parameter);
+new blocks — swap, load average, disk I/O, temperatures of any sensors, systemd units,
+peripheral batteries (upower), sound (wpctl), git repositories, text and blank lines; the
+network block's address, totals and Wi-Fi signal; the CPU's average frequency; podman,
+libvirt and the apt, dnf, zypper and flatpak update counts beside pacman; a pending reboot
+in system health; every GPU, and none on a machine without one; the clock in 12 or 24 hours;
+the bars' width and characters and the separator as settings; a second column; on the
+Blocks page the machine's own sensors, interfaces and mount points to pick from, a
+duplicate button, a name per block, and the layout as JSON to edit or paste. Fixed: the
+model line's "62/0°C" on a one-node machine and the redundant node line there.
 
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
@@ -123,6 +135,12 @@ plainplayer view on a new *Player* page, off by default, with the player's own f
 and colours; on a line it goes along the edge the bars reach last. With *Mouse* on, only
 the player's controls row takes clicks, the rest of the widget lets them through. The
 description below already says so.
+
+**0.4 — not uploaded yet.** What's new: a *Channels* switch on the *Ring* page, on by
+default — one spectrum around the whole ring, both channels averaged by the relay; off
+keeps cava's stereo frame, which is mirrored about its middle. Needs the relay from this
+version (`./install.sh --spectrum`): an older relay ignores the request and serves the
+mirrored frame.
 
 - **File:** `dist/plainspectrum-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Multimedia
@@ -370,6 +388,66 @@ plainweather — погода для рабочего стола Plasma 6 про
 единицы, дни, строка источника; страница «Мышь» пропускает на стол обе кнопки, как у
 других виджетов plaintop. Интерфейс говорит на языке Plasma — десять языков, всё, кроме
 английского и русского, переведено машинно, исправления приветствуются.
+
+Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop,
+дневник разработки: https://t.me/s1dd1_logs
+```
+
+## plaincalendar — calendar
+
+Not published yet.
+
+- **File:** `dist/plaincalendar-<version>.plasmoid`
+- **Category:** Plasma 6 Extensions → Date and Time
+- **License:** GPL-2.0-or-later
+- **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
+- **Tags:** calendar, month, week numbers, text, monospace
+- **Images:** three months one under another, the week numbers, a weekend in red, today
+  in brackets — needs no data, any machine renders it
+
+**Summary:** A wall calendar as plain text — one month or three, week numbers, the weekends and today marked — in the plaintop style.
+
+**Description:**
+
+```
+plaincalendar — a wall calendar for the Plasma 6 desktop as plain monospace text, in the
+style of the plaintop monitor: no frames, no graphics. The month's name and year, a row
+of weekday names, the days in seven columns with the ISO week number in front of every
+row — one month, or three one under another, the previous, the current and the next, as
+a quarterly calendar on an office wall. Weekends in their own colour, today in brackets
+in another. The names, the first day of the week and the weekend come from your locale;
+the first day can be forced to Monday or Sunday, and the empty cells can show the
+neighbouring months' days. Nothing is fetched and nothing runs beside the widget: it
+needs nothing beyond Plasma.
+
+Right-click → Configure: months (one or three), week numbers, the first day of the
+week, the weekends' colour, the neighbouring months; font, size, cell width, four
+colours; the Mouse page lets both buttons through to the desktop like the other plaintop
+widgets. The default font is JetBrainsMono Nerd Font Mono; any monospace font works. The
+interface follows Plasma's language — ten languages, all but English and Russian
+machine-translated, corrections welcome.
+
+Source, issues, details: https://github.com/highscrren-dotcom/plaintop,
+devlog: https://t.me/s1dd1_logs
+
+———
+
+plaincalendar — настенный календарь для рабочего стола Plasma 6 простым моноширинным
+текстом, в стиле монитора plaintop: без рамок и графики. Название месяца и год, строка
+дней недели, дни в семь столбцов с номером недели по ISO перед каждой строкой — один
+месяц либо три столбиком, прошлый, текущий и следующий, как квартальный календарь на
+стене кабинета. Выходные своим цветом, сегодняшний день в скобках другим. Названия,
+первый день недели и выходные берутся из вашей локали; первый день можно принудительно
+сделать понедельником или воскресеньем, а в пустых ячейках показать дни соседних
+месяцев. Ничего не запрашивается, рядом с виджетом ничего не работает: сверх Plasma ему
+не нужно ничего.
+
+Правый клик → Настроить: месяцы (один или три), номера недель, первый день недели, цвет
+выходных, соседние месяцы; шрифт, кегль, ширина ячейки, четыре цвета; страница «Мышь»
+пропускает на стол обе кнопки, как у других виджетов plaintop. Шрифт по умолчанию —
+JetBrainsMono Nerd Font Mono; подойдёт любой моноширинный. Интерфейс говорит на языке
+Plasma — десять языков, всё, кроме английского и русского, переведено машинно,
+исправления приветствуются.
 
 Исходники, вопросы, подробности: https://github.com/highscrren-dotcom/plaintop,
 дневник разработки: https://t.me/s1dd1_logs
