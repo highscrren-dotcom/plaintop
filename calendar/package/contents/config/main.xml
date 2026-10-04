@@ -113,6 +113,36 @@
     <entry name="stickerAnimation" type="Int">
       <default>2</default>
     </entry>
+    <!-- Reminders. A note whose first line starts with a time ("14:30 Dentist") rings
+         remindLead minutes before it; one starting with "!" rings at remindHour of its day;
+         the accounts' events ring by their own VALARMs, and timed ones without any
+         remindLead minutes before when remindEvents is on. A reminder is a sheet by the
+         day's cell with snooze and done; an alarm older than remindMissed hours is dropped.
+         Optionally a system notification (notify-send) and a sound file too. -->
+    <entry name="reminders" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="remindLead" type="Int">
+      <default>10</default>
+    </entry>
+    <entry name="remindHour" type="String">
+      <default>09:00</default>
+    </entry>
+    <entry name="remindEvents" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="remindMissed" type="Int">
+      <default>12</default>
+    </entry>
+    <entry name="snoozeMinutes" type="Int">
+      <default>10</default>
+    </entry>
+    <entry name="remindSystem" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="remindSound" type="String">
+      <default></default>
+    </entry>
   </group>
 
 </kcfg>

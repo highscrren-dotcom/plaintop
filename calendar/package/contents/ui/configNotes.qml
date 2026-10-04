@@ -20,6 +20,14 @@ KCM.SimpleKCM {
     property alias cfg_stickerColumns: columnsField.value
     property alias cfg_stickerAnimation: animationBox.currentIndex
     property string cfg_noteAccount: "local"
+    property alias cfg_reminders: remindBox.checked
+    property alias cfg_remindLead: leadField.value
+    property alias cfg_remindHour: hourField.text
+    property alias cfg_remindEvents: eventsBox.checked
+    property alias cfg_remindMissed: missedField.value
+    property alias cfg_snoozeMinutes: snoozeField.value
+    property alias cfg_remindSystem: systemBox.checked
+    property alias cfg_remindSound: soundField.text
 
     // Colours are stored as strings, while ColorButton works with a color: converted in place.
     property string cfg_colorNote: "#8FB6E0"
@@ -112,6 +120,84 @@ KCM.SimpleKCM {
             enabled: notesBox.checked
             from: 1
             to: 180
+        }
+
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Reminders") }
+
+        CheckBox {
+            id: remindBox
+            Kirigami.FormData.label: i18n("Reminders:")
+            enabled: notesBox.checked
+            text: i18n("a sheet by the day's cell when an entry is due")
+        }
+
+        Label {
+            text: i18n("A note whose first line starts with a time — “14:30 Dentist” — becomes a timed\nentry and rings before it; “!Buy milk” stays a note and rings at the hour below.\nThe accounts' events ring by their own alarms. Both reach the phone through the\naccount. The sheet offers to snooze, to put it off till tomorrow, or done.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
+        }
+
+        SpinBox {
+            id: leadField
+            Kirigami.FormData.label: i18n("Before a timed entry, min:")
+            enabled: notesBox.checked && remindBox.checked
+            from: -1
+            to: 1440
+            textFromValue: function(value) { return value < 0 ? i18nc("no reminder before timed notes", "none") : String(value) }
+            valueFromText: function(text) { const n = parseInt(text); return isNaN(n) ? -1 : n }
+        }
+
+        TextField {
+            id: hourField
+            Kirigami.FormData.label: i18n("“!” notes ring at:")
+            enabled: notesBox.checked && remindBox.checked
+            Layout.preferredWidth: Kirigami.Units.gridUnit * 5
+            placeholderText: "09:00"
+            maximumLength: 5
+        }
+
+        CheckBox {
+            id: eventsBox
+            Kirigami.FormData.label: i18n("Events without an alarm:")
+            enabled: notesBox.checked && remindBox.checked
+            text: i18n("ring before them too, as for a timed note")
+        }
+
+        SpinBox {
+            id: snoozeField
+            Kirigami.FormData.label: i18n("Snooze for, min:")
+            enabled: notesBox.checked && remindBox.checked
+            from: 1
+            to: 180
+        }
+
+        SpinBox {
+            id: missedField
+            Kirigami.FormData.label: i18n("Show missed ones from the last, h:")
+            enabled: notesBox.checked && remindBox.checked
+            from: 0
+            to: 168
+        }
+
+        Label {
+            text: i18n("While the machine was off: alarms older than this are dropped quietly.")
+            opacity: 0.7
+            font: Kirigami.Theme.smallFont
+        }
+
+        CheckBox {
+            id: systemBox
+            Kirigami.FormData.label: i18n("System notification:")
+            enabled: notesBox.checked && remindBox.checked
+            text: i18n("also through notify-send — in Plasma's history, silenced by Do Not Disturb")
+        }
+
+        TextField {
+            id: soundField
+            Kirigami.FormData.label: i18n("Sound file:")
+            enabled: notesBox.checked && remindBox.checked
+            Layout.fillWidth: true
+            placeholderText: i18nc("placeholder: no sound", "none — or /usr/share/sounds/freedesktop/stereo/message.oga")
         }
 
         Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18nc("settings section", "Sticker") }

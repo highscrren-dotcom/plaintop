@@ -24,6 +24,9 @@ PlasmaCore.Dialog {
     property var entries: []           // the day's entries, as notes.py lists them
     property var accounts: []          // the document's accounts: names and errors
     property string noteAccount: "local"
+    // The reminders' syntax in the hint, with the hour "!" notes ring at.
+    property bool reminders: true
+    property string remindHour: "09:00"
 
     property string fontFamily: "JetBrainsMono Nerd Font Mono"
     property int fontSize: 10
@@ -54,7 +57,10 @@ PlasmaCore.Dialog {
         for (let i = 0; i < list.length; i++) {
             const e = list[i]
             if (e.own && e.account === noteAccount) {
-                own = e.summary + (e.description.length > 0 ? "\n" + e.description : "")
+                // The script rebuilds the editor's text: the time or the "!" in front.
+                own = (e.text !== undefined && e.text !== null && String(e.text).length > 0)
+                    ? String(e.text)
+                    : e.summary + (e.description.length > 0 ? "\n" + e.description : "")
                 break
             }
         }
@@ -142,11 +148,14 @@ PlasmaCore.Dialog {
             const err = accountError(g.id)
             out.push({ text: framed(accountName(g.id) + (err.length > 0 ? "  · " + i18nc("the account's last fetch failed", "offline") : "")), role: "dim" })
             for (const e of g.items) {
+                // A task's box, an entry's time, and "!" on a note of yours that rings.
                 let head = ""
                 if (e.kind === "todo")
                     head = (e.done ? "[x] " : "[ ] ")
                 else if (e.time.length > 0)
                     head = e.time + " "
+                else if (e.own && e.alarm === true)
+                    head = "!"
                 out.push({ text: framed(head + e.summary), role: e.done ? "dim" : "fg" })
                 if (e.description.length > 0)
                     out.push({ text: framed("  " + e.description.split("\n")[0]), role: "dim" })
@@ -157,6 +166,9 @@ PlasmaCore.Dialog {
         out.push({ text: separator, role: "dim" })
         const where = noteAccount === "local" ? "" : "  · " + accountName(noteAccount)
         out.push({ text: framed(i18nc("the sticker's hint line", "Esc closes · an empty note deletes it") + where), role: "dim" })
+        if (reminders)
+            out.push({ text: framed(i18nc("the sticker's second hint line: the reminders' syntax; %1 is an hour",
+                                          "14:30 text — rings before it · !text — rings at %1", remindHour)), role: "dim" })
         out.push({ text: bottom, role: "dim" })
         return out
     }

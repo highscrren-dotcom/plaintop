@@ -446,6 +446,13 @@ an account's calendar. Accounts on a new page, any number: Yandex and iCloud (Ca
 password), Google (CalDAV, OAuth login once), any CalDAV server, read-only ICS links. The
 description below says so; Yandex was tried end to end, the others not yet.
 
+**0.3 — not uploaded yet.** What's new: reminders. A note whose first line starts with a
+time ("14:30 Dentist") becomes a timed event and rings before it; "!Buy milk" rings at a
+set hour of its day; both are VALARMs, so the account's phone rings too. The accounts'
+events ring by their own alarms. A due alarm opens a sheet by the day's cell with snooze,
+an hour, tomorrow, done, and "task done" for tasks; missed ones come one by one. Optional
+system notification and sound. ⚠️ Not yet run on a desktop at the time of writing.
+
 - **File:** `dist/plaincalendar-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Date and Time
 - **License:** GPL-2.0-or-later

@@ -520,3 +520,126 @@ msgstr "Dni z wpisami:"
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "Kartka karteczki:"
+
+#: calendar/package/contents/ui/Reminder.qml:80
+#, kde-format
+msgctxt "reminder: snooze for N minutes"
+msgid "in %1 min"
+msgstr "za %1 min"
+
+#: calendar/package/contents/ui/Reminder.qml:81
+msgctxt "reminder: snooze for an hour"
+msgid "in an hour"
+msgstr "za godzinę"
+
+#: calendar/package/contents/ui/Reminder.qml:82
+#, kde-format
+msgctxt "reminder: tomorrow at an hour"
+msgid "tomorrow at %1"
+msgstr "jutro o %1"
+
+#: calendar/package/contents/ui/Reminder.qml:83
+msgctxt "reminder: acknowledged, never again"
+msgid "done"
+msgstr "gotowe"
+
+#: calendar/package/contents/ui/Reminder.qml:86
+msgctxt "reminder: complete the task on its server"
+msgid "task done"
+msgstr "zadanie wykonane"
+
+#: calendar/package/contents/ui/Reminder.qml:102
+msgctxt "reminder: it was due earlier"
+msgid "MISSED"
+msgstr "POMINIĘTE"
+
+#: calendar/package/contents/ui/Sticker.qml:170
+#, kde-format
+msgctxt "the sticker's second hint line: the reminders' syntax; %1 is an hour"
+msgid "14:30 text — rings before it · !text — rings at %1"
+msgstr "14:30 tekst — dzwoni przed · !tekst — dzwoni o %1"
+
+#: calendar/package/contents/ui/configNotes.qml:125
+msgctxt "settings section"
+msgid "Reminders"
+msgstr "Przypomnienia"
+
+#: calendar/package/contents/ui/configNotes.qml:129
+msgid "Reminders:"
+msgstr "Przypomnienia:"
+
+#: calendar/package/contents/ui/configNotes.qml:131
+msgid "a sheet by the day's cell when an entry is due"
+msgstr "arkusz przy komórce dnia, gdy nadchodzi termin wpisu"
+
+#: calendar/package/contents/ui/configNotes.qml:135
+msgid ""
+"A note whose first line starts with a time — “14:30 Dentist” — becomes a "
+"timed\n"
+"entry and rings before it; “!Buy milk” stays a note and rings at the hour "
+"below.\n"
+"The accounts' events ring by their own alarms. Both reach the phone "
+"through the\n"
+"account. The sheet offers to snooze, to put it off till tomorrow, or done."
+msgstr ""
+"Notatka, której pierwszy wiersz zaczyna się godziną — „14:30 Dentysta” — "
+"staje się\n"
+"wpisem z godziną i dzwoni przed nim; „!Kup mleko” zostaje notatką i dzwoni "
+"o godzinie\n"
+"poniżej. Zdarzenia kont dzwonią własnymi alarmami. Oba trafiają na telefon "
+"przez konto.\n"
+"Arkusz proponuje odłożyć, przenieść na jutro albo „gotowe”."
+
+#: calendar/package/contents/ui/configNotes.qml:142
+msgid "Before a timed entry, min:"
+msgstr "Przed wpisem z godziną, min:"
+
+#: calendar/package/contents/ui/configNotes.qml:146
+msgctxt "no reminder before timed notes"
+msgid "none"
+msgstr "brak"
+
+#: calendar/package/contents/ui/configNotes.qml:152
+msgid "“!” notes ring at:"
+msgstr "Notatki z „!” dzwonią o:"
+
+#: calendar/package/contents/ui/configNotes.qml:161
+msgid "Events without an alarm:"
+msgstr "Zdarzenia bez alarmu:"
+
+#: calendar/package/contents/ui/configNotes.qml:163
+msgid "ring before them too, as for a timed note"
+msgstr "dzwonić też przed nimi, jak przed notatką z godziną"
+
+#: calendar/package/contents/ui/configNotes.qml:168
+msgid "Snooze for, min:"
+msgstr "Odłożyć na, min:"
+
+#: calendar/package/contents/ui/configNotes.qml:176
+msgid "Show missed ones from the last, h:"
+msgstr "Pokazywać pominięte z ostatnich, godz.:"
+
+#: calendar/package/contents/ui/configNotes.qml:183
+msgid ""
+"While the machine was off: alarms older than this are dropped quietly."
+msgstr "Gdy maszyna była wyłączona: starsze alarmy są pomijane po cichu."
+
+#: calendar/package/contents/ui/configNotes.qml:190
+msgid "System notification:"
+msgstr "Powiadomienie systemowe:"
+
+#: calendar/package/contents/ui/configNotes.qml:192
+msgid ""
+"also through notify-send — in Plasma's history, silenced by Do Not Disturb"
+msgstr ""
+"także przez notify-send — w historii Plasmy, wyciszone w trybie „Nie "
+"przeszkadzać”"
+
+#: calendar/package/contents/ui/configNotes.qml:197
+msgid "Sound file:"
+msgstr "Plik dźwiękowy:"
+
+#: calendar/package/contents/ui/configNotes.qml:200
+msgctxt "placeholder: no sound"
+msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
+msgstr "brak — albo /usr/share/sounds/freedesktop/stereo/message.oga"

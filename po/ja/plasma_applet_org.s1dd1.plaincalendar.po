@@ -514,3 +514,121 @@ msgstr "記録のある日:"
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "付箋の用紙:"
+
+#: calendar/package/contents/ui/Reminder.qml:80
+#, kde-format
+msgctxt "reminder: snooze for N minutes"
+msgid "in %1 min"
+msgstr "%1 分後"
+
+#: calendar/package/contents/ui/Reminder.qml:81
+msgctxt "reminder: snooze for an hour"
+msgid "in an hour"
+msgstr "1時間後"
+
+#: calendar/package/contents/ui/Reminder.qml:82
+#, kde-format
+msgctxt "reminder: tomorrow at an hour"
+msgid "tomorrow at %1"
+msgstr "明日 %1"
+
+#: calendar/package/contents/ui/Reminder.qml:83
+msgctxt "reminder: acknowledged, never again"
+msgid "done"
+msgstr "完了"
+
+#: calendar/package/contents/ui/Reminder.qml:86
+msgctxt "reminder: complete the task on its server"
+msgid "task done"
+msgstr "タスク完了"
+
+#: calendar/package/contents/ui/Reminder.qml:102
+msgctxt "reminder: it was due earlier"
+msgid "MISSED"
+msgstr "見逃し"
+
+#: calendar/package/contents/ui/Sticker.qml:170
+#, kde-format
+msgctxt "the sticker's second hint line: the reminders' syntax; %1 is an hour"
+msgid "14:30 text — rings before it · !text — rings at %1"
+msgstr "14:30 テキスト — その前に通知 · !テキスト — %1 に通知"
+
+#: calendar/package/contents/ui/configNotes.qml:125
+msgctxt "settings section"
+msgid "Reminders"
+msgstr "リマインダー"
+
+#: calendar/package/contents/ui/configNotes.qml:129
+msgid "Reminders:"
+msgstr "リマインダー:"
+
+#: calendar/package/contents/ui/configNotes.qml:131
+msgid "a sheet by the day's cell when an entry is due"
+msgstr "予定の時刻にその日のマスの横にシートを表示"
+
+#: calendar/package/contents/ui/configNotes.qml:135
+msgid ""
+"A note whose first line starts with a time — “14:30 Dentist” — becomes a "
+"timed\n"
+"entry and rings before it; “!Buy milk” stays a note and rings at the hour "
+"below.\n"
+"The accounts' events ring by their own alarms. Both reach the phone "
+"through the\n"
+"account. The sheet offers to snooze, to put it off till tomorrow, or done."
+msgstr ""
+"最初の行が時刻で始まるメモ —「14:30 歯医者」— は時刻付きの予定になり、その前に通知します。\n"
+"「!牛乳を買う」はメモのままで、下の時刻に通知します。アカウントの予定は自身の\n"
+"アラームで通知します。どちらもアカウント経由で電話にも届きます。シートでは後で、\n"
+"明日に延期、完了を選べます。"
+
+#: calendar/package/contents/ui/configNotes.qml:142
+msgid "Before a timed entry, min:"
+msgstr "時刻付き予定の何分前:"
+
+#: calendar/package/contents/ui/configNotes.qml:146
+msgctxt "no reminder before timed notes"
+msgid "none"
+msgstr "なし"
+
+#: calendar/package/contents/ui/configNotes.qml:152
+msgid "“!” notes ring at:"
+msgstr "「!」メモの通知時刻:"
+
+#: calendar/package/contents/ui/configNotes.qml:161
+msgid "Events without an alarm:"
+msgstr "アラームのない予定:"
+
+#: calendar/package/contents/ui/configNotes.qml:163
+msgid "ring before them too, as for a timed note"
+msgstr "時刻付きメモと同様にその前にも通知する"
+
+#: calendar/package/contents/ui/configNotes.qml:168
+msgid "Snooze for, min:"
+msgstr "後で通知、分:"
+
+#: calendar/package/contents/ui/configNotes.qml:176
+msgid "Show missed ones from the last, h:"
+msgstr "見逃した通知を表示する範囲、時間:"
+
+#: calendar/package/contents/ui/configNotes.qml:183
+msgid ""
+"While the machine was off: alarms older than this are dropped quietly."
+msgstr "電源が切れていた間のもの: これより古い通知は静かに破棄されます。"
+
+#: calendar/package/contents/ui/configNotes.qml:190
+msgid "System notification:"
+msgstr "システム通知:"
+
+#: calendar/package/contents/ui/configNotes.qml:192
+msgid ""
+"also through notify-send — in Plasma's history, silenced by Do Not Disturb"
+msgstr "notify-send でも通知 — Plasma の履歴に残り、「通知を停止」中は鳴らない"
+
+#: calendar/package/contents/ui/configNotes.qml:197
+msgid "Sound file:"
+msgstr "サウンドファイル:"
+
+#: calendar/package/contents/ui/configNotes.qml:200
+msgctxt "placeholder: no sound"
+msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
+msgstr "なし — または /usr/share/sounds/freedesktop/stereo/message.oga"

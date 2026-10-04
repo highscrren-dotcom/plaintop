@@ -686,3 +686,66 @@ a program started the way the host starts it survives a restart of the shell.
 **Revisit when:** test 18 fails on a later Plasma or Qt — then the fallback rectangle is the mask and the
 decision's second half is rewritten; or when a block wants more than one action per line
 beyond the menu.
+
+## 15. Reminders in the calendar: the time in the text, VALARM in the data, one sheet at a time (2026-10-04)
+
+**Decision:** a reminder is set by writing, not by a form. A note whose first line starts
+with a time — `14:30 Dentist`, `9.00-10.30 Standup` — is saved as a timed event (DTSTART and
+DTEND in UTC, an hour long unless a range is given) with a VALARM `remindLead` minutes
+before it; `!Buy milk` stays an all-day note with a VALARM at `remindHour` of its day; plain
+text stays plain. The accounts' entries ring by their own VALARMs (relative to the start or
+the end, or absolute; a relative one on an all-day entry counts from `remindHour`, the hour a
+phone would use), and a timed entry without any rings `remindLead` before when
+`remindEvents` says so. `notes.py` computes the schedule — every alarm from `remindMissed`
+hours back to 36 hours ahead — into the document as `alarms`, each with a key naming the
+account, the uid, the occurrence and the alarm's index; acknowledgements and snoozes are
+local, in `reminders.json` beside the caches, never written to a server. The widget's clock
+looks every half minute, takes the first due alarm, claims it (an exclusive file, so two
+instances on two screens show it once) and opens the sheet; the sheet's choice goes back as
+`ack`, `snooze MINUTES|ISO` or `done ACCOUNT UID KEY`, each printing the document anew, which
+brings the next due alarm. One sheet at a time, in order; a late one is headed MISSED.
+
+**The sheet.** The sticker's kind of window — `PlasmaCore.Dialog`, no background, the
+character frame, the widget's font and palette — of type `Notification`: it does not take
+the keyboard from what the user is typing, so it is driven by the pointer, hover marking a
+row and a click choosing. Rows: the day and the time, the entry, its account, then
+`> in 10 min`, `in an hour`, `tomorrow at 09:00`, `done`, and `task done` for a task, which
+completes it on its server (GET, STATUS:COMPLETED, PUT with If-Match). It hangs from the
+day's cell when the grid shows the day, else from the widget's first line.
+
+**Why the text and not fields.** The project has no forms: a sticker is a sheet of text,
+and "14:30 Dentist" reads in the grid as it is typed and round-trips through iCalendar (the
+time back from DTSTART, the "!" back from the alarm). A field for the time would be the one
+widget in the set with a widget-toolkit control on its face.
+
+**Why VALARM and not a schedule of our own.** The data already travel to Yandex, iCloud and
+Google over CalDAV; a VALARM in the same resource makes the phone ring with no second
+mechanism, and the desktop reads the servers' alarms by the same rule. UTC in DTSTART
+avoids a VTIMEZONE for every server.
+
+**Why local ack and snooze.** A snooze is this desktop's business; writing it to the server
+would move the event or change the alarm for every device. A week's worth is kept, then
+pruned.
+
+**What we pay.** The sheet has no keyboard. A snooze on one machine does not reach another.
+Alarms of all-day entries follow `remindHour`, not the server's notion. `--missed` hours of
+old alarms are shown on start, one by one — long enough away and they are dropped quietly.
+The optional system notification goes through `notify-send`, a dependency the user opts
+into; the sound through `pw-play` or `paplay`.
+
+**Alternatives considered.** A form with a time picker — not the project's face. KNotification
+from QML (`org.kde.notification`) — needs a `.notifyrc` installed system-wide, which a
+plasmoid package does not ship. A daemon of our own — the executable engine already runs the
+script every few minutes, and a half-minute clock in the widget is enough.
+
+**Verified by running:** `tests/notes.py`, 114 checks: VALARM and DURATION parsed, when each
+rings (relative, off the end, absolute, a day before an all-day entry, the lead), the
+schedule with acknowledged and snoozed alarms and the missed window, the timed and the "!"
+notes round-tripping through iCalendar, the CLI — set, ack, snooze by minutes and by time,
+claim first and second, a task completed on the fake server with If-Match. **Not yet:** the
+sheet on a desktop — placement, that a Notification-type dialog shows by a visualParent
+and takes no focus, hover and click on it, the claim with two instances, the system
+notification and the sound.
+
+**Revisit when:** the desktop shows the Notification type cannot be placed by an item, or
+the sheet needs the keyboard after all — then PopupMenu with `hideOnWindowDeactivate` off.

@@ -525,3 +525,130 @@ msgstr "Jours avec entrées :"
 msgctxt "palette: colour of"
 msgid "Sticker sheet:"
 msgstr "Feuille du pense-bête :"
+
+#: calendar/package/contents/ui/Reminder.qml:80
+#, kde-format
+msgctxt "reminder: snooze for N minutes"
+msgid "in %1 min"
+msgstr "dans %1 min"
+
+#: calendar/package/contents/ui/Reminder.qml:81
+msgctxt "reminder: snooze for an hour"
+msgid "in an hour"
+msgstr "dans une heure"
+
+#: calendar/package/contents/ui/Reminder.qml:82
+#, kde-format
+msgctxt "reminder: tomorrow at an hour"
+msgid "tomorrow at %1"
+msgstr "demain à %1"
+
+#: calendar/package/contents/ui/Reminder.qml:83
+msgctxt "reminder: acknowledged, never again"
+msgid "done"
+msgstr "vu"
+
+#: calendar/package/contents/ui/Reminder.qml:86
+msgctxt "reminder: complete the task on its server"
+msgid "task done"
+msgstr "tâche terminée"
+
+#: calendar/package/contents/ui/Reminder.qml:102
+msgctxt "reminder: it was due earlier"
+msgid "MISSED"
+msgstr "MANQUÉ"
+
+#: calendar/package/contents/ui/Sticker.qml:170
+#, kde-format
+msgctxt "the sticker's second hint line: the reminders' syntax; %1 is an hour"
+msgid "14:30 text — rings before it · !text — rings at %1"
+msgstr "14:30 texte — sonne avant · !texte — sonne à %1"
+
+#: calendar/package/contents/ui/configNotes.qml:125
+msgctxt "settings section"
+msgid "Reminders"
+msgstr "Rappels"
+
+#: calendar/package/contents/ui/configNotes.qml:129
+msgid "Reminders:"
+msgstr "Rappels :"
+
+#: calendar/package/contents/ui/configNotes.qml:131
+msgid "a sheet by the day's cell when an entry is due"
+msgstr ""
+"une feuille près de la case du jour quand une entrée arrive à échéance"
+
+#: calendar/package/contents/ui/configNotes.qml:135
+msgid ""
+"A note whose first line starts with a time — “14:30 Dentist” — becomes a "
+"timed\n"
+"entry and rings before it; “!Buy milk” stays a note and rings at the hour "
+"below.\n"
+"The accounts' events ring by their own alarms. Both reach the phone "
+"through the\n"
+"account. The sheet offers to snooze, to put it off till tomorrow, or done."
+msgstr ""
+"Une note dont la première ligne commence par une heure — « 14:30 Dentiste "
+"» — devient un\n"
+"rendez-vous et sonne avant ; « !Acheter du lait » reste une note et sonne "
+"à l'heure ci-dessous.\n"
+"Les événements des comptes sonnent avec leurs propres alarmes. Les deux "
+"atteignent le\n"
+"téléphone via le compte. La feuille propose de reporter, de remettre à "
+"demain, ou vu."
+
+#: calendar/package/contents/ui/configNotes.qml:142
+msgid "Before a timed entry, min:"
+msgstr "Avant un rendez-vous, min :"
+
+#: calendar/package/contents/ui/configNotes.qml:146
+msgctxt "no reminder before timed notes"
+msgid "none"
+msgstr "aucun"
+
+#: calendar/package/contents/ui/configNotes.qml:152
+msgid "“!” notes ring at:"
+msgstr "Les notes « ! » sonnent à :"
+
+#: calendar/package/contents/ui/configNotes.qml:161
+msgid "Events without an alarm:"
+msgstr "Événements sans alarme :"
+
+#: calendar/package/contents/ui/configNotes.qml:163
+msgid "ring before them too, as for a timed note"
+msgstr "sonner aussi avant eux, comme pour une note horaire"
+
+#: calendar/package/contents/ui/configNotes.qml:168
+msgid "Snooze for, min:"
+msgstr "Reporter de, min :"
+
+#: calendar/package/contents/ui/configNotes.qml:176
+msgid "Show missed ones from the last, h:"
+msgstr "Montrer les manqués des dernières, h :"
+
+#: calendar/package/contents/ui/configNotes.qml:183
+msgid ""
+"While the machine was off: alarms older than this are dropped quietly."
+msgstr ""
+"Pendant que la machine était éteinte : les alarmes plus anciennes sont "
+"abandonnées sans bruit."
+
+#: calendar/package/contents/ui/configNotes.qml:190
+msgid "System notification:"
+msgstr "Notification système :"
+
+#: calendar/package/contents/ui/configNotes.qml:192
+msgid ""
+"also through notify-send — in Plasma's history, silenced by Do Not Disturb"
+msgstr ""
+"aussi via notify-send — dans l'historique de Plasma, muet en « Ne pas "
+"déranger »"
+
+#: calendar/package/contents/ui/configNotes.qml:197
+msgid "Sound file:"
+msgstr "Fichier son :"
+
+#: calendar/package/contents/ui/configNotes.qml:200
+msgctxt "placeholder: no sound"
+msgid "none — or /usr/share/sounds/freedesktop/stereo/message.oga"
+msgstr "aucun — ou /usr/share/sounds/freedesktop/stereo/message.oga"

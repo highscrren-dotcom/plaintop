@@ -22,10 +22,23 @@ one-off browser login. The widget's own note of a day is an all-day VEVENT with 
 plaincalendar-<date>@<host>, in the account the settings name; the first line of the
 text is the SUMMARY, the rest the DESCRIPTION.
 
-    notes.py sync [--from D --to D] [--every MIN] [--force] [--upcoming N]   refresh due accounts, print
-    notes.py dump [--from D --to D] [--upcoming N]                            print from the caches
-    notes.py set ACCOUNT DATE B64TEXT                                          create or update the note
+Reminders live in the text and in the data. A first line "14:30 Dentist" makes the note a
+timed event (DTSTART/DTEND in UTC, an hour long unless "14:30-15:15") with a VALARM
+--lead minutes before it; "!Buy milk" keeps the note all-day and sets a VALARM at --hour
+of that day. Both reach the account's server, so a phone rings too. The document carries
+`alarms`: every alarm of every entry (VALARMs, or --lead before a timed entry without one)
+that falls between --missed hours ago and 36 hours ahead, minus those acknowledged, with
+snoozed ones moved; the widget fires them. The state is reminders.json in the cache.
+
+    notes.py sync [--from D --to D] [--every MIN] [--force] [--upcoming N] [ALARM OPTS]
+    notes.py dump [--from D --to D] [--upcoming N] [ALARM OPTS]               print from the caches
+    notes.py set ACCOUNT DATE B64TEXT [ALARM OPTS]                            create or update the note
     notes.py delete ACCOUNT DATE
+    notes.py ack KEY                        the alarm was seen; never again
+    notes.py snooze KEY MINUTES|ISO         again in MINUTES, or at a local "YYYY-MM-DDTHH:MM"
+    notes.py claim KEY                      {"claimed": true} for the one instance that asked first
+    notes.py done ACCOUNT UID [KEY]         complete the task on its server, acknowledge KEY
+      ALARM OPTS: --lead MIN (10; -1 none) --hour HH:MM (09:00) --no-events --missed HOURS (12) --no-alarms
     notes.py accounts                       the accounts without their secrets
     notes.py account-save B64JSON           add or replace one (by id); its secrets from inbox.ini
     notes.py account-remove ID
@@ -64,6 +77,9 @@ ACCOUNTS = CONFIG_DIR / "accounts.json"
 # reads /proc/*/cmdline — so it writes it here (QtCore.Settings, hex), in a folder kept
 # at 700, and account-save takes it and deletes the file.
 INBOX = CONFIG_DIR / "inbox.ini"
+# What was acknowledged or snoozed, and the claims of the instance that shows an alarm.
+REMINDERS = CACHE_DIR / "reminders.json"
+CLAIMS = CACHE_DIR / "claims"
 PRODID = "-//s1dd1//plaincalendar//EN"
 TIMEOUT = 15
 DAV = "DAV:"
@@ -133,19 +149,21 @@ def components(text):
                 kind, props = stack.pop()
                 if kind in ("VEVENT", "VTODO"):
                     out.append((kind, props))
+                elif kind == "VALARM" and stack:
+                    # An alarm belongs to the entry around it: its properties ride along
+                    # as one pseudo-property, the list in place of a value.
+                    stack[-1][1].append(("VALARM", {}, props))
         elif stack:
             stack[-1][1].append((name, params, value))
     return out
 
 
-def to_local(value, params):
-    """A DATE or DATE-TIME value as (date, "HH:MM" or ""), in local time."""
-    value = value.strip()
-    if params.get("VALUE") == "DATE" or re.fullmatch(r"\d{8}", value):
-        return dt.date(int(value[:4]), int(value[4:6]), int(value[6:8])), ""
-    m = re.fullmatch(r"(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?(Z?)", value)
+def local_datetime(value, params):
+    """A DATE-TIME value as a naive local datetime, or None: Z and TZID are converted,
+    a floating time is taken as local."""
+    m = re.fullmatch(r"(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})?(Z?)", value.strip())
     if not m:
-        return None, ""
+        return None
     y, mo, d, hh, mi, ss, z = m.groups()
     when = dt.datetime(int(y), int(mo), int(d), int(hh), int(mi), int(ss or 0))
     tzid = params.get("TZID")
@@ -156,7 +174,51 @@ def to_local(value, params):
             when = when.replace(tzinfo=ZoneInfo(tzid)).astimezone().replace(tzinfo=None)
         except Exception:
             pass                # an unknown zone name: taken as local time
+    return when
+
+
+def to_local(value, params):
+    """A DATE or DATE-TIME value as (date, "HH:MM" or ""), in local time."""
+    value = value.strip()
+    if params.get("VALUE") == "DATE" or re.fullmatch(r"\d{8}", value):
+        return dt.date(int(value[:4]), int(value[4:6]), int(value[6:8])), ""
+    when = local_datetime(value, params)
+    if when is None:
+        return None, ""
     return when.date(), when.strftime("%H:%M")
+
+
+def utc_stamp(when):
+    """A naive local datetime as an iCalendar UTC value: unambiguous on every server,
+    no VTIMEZONE needed."""
+    return when.astimezone(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def parse_duration(value):
+    """An iCalendar duration ("-PT15M", "P1DT9H", "PT0S", "P2W") in seconds, signed."""
+    m = re.fullmatch(r"([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?", value.strip())
+    if not m:
+        return None
+    sign, w, d, h, mi, sec = m.groups()
+    total = (int(w or 0) * 7 + int(d or 0)) * 86400 + int(h or 0) * 3600 + int(mi or 0) * 60 + int(sec or 0)
+    return -total if sign == "-" else total
+
+
+def alarm_of(props):
+    """A VALARM's trigger: {"at": local "YYYY-MM-DDTHH:MM"} for an absolute one, or
+    {"rel": seconds, "end": bool} relative to the start (or the end). The action does not
+    matter here: DISPLAY, AUDIO and EMAIL all ring on the desktop."""
+    for name, params, value in props:
+        if name != "TRIGGER":
+            continue
+        if params.get("VALUE") == "DATE-TIME" or "T" in value and value.strip()[:1].isdigit():
+            when = local_datetime(value, params)
+            return {"at": when.strftime("%Y-%m-%dT%H:%M")} if when else None
+        secs = parse_duration(value)
+        if secs is None:
+            return None
+        return {"rel": secs, "end": params.get("RELATED", "START").upper() == "END"}
+    return None
 
 
 def parse_rrule(value):
@@ -171,9 +233,12 @@ def parse_rrule(value):
 def entry_of(kind, props):
     """One stored entry from a component's properties, or None when it has no date."""
     e = {"kind": "todo" if kind == "VTODO" else "event", "uid": "", "summary": "", "description": "",
-         "start": None, "time": "", "span": 1, "rrule": None, "exdates": [], "done": False}
+         "start": None, "time": "", "span": 1, "rrule": None, "exdates": [], "done": False,
+         "alarms": [], "minutes": 0, "end": ""}
     end = None
     due = None
+    start_dt = end_dt = None
+    duration = None
     for name, params, value in props:
         if name == "UID":
             e["uid"] = value
@@ -185,6 +250,7 @@ def entry_of(kind, props):
             d, t = to_local(value, params)
             if d:
                 e["start"], e["time"] = d.isoformat(), t
+                start_dt = local_datetime(value, params) if t else None
         elif name == "DUE" and kind == "VTODO":
             d, t = to_local(value, params)
             if d:
@@ -192,6 +258,13 @@ def entry_of(kind, props):
         elif name == "DTEND" and kind == "VEVENT":
             d, t = to_local(value, params)
             end = (d, t)
+            end_dt = local_datetime(value, params) if t else None
+        elif name == "DURATION":
+            duration = parse_duration(value)
+        elif name == "VALARM":
+            alarm = alarm_of(value)
+            if alarm:
+                e["alarms"].append(alarm)
         elif name == "RRULE":
             e["rrule"] = parse_rrule(value)
         elif name == "EXDATE":
@@ -212,6 +285,14 @@ def entry_of(kind, props):
         # All-day events end on the day after their last day (exclusive).
         span = (end[0] - dt.date.fromisoformat(e["start"])).days
         e["span"] = max(1, span)
+    # A timed entry's length, for alarms set off its end and for the text of a note.
+    if e["time"]:
+        if start_dt and end_dt:
+            e["minutes"] = max(0, int((end_dt - start_dt).total_seconds() // 60))
+            if end_dt.date() == start_dt.date():
+                e["end"] = end_dt.strftime("%H:%M")
+        elif duration:
+            e["minutes"] = max(0, duration // 60)
     return e
 
 
@@ -321,25 +402,86 @@ def note_uid(date):
     return f"plaincalendar-{date}@{socket.gethostname() or 'host'}"
 
 
-def own_ics(date, text, uid=None):
-    """The widget's note as an all-day event: the first line is the summary."""
+HEAD_RE = re.compile(r"^(!?)\s*(\d{1,2})[:.](\d{2})(?:\s*[-\u2013\u2014]\s*(\d{1,2})[:.](\d{2}))?(?:\s+(.*))?$")
+
+
+def parse_head(line):
+    """The first line of a note: ("!" or "", start (h, m) or None, end (h, m) or None,
+    the summary). "14:30 Dentist", "9.00-10.30 Standup", "!Buy milk", or plain text."""
+    m = HEAD_RE.match(line.strip())
+    if m:
+        bang, h1, m1, h2, m2, rest = m.groups()
+        start = (int(h1), int(m1))
+        end = (int(h2), int(m2)) if h2 is not None else None
+        if start[0] < 24 and start[1] < 60 and (end is None or (end[0] < 24 and end[1] < 60)):
+            return bang, start, end, (rest or "").strip()
+    if line.strip().startswith("!"):
+        return "!", None, None, line.strip()[1:].strip()
+    return "", None, None, line.strip()
+
+
+def parse_hour(value, fallback=(9, 0)):
+    m = re.fullmatch(r"(\d{1,2})[:.](\d{2})", str(value or "").strip())
+    if m and int(m.group(1)) < 24 and int(m.group(2)) < 60:
+        return int(m.group(1)), int(m.group(2))
+    return fallback
+
+
+def own_ics(date, text, uid=None, lead=10, hour="09:00"):
+    """The widget's note as iCalendar: an all-day event, or a timed one when the first
+    line starts with a time; the rest of that line is the summary, the other lines the
+    description. A timed note gets a VALARM `lead` minutes before (none when lead < 0);
+    "!" on an all-day note sets one at `hour` of its day."""
     day = dt.date.fromisoformat(date)
     lines = [l.rstrip() for l in text.strip().split("\n")]
-    summary = lines[0] if lines else ""
+    bang, start, end, summary = parse_head(lines[0] if lines else "")
     description = "\n".join(lines[1:]).strip()
     props = [
         "BEGIN:VCALENDAR", "VERSION:2.0", f"PRODID:{PRODID}",
         "BEGIN:VEVENT",
         f"UID:{uid or note_uid(date)}",
         "DTSTAMP:" + dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ"),
-        "DTSTART;VALUE=DATE:" + day.strftime("%Y%m%d"),
-        "DTEND;VALUE=DATE:" + (day + dt.timedelta(days=1)).strftime("%Y%m%d"),
-        "SUMMARY:" + escape(summary),
     ]
+    alarm = None
+    if start:
+        begins = dt.datetime(day.year, day.month, day.day, start[0], start[1])
+        ends = dt.datetime(day.year, day.month, day.day, end[0], end[1]) if end else begins + dt.timedelta(hours=1)
+        if ends <= begins:
+            ends = begins + dt.timedelta(hours=1)
+        props += ["DTSTART:" + utc_stamp(begins), "DTEND:" + utc_stamp(ends)]
+        if lead is not None and lead >= 0:
+            alarm = "TRIGGER:-PT%dM" % lead if lead > 0 else "TRIGGER:PT0S"
+    else:
+        props += ["DTSTART;VALUE=DATE:" + day.strftime("%Y%m%d"),
+                  "DTEND;VALUE=DATE:" + (day + dt.timedelta(days=1)).strftime("%Y%m%d")]
+        if bang:
+            h, mi = parse_hour(hour)
+            alarm = "TRIGGER;VALUE=DATE-TIME:" + utc_stamp(dt.datetime(day.year, day.month, day.day, h, mi))
+    props.append("SUMMARY:" + escape(summary))
     if description:
         props.append("DESCRIPTION:" + escape(description))
+    if alarm:
+        props += ["BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + escape(summary or "plaincalendar"),
+                  alarm, "END:VALARM"]
     props += ["END:VEVENT", "END:VCALENDAR"]
     return "\r\n".join(fold(p) for p in props) + "\r\n"
+
+
+def own_text(e):
+    """The text of the widget's own note as the editor shows it: the time or the "!"
+    back in front of the summary, the description below."""
+    head = ""
+    if e.get("time"):
+        head = e["time"]
+        if e.get("end") and e.get("minutes", 60) != 60:
+            head += "-" + e["end"]
+        head += " "
+    elif e.get("alarms"):
+        head = "!"
+    text = head + e.get("summary", "")
+    if e.get("description"):
+        text += "\n" + e["description"]
+    return text
 
 
 def is_own(e):
@@ -437,9 +579,9 @@ def local_entries():
     return out
 
 
-def local_set(date, text):
+def local_set(date, text, lead=10, hour="09:00"):
     LOCAL_DIR.mkdir(parents=True, exist_ok=True)
-    (LOCAL_DIR / f"{note_uid(date)}.ics").write_text(own_ics(date, text), encoding="utf-8")
+    (LOCAL_DIR / f"{note_uid(date)}.ics").write_text(own_ics(date, text, None, lead, hour), encoding="utf-8")
 
 
 def local_delete(date):
@@ -761,14 +903,117 @@ def refresh(account, lo, hi):
 def shown(e, account_id, day):
     return {"account": account_id, "uid": e.get("uid", ""), "kind": e["kind"],
             "summary": e.get("summary", ""), "description": e.get("description", ""),
-            "time": e.get("time", ""), "done": bool(e.get("done")), "own": is_own(e),
+            "time": e.get("time", ""), "end": e.get("end", ""), "done": bool(e.get("done")),
+            "own": is_own(e), "alarm": bool(e.get("alarms")),
+            "text": own_text(e) if is_own(e) else "",
             "date": day.isoformat(), "start": e["start"]}
 
 
-def build(accounts, lo, hi, upcoming_n, caches):
+# ── Reminders ─────────────────────────────────────────────────────────────────
+def load_state():
+    if REMINDERS.exists():
+        try:
+            st = json.loads(REMINDERS.read_text(encoding="utf-8"))
+            if isinstance(st, dict):
+                return {"acked": dict(st.get("acked") or {}), "snoozed": dict(st.get("snoozed") or {})}
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {"acked": {}, "snoozed": {}}
+
+
+def save_state(st):
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = REMINDERS.with_suffix(".tmp")
+    tmp.write_text(json.dumps(st, ensure_ascii=False), encoding="utf-8")
+    tmp.replace(REMINDERS)
+
+
+def prune_state(st, now):
+    """Acknowledgements and snoozes older than a week go; so do claim files."""
+    limit = (now - dt.timedelta(days=7)).strftime("%Y-%m-%dT%H:%M")
+    st["acked"] = {k: v for k, v in st["acked"].items() if str(v) >= limit}
+    st["snoozed"] = {k: v for k, v in st["snoozed"].items() if str(v) >= limit}
+    if CLAIMS.exists():
+        cutoff = (now - dt.timedelta(days=3)).timestamp()
+        for p in CLAIMS.iterdir():
+            try:
+                if p.stat().st_mtime < cutoff:
+                    p.unlink()
+            except OSError:
+                pass
+
+
+def alarm_options(lead=10, hour="09:00", events=True, missed=12, alarms=True):
+    return {"lead": lead, "hour": hour, "events": events, "missed": missed, "alarms": alarms}
+
+
+def alarm_times(e, day, opts):
+    """When an entry's occurrence on `day` rings, local datetimes. A VALARM relative to
+    the start of an all-day entry counts from `hour` of its day, not midnight — the hour
+    a phone would use; one relative to the end counts from the end of a timed entry.
+    Without a VALARM, a timed entry rings `lead` minutes before, when asked."""
+    h, mi = parse_hour(opts["hour"])
+    if e.get("time"):
+        t = dt.datetime.strptime(e["time"], "%H:%M").time()
+        start = dt.datetime.combine(day, t)
+    else:
+        start = dt.datetime.combine(day, dt.time(h, mi))
+    out = []
+    for a in e.get("alarms", []):
+        if "at" in a:
+            try:
+                out.append(dt.datetime.strptime(a["at"], "%Y-%m-%dT%H:%M"))
+            except ValueError:
+                pass
+        else:
+            anchor = start + dt.timedelta(minutes=e.get("minutes", 0)) if a.get("end") and e.get("time") else start
+            out.append(anchor + dt.timedelta(seconds=int(a.get("rel", 0))))
+    if not e.get("alarms") and e.get("time") and opts.get("events") and opts.get("lead", -1) is not None and opts["lead"] >= 0:
+        out.append(start - dt.timedelta(minutes=opts["lead"]))
+    return out
+
+
+def alarm_key(account_id, e, day, i):
+    return f"{account_id}|{e.get('uid', '')}|{day.isoformat()}|{i}"
+
+
+def alarms_for(sources, now, opts, st):
+    """The alarms due between `missed` hours ago and 36 hours ahead, acknowledged ones
+    left out, snoozed ones at their new time, sorted by time."""
+    if not opts.get("alarms", True):
+        return []
+    lo = now - dt.timedelta(hours=max(0, opts.get("missed", 12)))
+    hi = now + dt.timedelta(hours=36)
+    out = []
+    for account_id, cache in sources:
+        for e in cache.get("entries", []):
+            if e["kind"] == "todo" and e.get("done"):
+                continue
+            # An alarm may precede its day (-P1D) or follow a snooze into the next one.
+            for o in occurrences(e, lo.date() - dt.timedelta(days=2), hi.date() + dt.timedelta(days=1)):
+                for i, when in enumerate(alarm_times(e, o, opts)):
+                    key = alarm_key(account_id, e, o, i)
+                    if key in st["acked"]:
+                        continue
+                    if key in st["snoozed"]:
+                        try:
+                            when = dt.datetime.strptime(st["snoozed"][key], "%Y-%m-%dT%H:%M")
+                        except ValueError:
+                            pass
+                    if lo <= when <= hi:
+                        item = shown(e, account_id, o)
+                        item.update({"key": key, "at": when.strftime("%Y-%m-%dT%H:%M"),
+                                     "snoozed": key in st["snoozed"]})
+                        out.append(item)
+    out.sort(key=lambda x: (x["at"], x["summary"]))
+    return out
+
+
+def build(accounts, lo, hi, upcoming_n, caches, opts=None):
     days, ahead = {}, {}
     today = dt.date.today()
     far = max(hi, today + dt.timedelta(days=180))
+    opts = opts or alarm_options()
 
     def add(day, item, into):
         into.setdefault(day.isoformat(), []).append(item)
@@ -803,8 +1048,10 @@ def build(accounts, lo, hi, upcoming_n, caches):
         state.append({"id": a["id"], "name": a.get("name") or a["id"], "kind": a.get("kind", "caldav"),
                       "ok": not c.get("error") and bool(c.get("fetched")), "error": c.get("error", ""),
                       "fetched": c.get("fetched", "")})
-    return {"generated": dt.datetime.now().isoformat(timespec="seconds"), "today": today.isoformat(),
-            "from": lo.isoformat(), "to": hi.isoformat(), "accounts": state, "days": days, "upcoming": upcoming}
+    now = dt.datetime.now()
+    return {"generated": now.isoformat(timespec="seconds"), "today": today.isoformat(),
+            "from": lo.isoformat(), "to": hi.isoformat(), "accounts": state, "days": days, "upcoming": upcoming,
+            "alarms": alarms_for(sources, now, opts, load_state())}
 
 
 def window(frm=None, to=None):
@@ -832,14 +1079,14 @@ def find_account(accounts, account_id):
     raise DavError(f"no account {account_id!r}")
 
 
-def set_note(accounts, account_id, date, text):
+def set_note(accounts, account_id, date, text, lead=10, hour="09:00"):
     try:
         dt.date.fromisoformat(date)
     except ValueError as ex:
         raise DavError(f"not a date: {date}") from ex
     if account_id == "local":
         if text.strip():
-            local_set(date, text)
+            local_set(date, text, lead, hour)
         else:
             local_delete(date)
         return
@@ -852,9 +1099,60 @@ def set_note(accounts, account_id, date, text):
     existing = next((e for e in cache.get("entries", []) if e.get("uid") == note_uid(date) and e.get("href")), None)
     if text.strip():
         href = existing["href"] if existing else calendar.rstrip("/") + "/" + note_uid(date) + ".ics"
-        dav.put(href, own_ics(date, text, note_uid(date)), existing.get("etag", "") if existing else "")
+        dav.put(href, own_ics(date, text, note_uid(date), lead, hour), existing.get("etag", "") if existing else "")
     elif existing:
         dav.delete(existing["href"], existing.get("etag", ""))
+
+
+def complete_todo(accounts, account_id, uid):
+    """Mark a task done on its server: the resource is fetched, STATUS:COMPLETED and the
+    completion stamp put in, and it goes back with If-Match on the etag."""
+    account = find_account(accounts, account_id)
+    if account.get("kind") == "ics":
+        raise DavError("an ICS link is read-only")
+    cache = load_cache(account_id)
+    e = next((x for x in cache.get("entries", []) if x.get("uid") == uid and x.get("href")), None)
+    if e is None or e.get("kind") != "todo":
+        raise DavError(f"no task {uid!r} in {account_id}")
+    dav = Dav(account)
+    status, headers, text, _ = dav.request("GET", urllib.parse.urljoin(dav.base, e["href"]))
+    if status != 200:
+        raise DavError(f"GET {e['href']}: HTTP {status}")
+    etag = headers.get("etag", e.get("etag", ""))
+    stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    # Each VTODO is taken whole — its UID may come after its STATUS — and only the one
+    # asked for is rewritten; the others in the resource stay as they were.
+    out, todo = [], None
+    for line in unfold(text):
+        name, _, value = split_line(line)
+        if name == "BEGIN" and value.upper() == "VTODO":
+            todo = [line]
+            continue
+        if todo is not None:
+            todo.append(line)
+            if name == "END" and value.upper() == "VTODO":
+                mine = any(split_line(l)[0] == "UID" and split_line(l)[2] == uid for l in todo)
+                if mine:
+                    body = [l for l in todo[1:-1] if split_line(l)[0] not in ("STATUS", "COMPLETED", "PERCENT-COMPLETE")]
+                    todo = [todo[0]] + body + ["STATUS:COMPLETED", f"COMPLETED:{stamp}", "PERCENT-COMPLETE:100", todo[-1]]
+                out += todo
+                todo = None
+            continue
+        out.append(line)
+    dav.put(urllib.parse.urljoin(dav.base, e["href"]), "\r\n".join(fold(l) for l in out) + "\r\n", etag)
+
+
+def claim(key):
+    """The first instance of the widget to ask gets the alarm; the others do not. One
+    file per key, created exclusively."""
+    CLAIMS.mkdir(parents=True, exist_ok=True)
+    name = re.sub(r"[^A-Za-z0-9_.@-]", "_", key)[:200]
+    try:
+        fd = os.open(CLAIMS / name, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    except FileExistsError:
+        return False
+    os.close(fd)
+    return True
 
 
 def emit(obj):
@@ -865,16 +1163,28 @@ def emit(obj):
 def main(argv):
     ap = argparse.ArgumentParser(prog="notes.py", description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
+    # The alarm options go with every command that prints a document, so the widget's
+    # settings reach the schedule whichever command refreshed it.
+    alarms = argparse.ArgumentParser(add_help=False)
+    alarms.add_argument("--lead", type=int, default=10)
+    alarms.add_argument("--hour", default="09:00")
+    alarms.add_argument("--no-events", dest="events", action="store_false")
+    alarms.add_argument("--missed", type=int, default=12)
+    alarms.add_argument("--no-alarms", dest="alarms", action="store_false")
+    alarms.add_argument("--upcoming", type=int, default=5)
     for name in ("sync", "dump"):
-        p = sub.add_parser(name)
+        p = sub.add_parser(name, parents=[alarms])
         p.add_argument("--from", dest="frm")
         p.add_argument("--to")
-        p.add_argument("--upcoming", type=int, default=5)
         if name == "sync":
             p.add_argument("--every", type=int, default=15)
             p.add_argument("--force", action="store_true")
-    p = sub.add_parser("set"); p.add_argument("account"); p.add_argument("date"); p.add_argument("b64")
-    p = sub.add_parser("delete"); p.add_argument("account"); p.add_argument("date")
+    p = sub.add_parser("set", parents=[alarms]); p.add_argument("account"); p.add_argument("date"); p.add_argument("b64")
+    p = sub.add_parser("delete", parents=[alarms]); p.add_argument("account"); p.add_argument("date")
+    p = sub.add_parser("ack", parents=[alarms]); p.add_argument("key")
+    p = sub.add_parser("snooze", parents=[alarms]); p.add_argument("key"); p.add_argument("when")
+    p = sub.add_parser("claim"); p.add_argument("key")
+    p = sub.add_parser("done", parents=[alarms]); p.add_argument("account"); p.add_argument("uid"); p.add_argument("key", nargs="?", default="")
     sub.add_parser("accounts")
     p = sub.add_parser("account-save"); p.add_argument("b64")
     p = sub.add_parser("account-remove"); p.add_argument("id")
@@ -885,6 +1195,8 @@ def main(argv):
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     os.chmod(CONFIG_DIR, 0o700)
     accounts = load_accounts()
+    opts = (alarm_options(args.lead, args.hour, args.events, args.missed, args.alarms)
+            if hasattr(args, "lead") else alarm_options())
 
     try:
         if args.cmd in ("sync", "dump"):
@@ -896,14 +1208,44 @@ def main(argv):
                     if args.force or due(cache, args.every):
                         cache = refresh(a, lo, hi)
                     caches[a["id"]] = cache
-            emit(build(accounts, lo, hi, args.upcoming, caches))
+                st = load_state()
+                prune_state(st, dt.datetime.now())
+                save_state(st)
+            emit(build(accounts, lo, hi, args.upcoming, caches, opts))
         elif args.cmd in ("set", "delete"):
             text = base64.b64decode(args.b64).decode("utf-8") if args.cmd == "set" else ""
-            set_note(accounts, args.account, args.date, text)
+            set_note(accounts, args.account, args.date, text, args.lead, args.hour)
             lo, hi = window()
             if args.account != "local":
                 refresh(find_account(accounts, args.account), lo, hi)
-            emit(build(accounts, lo, hi, 5, {}))
+            emit(build(accounts, lo, hi, args.upcoming, {}, opts))
+        elif args.cmd in ("ack", "snooze"):
+            st = load_state()
+            now = dt.datetime.now()
+            if args.cmd == "ack":
+                st["acked"][args.key] = now.strftime("%Y-%m-%dT%H:%M")
+                st["snoozed"].pop(args.key, None)
+            else:
+                if re.fullmatch(r"\d+", args.when):
+                    when = now + dt.timedelta(minutes=int(args.when))
+                else:
+                    when = dt.datetime.strptime(args.when[:16], "%Y-%m-%dT%H:%M")
+                st["snoozed"][args.key] = when.strftime("%Y-%m-%dT%H:%M")
+                st["acked"].pop(args.key, None)
+            save_state(st)
+            lo, hi = window()
+            emit(build(accounts, lo, hi, args.upcoming, {}, opts))
+        elif args.cmd == "claim":
+            emit({"ok": True, "key": args.key, "claimed": claim(args.key)})
+        elif args.cmd == "done":
+            complete_todo(accounts, args.account, args.uid)
+            if args.key:
+                st = load_state()
+                st["acked"][args.key] = dt.datetime.now().strftime("%Y-%m-%dT%H:%M")
+                save_state(st)
+            lo, hi = window()
+            refresh(find_account(accounts, args.account), lo, hi)
+            emit(build(accounts, lo, hi, args.upcoming, {}, opts))
         elif args.cmd == "accounts":
             emit([public(a) for a in accounts])
         elif args.cmd == "account-save":

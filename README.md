@@ -229,6 +229,20 @@ calendar-query, PUT and DELETE with etags, recurrence rules, the time zones — 
 the passwords in its own file, mode 600. `./install.sh --check-notes` runs its stand,
 a fake CalDAV server included.
 
+**Reminders.** The time goes in the text: a note whose first line starts with a time —
+`14:30 Dentist`, or `9.00-10.30 Standup` — becomes a timed event and rings a few minutes
+before it (ten by default); `!Buy milk` stays a note on its day and rings at the hour you
+set (09:00). Both are VALARMs in the iCalendar the note is saved as, so an account's phone
+rings too; the accounts' own events ring by their alarms, and timed ones without any by
+the same lead if you ask. When one is due, a sheet in the same frame opens from the day's
+cell — the entry, its account, and the ways out marked with `>`: snooze a few minutes, an
+hour, tomorrow at the hour, done, and for a task "task done", which completes it on its
+server. The sheet does not take the keyboard from what you are typing. Alarms missed while
+the machine was off come one after another, headed MISSED, up to a few hours back; with
+two instances of the widget, the one that claims an alarm first shows it. Acknowledgements
+and snoozes stay local, in `~/.cache/plaincalendar/reminders.json`. Optionally a system
+notification through `notify-send` and a sound file. Everything is on the *Notes* page.
+
 ## Three layers
 
 ```

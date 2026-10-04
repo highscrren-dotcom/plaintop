@@ -76,7 +76,7 @@ journalctl --user -b --since "-1min" | grep -i plaintop             # ошибк
 ./install.sh --pack                                                 # файлы .plasmoid для релиза → dist/
 ./install.sh --check-passthrough                                    # стенд сквозных кликов: 18 тестов на скомпилированной обёртке апплета оболочки
 ./install.sh --check-monitor                                        # стенд строк монитора: строки каждого типа блока из значений, поданных вручную
-./install.sh --check-notes                                          # скрипт заметок календаря: iCalendar, повторения, vdir, CalDAV на поддельном сервере
+./install.sh --check-notes                                          # скрипт заметок календаря: iCalendar, повторения, будильники, vdir, CalDAV на поддельном сервере
 ```
 
 Четыре вещи, которые иначе съедят вам вечер — все четыре разобраны в
