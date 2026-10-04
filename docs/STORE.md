@@ -67,7 +67,8 @@ in system health; every GPU, and none on a machine without one; the clock in 12 
 the bars' width and characters and the separator as settings; a second column; on the
 Blocks page the machine's own sensors, interfaces and mount points to pick from, a
 duplicate button, a name per block, and the layout as JSON to edit or paste. Fixed: the
-model line's "62/0°C" on a one-node machine and the redundant node line there.
+model line's "62/0°C" on a one-node machine and the redundant node line there; the GPU's
+power on AMD cards, which read "pwr 0W"; sparkline glyphs half a step too high.
 
 - **File:** `dist/plaintop-<version>.plasmoid`
 - **Category:** Plasma 6 Extensions → Monitoring
@@ -89,14 +90,22 @@ processes by CPU and by memory, RAM, GPU with VRAM, disks with NVMe temperature,
 network, the battery where there is one, docker/ollama/updates, system health — failed
 systemd units, errors since boot, the last journal errors — and a hardware spec sheet.
 
+Also on offer: swap, load average, disk I/O, temperatures of any sensors, systemd units,
+batteries of wireless devices (upower), the sound device's volume, git repositories, plain text
+and blank lines. A bar can turn red past a threshold and draw a sparkline of its recent
+values after it, and blocks can go into a second column.
+
 The blocks, their order and their parameters are set on the Blocks page of the
-settings; a block can also be any ksystemstats sensor or any command. Sensors specific to
+settings, where the machine's own sensors, interfaces and mount points are offered in
+lists, a block can be duplicated and named, and the whole layout can be edited or pasted
+as JSON; a block can also be any ksystemstats sensor or any command. Sensors specific to
 a machine — fans, NVMe, the network interface — are found on the machine itself.
 Data comes from ksystemstats, the same service as Plasma's System Monitor.
 
 The interface follows Plasma's language: English, Russian, Ukrainian, German, French,
 Spanish, Brazilian Portuguese, Polish, Simplified Chinese, Japanese — all but English and
-Russian machine-translated, corrections welcome. The updates line reads pacman.
+Russian machine-translated, corrections welcome. The updates line reads pacman and
+flatpak; apt, dnf and zypper are read too but not yet tried on those systems.
 
 Out of the box the widget takes clicks like any other; General → Mouse lets both buttons
 through to the desktop, and the widget takes the mouse only in the desktop's edit mode —
@@ -112,13 +121,21 @@ GPU с VRAM, диски с температурой NVMe, аптайм, сеть
 docker/ollama/обновления, здоровье системы — упавшие юниты systemd, ошибки с загрузки,
 последние ошибки журнала — и паспорт железа.
 
-Набор блоков, порядок и параметры — на странице «Блоки» в настройках; блоком может быть
+Ещё есть своп, средняя нагрузка, ввод-вывод дисков, температуры любых датчиков, юниты
+systemd, батареи беспроводных устройств (upower), громкость звукового устройства, репозитории git, просто
+текст и пустые строки. Полоска может краснеть за порогом и рисовать после себя спарклайн
+недавних значений, а блоки — уходить во вторую колонку.
+
+Набор блоков, порядок и параметры — на странице «Блоки» в настройках: там датчики,
+интерфейсы и точки монтирования этой машины предлагаются списками, блок можно
+продублировать и назвать, а всю раскладку — править или вставить как JSON; блоком может быть
 любой датчик ksystemstats или любая команда. Привязанные к машине датчики — вентиляторы,
 NVMe, сетевой интерфейс — находятся на самой машине. Данные берутся у ksystemstats — той
 же службы, что у «Системного монитора» Plasma. Интерфейс говорит на языке Plasma: английский,
 русский, украинский, немецкий, французский, испанский, португальский (Бразилия), польский,
 китайский и японский — всё, кроме английского и русского, переведено машинно, исправления
-приветствуются. Строка обновлений читает pacman.
+приветствуются. Строка обновлений читает pacman и flatpak; apt, dnf и zypper тоже
+читаются, но на этих системах ещё не опробованы.
 
 Сразу после установки виджет ловит клики, как любой другой; «Общее → Мышь» пропускает
 на рабочий стол обе кнопки, а мышь виджет берёт только в режиме правки рабочего стола —
@@ -162,7 +179,9 @@ on the wallpaper.
 What you can set (right-click → Configure):
 • Shape — ring or line (a ring with a span under 360° is an arc), number of bars, radius,
   span and start angle, bar thickness and gaps, length at silence and at maximum, growth
-  outward / inward / both ways (up / down on a line), mirrored or reversed band order.
+  outward / inward / both ways (up / down on a line), mirrored or reversed band order,
+  and Channels — one spectrum around the whole ring, or cava's stereo frame, mirrored
+  about its middle.
 • Appearance — solid bars or a ladder of blocks, rounded ends, colour, a second colour
   for the high frequencies, opacity, a thin guide circle.
 • Behaviour — data frames per second and smoothing. In silence the ring dissolves and
@@ -206,7 +225,8 @@ PlainExt для Rainmeter: один цвет, прямые концы, без г
 • Форма — кольцо или линия (кольцо с охватом меньше 360° — дуга), число штрихов, радиус,
   охват и начальный угол, толщина штрихов и зазоры, длина в тишине и на максимуме, рост
   наружу / внутрь / в обе стороны (у линии — вверх / вниз), зеркальный или обратный
-  порядок полос.
+  порядок полос и «Каналы» — один спектр по всему кольцу или стереокадр cava, зеркальный
+  относительно середины.
 • Вид — сплошные штрихи или лесенка из блоков, скруглённые концы, цвет, второй цвет для
   высоких частот, непрозрачность, тонкая направляющая окружность.
 • Поведение — кадров данных в секунду и сглаживание. В тишине кольцо растворяется и
@@ -403,7 +423,8 @@ Not published yet.
 - **Source / homepage:** https://github.com/highscrren-dotcom/plaintop
 - **Tags:** calendar, month, week numbers, text, monospace
 - **Images:** three months one under another, the week numbers, a weekend in red, today
-  in brackets — needs no data, any machine renders it
+  in brackets — needs no data, any machine renders it. Rendered 2026-10-04: a logo (the
+  October block) and a gallery picture (three months), English locale, stock colours
 
 **Summary:** A wall calendar as plain text — one month or three, week numbers, the weekends and today marked — in the plaintop style.
 
