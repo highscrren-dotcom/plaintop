@@ -99,7 +99,10 @@ PlasmoidItem {
     P5Support.DataSource {
         id: notesSource
         engine: "executable"
-        interval: Math.max(1, root.cfg.syncMinutes) * 60000
+        // Every minute, so an event leaves the upcoming lines when it is over and a missed
+        // reminder shows up at once; the script reaches the accounts only every
+        // syncMinutes (--every) and reads its caches the rest of the time.
+        interval: 60000
         connectedSources: root.cfg.notes
             ? ["python3 '" + root.notesScript + "' sync --every " + Math.max(1, root.cfg.syncMinutes) + root.alarmOptions]
             : []
@@ -339,7 +342,7 @@ PlasmoidItem {
 
         function maskRect(into) {
             const chain = [root.x, root.y, rep.x, rep.y, view.x, view.y]
-            const g = view.gridRect
+            const g = view.clickRect
             return (into && chain) ? view.mapToItem(into, g.x, g.y, g.width, g.height) : Qt.rect(0, 0, 0, 0)
         }
         Item {
@@ -393,6 +396,12 @@ PlasmoidItem {
             colorToday: root.cfg.colorToday
             colorNote: root.cfg.colorNote
 
+            onMissedClicked: a => {
+                if (rep.reminderOpen()) return
+                const p = String(a.at).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/)
+                const when = p ? new Date(Number(p[1]), Number(p[2]) - 1, Number(p[3]), Number(p[4]), Number(p[5])).getTime() : Date.now()
+                rep.showReminder(a, Date.now() - when > 10 * 60000)
+            }
             onDayClicked: (key, x, y, w, h) => {
                 // The sticker hangs from an invisible item laid over the clicked cell.
                 anchor.x = x; anchor.y = y; anchor.width = w; anchor.height = h

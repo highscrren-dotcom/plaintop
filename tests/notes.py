@@ -575,6 +575,35 @@ def test_reminders():
     ok(mine[0]["at"] == tomorrow + "T07:00", "snoozed to a time: " + repr(mine))
     code, doc = run("dump", "--no-alarms")
     ok(doc["alarms"] == [], "--no-alarms empties the list")
+
+    # Upcoming keeps what rang unanswered — first, marked — and drops what is over.
+    b64 = lambda t: base64.b64encode(t.encode()).decode()
+    now = dt.datetime.now()
+    def at(minutes):
+        t = now + dt.timedelta(minutes=minutes)
+        return t.date().isoformat(), t.strftime("%H:%M")
+    d1, t1 = at(-60)
+    code, doc = run("set", "local", d1, b64(t1 + " Пропущенное"), "--lead", "10", "--uid", "new")
+    first = doc["upcoming"][0] if doc["upcoming"] else {}
+    ok(first.get("summary") == "Пропущенное" and first.get("missed") is True and first.get("key"), "a missed reminder heads upcoming, marked: " + repr(first))
+    code, doc = run("ack", first.get("key", ""))
+    ok(not [u for u in doc["upcoming"] if u["summary"] == "Пропущенное"], "answered and over: gone from upcoming")
+    d2, t2 = at(-90)
+    _, t2e = at(-30)
+    run("set", "local", d2, b64(t2 + "-" + t2e + " Прошло"), "--lead", "-1", "--uid", "new")
+    code, doc = run("dump")
+    ok(not [u for u in doc["upcoming"] if u["summary"] == "Прошло"], "over, with no alarm: not listed")
+    if now.hour >= 1:
+        d3, t3 = at(-10)
+        _, t3e = at(50)
+        run("set", "local", d3, b64(t3 + "-" + t3e + " Идёт"), "--lead", "-1", "--uid", "new")
+        code, doc = run("dump")
+        ok([u for u in doc["upcoming"] if u["summary"] == "Идёт" and not u.get("missed")], "still going: listed")
+    for day in {d1, d2, at(-10)[0]}:
+        code, doc = run("dump")
+        for e in doc["days"].get(day, []):
+            if e["own"] and e["summary"] in ("Пропущенное", "Прошло", "Идёт"):
+                run("delete", "local", day, "--uid", e["uid"])
     code, got = run("claim", key)
     ok(code == 0 and got["claimed"] is True, "the first claim wins")
     code, got = run("claim", key)

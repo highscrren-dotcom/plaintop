@@ -1039,6 +1039,24 @@ def alarms_for(sources, now, opts, st):
     return out
 
 
+def ended(item, now):
+    """A timed event whose end — or start, when it has none — is behind `now`. An
+    all-day entry lasts its day; a task stays until it is done."""
+    if not item.get("time") or item.get("kind") == "todo":
+        return False
+    try:
+        day = dt.date.fromisoformat(item["date"])
+        start = dt.datetime.combine(day, dt.datetime.strptime(item["time"], "%H:%M").time())
+        end = start
+        if item.get("end"):
+            end = dt.datetime.combine(day, dt.datetime.strptime(item["end"], "%H:%M").time())
+            if end < start:
+                end += dt.timedelta(days=1)
+    except (KeyError, ValueError):
+        return False
+    return end <= now
+
+
 def build(accounts, lo, hi, upcoming_n, caches, opts=None):
     days, ahead = {}, {}
     today = dt.date.today()
@@ -1062,14 +1080,26 @@ def build(accounts, lo, hi, upcoming_n, caches, opts=None):
     order = lambda x: (0 if x["own"] else 1, x["kind"] == "todo", x["time"] or "~", x["summary"])
     for key in days:
         days[key].sort(key=order)
-    upcoming = []
+    # Upcoming: first the reminders that rang and were not answered — they stay, marked
+    # missed, until "done" — then what is ahead; a timed entry goes once its end is past.
+    now = dt.datetime.now()
+    alarms = alarms_for(sources, now, opts, load_state())
+    stamp = now.strftime("%Y-%m-%dT%H:%M")
+    upcoming, seen = [], set()
+    for a in alarms:
+        k = (a["account"], a["uid"], a["date"])
+        if a["at"] <= stamp and k not in seen and len(upcoming) < upcoming_n:
+            seen.add(k)
+            upcoming.append(dict(a, missed=True))
     for key in sorted(ahead):
         for item in sorted(ahead[key], key=order):
-            if item["kind"] == "todo" and item["done"]:
-                continue
-            upcoming.append(item)
             if len(upcoming) >= upcoming_n:
                 break
+            if item["kind"] == "todo" and item["done"]:
+                continue
+            if (item["account"], item["uid"], item["date"]) in seen or ended(item, now):
+                continue
+            upcoming.append(item)
         if len(upcoming) >= upcoming_n:
             break
     state = [{"id": "local", "name": "local", "kind": "local", "ok": True, "error": "", "fetched": ""}]
@@ -1078,10 +1108,9 @@ def build(accounts, lo, hi, upcoming_n, caches, opts=None):
         state.append({"id": a["id"], "name": a.get("name") or a["id"], "kind": a.get("kind", "caldav"),
                       "ok": not c.get("error") and bool(c.get("fetched")), "error": c.get("error", ""),
                       "fetched": c.get("fetched", "")})
-    now = dt.datetime.now()
     return {"generated": now.isoformat(timespec="seconds"), "today": today.isoformat(),
             "from": lo.isoformat(), "to": hi.isoformat(), "accounts": state, "days": days, "upcoming": upcoming,
-            "alarms": alarms_for(sources, now, opts, load_state())}
+            "alarms": alarms}
 
 
 def window(frm=None, to=None):

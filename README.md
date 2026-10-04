@@ -246,7 +246,9 @@ two instances of the widget, the one that claims an alarm first shows it. Acknow
 and snoozes stay local, in `~/.cache/plaincalendar/reminders.json`. Optionally a system
 notification through `notify-send` and a sound — five short plain tones of the widget's own
 (bell, blip, chime, pager, tick; made by `calendar/sounds.py`) or a file of yours, with a
-*Listen* button. Everything is on the *Notes* page.
+*Listen* button. Everything is on the *Notes* page. A reminder you miss is not lost: until
+you answer it, it heads the upcoming lines under the months in red with a "!", and a click
+on it opens its sheet again; a timed entry leaves those lines once it is over.
 
 ## Three layers
 

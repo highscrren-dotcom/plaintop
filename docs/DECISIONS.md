@@ -731,7 +731,11 @@ the face, at the user's word. A note of yours without an alarm now stays silent:
 the user's word: a day holds as many notes of yours as you like — the sticker lists them,
 a click puts one in the editor, "+ new note" starts another; each is a VEVENT of its own
 (the first keeps the uid `plaincalendar-<date>@<host>`, the others add a random suffix), so
-each rings and syncs on its own.
+each rings and syncs on its own. And a missed reminder cannot slip by: until it is answered
+it heads the upcoming lines, marked "!" in the accent, and a click opens its sheet — the
+sheet shown once and lost to a restart had no way back before; a timed entry leaves those
+lines when its end is past, and the widget reads its document every minute (the accounts
+are still fetched every `syncMinutes`).
 
 **Why VALARM and not a schedule of our own.** The data already travel to Yandex, iCloud and
 Google over CalDAV; a VALARM in the same resource makes the phone ring with no second

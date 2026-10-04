@@ -452,6 +452,8 @@ of an all-day one; typing "14:30 Dentist" or "!Buy milk" into the note does the 
 events ring by their own alarms. A due alarm opens a sheet by the day's cell with snooze,
 an hour, tomorrow, done, and "task done" for tasks; missed ones come one by one. Optional
 system notification and a sound — five plain tones of its own or a file of yours. As many notes a day as you like, each with its own reminder.
+A missed reminder stays at the top of the upcoming lines in red until you answer it; a click
+opens it again; an event leaves those lines once it is over.
 Checked on the desktop 2026-10-04, Yandex included.
 
 - **File:** `dist/plaincalendar-<version>.plasmoid`
@@ -490,8 +492,9 @@ fetches nothing.
 Reminders: under a note the sticker has a time field and a "remind" row — none, ten
 minutes or an hour before a timed note, or at 09:00 for an all-day one. When one is due a
 small sheet in the same frame opens by the day: in 10 minutes, in an hour, tomorrow at
-09:00, done. A reminder is a VALARM in the note, so the account's calendar keeps it and a
-phone synced to it can ring too. Optionally a system notification and a sound — five
+09:00, done. A reminder you miss stays at the top of the list under the months, in red,
+until you answer it. A reminder is a VALARM in the note, so the account's calendar keeps it
+and a phone synced to it can ring too. Optionally a system notification and a sound — five
 plain tones of the widget's own, or a file of yours.
 
 Right-click → Configure: months (one or three), week numbers, the first day of the
@@ -529,7 +532,8 @@ Python 3 (только стандартная библиотека) из пак�
 Напоминания: под заметкой в стикере поле времени и строка «напомнить» — нет, за десять
 минут или за час до заметки со временем, или в 09:00 для заметки на весь день. Когда
 подходит время, у дня открывается маленький лист в той же рамке: через 10 минут, через час,
-завтра в 09:00, готово. Напоминание — это VALARM в заметке, так что календарь аккаунта его
+завтра в 09:00, готово. Пропущенное остаётся красным наверху списка под месяцами, пока на
+него не ответить. Напоминание — это VALARM в заметке, так что календарь аккаунта его
 хранит, и синхронизированный с ним телефон тоже может позвонить. По желанию — системное
 уведомление и звук: пять простых сигналов самого виджета или свой файл.
 

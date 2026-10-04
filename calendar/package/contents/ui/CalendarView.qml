@@ -28,6 +28,8 @@ Item {
 
     // A day was clicked: its date and its cell, in the view's coordinates.
     signal dayClicked(string dateKey, real x, real y, real w, real h)
+    // A missed reminder's line under the months was clicked: the alarm, as notes.py lists it.
+    signal missedClicked(var alarm)
 
     property string fontFamily: "JetBrainsMono Nerd Font Mono"
     property int fontSize: 10
@@ -249,7 +251,11 @@ Item {
             head = e.done ? "[x] " : "[ ] "
         else if (e.time && e.time.length > 0)
             head = e.time + " "
-        const parts = [{ text: when + "  ", role: "dim" }, { text: head + e.summary, role: e.own ? "note" : "fg" }]
+        // A reminder that rang unanswered: "!" and the accent until "done"; a click opens it.
+        if (e.missed === true)
+            head = "! " + head
+        const parts = [{ text: when + "  ", role: "dim" },
+                       { text: head + e.summary, role: e.missed === true ? "accent" : e.own ? "note" : "fg" }]
         if (e.account !== "local")
             parts.push({ text: "  · " + accountName(e.account), role: "dim" })
         return fit(parts)
@@ -363,6 +369,20 @@ Item {
     // while the rest of the widget lets clicks through (the host's mask).
     readonly property rect gridRect: Qt.rect(0, 2 * lineHeight, width, (shown * (linesPerMonth + 1) - 3) * lineHeight)
 
+    // The upcoming line under a point, or null; the first sits after the blank line that
+    // follows the months.
+    readonly property var upcomingList: (notes && notes.upcoming) ? notes.upcoming : []
+    function upcomingAt(y) {
+        if (upcomingLines === 0) return null
+        const i = Math.floor(y / lineHeight) - (shown * linesPerMonth + shown)
+        return (i >= 0 && i < upcoming && i < upcomingList.length) ? upcomingList[i] : null
+    }
+    readonly property bool anyMissed: upcomingList.some(u => u.missed === true)
+    // What takes the mouse while clicks pass through: the day rows, and the upcoming lines
+    // too while a missed reminder waits there.
+    readonly property rect clickRect: anyMissed ? Qt.rect(0, 2 * lineHeight, width, (lineCount - 2) * lineHeight) : gridRect
+    property bool hoverMissed: false
+
     // The day under the pointer, and the day whose sticker is open (set by the host):
     // either is framed, so the eye knows which cell a click lands on.
     property string hoverKey: ""
@@ -377,17 +397,23 @@ Item {
         enabled: view.notesOn
         acceptedButtons: Qt.LeftButton
         hoverEnabled: true
-        cursorShape: view.hoverKey.length > 0 ? Qt.PointingHandCursor : Qt.ArrowCursor
+        cursorShape: (view.hoverKey.length > 0 || view.hoverMissed) ? Qt.PointingHandCursor : Qt.ArrowCursor
         onPositionChanged: mouse => {
             const c = view.cellAt(mouse.x, mouse.y)
             view.hoverBlock = c ? c.block : -1
             view.hoverKey = c ? c.key : ""
+            const u = c ? null : view.upcomingAt(mouse.y)
+            view.hoverMissed = u !== null && u.missed === true
         }
-        onExited: view.hoverKey = ""
+        onExited: { view.hoverKey = ""; view.hoverMissed = false }
         onClicked: mouse => {
             const c = view.cellAt(mouse.x, mouse.y)
-            if (!c)
+            if (!c) {
+                const u = view.upcomingAt(mouse.y)
+                if (u && u.missed === true)
+                    view.missedClicked(u)
                 return
+            }
             view.activeBlock = c.block
             const r = view.cellRect(c.key, c.block)
             view.dayClicked(c.key, r.x, r.y, r.width, r.height)
