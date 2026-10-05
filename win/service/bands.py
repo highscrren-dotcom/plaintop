@@ -66,6 +66,15 @@ GAIN_RISE_DB_PER_S = 0.6
 GAIN_RISE_INIT_DB_PER_S = 50.0
 GAIN_FALL_DB_PER_S = 12.0
 GAIN_MAX_DB = 60.0      # the quietest band peak the gain will bring to the top
+# A signal whose peak band stays under a quarter of the top (-12 dB) for two seconds
+# rises at a middle rate, 12 dB/s: the slow 0.6 dB/s is for riding a track's dynamics,
+# not for the system volume turned down to a few percent — the first desk's output
+# peaked at -41 dBFS, and after a louder spell the ring would have needed a minute to
+# come back. A verse 12 dB under its chorus costs a second of clipping at the chorus,
+# which the fall rate takes care of, as it does for cava.
+LOW_LEVEL = 0.25
+LOW_SECONDS = 2.0
+GAIN_RISE_LOW_DB_PER_S = 12.0
 # The FFT is four times the window, zero-padded. That sharpens nothing — the window sets
 # how wide a tone smears — but it places a peak to within 6 Hz instead of 23, so two bass
 # notes a few Hz apart land in different bands rather than in the same bin; with one bin
@@ -115,8 +124,12 @@ class Analyzer:
         self._bin_idx, self._band_idx, self._weights = self._band_weights()
         self.gain = 1.0
         self.gain_init = True       # no overshoot yet: the fast ramp of a cold start
+        self._low_frames = 0        # frames in a row with the peak under LOW_LEVEL
+        self._boost = False         # the middle rise, latched until the next overshoot
+        self.input_peak = 0.0       # the largest sample magnitude of the last block pushed
         self._rise = 10 ** (GAIN_RISE_DB_PER_S / 20 / fps)
         self._rise_init = 10 ** (GAIN_RISE_INIT_DB_PER_S / 20 / fps)
+        self._rise_low = 10 ** (GAIN_RISE_LOW_DB_PER_S / 20 / fps)
         self._fall = 10 ** (-GAIN_FALL_DB_PER_S / 20 / fps)
         self._gain_max = 10 ** (GAIN_MAX_DB / 20)
         # The smoothing is the share of the previous frame kept, noise/100 at 30 fps and
@@ -168,6 +181,8 @@ class Analyzer:
             block = np.repeat(block[:, :1], self.channels, axis=1)
         block = block[:, :self.channels]
         n = len(block)
+        if n:
+            self.input_peak = float(np.abs(block).max())
         if n >= self.size:
             self._ring[:] = block[-self.size:]
             self._pos = 0
@@ -198,10 +213,23 @@ class Analyzer:
             # a big one comes down at the fall rate while the peak band clips.
             self.gain *= max(1.0 / peak, self._fall)
             self.gain_init = False
+            self._low_frames = 0
+            self._boost = False
         elif peak > 0.0:
             # Exact silence leaves the gain alone, as cava's `if (!silence)` does: a gain
-            # that climbed through a pause would clip the first beat after it.
-            rise = self._rise * self._rise_init if self.gain_init else self._rise
+            # that climbed through a pause would clip the first beat after it. A signal
+            # that stays far under the top rises at the middle rate (LOW_LEVEL, LOW_SECONDS),
+            # latched until the top is reached: crossing the threshold on the way up is
+            # not the top, and the slow rate from there would still take twenty seconds.
+            self._low_frames = self._low_frames + 1 if peak < LOW_LEVEL else 0
+            if self._low_frames >= LOW_SECONDS * self.fps:
+                self._boost = True
+            if self.gain_init:
+                rise = self._rise * self._rise_init
+            elif self._boost:
+                rise = self._rise_low
+            else:
+                rise = self._rise
             self.gain = min(self.gain * rise, self._gain_max)
         level = np.minimum(bands * self.gain, 1.0) ** CURVE
         self._levels += (1.0 - self._keep) * (level - self._levels)
@@ -478,6 +506,7 @@ class Capture:
         self.noise = noise
         self.sleep = sleep
         self.scan = []                    # the doze's last probes: [(output, peak)], newest last
+        self._stamps = []                 # the last seconds' frame times, for the measured rate
         self.frames = 0
         self.restarts = 0
         self.stamp = 0.0
@@ -509,8 +538,20 @@ class Capture:
         return [0] * (2 * self.bars)
 
     def state(self):
-        age = time.monotonic() - self.stamp if self.stamp else -1
+        now = time.monotonic()
+        age = now - self.stamp if self.stamp else -1
+        recent = [t for t in self._stamps if now - t <= 5.0]
+        span = (recent[-1] - recent[0]) if len(recent) > 1 else 0.0
+        a = self._analyzer
         return {"frames": self.frames, "restarts": self.restarts,
+                # The reconnaissance of a dark ring, part two: how many frames a second
+                # really come (30 when the stream delivers), what the last block peaked
+                # at (-41 dBFS on the first desk: the system volume at a few percent) and
+                # where the gain stands against its ceiling.
+                "rate": round((len(recent) - 1) / span, 1) if span > 0 else 0.0,
+                "input_peak": round(float(a.input_peak), 5) if a is not None else 0.0,
+                "gain_db": round(20 * math.log10(a.gain), 1) if a is not None and a.gain > 0 else 0.0,
+                "gain_max_db": GAIN_MAX_DB,
                 "source": self.source or "(default)", "age": round(age, 2),
                 "bars": self.bars, "fps": self.fps, "backend": self.backend.name,
                 "libraries": dict(LIBRARIES),
@@ -585,6 +626,9 @@ class Capture:
                 self._frame = self._analyzer.frame()
                 self.stamp = now
                 self.frames += 1
+                self._stamps.append(now)
+                if len(self._stamps) > 10 * self.fps:
+                    del self._stamps[:len(self._stamps) - 6 * self.fps]
                 next_frame += period
                 if next_frame < now:        # a long read: no burst of catch-up frames
                     next_frame = now + period

@@ -178,7 +178,19 @@ def test_levels_and_autosens():
     ok(frames <= 3 * bands.FPS, f"…in {frames} frames, under three seconds' worth")
     steady = [max(run(a, gen, 1)) for _ in range(2 * bands.FPS)]
     ok(min(steady) >= 900, f"…and it stays there: min {min(steady)}")
-    print(f"  ✓ autosens: {first} → {peak} in {frames} frames, steady above {min(steady)}")
+    # The system volume turned down: the same tone at -41 dBFS after the gain settled on
+    # the loud one. The slow rise alone would take a minute; the re-armed fast rise is back
+    # near the top within about two seconds (LOW_SECONDS to notice, the ramp after).
+    quiet = tone(1000.0, 0.0089)
+    low = max(run(a, quiet, 6))               # six frames: the smoothing has let the loud level go
+    ok(low < 400, f"the -41 dBFS tone after the loud one sits low: {low}")
+    for frames in range(1, 8 * bands.FPS + 1):
+        peak = max(run(a, quiet, 1))
+        if peak >= 950:
+            break
+    ok(peak >= 950 and frames <= 5 * bands.FPS, f"…and the middle rise brings it back within five seconds: {peak} after {frames} frames")
+    ok(a.input_peak > 0.0088 and a.input_peak < 0.0090, f"input_peak is the last block's peak: {a.input_peak}")
+    print(f"  ✓ autosens: {first} → {peak} in {frames} frames, steady above {min(steady)}; -41 dBFS after a loud spell back in {frames} frames")
 
 
 def test_smoothing():
@@ -222,8 +234,11 @@ def test_capture_rate():
         ok(st["restarts"] == 0 and st["backend"] == "synthetic" and st["bars"] == bands.BARS
            and st["fps"] == bands.FPS and 0 <= st["age"] < 1 and st["frames"] == cap.frames,
            "state(): " + repr(st))
-        ok(set(st) == {"frames", "restarts", "source", "age", "bars", "fps", "backend", "libraries", "candidates", "prefer", "scan"},
-           "state() has the relay's keys plus backend, libraries, candidates, prefer, scan")
+        ok(set(st) == {"frames", "restarts", "source", "age", "bars", "fps", "backend", "libraries", "candidates", "prefer", "scan",
+                       "rate", "input_peak", "gain_db", "gain_max_db"},
+           "state() has the relay's keys plus backend, libraries, candidates, prefer, scan, rate, input_peak, gain_db, gain_max_db")
+        ok(20 <= st["rate"] <= 40 and st["input_peak"] > 0 and st["gain_max_db"] == bands.GAIN_MAX_DB,
+           f"the measured rate is about FPS, the input peak and the gain are read: rate {st['rate']}, peak {st['input_peak']}, gain {st['gain_db']} dB")
         ok(isinstance(st["libraries"], dict) and all(v is True or isinstance(v, str) for v in st["libraries"].values()),
            "libraries: each capture library True or its probe's error: " + repr(st["libraries"]))
     finally:

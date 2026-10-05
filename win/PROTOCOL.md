@@ -75,8 +75,11 @@ Silence for a second is served as zeros. `/state` answers `{"frames", "restarts"
 `libraries` (each capture library by name, `true` where it imports or the text of what
 its import raised — a frozen exe packed without the library and a desk without a sound
 device look the same otherwise), `candidates` (the outputs the backend can choose from),
-`prefer` (`PLAINTOP_CAPTURE`) and `scan` (what the idle capture heard on the outputs it
-tried, newest last: `[{"source": "Speakers (Realtek)", "peak": 0.31}, …]`).
+`prefer` (`PLAINTOP_CAPTURE`), `scan` (what the idle capture heard on the outputs it
+tried, newest last: `[{"source": "Speakers (Realtek)", "peak": 0.31}, …]`), `rate` (frames
+a second actually produced over the last five), `input_peak` (the last block's largest
+sample, 0–1: 0.009 is −41 dBFS, the system volume at a few percent), `gain_db` and
+`gain_max_db` (where the automatic gain stands against its ceiling).
 
 ### `/devices?seconds=0.4` · `GET`
 
