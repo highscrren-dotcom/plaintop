@@ -25,8 +25,8 @@
   (`rate`, `input_peak`, `gain_db`) и `/bands?bars=16&mono=1` при музыке**;
   один клик по кнопке из чужого окна (`noActivate`); блок GPU из двух карт (NVIDIA T600 с температурой, Intel UHD 770 с общей памятью), кнопки
   плеера без задержки, погоду с данными (через `/fetch`; если всё ещё offline — прокси по PAC → службе
-  `HTTPS_PROXY`). **Артефакт для шестого запуска (noActivate, /devices, темы): run 37273401051 →
-  `plaintop-win`**; предыдущий — run 37269905818 (id 11327921620, 72 MiB); exe в CI: `/fetch`
+  `HTTPS_PROXY`). **Артефакт для седьмого запуска (подъём усиления 12 дБ/с, `/state` с `rate`,
+  `input_peak`, `gain_db`; плюс noActivate, /devices, темы): run 37278939042 → `plaintop-win`**; exe в CI: `/fetch`
   тянет Open-Meteo, `backend: soundcard`, `/player` → `winrt`; `gpu/*` на runner'е 0 (карты нет).
   Что увидит только стол: окна (прозрачность,
   «под всеми», переключение `WindowTransparentForInput` на ходу, перетаскивание, меню правой
