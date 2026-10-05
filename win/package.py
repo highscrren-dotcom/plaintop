@@ -52,6 +52,10 @@ def main(argv):
     shutil.copy2(ROOT / "calendar" / "package" / "contents" / "code" / "notes.py", DIST / "calendar" / "notes.py")
     (DIST / "spectrum").mkdir()
     shutil.copy2(ROOT / "spectrum" / "relay.py", DIST / "spectrum" / "relay.py")
+    # The palettes: the same files install.sh --palette writes on Plasma, for /themes.
+    (DIST / "palettes").mkdir()
+    for f in sorted((ROOT / "palettes").glob("*.json")):
+        shutil.copy2(f, DIST / "palettes" / f.name)
 
     # Qt: the qml tool and whatever the hosts import, found by windeployqt from the QML.
     qml = tool("qml", qt_dir)
@@ -70,7 +74,7 @@ def main(argv):
     # The service, frozen. The launcher is win/plaintop.py; the service's modules are
     # imported by name from win/service, so they are hidden imports here.
     hidden = ["server", "paths", "monitor_win", "gpu_win", "exec_win", "bands", "player_win", "notes_bridge", "holidays_win",
-              "timezones", "settings_store", "ui", "notify_win"]
+              "timezones", "settings_store", "ui", "notify_win", "themes"]
     cmd = [sys.executable, "-m", "PyInstaller", "--noconfirm", "--onedir", "--name", "plaintop",
            "--distpath", str(DIST.parent / "_py"), "--workpath", str(DIST.parent / "_work"),
            "--specpath", str(DIST.parent / "_work"), "--paths", str(ROOT / "win" / "service"),

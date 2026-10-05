@@ -210,6 +210,17 @@ same key names), which a person may edit; the service re-reads it when it change
 changed, so a host may ask every second for nothing. `POST {"key": value, …}` merges and
 writes. The types come from `main.xml`.
 
+### `/themes` · `GET`, `POST` `{"name": "nord"}`
+
+The palettes — `palettes/*.json`, the same files `install.sh --palette` writes into the
+plasmoids — for the tray's *Theme* menu: `GET` answers `{"themes": [{"name", "title",
+"note", "swatch": {"fg", "accent", "dim", "value"}}, …], "current": "nord"}`, `stock`
+first (the widgets' own defaults), `current` the palette whose every key the settings
+carry now (`""` when none does). `POST` writes one into every widget's settings through
+the store; the hosts follow on their next poll. Every key is checked against the schema
+before anything is written, as `palette.py` does on Plasma: a misspelt key is a 400, an
+unknown name a 404.
+
 ### `/ui` · `POST`
 
 The process manager: `{"show": "monitor", "on": true}` starts (or stops) a widget's

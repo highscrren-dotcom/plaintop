@@ -332,11 +332,16 @@ failed, the line that let the button go, and the mask.
 
 **Palettes.** `./install.sh --palette NAME` writes a palette into every instance of the
 five widgets at once, and `--palette-save NAME` keeps the desktop's current colours as
-`palettes/NAME.json`. `stock` is the defaults, read from each widget's `main.xml`; the
-repo also has `amber` and `warm-ash`, both amber on a dark wallpaper, and `tachikoma` and
-`tachikoma-rooftops`, orange and cyan on blue-grey, the second with an orange ring. A palette is plain
-JSON — each widget's id mapped to the colour keys its settings dialog writes — and the
-keys are checked before anything is written.
+`palettes/NAME.json`. `stock` is the defaults, read from each widget's `main.xml`. The repo
+carries twenty-four: the house ones — `amber` and `warm-ash` (amber on a dark wallpaper),
+`tachikoma` and `tachikoma-rooftops` (orange and cyan on blue-grey, the second with an orange
+ring) — and twenty more: the editor and terminal classics `nord`, `gruvbox-dark`, `dracula`,
+`solarized-dark`, `solarized-light`, `monokai`, `catppuccin-mocha`, `tokyo-night`, `one-dark`,
+`everforest`, `rose-pine`, `kanagawa`, and the moods `matrix` (phosphor green), `ember`,
+`ice`, `paper-light` (dark ink for a light wallpaper), `monochrome`, `cyberpunk`, `sepia`,
+`ocean`. A palette is plain JSON — each widget's id mapped to the colour keys its settings
+dialog writes, plus an `about` block with a title and a note — and the keys are checked
+before anything is written. On Windows the same files are the tray's *Theme* menu.
 
 Two block types are deliberately open-ended:
 

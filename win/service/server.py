@@ -249,6 +249,29 @@ def manager(svc):
     return svc.instance("ui", "Manager")
 
 
+def get_themes(svc, query, body, path):
+    """The palettes (palettes/*.json, the same files as on Plasma) with a swatch each,
+    and which one the settings carry now."""
+    themes = svc.need("themes")
+    st = store(svc)
+    schema = {w: st.schema[w] for w in st.widgets()}
+    return json_reply(200, {"themes": themes.list_themes(schema), "current": themes.current(st)})
+
+
+def post_themes(svc, query, body, path):
+    """{"name": "nord"}: the palette into every widget's ini; the hosts follow within a
+    second. "stock" is the widgets' own defaults."""
+    name = body.get("name") if isinstance(body, dict) else None
+    if not isinstance(name, str) or not name:
+        return error(400, "a palette name expected")
+    themes = svc.need("themes")
+    try:
+        written = themes.apply(store(svc), name)
+    except themes.BadPalette as e:
+        return error(404 if str(e).startswith("no palette") else 400, str(e))
+    return json_reply(200, {"ok": True, "applied": name, "stamps": written})
+
+
 def get_ui(svc, query, body, path):
     return json_reply(200, manager(svc).status())
 
@@ -273,6 +296,7 @@ ROUTES = {
     ("GET", "/holidays"): get_holidays, ("GET", "/holidays/regions"): get_regions,
     ("GET", "/time"): get_time, ("GET", "/fetch"): get_fetch,
     ("GET", "/ui"): get_ui, ("POST", "/ui"): post_ui,
+    ("GET", "/themes"): get_themes, ("POST", "/themes"): post_themes,
 }
 
 

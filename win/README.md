@@ -49,6 +49,10 @@ seen on one yet. Reports welcome.
   a part of an output's name, pins the choice; `/state` names the output in `source` and lists in
   `scan` what the idle capture heard where. When the ring stays dark with music on, open
   `http://127.0.0.1:8788/devices` while it plays: every output with the peak heard on it.
+- **Themes**: the tray's *Theme* menu lists the repo's palettes (`palettes/*.json`, twenty-four of
+  them, the same files `install.sh --palette` uses on Plasma) and writes one into every widget's
+  settings at once; *Stock* is the widgets' own defaults. The colours are ordinary settings
+  afterwards — change any of them in the settings window.
 - **A click is a click**: the windows never take the activation (`noActivate` in the ini, on by
   default), so a press on a player button works from whatever window you were in, and that
   window keeps the focus. The sheets of the calendar are windows of their own and do take it.

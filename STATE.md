@@ -100,6 +100,8 @@ Windows, `webbrowser`). Стенды Plasma: `--check-notes` 145, `--check-relay
   на смену (слово пользователя: «логичная анимация»).
 - Пятый стол: «клик дважды» → `noActivate` (ini, по умолчанию) = `Qt.WindowDoesNotAcceptFocus`;
   спектр «так и не работает» → разведка: `GET /devices` (пик на каждом выходе), `/state.scan`.
+- **Темы**: 24 палитры в `palettes/` (20 новых, блок `about`), `win/service/themes.py` + `/themes`,
+  трей «Тема», `palettes/` в zip; на Plasma те же файлы через `install.sh --palette`.
 - Стенды: `tests/win_hosts.py`+`.qml` 9/9 (6.8.3, 6.10.1, 6.11.3, настоящая служба на Linux),
   `win_service.py` 167, `win_bands.py` 51, `win_media.py` 94.
 - Документы: решение 17 EN/RU, GOTCHAS часть III (10 записей, EN/RU, оглавление; последняя —
@@ -128,7 +130,7 @@ scratchpad сессии (не в репозитории). Никогда `pkill 
 - Прежние пункты Plasma: менеджер дизайнов, активные строки дальше (часы → календарь), заметки (todo),
   напоминания (клавиатура у листа), праздники (переносы выходных), погода (`timezone`, строка «сейчас»),
   общий `Sheet.qml`/`Passthrough.qml`, магазин по `docs/STORE.md` (plaintop 0.5, plaincalendar 0.3).
-- Windows дальше: пакеты в zip по релизу; палитры (`palettes/palette.py` → ini через `/settings`);
+- Windows дальше: пакеты в zip по релизу; страница «Тема» в окне настроек (сейчас только трей);
   второй экземпляр виджета; `qml-stands.yml` можно заменить прогоном на голом Qt через шимы для
   `monitor.qml`/`weather.qml` (`passthrough.qml` требует Plasma).
 

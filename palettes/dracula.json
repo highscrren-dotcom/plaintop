@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Dracula",
+    "note": "Purple-grey night, pink accent, cyan values."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#FF79C6",
+    "colorDim": "#6272A4",
+    "colorValue": "#8BE9FD",
+    "colorPaper": "#282A36"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#FF79C6",
+    "colorDim": "#6272A4"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#FF79C6",
+    "colorDim": "#6272A4"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#BD93F9",
+    "colorHigh": "#FF79C6",
+    "opacityPercent": 90,
+    "playerColorFg": "#F8F8F2",
+    "playerColorAccent": "#FF79C6",
+    "playerColorDim": "#6272A4"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#FF79C6",
+    "colorDim": "#6272A4",
+    "colorToday": "#50FA7B",
+    "colorNote": "#F1FA8C",
+    "colorPaper": "#282A36",
+    "colorHoliday": "#FF5555"
+  }
+}

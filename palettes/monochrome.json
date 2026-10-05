@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Monochrome",
+    "note": "Greys only, white accent — for a wallpaper that has the colour."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#DDDDDD",
+    "colorAccent": "#FFFFFF",
+    "colorDim": "#777777",
+    "colorValue": "#BBBBBB",
+    "colorPaper": "#1A1A1A"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#DDDDDD",
+    "colorAccent": "#FFFFFF",
+    "colorDim": "#777777"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#DDDDDD",
+    "colorAccent": "#FFFFFF",
+    "colorDim": "#777777"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#BBBBBB",
+    "colorHigh": "#FFFFFF",
+    "opacityPercent": 85,
+    "playerColorFg": "#DDDDDD",
+    "playerColorAccent": "#FFFFFF",
+    "playerColorDim": "#777777"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#DDDDDD",
+    "colorAccent": "#FFFFFF",
+    "colorDim": "#777777",
+    "colorToday": "#FFFFFF",
+    "colorNote": "#CCCCCC",
+    "colorPaper": "#1A1A1A",
+    "colorHoliday": "#999999"
+  }
+}

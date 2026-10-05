@@ -2,8 +2,9 @@
 """Colour palettes for the five widgets: put one on the desktop, or keep the current one.
 
 A palette is palettes/<name>.json: each widget's plugin id mapped to its colour keys, the
-same keys its settings dialog writes. "stock" is not a file: it is read from the widgets'
-main.xml, so it cannot drift from the defaults.
+same keys its settings dialog writes, and an optional "about" block with a title and a
+note for the menus. "stock" is not a file: it is read from the widgets' main.xml, so it
+cannot drift from the defaults. The Windows service applies the same files (/themes).
 
     python3 palettes/palette.py apply NAME   # write into every instance on every desktop
     python3 palettes/palette.py save NAME    # the desktop's current colours → palettes/NAME.json
@@ -36,6 +37,7 @@ KEYS = {
                                                        "colorNote", "colorPaper", "colorHoliday"]),
 }
 COLOUR = re.compile(r"^#(?:[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$")
+ABOUT = "about"                       # {"title": "…", "note": "…"}: for the menus, not a widget
 KCFG = "{http://www.kde.org/standards/kcfg/1.0}"
 
 
@@ -70,6 +72,9 @@ def load(name, stock):
         palette = json.loads(path.read_text())
     except json.JSONDecodeError as e:
         fail(f"{path.relative_to(REPO)}: {e}")
+    about = palette.pop(ABOUT, None)
+    if about is not None and not (isinstance(about, dict) and all(isinstance(v, str) for v in about.values())):
+        fail(f"{name}: \"{ABOUT}\" must be an object of strings")
     for plugin, values in palette.items():
         if plugin not in stock:
             fail(f"{name}: unknown widget {plugin}")

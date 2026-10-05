@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Monokai",
+    "note": "The editor classic: pink, green, yellow on charcoal."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#F92672",
+    "colorDim": "#75715E",
+    "colorValue": "#66D9EF",
+    "colorPaper": "#272822"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#F92672",
+    "colorDim": "#75715E"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#F92672",
+    "colorDim": "#75715E"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#A6E22E",
+    "colorHigh": "#F92672",
+    "opacityPercent": 90,
+    "playerColorFg": "#F8F8F2",
+    "playerColorAccent": "#F92672",
+    "playerColorDim": "#75715E"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#F8F8F2",
+    "colorAccent": "#F92672",
+    "colorDim": "#75715E",
+    "colorToday": "#A6E22E",
+    "colorNote": "#E6DB74",
+    "colorPaper": "#272822",
+    "colorHoliday": "#FD971F"
+  }
+}

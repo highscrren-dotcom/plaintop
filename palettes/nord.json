@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Nord",
+    "note": "Arctic blues on slate — the Nord scheme."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#D8DEE9",
+    "colorAccent": "#88C0D0",
+    "colorDim": "#4C566A",
+    "colorValue": "#81A1C1",
+    "colorPaper": "#2E3440"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#D8DEE9",
+    "colorAccent": "#88C0D0",
+    "colorDim": "#4C566A"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#D8DEE9",
+    "colorAccent": "#88C0D0",
+    "colorDim": "#4C566A"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#81A1C1",
+    "colorHigh": "#88C0D0",
+    "opacityPercent": 90,
+    "playerColorFg": "#D8DEE9",
+    "playerColorAccent": "#88C0D0",
+    "playerColorDim": "#4C566A"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#D8DEE9",
+    "colorAccent": "#88C0D0",
+    "colorDim": "#4C566A",
+    "colorToday": "#A3BE8C",
+    "colorNote": "#EBCB8B",
+    "colorPaper": "#2E3440",
+    "colorHoliday": "#BF616A"
+  }
+}

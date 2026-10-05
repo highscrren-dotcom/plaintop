@@ -19,10 +19,20 @@ QtObject {
     })
     property var running: ({})
     property var shown: ({})
+    // The palettes the service lists (/themes) and the one the settings carry now.
+    property var themes: []
+    property string theme: ""
 
     function refresh() {
         Service.getJson("/ui", function(d) {
             if (d && d.running) tray.running = d.running
+        })
+        Service.getJson("/themes", function(d) {
+            if (!d || !d.themes) return
+            tray.theme = String(d.current || "")
+            // Only on change: rebuilding the submenu while it is open would close it.
+            const names = d.themes.map(t => t.name).join("\n")
+            if (names !== tray.themes.map(t => t.name).join("\n")) tray.themes = d.themes
         })
         for (const w of widgets) {
             Service.getJson("/settings/" + w, function(d) {
@@ -83,6 +93,23 @@ QtObject {
                 Platform.MenuItem { text: tray.titles.player; onTriggered: Service.postJson("/ui", { settings: "player" }) }
                 Platform.MenuItem { text: tray.titles.weather; onTriggered: Service.postJson("/ui", { settings: "weather" }) }
                 Platform.MenuItem { text: tray.titles.calendar; onTriggered: Service.postJson("/ui", { settings: "calendar" }) }
+            }
+            Platform.Menu {
+                id: themeMenu
+                title: I18n.i18nc("tray menu", "Theme")
+                Instantiator {
+                    model: tray.themes
+                    delegate: Platform.MenuItem {
+                        required property var modelData
+                        text: modelData.title + (modelData.error ? "  ✗" : "")
+                        enabled: !modelData.error
+                        checkable: true
+                        checked: tray.theme === modelData.name
+                        onTriggered: Service.postJson("/themes", { name: modelData.name }, tray.refresh)
+                    }
+                    onObjectAdded: (index, object) => themeMenu.insertItem(index, object)
+                    onObjectRemoved: (index, object) => themeMenu.removeItem(object)
+                }
             }
             Platform.MenuSeparator {}
             Platform.MenuItem {

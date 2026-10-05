@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Gruvbox dark",
+    "note": "Retro warm: cream on dark brown, orange accent."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#EBDBB2",
+    "colorAccent": "#FE8019",
+    "colorDim": "#928374",
+    "colorValue": "#83A598",
+    "colorPaper": "#282828"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#EBDBB2",
+    "colorAccent": "#FE8019",
+    "colorDim": "#928374"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#EBDBB2",
+    "colorAccent": "#FE8019",
+    "colorDim": "#928374"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#D79921",
+    "colorHigh": "#FE8019",
+    "opacityPercent": 90,
+    "playerColorFg": "#EBDBB2",
+    "playerColorAccent": "#FE8019",
+    "playerColorDim": "#928374"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#EBDBB2",
+    "colorAccent": "#FE8019",
+    "colorDim": "#928374",
+    "colorToday": "#B8BB26",
+    "colorNote": "#FABD2F",
+    "colorPaper": "#282828",
+    "colorHoliday": "#FB4934"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "One Dark",
+    "note": "Atom's One Dark: muted grey-blue, red accent."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#ABB2BF",
+    "colorAccent": "#E06C75",
+    "colorDim": "#5C6370",
+    "colorValue": "#61AFEF",
+    "colorPaper": "#282C34"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#ABB2BF",
+    "colorAccent": "#E06C75",
+    "colorDim": "#5C6370"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#ABB2BF",
+    "colorAccent": "#E06C75",
+    "colorDim": "#5C6370"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#56B6C2",
+    "colorHigh": "#61AFEF",
+    "opacityPercent": 90,
+    "playerColorFg": "#ABB2BF",
+    "playerColorAccent": "#E06C75",
+    "playerColorDim": "#5C6370"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#ABB2BF",
+    "colorAccent": "#E06C75",
+    "colorDim": "#5C6370",
+    "colorToday": "#98C379",
+    "colorNote": "#E5C07B",
+    "colorPaper": "#282C34",
+    "colorHoliday": "#BE5046"
+  }
+}

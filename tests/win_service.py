@@ -689,6 +689,33 @@ def test_server():
             ok(st == 200 and d["outputs"][0]["name"] == "out 0.25" and d["capture"]["backend"] == "fake", "/devices: the outputs probed for the seconds asked, the capture's state beside: " + repr(d)[:100])
             ok(json.loads(req("GET", "/devices?seconds=99")[2])["outputs"][0]["name"] == "out 2.0", "/devices: seconds capped at 2")
             svc.modules["bands"] = None
+
+            # /themes: the palettes listed with swatches, one applied into a real store
+            # (a temporary directory of ini files, the schema from the tree's main.xml).
+            import importlib as _il
+            svc.modules["themes"] = _il.import_module("themes")
+            real_store = _il.import_module("settings_store").Store(directory=tempfile.mkdtemp(prefix="plaintop-themes-"))
+            fake_instance = svc.instances.pop("settings_store", None)
+            svc.instances["settings_store"] = real_store
+            st, _, body, _ = req("GET", "/themes")
+            d = json.loads(body)
+            names = [t["name"] for t in d["themes"]]
+            ok(st == 200 and names[0] == "stock" and len(names) >= 21 and "nord" in names and "amber" in names, f"/themes lists stock and the palettes ({len(names)}): " + " ".join(names[:6]) + " …")
+            nord = next(t for t in d["themes"] if t["name"] == "nord")
+            ok(nord["title"] == "Nord" and nord["note"] and nord["swatch"]["fg"] == "#D8DEE9" and nord["swatch"]["accent"] == "#88C0D0" and not nord.get("error"), "a palette carries its title, note and swatch: " + repr(nord))
+            ok(all(not t.get("error") for t in d["themes"]), "every palette file loads against the schema")
+            st, _, body, _ = req("POST", "/themes", {"name": "nord"}, token)
+            d = json.loads(body)
+            ok(st == 200 and d["applied"] == "nord" and set(d["stamps"]) == {"monitor", "player", "weather", "spectrum", "calendar"}, "POST /themes writes every widget: " + repr(d))
+            ok(real_store.values["monitor"]["colorFg"] == "#D8DEE9" and real_store.values["calendar"]["colorHoliday"] == "#BF616A" and real_store.values["spectrum"]["opacityPercent"] == 90, "the keys land in the widgets' settings with their types")
+            ok(json.loads(req("GET", "/themes")[2])["current"] == "nord", "/themes names the palette the settings carry now")
+            ok(req("POST", "/themes", {"name": "no-such"}, token)[0] == 404 and req("POST", "/themes", {"name": "../etc"}, token)[0] == 400 and req("POST", "/themes", {}, token)[0] == 400, "an unknown, a bad and a missing name: 404, 400, 400")
+            st, _, body, _ = req("POST", "/themes", {"name": "stock"}, token)
+            ok(st == 200 and real_store.values["monitor"]["colorFg"] == "#C8CCD4" and json.loads(req("GET", "/themes")[2])["current"] == "stock", "stock restores main.xml's defaults")
+            ok(req("POST", "/themes", {"name": "nord"})[0] == 401, "POST /themes needs the token")
+            svc.instances.pop("settings_store", None)
+            if fake_instance is not None:
+                svc.instances["settings_store"] = fake_instance
         finally:
             ur.urlopen = real_urlopen
     finally:

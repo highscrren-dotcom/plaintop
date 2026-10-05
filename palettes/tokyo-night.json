@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Tokyo Night",
+    "note": "Blue-violet night city, orange accent."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#C0CAF5",
+    "colorAccent": "#FF9E64",
+    "colorDim": "#565F89",
+    "colorValue": "#7AA2F7",
+    "colorPaper": "#1A1B26"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#C0CAF5",
+    "colorAccent": "#FF9E64",
+    "colorDim": "#565F89"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#C0CAF5",
+    "colorAccent": "#FF9E64",
+    "colorDim": "#565F89"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#7AA2F7",
+    "colorHigh": "#BB9AF7",
+    "opacityPercent": 90,
+    "playerColorFg": "#C0CAF5",
+    "playerColorAccent": "#FF9E64",
+    "playerColorDim": "#565F89"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#C0CAF5",
+    "colorAccent": "#FF9E64",
+    "colorDim": "#565F89",
+    "colorToday": "#9ECE6A",
+    "colorNote": "#E0AF68",
+    "colorPaper": "#1A1B26",
+    "colorHoliday": "#F7768E"
+  }
+}

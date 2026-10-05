@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Paper light",
+    "note": "Dark ink for a light wallpaper; red accent, blue values."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#2B2B2B",
+    "colorAccent": "#C0392B",
+    "colorDim": "#8A8A8A",
+    "colorValue": "#2E6DB4",
+    "colorPaper": "#FBFBF8"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#2B2B2B",
+    "colorAccent": "#C0392B",
+    "colorDim": "#8A8A8A"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#2B2B2B",
+    "colorAccent": "#C0392B",
+    "colorDim": "#8A8A8A"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#2B2B2B",
+    "colorHigh": "#C0392B",
+    "opacityPercent": 70,
+    "playerColorFg": "#2B2B2B",
+    "playerColorAccent": "#C0392B",
+    "playerColorDim": "#8A8A8A"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#2B2B2B",
+    "colorAccent": "#C0392B",
+    "colorDim": "#8A8A8A",
+    "colorToday": "#2E6DB4",
+    "colorNote": "#B8860B",
+    "colorPaper": "#FBFBF8",
+    "colorHoliday": "#C0392B"
+  }
+}

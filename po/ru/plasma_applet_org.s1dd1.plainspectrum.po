@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-05 05:54+0000\n"
+"POT-Creation-Date: 2026-10-05 06:36+0000\n"
 "PO-Revision-Date: 2026-09-22 13:39+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -494,22 +494,22 @@ msgstr ""
 "нет данных: служба plainspectrum-relay не отвечает\n"
 "порт %1"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:156
+#: win/host/imports/plaintop/WidgetWindow.qml:161
 msgctxt "the widget's window menu"
 msgid "Settings…"
 msgstr "Настройки…"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:160
+#: win/host/imports/plaintop/WidgetWindow.qml:165
 msgctxt "the widget's window menu"
 msgid "Let clicks through"
 msgstr "Пропускать клики"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:166
+#: win/host/imports/plaintop/WidgetWindow.qml:171
 msgctxt "the widget's window menu"
 msgid "Behind the desktop icons"
 msgstr "За значками стола"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:173
+#: win/host/imports/plaintop/WidgetWindow.qml:178
 msgctxt "the widget's window menu"
 msgid "Close"
 msgstr "Закрыть"

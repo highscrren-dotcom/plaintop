@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Solarized dark",
+    "note": "Ethan Schoonover's palette on its dark base."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#93A1A1",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#586E75",
+    "colorValue": "#268BD2",
+    "colorPaper": "#002B36"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#93A1A1",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#586E75"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#93A1A1",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#586E75"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#2AA198",
+    "colorHigh": "#268BD2",
+    "opacityPercent": 90,
+    "playerColorFg": "#93A1A1",
+    "playerColorAccent": "#CB4B16",
+    "playerColorDim": "#586E75"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#93A1A1",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#586E75",
+    "colorToday": "#859900",
+    "colorNote": "#B58900",
+    "colorPaper": "#002B36",
+    "colorHoliday": "#DC322F"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Rosé Pine",
+    "note": "Dusty rose and pine on near-black."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#E0DEF4",
+    "colorAccent": "#EBBCBA",
+    "colorDim": "#6E6A86",
+    "colorValue": "#9CCFD8",
+    "colorPaper": "#191724"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#E0DEF4",
+    "colorAccent": "#EBBCBA",
+    "colorDim": "#6E6A86"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#E0DEF4",
+    "colorAccent": "#EBBCBA",
+    "colorDim": "#6E6A86"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#C4A7E7",
+    "colorHigh": "#EBBCBA",
+    "opacityPercent": 90,
+    "playerColorFg": "#E0DEF4",
+    "playerColorAccent": "#EBBCBA",
+    "playerColorDim": "#6E6A86"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#E0DEF4",
+    "colorAccent": "#EBBCBA",
+    "colorDim": "#6E6A86",
+    "colorToday": "#31748F",
+    "colorNote": "#F6C177",
+    "colorPaper": "#191724",
+    "colorHoliday": "#EB6F92"
+  }
+}

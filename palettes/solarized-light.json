@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Solarized light",
+    "note": "The same palette for a light wallpaper: dark text."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#586E75",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#93A1A1",
+    "colorValue": "#268BD2",
+    "colorPaper": "#FDF6E3"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#586E75",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#93A1A1"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#586E75",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#93A1A1"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#268BD2",
+    "colorHigh": "#2AA198",
+    "opacityPercent": 80,
+    "playerColorFg": "#586E75",
+    "playerColorAccent": "#CB4B16",
+    "playerColorDim": "#93A1A1"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#586E75",
+    "colorAccent": "#CB4B16",
+    "colorDim": "#93A1A1",
+    "colorToday": "#859900",
+    "colorNote": "#B58900",
+    "colorPaper": "#FDF6E3",
+    "colorHoliday": "#DC322F"
+  }
+}
