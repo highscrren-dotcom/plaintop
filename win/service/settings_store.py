@@ -38,6 +38,11 @@ WINDOW_KEYS = {
     # per-pixel alpha, and Windows passes the mouse through its transparent pixels — the
     # candidate for a partial click-through without C++ (docs/research/windows-widgets.ru.md).
     "softwareRender": ("Bool", False),
+    # The window never takes the activation from whatever the user works in: the first
+    # click on an inactive window did only that on the desk ("I have to click twice"),
+    # and a widget has no business stealing the focus anyway. The sheets (Dialog shim)
+    # are windows of their own and take it when they open, so a note can be typed.
+    "noActivate": ("Bool", True),
 }
 
 # Where the Plasma default names something Windows has not.

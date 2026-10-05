@@ -71,10 +71,19 @@ frame is kept in cava's stereo order — the left channel from its highest band 
 lowest, then the right from lowest to highest — so `fold_mono` and `resample` are
 imported from `spectrum/relay.py` and `spectrum/shared/Spectrum.qml` needs no change.
 Silence for a second is served as zeros. `/state` answers `{"frames", "restarts",
-"source", "age", "bars", "fps", "backend"}` as the relay does, plus the capture backend
-and `libraries`: each capture library by name, `true` where it imports or the text of
-what its import raised — a frozen exe packed without the library and a desk without a
-sound device look the same otherwise.
+"source", "age", "bars", "fps", "backend"}` as the relay does, plus the capture backend,
+`libraries` (each capture library by name, `true` where it imports or the text of what
+its import raised — a frozen exe packed without the library and a desk without a sound
+device look the same otherwise), `candidates` (the outputs the backend can choose from),
+`prefer` (`PLAINTOP_CAPTURE`) and `scan` (what the idle capture heard on the outputs it
+tried, newest last: `[{"source": "Speakers (Realtek)", "peak": 0.31}, …]`).
+
+### `/devices?seconds=0.4` · `GET`
+
+The reconnaissance of a dark ring: every output's loopback listened to for `seconds`
+(0.1–2) — `{"outputs": [{"name", "default", "peak", "error"}], "capture": <the /state
+dict>}`. `peak` is the largest sample magnitude heard: 0.0 is silence, anything above
+about 0.01 is sound rendered on that output. Ask it while the music plays.
 
 ### `/monitor` · `GET`
 

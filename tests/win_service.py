@@ -681,6 +681,14 @@ def test_server():
             ok(st == 502 and "URLError" in json.loads(body)["error"], "a host that cannot be reached is a 502 with the reason")
             ok(req("GET", "/fetch?url=http://example.org/")[0] == 400, "http:// is refused")
             ok(req("GET", "/fetch")[0] == 400, "no url is refused")
+
+            ok(req("GET", "/devices")[0] == 503, "/devices without the bands module: 503")
+            svc.modules["bands"] = NS(probe_outputs=lambda seconds: [{"name": f"out {seconds}", "default": True, "peak": 0.2, "error": ""}], BARS=8)
+            st, _, body, _ = req("GET", "/devices?seconds=0.25")
+            d = json.loads(body)
+            ok(st == 200 and d["outputs"][0]["name"] == "out 0.25" and d["capture"]["backend"] == "fake", "/devices: the outputs probed for the seconds asked, the capture's state beside: " + repr(d)[:100])
+            ok(json.loads(req("GET", "/devices?seconds=99")[2])["outputs"][0]["name"] == "out 2.0", "/devices: seconds capped at 2")
+            svc.modules["bands"] = None
         finally:
             ur.urlopen = real_urlopen
     finally:

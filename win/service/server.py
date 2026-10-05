@@ -107,6 +107,18 @@ def get_bands(svc, query, body, path):
     return 200, text.encode(), "text/plain"
 
 
+def get_devices(svc, query, body, path):
+    """The reconnaissance of a dark spectrum: every output listened to for `seconds`
+    (0.1–2, default 0.4) with the peak heard, and the capture's state beside it."""
+    bands = svc.need("bands")
+    try:
+        seconds = min(2.0, max(0.1, float(query.get("seconds", ["0.4"])[0])))
+    except ValueError:
+        seconds = 0.4
+    return json_reply(200, {"outputs": bands.probe_outputs(seconds),
+                            "capture": svc.capture.state() if svc.capture else None})
+
+
 def get_state(svc, query, body, path):
     if svc.capture:
         return json_reply(200, svc.capture.state())
@@ -253,7 +265,8 @@ def post_ui(svc, query, body, path):
 
 
 ROUTES = {
-    ("GET", "/bands"): get_bands, ("GET", "/state"): get_state, ("GET", "/monitor"): get_monitor,
+    ("GET", "/bands"): get_bands, ("GET", "/state"): get_state, ("GET", "/devices"): get_devices,
+    ("GET", "/monitor"): get_monitor,
     ("POST", "/exec"): post_exec,
     ("GET", "/player"): get_player, ("POST", "/player"): post_player,
     ("POST", "/notes"): post_notes, ("POST", "/notify"): post_notify,

@@ -46,7 +46,12 @@ seen on one yet. Reports welcome.
   first, then every other output while the current one is silent (Windows sends a program's
   sound where the program or the per-app setting says, not always where the default points;
   the first desk had a USB headset as the default and the music on the speakers). `PLAINTOP_CAPTURE`,
-  a part of an output's name, pins the choice; `/state` names the output in `source`.
+  a part of an output's name, pins the choice; `/state` names the output in `source` and lists in
+  `scan` what the idle capture heard where. When the ring stays dark with music on, open
+  `http://127.0.0.1:8788/devices` while it plays: every output with the peak heard on it.
+- **A click is a click**: the windows never take the activation (`noActivate` in the ini, on by
+  default), so a press on a player button works from whatever window you were in, and that
+  window keeps the focus. The sheets of the calendar are windows of their own and do take it.
 - **The weather** asks its sources through the service (`/fetch`), which reads the proxy
   from the system's settings and trusts the system's certificate store — the bare window's
   own requests stayed "offline" on a corporate network. A proxy set by a PAC script is not

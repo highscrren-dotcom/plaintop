@@ -407,6 +407,45 @@ class SyntheticBackend:
 LIBRARIES = {}                        # backend name → True, or the probe's error as text
 
 
+def probe_outputs(seconds=0.4):
+    """Every output's loopback listened to for `seconds`: [{"name", "default", "peak",
+    "error"}], `peak` the largest sample magnitude heard — 0.0 is silence, anything above
+    about 0.01 is sound rendered there. The reconnaissance for a spectrum that stays dark
+    (/devices): which output the music really goes to, in the service's own words rather
+    than the sound settings'. One stream per output in turn, shared mode, so the capture's
+    own stream is untouched; a device that refuses says so in `error`."""
+    try:
+        import soundcard as sc
+    except Exception as e:
+        return [{"name": "", "default": False, "peak": 0.0, "error": f"soundcard: {e!r}"}]
+    try:
+        default_id = sc.default_speaker().id
+    except Exception:
+        default_id = None
+    try:
+        speakers = list(sc.all_speakers())
+    except Exception as e:
+        return [{"name": "", "default": False, "peak": 0.0, "error": f"all_speakers: {e!r}"}]
+    out = []
+    for s in speakers:
+        row = {"name": str(s.name), "default": s.id == default_id, "peak": 0.0, "error": ""}
+        try:
+            mic = sc.get_microphone(s.id, include_loopback=True)
+            channels = 2 if mic.channels >= 2 else 1
+            with mic.recorder(samplerate=48000, channels=channels, blocksize=960) as rec:
+                deadline = time.monotonic() + max(0.1, float(seconds))
+                peak = 0.0
+                while time.monotonic() < deadline:
+                    data = np.asarray(rec.record(numframes=960), dtype=np.float32)
+                    if data.size:
+                        peak = max(peak, float(np.abs(data).max()))
+            row["peak"] = round(peak, 4)
+        except Exception as e:
+            row["error"] = repr(e)
+        out.append(row)
+    return out
+
+
 def pick_backend():
     """The first capture library that imports, soundcard then pyaudiowpatch; silence when
     neither does. Said once on stderr, as relay.py says "cava not found", and kept in
@@ -438,6 +477,7 @@ class Capture:
         self.high_hz = high_hz
         self.noise = noise
         self.sleep = sleep
+        self.scan = []                    # the doze's last probes: [(output, peak)], newest last
         self.frames = 0
         self.restarts = 0
         self.stamp = 0.0
@@ -473,7 +513,12 @@ class Capture:
         return {"frames": self.frames, "restarts": self.restarts,
                 "source": self.source or "(default)", "age": round(age, 2),
                 "bars": self.bars, "fps": self.fps, "backend": self.backend.name,
-                "libraries": dict(LIBRARIES)}
+                "libraries": dict(LIBRARIES),
+                # The outputs the backend can choose from, the one pinned by PLAINTOP_CAPTURE,
+                # and what the doze heard on each it tried — the reconnaissance of a dark ring.
+                "candidates": int(getattr(self.backend, "candidates", 1) or 1),
+                "prefer": str(getattr(self.backend, "prefer", "") or ""),
+                "scan": [{"source": s, "peak": p} for s, p in self.scan]}
 
     def _run(self):
         """Nothing inside the loop may end the thread (relay.py learnt that the hard way):
@@ -556,7 +601,9 @@ class Capture:
         while not self._stop.wait(1.0):
             self._open()
             block = self.backend.read()
-            if block is not None and len(block) and block.any():
+            peak = float(np.abs(block).max()) if block is not None and len(block) else 0.0
+            self.scan = (self.scan + [(self.source, round(peak, 4))])[-8:]
+            if peak > 0:
                 self._analyzer.push(block)
                 return
             self.backend.close()

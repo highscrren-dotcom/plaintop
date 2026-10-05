@@ -222,8 +222,8 @@ def test_capture_rate():
         ok(st["restarts"] == 0 and st["backend"] == "synthetic" and st["bars"] == bands.BARS
            and st["fps"] == bands.FPS and 0 <= st["age"] < 1 and st["frames"] == cap.frames,
            "state(): " + repr(st))
-        ok(set(st) == {"frames", "restarts", "source", "age", "bars", "fps", "backend", "libraries"},
-           "state() has the relay's keys plus backend and libraries")
+        ok(set(st) == {"frames", "restarts", "source", "age", "bars", "fps", "backend", "libraries", "candidates", "prefer", "scan"},
+           "state() has the relay's keys plus backend, libraries, candidates, prefer, scan")
         ok(isinstance(st["libraries"], dict) and all(v is True or isinstance(v, str) for v in st["libraries"].values()),
            "libraries: each capture library True or its probe's error: " + repr(st["libraries"]))
     finally:
@@ -295,6 +295,11 @@ def test_capture_follows_sound():
         ok(st["age"] < 0.5 and st["frames"] > 5, f"frames flow from it: {st['frames']} frames, age {st['age']}")
         ok(max(cap.frame()) > 0, "the frame is not silence")
         ok(backend.opened[0] == "A" and "B" in backend.opened, "the default first, then the next while silent")
+        ok(st["scan"] and st["scan"][0]["source"] == "A" and st["scan"][0]["peak"] == 0.0 and st["scan"][-1]["source"] == "B" and st["scan"][-1]["peak"] > 0,
+           f"the scan log says what the doze heard where: {st['scan']}")
+        probe = bands.probe_outputs(0.1)
+        ok(isinstance(probe, list) and all({"name", "default", "peak", "error"} <= set(r) for r in probe),
+           "probe_outputs answers rows (an error row without soundcard): " + repr(probe)[:120])
     finally:
         cap.stop()
     print(f"  ✓ follows the sound: {' → '.join(backend.opened[:4])}")

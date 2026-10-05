@@ -21,12 +21,17 @@ Window {
     property int cfgStamp: -1
     readonly property bool ready: cfgStamp >= 0
     readonly property bool passing: cfg.clickThrough === true
+    // No activation: a click on the window is a click on the widget, not first a click
+    // that activates it ("I have to press twice", the desk said), and the window the user
+    // works in keeps the focus. The Dialog shim's sheets are windows of their own and ask
+    // for it when they open. `noActivate=false` in the ini brings the old behaviour back.
+    readonly property bool noActivate: flag("noActivate", true)
 
     visible: ready
     color: "transparent"
     title: "plaintop " + widget
     flags: Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnBottomHint | Qt.NoDropShadowWindowHint
-           | (passing ? Qt.WindowTransparentForInput : 0)
+           | (passing ? Qt.WindowTransparentForInput : 0) | (noActivate ? Qt.WindowDoesNotAcceptFocus : 0)
 
     // ── i18n ──────────────────────────────────────────────────────────────────
     function i18n(text) { return I18n.i18n.apply(null, arguments) }
