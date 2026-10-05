@@ -584,8 +584,9 @@ Item {
                                  .replace(/ @.*$/, "").replace(/\s+/g, " ").trim()
             monitor.cpuSockets = sockets
             monitor.cpuCores = sockets * perSocket
-            // "CPU(s)" is the thread count itself; the product is wrong on a hybrid CPU
-            // (i7-14700: 20 cores, 28 threads, "Thread(s) per core: 2" → 40).
+            // "CPU(s)" is the thread count itself; the product is wrong on a hybrid CPU,
+            // where only the performance cores have two threads ("Thread(s) per core: 2"
+            // × 20 cores → 40 for a part with 28 threads).
             monitor.cpuThreads = cpus > 0 ? cpus : sockets * perSocket * perCore
         }
     }

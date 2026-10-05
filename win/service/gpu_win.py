@@ -13,9 +13,9 @@ nvidia-smi gives them where it is; an Intel or AMD card shows none without LHM.
 The counters name a card by its LUID, and so does DXGI: IDXGIFactory1::EnumAdapters1
 (dxgi.dll through ctypes, three vtable calls) lists the adapters with their LUID, name,
 dedicated memory, shared memory limit and a flag for the software adapter — the key
-that joins the counters to a card. The first desk had three "cards": the counters list
-the Microsoft Basic Render Driver too, and the registry's and nvidia-smi's orders are
-their own; matched by index, an NVIDIA T600 came out twice and its memory under a
+that joins the counters to a card. The first desk had three "cards" for two: the
+counters list the Microsoft Basic Render Driver too, and the registry's and nvidia-smi's
+orders are their own; matched by index, one card came out twice and its memory under a
 nameless third. nvidia-smi's row is matched by the card's name. The registry is the
 fallback where DXGI cannot be asked. LHM, when it runs, is preferred for every id it
 gives (monitor_win.Sampler merges this under it).
