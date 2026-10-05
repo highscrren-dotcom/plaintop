@@ -69,7 +69,7 @@ def main(argv):
 
     # The service, frozen. The launcher is win/plaintop.py; the service's modules are
     # imported by name from win/service, so they are hidden imports here.
-    hidden = ["server", "paths", "monitor_win", "exec_win", "bands", "player_win", "notes_bridge", "holidays_win",
+    hidden = ["server", "paths", "monitor_win", "gpu_win", "exec_win", "bands", "player_win", "notes_bridge", "holidays_win",
               "timezones", "settings_store", "ui", "notify_win"]
     cmd = [sys.executable, "-m", "PyInstaller", "--noconfirm", "--onedir", "--name", "plaintop",
            "--distpath", str(DIST.parent / "_py"), "--workpath", str(DIST.parent / "_work"),
