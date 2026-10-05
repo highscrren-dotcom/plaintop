@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-05 03:41+0000\n"
+"POT-Creation-Date: 2026-10-05 05:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: player/shared/PlayerView.qml:179
+#: player/shared/PlayerView.qml:182
 msgctxt "the widget's header line"
 msgid "NOW PLAYING"
 msgstr ""
 
-#: player/shared/PlayerView.qml:184
+#: player/shared/PlayerView.qml:187
 msgctxt "no MPRIS player on the bus"
 msgid "no player"
 msgstr ""
 
-#: player/shared/PlayerView.qml:200
+#: player/shared/PlayerView.qml:203
 msgctxt "playback status"
 msgid "stopped"
 msgstr ""
 
-#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+#: player/shared/PlayerView.qml:207 player/shared/PlayerView.qml:340
 msgctxt "playback status"
 msgid "paused"
+msgstr ""
+
+#: player/shared/PlayerView.qml:339
+msgctxt "playback status"
+msgid "playing"
 msgstr ""
 
 #: spectrum/package/contents/config/config.qml:7 win/host/settings.qml:49

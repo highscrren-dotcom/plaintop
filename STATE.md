@@ -94,6 +94,8 @@ Windows, `webbrowser`). Стенды Plasma: `--check-notes` 145, `--check-relay
   соединяет счётчики с картами DXGI по LUID (`dxgi_adapters()`, ctypes/vtable), `Mpris2Model` держит
   нажатый PlayPause 2,5 с, `WeatherView.requestPrefix` (общий файл) + `/fetch` в службе (https, GET,
   прокси и сертификаты системы; `tests/win_service.py` подменяет `urlopen`).
+- Четвёртый стол: спектр заработал; `PlayerView` (общий) пишет «playing»/«paused» после кнопок и
+  вспыхивает акцентом на смену (слово пользователя: «логичная анимация»).
 - Стенды: `tests/win_hosts.py`+`.qml` 9/9 (6.8.3, 6.10.1, 6.11.3, настоящая служба на Linux),
   `win_service.py` 167, `win_bands.py` 51, `win_media.py` 94.
 - Документы: решение 17 EN/RU, GOTCHAS часть III (10 записей, EN/RU, оглавление; последняя —

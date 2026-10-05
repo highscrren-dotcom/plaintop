@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-05 03:41+0000\n"
+"POT-Creation-Date: 2026-10-05 05:54+0000\n"
 "PO-Revision-Date: 2026-09-22 13:49+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Polish\n"
@@ -19,25 +19,30 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: player/shared/PlayerView.qml:179
+#: player/shared/PlayerView.qml:182
 msgctxt "the widget's header line"
 msgid "NOW PLAYING"
 msgstr "TERAZ GRA"
 
-#: player/shared/PlayerView.qml:184
+#: player/shared/PlayerView.qml:187
 msgctxt "no MPRIS player on the bus"
 msgid "no player"
 msgstr "brak odtwarzacza"
 
-#: player/shared/PlayerView.qml:200
+#: player/shared/PlayerView.qml:203
 msgctxt "playback status"
 msgid "stopped"
 msgstr "zatrzymano"
 
-#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+#: player/shared/PlayerView.qml:207 player/shared/PlayerView.qml:340
 msgctxt "playback status"
 msgid "paused"
 msgstr "pauza"
+
+#: player/shared/PlayerView.qml:339
+msgctxt "playback status"
+msgid "playing"
+msgstr ""
 
 #: spectrum/package/contents/config/config.qml:7 win/host/settings.qml:49
 msgctxt "settings page"

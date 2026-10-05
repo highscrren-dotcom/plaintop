@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-05 03:41+0000\n"
+"POT-Creation-Date: 2026-10-05 05:54+0000\n"
 "PO-Revision-Date: 2026-09-23 17:52+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -157,25 +157,30 @@ msgstr ""
 "там же його налаштування, або ./install.sh з перемикачем clicks off.\n"
 "Кнопки керування ловлять мишу й тоді; решта віджета її пропускає."
 
-#: player/shared/PlayerView.qml:179
+#: player/shared/PlayerView.qml:182
 msgctxt "the widget's header line"
 msgid "NOW PLAYING"
 msgstr "ЗАРАЗ ГРАЄ"
 
-#: player/shared/PlayerView.qml:184
+#: player/shared/PlayerView.qml:187
 msgctxt "no MPRIS player on the bus"
 msgid "no player"
 msgstr "немає плеєра"
 
-#: player/shared/PlayerView.qml:200
+#: player/shared/PlayerView.qml:203
 msgctxt "playback status"
 msgid "stopped"
 msgstr "зупинено"
 
-#: player/shared/PlayerView.qml:204 player/shared/PlayerView.qml:331
+#: player/shared/PlayerView.qml:207 player/shared/PlayerView.qml:340
 msgctxt "playback status"
 msgid "paused"
 msgstr "пауза"
+
+#: player/shared/PlayerView.qml:339
+msgctxt "playback status"
+msgid "playing"
+msgstr ""
 
 #: win/host/imports/plaintop/WidgetWindow.qml:156
 msgctxt "the widget's window menu"

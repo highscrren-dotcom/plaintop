@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-05 03:41+0000\n"
+"POT-Creation-Date: 2026-10-05 05:54+0000\n"
 "PO-Revision-Date: 2026-09-23 18:13+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -35,222 +35,222 @@ msgctxt "settings page"
 msgid "Mouse"
 msgstr "Миша"
 
-#: weather/package/contents/ui/WeatherView.qml:422
+#: weather/package/contents/ui/WeatherView.qml:428
 msgctxt "wind speed unit"
 msgid "m/s"
 msgstr "м/с"
 
-#: weather/package/contents/ui/WeatherView.qml:424
+#: weather/package/contents/ui/WeatherView.qml:430
 msgctxt "wind speed unit"
 msgid "mph"
 msgstr "миль/год"
 
-#: weather/package/contents/ui/WeatherView.qml:425
+#: weather/package/contents/ui/WeatherView.qml:431
 msgctxt "wind speed unit"
 msgid "km/h"
 msgstr "км/год"
 
-#: weather/package/contents/ui/WeatherView.qml:429
+#: weather/package/contents/ui/WeatherView.qml:435
 msgctxt "compass point"
 msgid "N"
 msgstr "Пн"
 
-#: weather/package/contents/ui/WeatherView.qml:429
+#: weather/package/contents/ui/WeatherView.qml:435
 msgctxt "compass point"
 msgid "NE"
 msgstr "ПнС"
 
-#: weather/package/contents/ui/WeatherView.qml:430
+#: weather/package/contents/ui/WeatherView.qml:436
 msgctxt "compass point"
 msgid "E"
 msgstr "С"
 
-#: weather/package/contents/ui/WeatherView.qml:430
+#: weather/package/contents/ui/WeatherView.qml:436
 msgctxt "compass point"
 msgid "SE"
 msgstr "ПдС"
 
-#: weather/package/contents/ui/WeatherView.qml:431
+#: weather/package/contents/ui/WeatherView.qml:437
 msgctxt "compass point"
 msgid "S"
 msgstr "Пд"
 
-#: weather/package/contents/ui/WeatherView.qml:431
+#: weather/package/contents/ui/WeatherView.qml:437
 msgctxt "compass point"
 msgid "SW"
 msgstr "ПдЗ"
 
-#: weather/package/contents/ui/WeatherView.qml:432
+#: weather/package/contents/ui/WeatherView.qml:438
 msgctxt "compass point"
 msgid "W"
 msgstr "З"
 
-#: weather/package/contents/ui/WeatherView.qml:432
+#: weather/package/contents/ui/WeatherView.qml:438
 msgctxt "compass point"
 msgid "NW"
 msgstr "ПнЗ"
 
-#: weather/package/contents/ui/WeatherView.qml:442
+#: weather/package/contents/ui/WeatherView.qml:448
 msgctxt "weather condition"
 msgid "clear"
 msgstr "ясно"
 
-#: weather/package/contents/ui/WeatherView.qml:443
+#: weather/package/contents/ui/WeatherView.qml:449
 msgctxt "weather condition"
 msgid "mostly clear"
 msgstr "малохмарно"
 
-#: weather/package/contents/ui/WeatherView.qml:444
+#: weather/package/contents/ui/WeatherView.qml:450
 msgctxt "weather condition"
 msgid "partly cloudy"
 msgstr "хмарно"
 
-#: weather/package/contents/ui/WeatherView.qml:445
+#: weather/package/contents/ui/WeatherView.qml:451
 msgctxt "weather condition"
 msgid "overcast"
 msgstr "похмуро"
 
-#: weather/package/contents/ui/WeatherView.qml:446
+#: weather/package/contents/ui/WeatherView.qml:452
 msgctxt "weather condition"
 msgid "fog"
 msgstr "туман"
 
-#: weather/package/contents/ui/WeatherView.qml:447
+#: weather/package/contents/ui/WeatherView.qml:453
 msgctxt "weather condition"
 msgid "rime fog"
 msgstr "паморозь"
 
-#: weather/package/contents/ui/WeatherView.qml:448
+#: weather/package/contents/ui/WeatherView.qml:454
 msgctxt "weather condition"
 msgid "light drizzle"
 msgstr "слабка мряка"
 
-#: weather/package/contents/ui/WeatherView.qml:449
+#: weather/package/contents/ui/WeatherView.qml:455
 msgctxt "weather condition"
 msgid "drizzle"
 msgstr "мряка"
 
-#: weather/package/contents/ui/WeatherView.qml:450
+#: weather/package/contents/ui/WeatherView.qml:456
 msgctxt "weather condition"
 msgid "heavy drizzle"
 msgstr "сильна мряка"
 
-#: weather/package/contents/ui/WeatherView.qml:451
+#: weather/package/contents/ui/WeatherView.qml:457
 msgctxt "weather condition"
 msgid "freezing drizzle"
 msgstr "крижана мряка"
 
-#: weather/package/contents/ui/WeatherView.qml:452
+#: weather/package/contents/ui/WeatherView.qml:458
 msgctxt "weather condition"
 msgid "heavy freezing drizzle"
 msgstr "сильна крижана мряка"
 
-#: weather/package/contents/ui/WeatherView.qml:453
+#: weather/package/contents/ui/WeatherView.qml:459
 msgctxt "weather condition"
 msgid "light rain"
 msgstr "невеликий дощ"
 
-#: weather/package/contents/ui/WeatherView.qml:454
+#: weather/package/contents/ui/WeatherView.qml:460
 msgctxt "weather condition"
 msgid "rain"
 msgstr "дощ"
 
-#: weather/package/contents/ui/WeatherView.qml:455
+#: weather/package/contents/ui/WeatherView.qml:461
 msgctxt "weather condition"
 msgid "heavy rain"
 msgstr "сильний дощ"
 
-#: weather/package/contents/ui/WeatherView.qml:456
+#: weather/package/contents/ui/WeatherView.qml:462
 msgctxt "weather condition"
 msgid "freezing rain"
 msgstr "крижаний дощ"
 
-#: weather/package/contents/ui/WeatherView.qml:457
+#: weather/package/contents/ui/WeatherView.qml:463
 msgctxt "weather condition"
 msgid "heavy freezing rain"
 msgstr "сильний крижаний дощ"
 
-#: weather/package/contents/ui/WeatherView.qml:458
+#: weather/package/contents/ui/WeatherView.qml:464
 msgctxt "weather condition"
 msgid "light snow"
 msgstr "невеликий сніг"
 
-#: weather/package/contents/ui/WeatherView.qml:459
+#: weather/package/contents/ui/WeatherView.qml:465
 msgctxt "weather condition"
 msgid "snow"
 msgstr "сніг"
 
-#: weather/package/contents/ui/WeatherView.qml:460
+#: weather/package/contents/ui/WeatherView.qml:466
 msgctxt "weather condition"
 msgid "heavy snow"
 msgstr "сильний сніг"
 
-#: weather/package/contents/ui/WeatherView.qml:461
+#: weather/package/contents/ui/WeatherView.qml:467
 msgctxt "weather condition"
 msgid "snow grains"
 msgstr "снігові зерна"
 
-#: weather/package/contents/ui/WeatherView.qml:462
+#: weather/package/contents/ui/WeatherView.qml:468
 msgctxt "weather condition"
 msgid "light showers"
 msgstr "невелика злива"
 
-#: weather/package/contents/ui/WeatherView.qml:463
+#: weather/package/contents/ui/WeatherView.qml:469
 msgctxt "weather condition"
 msgid "showers"
 msgstr "злива"
 
-#: weather/package/contents/ui/WeatherView.qml:464
+#: weather/package/contents/ui/WeatherView.qml:470
 msgctxt "weather condition"
 msgid "heavy showers"
 msgstr "сильна злива"
 
-#: weather/package/contents/ui/WeatherView.qml:465
+#: weather/package/contents/ui/WeatherView.qml:471
 msgctxt "weather condition"
 msgid "snow showers"
 msgstr "зливовий сніг"
 
-#: weather/package/contents/ui/WeatherView.qml:466
+#: weather/package/contents/ui/WeatherView.qml:472
 msgctxt "weather condition"
 msgid "heavy snow showers"
 msgstr "сильний снігопад"
 
-#: weather/package/contents/ui/WeatherView.qml:467
+#: weather/package/contents/ui/WeatherView.qml:473
 msgctxt "weather condition"
 msgid "thunderstorm"
 msgstr "гроза"
 
-#: weather/package/contents/ui/WeatherView.qml:468
+#: weather/package/contents/ui/WeatherView.qml:474
 msgctxt "weather condition"
 msgid "thunderstorm with hail"
 msgstr "гроза з градом"
 
-#: weather/package/contents/ui/WeatherView.qml:469
+#: weather/package/contents/ui/WeatherView.qml:475
 msgctxt "weather condition"
 msgid "thunderstorm with heavy hail"
 msgstr "гроза, сильний град"
 
-#: weather/package/contents/ui/WeatherView.qml:477
+#: weather/package/contents/ui/WeatherView.qml:483
 msgctxt "MET Norway's licence (CC BY 4.0) asks for this line"
 msgid "Weather data from MET Norway"
 msgstr "Дані про погоду: MET Norway"
 
-#: weather/package/contents/ui/WeatherView.qml:478
+#: weather/package/contents/ui/WeatherView.qml:484
 msgctxt "WeatherAPI.com's terms ask for this line"
 msgid "Powered by WeatherAPI.com"
 msgstr "Powered by WeatherAPI.com"
 
-#: weather/package/contents/ui/WeatherView.qml:479
+#: weather/package/contents/ui/WeatherView.qml:485
 msgctxt "Visual Crossing's terms ask for this line"
 msgid "Weather data provided by Visual Crossing"
 msgstr "Weather data provided by Visual Crossing"
 
-#: weather/package/contents/ui/WeatherView.qml:480
+#: weather/package/contents/ui/WeatherView.qml:486
 msgctxt "Open-Meteo's terms ask for this line"
 msgid "Weather data by Open-Meteo.com"
 msgstr "Дані про погоду: Open-Meteo.com"
 
-#: weather/package/contents/ui/WeatherView.qml:487
+#: weather/package/contents/ui/WeatherView.qml:493
 #, kde-format
 msgctxt "how old the shown weather is"
 msgid "%1 min ago"
@@ -259,7 +259,7 @@ msgstr[0] "%1 хвилину тому"
 msgstr[1] "%1 хвилини тому"
 msgstr[2] "%1 хвилин тому"
 
-#: weather/package/contents/ui/WeatherView.qml:488
+#: weather/package/contents/ui/WeatherView.qml:494
 #, kde-format
 msgctxt "how old the shown weather is"
 msgid "%1 h ago"
@@ -268,48 +268,48 @@ msgstr[0] "%1 годину тому"
 msgstr[1] "%1 години тому"
 msgstr[2] "%1 годин тому"
 
-#: weather/package/contents/ui/WeatherView.qml:526
+#: weather/package/contents/ui/WeatherView.qml:532
 msgctxt "no location, no guess"
 msgid "set a location in the widget settings"
 msgstr "вкажіть місце в налаштуваннях віджета"
 
-#: weather/package/contents/ui/WeatherView.qml:530
+#: weather/package/contents/ui/WeatherView.qml:536
 msgctxt "the source needs a key and none is set"
 msgid "set the API key in the widget settings"
 msgstr "вкажіть ключ API в налаштуваннях віджета"
 
-#: weather/package/contents/ui/WeatherView.qml:535
+#: weather/package/contents/ui/WeatherView.qml:541
 msgctxt "header: the place was guessed from the time zone"
 msgid "time zone"
 msgstr "часовий пояс"
 
-#: weather/package/contents/ui/WeatherView.qml:539
+#: weather/package/contents/ui/WeatherView.qml:545
 msgctxt "header: the last request failed"
 msgid "offline"
 msgstr "офлайн"
 
-#: weather/package/contents/ui/WeatherView.qml:541
+#: weather/package/contents/ui/WeatherView.qml:547
 msgctxt "header: the source refused the API key"
 msgid "bad key"
 msgstr "хибний ключ"
 
-#: weather/package/contents/ui/WeatherView.qml:542
+#: weather/package/contents/ui/WeatherView.qml:548
 msgctxt "the widget's header line"
 msgid "WEATHER"
 msgstr "ПОГОДА"
 
-#: weather/package/contents/ui/WeatherView.qml:545
+#: weather/package/contents/ui/WeatherView.qml:551
 msgctxt "nothing fetched yet"
 msgid "no data yet"
 msgstr "даних поки немає"
 
-#: weather/package/contents/ui/WeatherView.qml:555
+#: weather/package/contents/ui/WeatherView.qml:561
 #, kde-format
 msgctxt "apparent temperature"
 msgid "feels %1"
 msgstr "відчувається %1"
 
-#: weather/package/contents/ui/WeatherView.qml:557
+#: weather/package/contents/ui/WeatherView.qml:563
 #, kde-format
 msgctxt "wind: speed, its unit, compass direction"
 msgid "wind %1 %2 %3"
