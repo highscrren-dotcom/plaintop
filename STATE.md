@@ -23,10 +23,10 @@
   спектр под музыку (`/state` → `source` = выход, где играет; если нет — `PLAINTOP_CAPTURE=<часть
   имени>`), блок GPU из двух карт (NVIDIA T600 с температурой, Intel UHD 770 с общей памятью), кнопки
   плеера без задержки, погоду с данными (через `/fetch`; если всё ещё offline — прокси по PAC → службе
-  `HTTPS_PROXY`). **Артефакт для четвёртого запуска: run 37266705249 → `plaintop-win` (id
-  11326293436, 72 MiB)**; его exe в CI вытянул прогноз Open-Meteo через `/fetch` (319 байт, JSON),
-  `backend: soundcard`, `/player` → `winrt`; `gpu/*` на runner'е 0 (карты нет). Что увидит
-  только стол: окна (прозрачность,
+  `HTTPS_PROXY`). Четвёртый запуск: спектр заработал. **Артефакт для пятого запуска (слово
+  состояния плеера): run 37269905818 → `plaintop-win` (id 11327921620, 72 MiB)**; exe в CI: `/fetch`
+  тянет Open-Meteo, `backend: soundcard`, `/player` → `winrt`; `gpu/*` на runner'е 0 (карты нет).
+  Что увидит только стол: окна (прозрачность,
   «под всеми», переключение `WindowTransparentForInput` на ходу, перетаскивание, меню правой
   кнопки), трей (`qml -a widget`), «за значками» (SetParent под WorkerW — в т.ч. 24H2), захват WASAPI
   (`pip install soundcard`), SMTC (`pip install winsdk`, Spotify/браузер), LHM JSON на 8085,
