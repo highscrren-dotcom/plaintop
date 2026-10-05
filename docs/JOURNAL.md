@@ -34,8 +34,10 @@ psutil), `/bands?bars=8&mono=1` → `0,0,0,0,0,0,0,0` при `frames: 5` (рел
 `plaintop.exe` из zip поднялся и ответил на `/monitor` (датчики runner'а), `/bands`, `/state`, `/settings/monitor` —
 падение пользователя закрыто; упал `/holidays`: `No translation file found for domain` — каталоги gettext пакета
 `holidays` не попали в exe (`--collect-submodules` не кладёт данные). Добавлены `--collect-data holidays` и
-`tzdata`, в `holidays_win.py` — откат на имена без перевода. **Не проверено**: exe после этого — следующим прогоном
-CI и рукой пользователя на столе.
+`tzdata`, в `holidays_win.py` — откат на имена без перевода. Второй прогон (run 37258346318) зелёный: exe из zip
+ответил на `/monitor` (34 датчика), `/bands`, `/state`, `/settings/monitor` (33 ключа), `/holidays` (US, июль 2026:
+03 и 04), `/time` (Berlin), `/notes dump` (exit 0), `/player`. Артефакт `plaintop-win` id 11323242997 — пользователю
+на стол. **Не проверено**: сам стол — окна, трей, звук, SMTC.
 
 ---
 
