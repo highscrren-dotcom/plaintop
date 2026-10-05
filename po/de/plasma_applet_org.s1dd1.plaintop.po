@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 21:01+0000\n"
+"POT-Creation-Date: 2026-10-05 03:41+0000\n"
 "PO-Revision-Date: 2026-09-22 13:25+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: German\n"
@@ -423,214 +423,214 @@ msgctxt "a line action failed: its exit code"
 msgid "exit code %1"
 msgstr "Exit-Code %1"
 
-#: monitor/shared/MonitorData.qml:874
+#: monitor/shared/MonitorData.qml:877
 #, kde-format
 msgctxt "uptime: days, abbreviated"
 msgid "%1d"
 msgstr "%1d"
 
-#: monitor/shared/MonitorData.qml:875
+#: monitor/shared/MonitorData.qml:878
 #, kde-format
 msgctxt "uptime: hours, abbreviated"
 msgid "%1h"
 msgstr "%1h"
 
-#: monitor/shared/MonitorData.qml:876
+#: monitor/shared/MonitorData.qml:879
 #, kde-format
 msgctxt "uptime: minutes, abbreviated"
 msgid "%1m"
 msgstr "%1min"
 
-#: monitor/shared/MonitorData.qml:883
+#: monitor/shared/MonitorData.qml:886
 #, kde-format
 msgctxt "battery: hours and minutes of an estimate"
 msgid "%1h %2m"
 msgstr "%1h %2min"
 
-#: monitor/shared/MonitorData.qml:900
+#: monitor/shared/MonitorData.qml:903
 msgctxt "battery: no current flowing, charged"
 msgid "full"
 msgstr "voll"
 
-#: monitor/shared/MonitorData.qml:901
+#: monitor/shared/MonitorData.qml:904
 msgctxt "battery: no current flowing"
 msgid "idle"
 msgstr "im Leerlauf"
 
-#: monitor/shared/MonitorData.qml:904
+#: monitor/shared/MonitorData.qml:907
 #, kde-format
 msgctxt "battery: charging; the power and the time to full"
 msgid "charging  %1 W  %2 to full"
 msgstr "lädt  %1 W  voll in %2"
 
-#: monitor/shared/MonitorData.qml:908
+#: monitor/shared/MonitorData.qml:911
 #, kde-format
 msgctxt "battery: discharging; the power and the time left"
 msgid "discharging  %1 W  %2 left"
 msgstr "entlädt  %1 W  noch %2"
 
-#: monitor/shared/MonitorData.qml:911
+#: monitor/shared/MonitorData.qml:914
 #, kde-format
 msgctxt "battery: wear, a percentage"
 msgid "health %1"
 msgstr "Zustand %1"
 
-#: monitor/shared/MonitorData.qml:983
+#: monitor/shared/MonitorData.qml:986
 #, kde-format
 msgctxt "line action: the block's own command"
 msgid "run %1"
 msgstr "%1 ausführen"
 
-#: monitor/shared/MonitorData.qml:990
+#: monitor/shared/MonitorData.qml:993
 msgctxt "line action: open Plasma's System Monitor"
 msgid "System Monitor"
 msgstr "Systemüberwachung"
 
-#: monitor/shared/MonitorData.qml:994
+#: monitor/shared/MonitorData.qml:997
 msgctxt "line action: open Plasma's Info Center"
 msgid "system information"
 msgstr "Systeminformationen"
 
-#: monitor/shared/MonitorData.qml:1000
+#: monitor/shared/MonitorData.qml:1003
 msgctxt "line action"
 msgid "date and time settings"
 msgstr "Einstellungen für Datum und Zeit"
 
-#: monitor/shared/MonitorData.qml:1003
+#: monitor/shared/MonitorData.qml:1006
 msgctxt "line action"
 msgid "open in a terminal"
 msgstr "im Terminal öffnen"
 
-#: monitor/shared/MonitorData.qml:1007
+#: monitor/shared/MonitorData.qml:1010
 msgctxt "line action"
 msgid "open in the file manager"
 msgstr "im Dateiverwalter öffnen"
 
-#: monitor/shared/MonitorData.qml:1013
+#: monitor/shared/MonitorData.qml:1016
 msgctxt "line action"
 msgid "lock the screen"
 msgstr "Bildschirm sperren"
 
-#: monitor/shared/MonitorData.qml:1014
+#: monitor/shared/MonitorData.qml:1017
 msgctxt "line action"
 msgid "log out"
 msgstr "abmelden"
 
-#: monitor/shared/MonitorData.qml:1017
+#: monitor/shared/MonitorData.qml:1020
 msgctxt "line action"
 msgid "reboot"
 msgstr "neu starten"
 
-#: monitor/shared/MonitorData.qml:1018
+#: monitor/shared/MonitorData.qml:1021
 msgctxt "line action"
 msgid "power off"
 msgstr "ausschalten"
 
-#: monitor/shared/MonitorData.qml:1023
+#: monitor/shared/MonitorData.qml:1026
 #, kde-format
 msgctxt "line action: send SIGTERM to the process"
 msgid "terminate %1"
 msgstr "%1 beenden"
 
-#: monitor/shared/MonitorData.qml:1025
+#: monitor/shared/MonitorData.qml:1028
 #, kde-format
 msgctxt "line action: send SIGKILL to the process"
 msgid "kill %1"
 msgstr "%1 abschießen"
 
-#: monitor/shared/MonitorData.qml:1032
+#: monitor/shared/MonitorData.qml:1035
 msgctxt "line action: the package manager's update in a terminal"
 msgid "update in a terminal"
 msgstr "im Terminal aktualisieren"
 
-#: monitor/shared/MonitorData.qml:1039
+#: monitor/shared/MonitorData.qml:1042
 msgctxt "line action: list the containers in a terminal"
 msgid "containers in a terminal"
 msgstr "Container im Terminal"
 
-#: monitor/shared/MonitorData.qml:1042
+#: monitor/shared/MonitorData.qml:1045
 msgctxt "line action: list ollama's models in a terminal"
 msgid "models in a terminal"
 msgstr "Modelle im Terminal"
 
-#: monitor/shared/MonitorData.qml:1045
+#: monitor/shared/MonitorData.qml:1048
 msgctxt "line action: open virt-manager"
 msgid "Virtual Machine Manager"
 msgstr "Virtuelle Maschinenverwaltung"
 
-#: monitor/shared/MonitorData.qml:1057
+#: monitor/shared/MonitorData.qml:1060
 msgctxt "line action: systemctl status in a terminal"
 msgid "status"
 msgstr "Status"
 
-#: monitor/shared/MonitorData.qml:1058
+#: monitor/shared/MonitorData.qml:1061
 msgctxt "line action: systemctl start"
 msgid "start"
 msgstr "starten"
 
-#: monitor/shared/MonitorData.qml:1059
+#: monitor/shared/MonitorData.qml:1062
 msgctxt "line action: systemctl stop"
 msgid "stop"
 msgstr "stoppen"
 
-#: monitor/shared/MonitorData.qml:1060
+#: monitor/shared/MonitorData.qml:1063
 msgctxt "line action: systemctl restart"
 msgid "restart"
 msgstr "neu starten"
 
-#: monitor/shared/MonitorData.qml:1061
+#: monitor/shared/MonitorData.qml:1064
 msgctxt "line action: the unit's journal in a terminal"
 msgid "journal"
 msgstr "Journal"
 
-#: monitor/shared/MonitorData.qml:1066
+#: monitor/shared/MonitorData.qml:1069
 msgctxt "line action"
 msgid "unmute"
 msgstr "Ton an"
 
-#: monitor/shared/MonitorData.qml:1066
+#: monitor/shared/MonitorData.qml:1069
 msgctxt "line action"
 msgid "mute"
 msgstr "stumm"
 
-#: monitor/shared/MonitorData.qml:1068
+#: monitor/shared/MonitorData.qml:1071
 msgctxt "line action"
 msgid "sound settings"
 msgstr "Toneinstellungen"
 
-#: monitor/shared/MonitorData.qml:1072
+#: monitor/shared/MonitorData.qml:1075
 msgctxt "line action"
 msgid "open in the editor"
 msgstr "im Editor öffnen"
 
-#: monitor/shared/MonitorData.qml:1073
+#: monitor/shared/MonitorData.qml:1076
 msgctxt "line action: git pull in a terminal"
 msgid "git pull"
 msgstr "git pull"
 
-#: monitor/shared/MonitorData.qml:1078
+#: monitor/shared/MonitorData.qml:1081
 #, kde-format
 msgctxt "line action: this program's journal in a terminal"
 msgid "journal of %1"
 msgstr "Journal von %1"
 
-#: monitor/shared/MonitorData.qml:1080
+#: monitor/shared/MonitorData.qml:1083
 msgctxt "line action: the journal's errors in a terminal"
 msgid "errors in a terminal"
 msgstr "Fehler im Terminal"
 
-#: monitor/shared/MonitorData.qml:1103
+#: monitor/shared/MonitorData.qml:1106
 msgctxt "docker: the user is not in the docker group yet"
 msgid "needs re-login"
 msgstr "Neuanmeldung nötig"
 
-#: monitor/shared/MonitorData.qml:1104 monitor/shared/MonitorData.qml:1114
+#: monitor/shared/MonitorData.qml:1107 monitor/shared/MonitorData.qml:1117
 #, kde-format
 msgctxt "docker: running containers of all containers"
 msgid "%1 of %2"
 msgstr "%1 von %2"
 
-#: monitor/shared/MonitorData.qml:1110
+#: monitor/shared/MonitorData.qml:1113
 #, kde-format
 msgctxt "ollama: no model loaded; how many are installed"
 msgid "idle, %1 model"
@@ -638,18 +638,18 @@ msgid_plural "idle, %1 models"
 msgstr[0] "im Leerlauf, %1 Modell"
 msgstr[1] "im Leerlauf, %1 Modelle"
 
-#: monitor/shared/MonitorData.qml:1113
+#: monitor/shared/MonitorData.qml:1116
 msgctxt "podman: it cannot be reached"
 msgid "no access"
 msgstr "kein Zugriff"
 
-#: monitor/shared/MonitorData.qml:1117
+#: monitor/shared/MonitorData.qml:1120
 #, kde-format
 msgctxt "libvirt: running virtual machines of all"
 msgid "%1 of %2"
 msgstr "%1 von %2"
 
-#: monitor/shared/MonitorData.qml:1125
+#: monitor/shared/MonitorData.qml:1128
 #, kde-format
 msgctxt "pacman: pending updates"
 msgid "%1 update"
@@ -657,196 +657,196 @@ msgid_plural "%1 updates"
 msgstr[0] "%1 Aktualisierung"
 msgstr[1] "%1 Aktualisierungen"
 
-#: monitor/shared/MonitorData.qml:1134
+#: monitor/shared/MonitorData.qml:1137
 msgctxt "systemd unit state"
 msgid "active"
 msgstr "aktiv"
 
-#: monitor/shared/MonitorData.qml:1135
+#: monitor/shared/MonitorData.qml:1138
 msgctxt "systemd unit state"
 msgid "inactive"
 msgstr "inaktiv"
 
-#: monitor/shared/MonitorData.qml:1136
+#: monitor/shared/MonitorData.qml:1139
 msgctxt "systemd unit state"
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: monitor/shared/MonitorData.qml:1137
+#: monitor/shared/MonitorData.qml:1140
 msgctxt "systemd unit state"
 msgid "starting"
 msgstr "startet"
 
-#: monitor/shared/MonitorData.qml:1138
+#: monitor/shared/MonitorData.qml:1141
 msgctxt "systemd unit state"
 msgid "stopping"
 msgstr "stoppt"
 
-#: monitor/shared/MonitorData.qml:1139
+#: monitor/shared/MonitorData.qml:1142
 msgctxt "systemd unit state"
 msgid "reloading"
 msgstr "lädt neu"
 
-#: monitor/shared/MonitorData.qml:1140
+#: monitor/shared/MonitorData.qml:1143
 msgctxt "systemd unit state: no answer"
 msgid "unknown"
 msgstr "unbekannt"
 
-#: monitor/shared/MonitorData.qml:1181
+#: monitor/shared/MonitorData.qml:1184
 msgctxt "line action: open the widget's settings dialog"
 msgid "settings…"
 msgstr "Einstellungen …"
 
-#: monitor/shared/MonitorData.qml:1203
+#: monitor/shared/MonitorData.qml:1206
 msgctxt "date line: a Qt date pattern, no year"
 msgid "dddd, MMMM d"
 msgstr "dddd, d. MMMM"
 
-#: monitor/shared/MonitorData.qml:1275
+#: monitor/shared/MonitorData.qml:1278
 #, kde-format
 msgctxt "load average over 1, 5 and 15 minutes"
 msgid "load %1  %2  %3"
 msgstr "Last %1  %2  %3"
 
-#: monitor/shared/MonitorData.qml:1295
+#: monitor/shared/MonitorData.qml:1298
 #, kde-format
 msgctxt "pressure: time every task stalled, memory and I/O"
 msgid "full  mem %1  io %2"
 msgstr "full  mem %1  io %2"
 
-#: monitor/shared/MonitorData.qml:1371
+#: monitor/shared/MonitorData.qml:1374
 msgctxt "disks: a configured mount point is absent"
 msgid "not mounted"
 msgstr "nicht eingehängt"
 
-#: monitor/shared/MonitorData.qml:1379
+#: monitor/shared/MonitorData.qml:1382
 #, kde-format
 msgctxt "uptime line"
 msgid "uptime %1"
 msgstr "Laufzeit %1"
 
-#: monitor/shared/MonitorData.qml:1387
+#: monitor/shared/MonitorData.qml:1390
 msgctxt "line action"
 msgid "network settings"
 msgstr "Netzwerkeinstellungen"
 
-#: monitor/shared/MonitorData.qml:1388
+#: monitor/shared/MonitorData.qml:1391
 msgctxt "line action: ip addr in a terminal"
 msgid "addresses in a terminal"
 msgstr "Adressen im Terminal"
 
-#: monitor/shared/MonitorData.qml:1402
+#: monitor/shared/MonitorData.qml:1405
 #, kde-format
 msgctxt "network: traffic since boot, down and up"
 msgid "total %1 down, %2 up"
 msgstr "gesamt %1 herunter, %2 hinauf"
 
-#: monitor/shared/MonitorData.qml:1406
+#: monitor/shared/MonitorData.qml:1409
 #, kde-format
 msgctxt "network: Wi-Fi signal strength"
 msgid "signal %1"
 msgstr "Signal %1"
 
-#: monitor/shared/MonitorData.qml:1415
+#: monitor/shared/MonitorData.qml:1418
 #, kde-format
 msgctxt "disk I/O: read and write rates"
 msgid "I/O  R %1  W %2"
 msgstr "I/O  L %1  S %2"
 
-#: monitor/shared/MonitorData.qml:1459
+#: monitor/shared/MonitorData.qml:1462
 msgctxt "line action"
 msgid "energy settings"
 msgstr "Energieeinstellungen"
 
-#: monitor/shared/MonitorData.qml:1480
+#: monitor/shared/MonitorData.qml:1483
 msgctxt "health: failed systemd units"
 msgid "failed units"
 msgstr "Units fehlgeschlagen"
 
-#: monitor/shared/MonitorData.qml:1483 monitor/shared/MonitorData.qml:1495
+#: monitor/shared/MonitorData.qml:1486 monitor/shared/MonitorData.qml:1498
 #, kde-format
 msgctxt "health: a count for the system and one for the user session"
 msgid "%1 system, %2 user"
 msgstr "%1 System, %2 Benutzer"
 
-#: monitor/shared/MonitorData.qml:1485
+#: monitor/shared/MonitorData.qml:1488
 msgctxt "line action: systemctl --failed in a terminal"
 msgid "failed units in a terminal"
 msgstr "fehlgeschlagene Units im Terminal"
 
-#: monitor/shared/MonitorData.qml:1490
+#: monitor/shared/MonitorData.qml:1493
 msgctxt "health: journal entries of priority error or worse"
 msgid "errors since boot"
 msgstr "Fehler seit Start"
 
-#: monitor/shared/MonitorData.qml:1493
+#: monitor/shared/MonitorData.qml:1496
 msgctxt "health: the system journal cannot be read by this user"
 msgid "no access"
 msgstr "kein Zugriff"
 
-#: monitor/shared/MonitorData.qml:1499
+#: monitor/shared/MonitorData.qml:1502
 msgctxt "health: a kernel newer than the running one is installed"
 msgid "reboot"
 msgstr "Neustart"
 
-#: monitor/shared/MonitorData.qml:1500
+#: monitor/shared/MonitorData.qml:1503
 msgctxt "health: a reboot is pending"
 msgid "pending"
 msgstr "steht an"
 
-#: monitor/shared/MonitorData.qml:1501
+#: monitor/shared/MonitorData.qml:1504
 msgctxt "line action"
 msgid "reboot now"
 msgstr "jetzt neu starten"
 
-#: monitor/shared/MonitorData.qml:1506
+#: monitor/shared/MonitorData.qml:1509
 msgctxt "line action: menu title for a journal line"
 msgid "journal"
 msgstr "Journal"
 
-#: monitor/shared/MonitorData.qml:1535
+#: monitor/shared/MonitorData.qml:1538
 msgctxt "peripheral battery: charging"
 msgid "charging"
 msgstr "lädt"
 
-#: monitor/shared/MonitorData.qml:1538
+#: monitor/shared/MonitorData.qml:1541
 msgctxt "line action"
 msgid "Bluetooth settings"
 msgstr "Bluetooth-Einstellungen"
 
-#: monitor/shared/MonitorData.qml:1556
+#: monitor/shared/MonitorData.qml:1559
 msgctxt "sound: the device is muted"
 msgid "muted"
 msgstr "stumm"
 
-#: monitor/shared/MonitorData.qml:1579
+#: monitor/shared/MonitorData.qml:1582
 msgctxt "repos: the path is not a git repository"
 msgid "not a repository"
 msgstr "kein Repository"
 
-#: monitor/shared/MonitorData.qml:1600
+#: monitor/shared/MonitorData.qml:1603
 msgctxt "line action: the block's command, in a terminal"
 msgid "run in a terminal"
 msgstr "im Terminal ausführen"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:127
+#: win/host/imports/plaintop/WidgetWindow.qml:156
 #, fuzzy
 msgctxt "the widget's window menu"
 msgid "Settings…"
 msgstr "Einstellungen …"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:131
+#: win/host/imports/plaintop/WidgetWindow.qml:160
 #, fuzzy
 msgctxt "the widget's window menu"
 msgid "Let clicks through"
 msgstr "Klicks zur Arbeitsfläche durchlassen"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:137
+#: win/host/imports/plaintop/WidgetWindow.qml:166
 msgctxt "the widget's window menu"
 msgid "Behind the desktop icons"
 msgstr ""
 
-#: win/host/imports/plaintop/WidgetWindow.qml:144
+#: win/host/imports/plaintop/WidgetWindow.qml:173
 msgctxt "the widget's window menu"
 msgid "Close"
 msgstr ""

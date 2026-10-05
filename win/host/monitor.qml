@@ -32,7 +32,7 @@ WidgetWindow {
     }
 
     // The configured family when it is installed, else the system's monospace face.
-    readonly property string face: Qt.fontFamilies().includes(str("fontFamily")) ? str("fontFamily") : "monospace"
+    readonly property string face: fixedFace("fontFamily")
 
     TextMetrics {
         id: cell

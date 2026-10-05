@@ -23,7 +23,7 @@ WidgetWindow {
     readonly property bool sounding: spectrum.sounding
     height: boardHeight
 
-    readonly property string playerFace: Qt.fontFamilies().includes(str("playerFontFamily")) ? str("playerFontFamily") : "monospace"
+    readonly property string playerFace: fixedFace("playerFontFamily")
     TextMetrics {
         id: playerCell
         font.family: root.playerFace
@@ -110,6 +110,30 @@ WidgetWindow {
         }
     }
 
+    // Without a capture library the service answers silence for ever, and a silent
+    // spectrum is an empty, invisible window — "I do not see the spectrum", the first
+    // desk said. /state names the backend; "none" is said here, where the ring would be.
+    property string captureBackend: ""
+    Timer {
+        interval: 5000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: Service.getJson("/state", function(d) { root.captureBackend = d ? String(d.backend || "") : "" })
+    }
+    Text {
+        id: captureNotice
+        visible: spectrum.relayUp && root.captureBackend === "none"
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: Math.round((parent.height - height) / 2)
+        color: root.str("color", "#C8CCD4")
+        opacity: 0.7
+        font.family: root.fixedFace("")
+        text: root.i18n("no sound capture: the service has no WASAPI loopback\n(the soundcard package is not inside)")
+        horizontalAlignment: Text.AlignHCenter
+        textFormat: Text.PlainText
+    }
+
     Text {
         id: relayNotice
         visible: !spectrum.relayUp
@@ -121,7 +145,7 @@ WidgetWindow {
                 : playerLoader.y + playerLoader.height + 4)
         color: root.str("color", "#C8CCD4")
         opacity: 0.7
-        font.family: "monospace"
+        font.family: root.fixedFace("")
         text: root.i18n("no data: the plainspectrum-relay service does not answer\nport %1", spectrum.relayPort)
         horizontalAlignment: Text.AlignHCenter
         textFormat: Text.PlainText

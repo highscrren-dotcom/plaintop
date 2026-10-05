@@ -153,6 +153,9 @@ The ones a session trips over first; each links to its section with the evidence
 - [A QML-declared enum reads unscoped, like a C++ Q_ENUM](#a-qml-declared-enum-reads-unscoped-like-a-c-q_enum)
 - [pkill by pattern kills the shell that typed it](#pkill-by-pattern-kills-the-shell-that-typed-it)
 - [A frozen module's __file__ is not where it was in the tree: the first zip looked for C:\spectrum\relay.py](#a-frozen-modules-__file__-is-not-where-it-was-in-the-tree-the-first-zip-looked-for-cspectrumrelaypy)
+- [On Windows "monospace" is no font family: Qt draws Segoe UI, and the columns wander](#on-windows-monospace-is-no-font-family-qt-draws-segoe-ui-and-the-columns-wander)
+- [lscpu's threads per core is wrong for a hybrid CPU: CPU(s) is the count](#lscpus-threads-per-core-is-wrong-for-a-hybrid-cpu-cpus-is-the-count)
+- [A DragHandler in an item above a MouseArea swallows the press; on the ancestor it lets the click through and takes the drag](#a-draghandler-in-an-item-above-a-mousearea-swallows-the-press-on-the-ancestor-it-lets-the-click-through-and-takes-the-drag)
 
 **conky (archive)**
 
@@ -1401,3 +1404,41 @@ one: `/holidays` answered `FileNotFoundError: No translation file found for doma
 that `--collect-submodules` does not pack; `--collect-data holidays` (and `tzdata`) does,
 and `holidays_win.py` falls back to the country's own names when a catalog is missing.
 2026-10-05.
+
+## On Windows "monospace" is no font family: Qt draws Segoe UI, and the columns wander
+
+The hosts fell back to `font.family: "monospace"` when the setting's family was not
+installed — a fontconfig alias that every Linux resolves to a fixed-pitch face. Windows
+has no such alias: Qt finds no family of that name and substitutes the default UI font,
+Segoe UI. The views lay their columns out in characters (a name padded to N, a bar of M
+cells, a week of 3-character days), so on the first desk, without the Nerd font, the
+monitor's percentages wandered line by line and the calendar's row with the bracketed
+day shifted. `WidgetWindow.fixedFace(key)` now takes the setting's family when it is
+installed and else the first installed of a list (JetBrainsMono Nerd Font Mono, Cascadia
+Mono, Consolas, Lucida Console, Courier New, the Linux faces, "monospace" last);
+`Qt.fontFamilies()` is the test. The Nerd font still has to be installed for the icons.
+2026-10-05.
+
+## lscpu's threads per core is wrong for a hybrid CPU: CPU(s) is the count
+
+`parseLscpu` multiplied *Socket(s) × Core(s) per socket × Thread(s) per core* for the
+thread count. A hybrid Intel CPU has no whole number of threads per core: an i7-14700
+has 8 P-cores with two threads and 12 E-cores with one — 20 cores, 28 threads — and
+Linux `lscpu` prints *Thread(s) per core: 2* for it, so the Plasma widget would have
+said 20c/40t; the Windows emulation divided the other way (28 // 20 = 1) and the desk
+read 20c/20t. `lscpu` also prints *CPU(s): 28*, the count itself: the parser takes that
+line when it is there and the product only without it, and `exec_win.lscpu` prints it.
+2026-10-05.
+
+## A DragHandler in an item above a MouseArea swallows the press; on the ancestor it lets the click through and takes the drag
+
+The window's drag was a MouseArea under the view, so only the bare pixels dragged and a
+calendar or a monitor full of mouse areas "barely moved". The right tool is a
+`DragHandler` with `target: null` and `onActiveChanged: if (active) startSystemMove()` —
+a handler takes the press passively, lets a click reach the view's own areas, and takes
+the grab over from them once the drag threshold is crossed (its default
+`grabPermissions` allow that). But it has to belong to an *ancestor* of those areas: put
+in a sibling item above the view, it swallows the press and nothing below gets it
+(probed on Qt 6.8 and 6.10 with qmltestrunner: presses 0 vs 1). Declared directly in a
+`Window`, a handler is parented to the content item, the ancestor of everything — that
+is where `WidgetWindow` keeps it. 2026-10-05.

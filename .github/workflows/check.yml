@@ -89,6 +89,18 @@ jobs:
       - name: the service's dependencies
         run: python -m pip install --quiet numpy psutil holidays tzdata tzlocal
 
+      # The capture and the media session go into the zip when they install here; each
+      # on its own line, since one wheel missing for this Python must not take the rest.
+      - name: the capture and the media session (optional, into the zip)
+        continue-on-error: true
+        run: |
+          python -m pip install --quiet soundcard
+          python -m pip install --quiet winsdk
+          python -m pip install --quiet winrt-runtime winrt-Windows.Media.Control winrt-Windows.Foundation winrt-Windows.Foundation.Collections winrt-Windows.Storage.Streams
+          python -c "import soundcard; print('soundcard imports')"
+          python -c "import winsdk.windows.media.control; print('winsdk imports')"
+          python -c "import winrt.windows.media.control; print('winrt imports')"
+
       - name: Python compiles
         run: python -m py_compile win/build.py win/service/server.py win/service/monitor_win.py win/service/exec_win.py win/service/bands.py win/service/player_win.py win/service/notes_bridge.py win/service/holidays_win.py win/service/timezones.py win/service/settings_store.py win/service/ui.py win/service/notify_win.py tests/win_service.py tests/win_bands.py tests/win_media.py tests/win_hosts.py
 
@@ -159,7 +171,9 @@ jobs:
             if (($b -split ',').Count -ne 8) { throw "/bands?bars=8 answered '$b'" }
             Write-Host "/bands: $b"
             $st = Invoke-RestMethod "$base/state" -TimeoutSec 10
-            Write-Host "/state: source=$($st.source) backend=$($st.backend) frames=$($st.frames)"
+            Write-Host "/state: source=$($st.source) backend=$($st.backend) frames=$($st.frames) libraries=$($st.libraries | ConvertTo-Json -Compress)"
+            $gpu = @($m.sensors.PSObject.Properties | Where-Object { $_.Name -like 'gpu/*' })
+            Write-Host "/monitor gpu/*: $($gpu.Count) ids $(($gpu | ForEach-Object { $_.Name + '=' + $_.Value.value }) -join ' ')"
             $s = Invoke-RestMethod "$base/settings/monitor" -TimeoutSec 10
             if (-not $s.values.frame) { throw "/settings/monitor has no frame (main.xml not found?)" }
             Write-Host "/settings/monitor: $(@($s.values.PSObject.Properties).Count) keys"

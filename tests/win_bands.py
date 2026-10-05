@@ -222,8 +222,10 @@ def test_capture_rate():
         ok(st["restarts"] == 0 and st["backend"] == "synthetic" and st["bars"] == bands.BARS
            and st["fps"] == bands.FPS and 0 <= st["age"] < 1 and st["frames"] == cap.frames,
            "state(): " + repr(st))
-        ok(set(st) == {"frames", "restarts", "source", "age", "bars", "fps", "backend"},
-           "state() has the relay's keys plus backend")
+        ok(set(st) == {"frames", "restarts", "source", "age", "bars", "fps", "backend", "libraries"},
+           "state() has the relay's keys plus backend and libraries")
+        ok(isinstance(st["libraries"], dict) and all(v is True or isinstance(v, str) for v in st["libraries"].values()),
+           "libraries: each capture library True or its probe's error: " + repr(st["libraries"]))
     finally:
         cap.stop()
     ok(not cap.alive(), "stop() ends the thread")

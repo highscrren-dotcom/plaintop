@@ -304,8 +304,9 @@ class Sampler:
     own: the rates (bytes/s) are deltas over this clock, and a real one would make them
     unrepeatable. `windows` gates the probes that only exist there."""
 
-    def __init__(self, interval=1.0, ps=psutil, lhm=None, clock=time.monotonic, windows=WINDOWS):
+    def __init__(self, interval=1.0, ps=psutil, lhm=None, clock=time.monotonic, windows=WINDOWS, gpu=None):
         self.interval, self.ps, self.lhm, self.clock, self.windows = interval, ps, lhm, clock, windows
+        self.gpu = gpu                            # gpu_win.Reader: the counters, under LHM's ids
         self._lock = threading.Lock()
         self._data = {"stamp": 0.0, "sensors": {}, "processes": [], "coreCount": 0}
         self._prev = None                         # (clock, net counters, disk counters)
@@ -451,6 +452,10 @@ class Sampler:
         tree = self.lhm.tree() if self.lhm else None
         if tree:
             s.update(lhm_sensors(tree, cores))
+        # The counters' GPU figures fill in what LHM did not give (everything, without LHM).
+        if self.gpu is not None:
+            for k, v in self.gpu.sensors().items():
+                s.setdefault(k, v)
 
         data = {"stamp": time.time(), "sensors": s, "processes": self._processes(), "coreCount": cores}
         with self._lock:

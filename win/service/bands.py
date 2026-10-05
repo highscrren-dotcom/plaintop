@@ -364,14 +364,21 @@ class SyntheticBackend:
         self.closes += 1
 
 
+LIBRARIES = {}                        # backend name → True, or the probe's error as text
+
+
 def pick_backend():
     """The first capture library that imports, soundcard then pyaudiowpatch; silence when
-    neither does. Said once on stderr, as relay.py says "cava not found"."""
+    neither does. Said once on stderr, as relay.py says "cava not found", and kept in
+    LIBRARIES for /state — a frozen exe packed without the library looks the same as a
+    desk without a sound device, and this tells them apart."""
     for cls in (SoundcardBackend, PyAudioBackend):
         try:
             cls.probe()
-        except Exception:
+        except Exception as e:
+            LIBRARIES[cls.name] = repr(e)
             continue
+        LIBRARIES[cls.name] = True
         return cls()
     print("no capture backend: pip install soundcard (or pyaudiowpatch) for WASAPI loopback; "
           "serving silence", file=sys.stderr, flush=True)
@@ -425,7 +432,8 @@ class Capture:
         age = time.monotonic() - self.stamp if self.stamp else -1
         return {"frames": self.frames, "restarts": self.restarts,
                 "source": self.source or "(default)", "age": round(age, 2),
-                "bars": self.bars, "fps": self.fps, "backend": self.backend.name}
+                "bars": self.bars, "fps": self.fps, "backend": self.backend.name,
+                "libraries": dict(LIBRARIES)}
 
     def _run(self):
         """Nothing inside the loop may end the thread (relay.py learnt that the hard way):

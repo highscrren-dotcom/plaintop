@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 21:01+0000\n"
+"POT-Creation-Date: 2026-10-05 03:41+0000\n"
 "PO-Revision-Date: 2026-09-22 13:39+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -480,7 +480,7 @@ msgstr ""
 "Без плеера на шине центр кольца остаётся пустым.\n"
 "Кнопки ловят мышь, даже когда остальное пропускает клики насквозь."
 
-#: spectrum/package/contents/ui/main.qml:238 win/host/spectrum.qml:125
+#: spectrum/package/contents/ui/main.qml:238 win/host/spectrum.qml:149
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"
@@ -489,22 +489,22 @@ msgstr ""
 "нет данных: служба plainspectrum-relay не отвечает\n"
 "порт %1"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:127
+#: win/host/imports/plaintop/WidgetWindow.qml:156
 msgctxt "the widget's window menu"
 msgid "Settings…"
 msgstr "Настройки…"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:131
+#: win/host/imports/plaintop/WidgetWindow.qml:160
 msgctxt "the widget's window menu"
 msgid "Let clicks through"
 msgstr "Пропускать клики"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:137
+#: win/host/imports/plaintop/WidgetWindow.qml:166
 msgctxt "the widget's window menu"
 msgid "Behind the desktop icons"
 msgstr "За значками стола"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:144
+#: win/host/imports/plaintop/WidgetWindow.qml:173
 msgctxt "the widget's window menu"
 msgid "Close"
 msgstr "Закрыть"
@@ -559,8 +559,10 @@ msgid ""
 "button\n"
 "on it while clicks are not passing — the controls work then as well."
 msgstr ""
-"Пока клики проходят насквозь, обе кнопки мыши попадают на рабочий стол — и на кнопках плеера тоже.\n"
-"Путь назад — меню значка в трее или собственное меню виджета: правая кнопка на нём,\n"
+"Пока клики проходят насквозь, обе кнопки мыши попадают на рабочий стол — и "
+"на кнопках плеера тоже.\n"
+"Путь назад — меню значка в трее или собственное меню виджета: правая кнопка "
+"на нём,\n"
 "пока клики не проходят; тогда работают и кнопки."
 
 #: win/host/settings/MousePage.qml:22 win/host/settings/SpectrumGeneral.qml:146
@@ -584,3 +586,11 @@ msgid ""
 msgstr ""
 "спектр считает служба plaintop из того, что играет вывод по умолчанию\n"
 "(WASAPI loopback); с портом 8788 хост спрашивает её же"
+
+#: win/host/spectrum.qml:132
+msgid ""
+"no sound capture: the service has no WASAPI loopback\n"
+"(the soundcard package is not inside)"
+msgstr ""
+"нет захвата звука: у службы нет WASAPI loopback\n"
+"(пакета soundcard внутри нет)"

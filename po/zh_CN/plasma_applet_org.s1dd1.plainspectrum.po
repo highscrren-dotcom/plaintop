@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 21:01+0000\n"
+"POT-Creation-Date: 2026-10-05 03:41+0000\n"
 "PO-Revision-Date: 2026-09-22 13:56+0500\n"
 "Last-Translator: Machine translation\n"
 "Language-Team: Chinese (Simplified)\n"
@@ -480,7 +480,7 @@ msgstr ""
 "总线上没有播放器时，环的中心保持空白。\n"
 "即使其余部分让点击穿透，控制按钮仍会接收鼠标。"
 
-#: spectrum/package/contents/ui/main.qml:238 win/host/spectrum.qml:125
+#: spectrum/package/contents/ui/main.qml:238 win/host/spectrum.qml:149
 #, kde-format
 msgid ""
 "no data: the plainspectrum-relay service does not answer\n"
@@ -489,23 +489,23 @@ msgstr ""
 "无数据：plainspectrum-relay 服务无响应\n"
 "端口 %1"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:127
+#: win/host/imports/plaintop/WidgetWindow.qml:156
 msgctxt "the widget's window menu"
 msgid "Settings…"
 msgstr ""
 
-#: win/host/imports/plaintop/WidgetWindow.qml:131
+#: win/host/imports/plaintop/WidgetWindow.qml:160
 #, fuzzy
 msgctxt "the widget's window menu"
 msgid "Let clicks through"
 msgstr "让点击穿透到桌面"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:137
+#: win/host/imports/plaintop/WidgetWindow.qml:166
 msgctxt "the widget's window menu"
 msgid "Behind the desktop icons"
 msgstr ""
 
-#: win/host/imports/plaintop/WidgetWindow.qml:144
+#: win/host/imports/plaintop/WidgetWindow.qml:173
 msgctxt "the widget's window menu"
 msgid "Close"
 msgstr ""
@@ -578,4 +578,10 @@ msgid ""
 "output\n"
 "plays (WASAPI loopback); with the port left at 8788 the host asks the "
 "service's own"
+msgstr ""
+
+#: win/host/spectrum.qml:132
+msgid ""
+"no sound capture: the service has no WASAPI loopback\n"
+"(the soundcard package is not inside)"
 msgstr ""

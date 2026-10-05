@@ -10,7 +10,7 @@ WidgetWindow {
     id: root
     widget: "player"
 
-    readonly property string face: Qt.fontFamilies().includes(str("fontFamily")) ? str("fontFamily") : "monospace"
+    readonly property string face: fixedFace("fontFamily")
     TextMetrics {
         id: cell
         font.family: root.face

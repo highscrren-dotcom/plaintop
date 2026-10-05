@@ -341,7 +341,9 @@ def main():
     svc = Service(token)
     mw = svc.module("monitor_win")
     if mw is not None:
-        svc.sampler = mw.Sampler(lhm=mw.LHM().start()).start()
+        gw = svc.module("gpu_win")
+        gpu = gw.Reader().start() if gw is not None else None
+        svc.sampler = mw.Sampler(lhm=mw.LHM().start(), gpu=gpu).start()
     bands = svc.module("bands")
     if bands is not None:
         try:

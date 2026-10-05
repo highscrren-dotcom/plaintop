@@ -71,7 +71,10 @@ frame is kept in cava's stereo order — the left channel from its highest band 
 lowest, then the right from lowest to highest — so `fold_mono` and `resample` are
 imported from `spectrum/relay.py` and `spectrum/shared/Spectrum.qml` needs no change.
 Silence for a second is served as zeros. `/state` answers `{"frames", "restarts",
-"source", "age", "bars", "fps", "backend"}` as the relay does, plus the capture backend.
+"source", "age", "bars", "fps", "backend"}` as the relay does, plus the capture backend
+and `libraries`: each capture library by name, `true` where it imports or the text of
+what its import raised — a frozen exe packed without the library and a desk without a
+sound device look the same otherwise.
 
 ### `/monitor` · `GET`
 
@@ -93,7 +96,13 @@ service's own clock:
 
 `sensors` lists only ids that exist on this machine (this is also the sensor tree for
 `SensorRegistry`); `value` is a number or a string, `name` the sensor's own label when it
-has one. `processes` are `[name, cpu %, memory bytes, pid]` — the union of the thirty
+has one. The GPU ids (`gpu/gpuN/usage`, `name`, `usedVram`, `totalVram`, and
+`temperature`, `power` where a source has them) come from LibreHardwareMonitor when it
+runs, else from `win/service/gpu_win.py`: the `GPU Engine` and `GPU Adapter Memory`
+performance counters (Task Manager's reading — the busiest engine type, summed over
+processes), the name and the card's memory size from the display class in the registry,
+the temperature and power from `nvidia-smi` where it is. An integrated GPU's "VRAM" is its
+shared usage against half of the RAM, as Task Manager shows it. `processes` are `[name, cpu %, memory bytes, pid]` — the union of the thirty
 heaviest by CPU and by memory, unsorted: the `KSortFilterProxyModel` shim sorts.
 
 ### `/exec` · `POST` `{"command": "…"}` → `{"stdout": "…", "stderr": "…", "exit code": 0}`

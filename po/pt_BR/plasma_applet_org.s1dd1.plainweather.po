@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-10-04 21:01+0000\n"
+"POT-Creation-Date: 2026-10-05 03:41+0000\n"
 "PO-Revision-Date: 2026-09-23 18:13+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -625,23 +625,23 @@ msgstr ""
 "O widget só pega o mouse no modo de edição da área de trabalho:\n"
 "lá estão as configurações dele, ou ./install.sh com a opção clicks off."
 
-#: win/host/imports/plaintop/WidgetWindow.qml:127
+#: win/host/imports/plaintop/WidgetWindow.qml:156
 msgctxt "the widget's window menu"
 msgid "Settings…"
 msgstr ""
 
-#: win/host/imports/plaintop/WidgetWindow.qml:131
+#: win/host/imports/plaintop/WidgetWindow.qml:160
 #, fuzzy
 msgctxt "the widget's window menu"
 msgid "Let clicks through"
 msgstr "deixar os cliques passarem para a área de trabalho"
 
-#: win/host/imports/plaintop/WidgetWindow.qml:137
+#: win/host/imports/plaintop/WidgetWindow.qml:166
 msgctxt "the widget's window menu"
 msgid "Behind the desktop icons"
 msgstr ""
 
-#: win/host/imports/plaintop/WidgetWindow.qml:144
+#: win/host/imports/plaintop/WidgetWindow.qml:173
 msgctxt "the widget's window menu"
 msgid "Close"
 msgstr ""

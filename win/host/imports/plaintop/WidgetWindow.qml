@@ -50,6 +50,24 @@ Window {
 
     signal settingsChanged()
 
+    // ── fonts ─────────────────────────────────────────────────────────────────
+    // The views lay their columns out in characters, so the face has to be fixed-pitch:
+    // the setting's family when it is installed, else the first of these that is. On
+    // Windows "monospace" is no family, and Qt's stand-in for an unknown one is Segoe UI
+    // — on the first desk the monitor's percentages wandered and the calendar's cells
+    // shifted on the bracketed day. The Nerd font still has to be installed for the icons.
+    readonly property var fixedFaces: ["JetBrainsMono Nerd Font Mono", "JetBrainsMono NFM", "Cascadia Mono", "Consolas",
+                                       "Lucida Console", "Courier New", "DejaVu Sans Mono", "Liberation Mono",
+                                       "Noto Sans Mono", "monospace"]
+    function fixedFace(key) {
+        const families = Qt.fontFamilies()
+        const wanted = key ? str(key) : ""
+        if (wanted !== "" && families.indexOf(wanted) >= 0) return wanted
+        for (let i = 0; i < fixedFaces.length; i++)
+            if (families.indexOf(fixedFaces[i]) >= 0) return fixedFaces[i]
+        return "monospace"
+    }
+
     function pollSettings() {
         Service.get("/settings/" + widget + "?since=" + cfgStamp, function(status, text) {
             if (status !== 200) return
@@ -107,18 +125,29 @@ Window {
     onYChanged: if (placed && !passing) moveSaver.restart()
 
     // ── the mouse while it is not passing through ─────────────────────────────
-    // Under everything else in the window (z below the view), so the view's own mouse
-    // areas — the player's controls, the calendar's cells — win where they are.
+    // A left drag anywhere moves the window. The handler belongs to the window's content
+    // item, the ancestor of the view, and holds the press passively: a click still
+    // reaches the view's own mouse areas (a calendar cell, a player button, an active
+    // line), and a drag past the threshold takes the press over from them and hands it
+    // to the system move. Before this the mover sat under the view and only the bare
+    // pixels dragged — "barely moved it", the first desk said. The handler must be the
+    // ancestor's: in an item above the view it swallows the press (probed on 6.8 and
+    // 6.10, docs/GOTCHAS.md). The right button opens the menu from under the view, where
+    // no area of the view took it.
+    DragHandler {
+        id: dragger
+        target: null
+        enabled: !win.passing
+        acceptedButtons: Qt.LeftButton
+        onActiveChanged: if (active) win.startSystemMove()
+    }
     MouseArea {
         id: mover
         anchors.fill: parent
         z: -1
         enabled: !win.passing
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onPressed: mouse => {
-            if (mouse.button === Qt.LeftButton) win.startSystemMove()
-            else menu.popup()
-        }
+        acceptedButtons: Qt.RightButton
+        onPressed: menu.popup()
     }
 
     Controls.Menu {

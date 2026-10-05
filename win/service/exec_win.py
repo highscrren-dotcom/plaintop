@@ -204,15 +204,18 @@ def cpu_model():
 
 
 def lscpu(args):
-    """The four lines parseLscpu() reads; the counts from psutil and WMI, since Windows
-    has no lscpu and WMI's sockets are what `cpu/all/cpuCount` shows anyway."""
+    """The five lines parseLscpu() reads; the counts from psutil and WMI, since Windows
+    has no lscpu and WMI's sockets are what `cpu/all/cpuCount` shows anyway. CPU(s) is the
+    thread count itself: a hybrid CPU (i7-14700: 20 cores, 28 threads) has no whole number
+    of threads per core, and 28 // 20 made the desk's first line say 20c/20t."""
     logical = os.cpu_count() or 1
     physical = (psutil.cpu_count(logical=False) if psutil else None) or logical
     sockets = max(1, mw.processor_count())
     return (f"Model name:            {cpu_model()}\n"
+            f"CPU(s):                {logical}\n"
             f"Socket(s):             {sockets}\n"
             f"Core(s) per socket:    {max(1, physical // sockets)}\n"
-            f"Thread(s) per core:    {max(1, logical // physical)}\n")
+            f"Thread(s) per core:    {max(1, round(logical / physical))}\n")
 
 
 def board_lines():

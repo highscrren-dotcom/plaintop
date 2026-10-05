@@ -89,6 +89,25 @@ def main(argv):
     cmd += ["--collect-submodules", "holidays", "--collect-data", "holidays"]
     if importlib.util.find_spec("tzdata") is not None:
         cmd += ["--collect-data", "tzdata"]
+    # The capture and the media session, whichever is installed where the zip is built:
+    # soundcard reads its C declarations from a header beside its module (data), the
+    # WinRT projections are imported by name at run time (player_win), unseen by the
+    # analysis. The first desk had neither: no spectrum, "no player".
+    optional = (("soundcard", ["--hidden-import", "soundcard", "--collect-data", "soundcard"]),
+                ("pyaudiowpatch", ["--hidden-import", "pyaudiowpatch"]),
+                ("winsdk", ["--hidden-import", "winsdk.windows.media.control", "--hidden-import", "winsdk._winrt",
+                            "--hidden-import", "winsdk.system"]),
+                ("winrt.windows.media.control", ["--hidden-import", "winrt.windows.media.control",
+                                                 "--hidden-import", "winrt.system", "--hidden-import", "winrt.windows.foundation",
+                                                 "--hidden-import", "winrt.windows.storage.streams"]))
+    for pkg, extra in optional:
+        try:
+            present = importlib.util.find_spec(pkg) is not None
+        except (ImportError, ValueError):
+            present = False
+        print(f"  {'+' if present else '-'} {pkg}")
+        if present:
+            cmd += extra
     if subprocess.run(cmd).returncode != 0:
         sys.exit("  ✗ PyInstaller failed")
     frozen = DIST.parent / "_py" / "plaintop"

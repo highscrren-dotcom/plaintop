@@ -236,6 +236,56 @@ def test_lhm():
     print("  ✓ lhm_sensors: LHM's tree as ksystemstats ids")
 
 
+GIB = 1073741824
+ENGINES = [("pid_1234_luid_0x00000000_0x0000F3E7_phys_0_eng_0_engtype_3D", 30.0),
+           ("pid_5678_luid_0x00000000_0x0000F3E7_phys_0_eng_0_engtype_3D", 25.0),
+           ("pid_1234_luid_0x00000000_0x0000F3E7_phys_0_eng_3_engtype_VideoDecode", 70.0),
+           ("pid_1234_luid_0x00000000_0x0000F3E7_phys_0_eng_1_engtype_Copy", -1.0),
+           ("pid_9_luid_0x00000000_0x0000A001_phys_0_eng_0_engtype_3D", 80.0),
+           ("pid_9_luid_0x00000000_0x0000A001_phys_0_eng_0_engtype_Compute_0", 90.0),
+           ("not a gpu instance", 5.0)]
+
+
+def test_gpu():
+    gw = importlib.import_module("gpu_win")
+    u = gw.usage_by_card(ENGINES)
+    ok(u == {"0x00000000_0x0000f3e7": 70.0, "0x00000000_0x0000a001": 90.0}, "usage: the busiest engine type, summed over processes (3D 30+25 < VideoDecode 70): " + repr(u))
+    ok(gw.usage_by_card([("pid_1_luid_0x0_0x1_phys_0_eng_0_engtype_3D", 80.0), ("pid_2_luid_0x0_0x1_phys_0_eng_0_engtype_3D", 70.0)]) == {"0x0_0x1": 100.0}, "usage: capped at 100")
+    m = gw.memory_by_card([("luid_0x00000000_0x0000F3E7_phys_0", 2 * GIB), ("luid_0x00000000_0x0000F3E7_phys_1", GIB), ("luid_0x00000000_0x0000A001_phys_0", 100.0)])
+    ok(m == {"0x00000000_0x0000f3e7": 3 * GIB, "0x00000000_0x0000a001": 100.0}, "memory: summed over the card's physical parts")
+    discrete = gw.card_sensors(0, "NVIDIA GeForce RTX 3080", 70.0, 2 * GIB, 300 * 1048576, 10 * GIB, 32 * GIB)
+    ok(discrete["gpu/gpu0/usage"] == {"value": 70.0} and discrete["gpu/gpu0/name"] == {"value": "NVIDIA GeForce RTX 3080"}, "a card: usage and name")
+    ok(discrete["gpu/gpu0/usedVram"]["value"] == 2 * GIB and discrete["gpu/gpu0/totalVram"]["value"] == 10 * GIB, "a card with its own memory: dedicated usage against qwMemorySize")
+    ok("gpu/gpu0/temperature" not in discrete and "gpu/gpu0/power" not in discrete, "no temperature or power from the counters")
+    igpu = gw.card_sensors(1, "Intel(R) UHD Graphics 770", 3.0, 64 * 1048576, 900 * 1048576, 128 * 1048576, 32 * GIB)
+    ok(igpu["gpu/gpu1/usedVram"]["value"] == 964 * 1048576 and igpu["gpu/gpu1/totalVram"]["value"] == 16 * GIB, "an integrated GPU: dedicated + shared usage against half of RAM")
+    smi = gw.parse_nvidia_smi("NVIDIA GeForce RTX 3080, 12, 45, 2048, 10240, 120.50\nNVIDIA T400, 0, [N/A], 100, 2048, [N/A]\nnot a row\n")
+    ok(len(smi) == 2 and smi[0] == {"name": "NVIDIA GeForce RTX 3080", "usage": 12.0, "temperature": 45.0, "memory_used": 2048.0, "memory_total": 10240.0, "power": 120.5}, "nvidia-smi: a row's six fields")
+    ok(smi[1]["temperature"] is None and smi[1]["power"] is None and smi[1]["memory_total"] == 2048.0, "nvidia-smi: [N/A] is None")
+    with_smi = gw.card_sensors(0, "", 70.0, 2 * GIB, 0, 10 * GIB, 32 * GIB, smi[0])
+    ok(with_smi["gpu/gpu0/temperature"] == {"value": 45.0} and with_smi["gpu/gpu0/power"] == {"value": 120.5} and with_smi["gpu/gpu0/name"]["value"] == "NVIDIA GeForce RTX 3080", "nvidia-smi fills temperature, power and the name")
+    ok(with_smi["gpu/gpu0/usedVram"]["value"] == 2048 * 1048576 and with_smi["gpu/gpu0/totalVram"]["value"] == 10240 * 1048576, "nvidia-smi's memory figures win (MiB → bytes)")
+    reader = gw.Reader().start()
+    ok(reader.sensors() == {} and reader.enabled == (os.name == "nt"), "the reader is idle off Windows")
+    ok(gw.registry_cards() == [] or os.name == "nt", "no registry off Windows")
+
+    class FakeGpu:
+        def sensors(self):
+            return {"gpu/gpu0/usage": {"value": 5.0}, "gpu/gpu0/name": {"value": "counters"}}
+    state, clock = {"step": 0}, [100.0]
+    sampler = mw.Sampler(interval=1, ps=fake_psutil(state), clock=lambda: clock[0], windows=False, gpu=FakeGpu())
+    s = sampler.sample()["sensors"]
+    ok(s["gpu/gpu0/usage"] == {"value": 5.0} and s["gpu/gpu0/name"]["value"] == "counters", "the sampler publishes the counters' GPU")
+
+    class FakeLHM:
+        def tree(self):
+            return LHM_TREE
+    sampler = mw.Sampler(interval=1, ps=fake_psutil(state), clock=lambda: clock[0], windows=False, gpu=FakeGpu(), lhm=FakeLHM())
+    s = sampler.sample()["sensors"]
+    ok(s["gpu/gpu0/name"]["value"] == "NVIDIA GeForce RTX 3080" and s["gpu/gpu0/usage"]["value"] == 12.0, "LHM's GPU wins over the counters' for the ids it gives")
+    print("  ✓ gpu_win: the counters' instances as a card's figures")
+
+
 # ── /exec: the recogniser and the emulators ───────────────────────────────────────────
 
 CODE = "/C:/Users/me/AppData/Local/plaintop/host/code"      # what Qt.resolvedUrl gives on Windows
@@ -292,6 +342,7 @@ def test_hardware_lines():
     ok(r["exit code"] == 0 and set(fields) >= {"Model name", "Socket(s)", "Core(s) per socket", "Thread(s) per core"}, "lscpu: the four keys parseLscpu reads: " + repr(fields))
     ok(all(fields[k].isdigit() and int(fields[k]) >= 1 for k in ("Socket(s)", "Core(s) per socket", "Thread(s) per core")), "lscpu: counts are positive integers")
     ok(fields["Model name"] != "", "lscpu: a model name")
+    ok(fields.get("CPU(s)") == str(os.cpu_count() or 1), "lscpu: CPU(s) is the thread count itself (a hybrid CPU has no whole threads per core)")
 
     r = ex.run(BOARD)
     ok((r["exit code"] == 0 and len(r["stdout"].rstrip("\n").split("\n")) >= 3) or (r["exit code"] != 0 and r["stdout"] == ""),
@@ -587,6 +638,7 @@ if __name__ == "__main__":
     test_sampler()
     test_parsers()
     test_lhm()
+    test_gpu()
     test_dispatch()
     test_hardware_lines()
     test_df()

@@ -31,11 +31,17 @@ seen on one yet. Reports welcome.
   6.8, 6.10 and 6.11; CI uses 6.10.
 - **The font**: *JetBrainsMono Nerd Font Mono* — the `JetBrainsMono.zip` from
   [nerdfonts.com](https://www.nerdfonts.com/font-downloads), unpacked and every `.ttf`
-  installed for the user (right-click → *Install*). Without it the widgets fall back to the
-  system's monospace face, and the weather's character icons lose their shape.
-- **LibreHardwareMonitor** (optional) for the temperatures, the fans and the GPU: run it,
+  installed for the user (right-click → *Install*). Without it the widgets take the first
+  fixed-pitch face Windows has (Cascadia Mono, Consolas, Lucida Console, Courier New — in
+  that order), so the columns stay columns, but the Nerd icons and the weather's character
+  icons lose their shape. (On Windows "monospace" names no family: the first desk ran on
+  Segoe UI, and the monitor's percentages wandered.)
+- **LibreHardwareMonitor** (optional) for the temperatures and the fans: run it,
   *Options → Remote Web Server → Run* (port 8085). Without it those readings are absent and
-  the lines that need them say nothing, as on a Linux machine without `lm_sensors`.
+  the lines that need them say nothing, as on a Linux machine without `lm_sensors`. The GPU
+  block does not need it: the load and the memory come from the performance counters Task
+  Manager reads, the name from the registry, and an NVIDIA card's temperature and power from
+  `nvidia-smi`; an Intel or AMD card shows no temperature without LHM.
 
 ## Run it from the repository
 
