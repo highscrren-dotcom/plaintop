@@ -119,10 +119,65 @@ jobs:
       # Advisory until it has proved itself: the zip with qml.exe, its modules and the
       # frozen service, kept as an artifact so a person can try it on a desktop.
       - name: the zip (advisory)
+        id: zip
         continue-on-error: true
         run: |
           python -m pip install --quiet pyinstaller
           python win/package.py --qt "$env:QT_ROOT_DIR"
+
+      # The frozen exe from the zip it just built, run the way a person runs it (another
+      # folder as the working directory, no hosts) and asked for every kind of file the
+      # service reads beside itself: the first run on a desk died looking for
+      # C:\spectrum\relay.py (docs/GOTCHAS.md). A --noconsole exe shows an uncaught
+      # exception as a message box and waits, so the step kills it by pid after 40 s.
+      - name: the frozen plaintop.exe from the zip
+        if: steps.zip.outcome == 'success'
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP "plaintop-smoke"
+          Expand-Archive dist/plaintop-win.zip -DestinationPath $dir -Force
+          $exe = Join-Path $dir "plaintop-win/plaintop.exe"
+          if (-not (Test-Path $exe)) { throw "no plaintop.exe in the zip" }
+          $env:PLAINTOP_NO_HOSTS = "1"; $env:PLAINTOP_PORT = "28788"; $env:PLAINTOP_TOKEN = "smoke"
+          $p = Start-Process -FilePath $exe -WorkingDirectory $env:RUNNER_TEMP -PassThru
+          $base = "http://127.0.0.1:28788"
+          $up = $false
+          for ($i = 0; $i -lt 80; $i++) {
+            Start-Sleep -Milliseconds 500
+            if ($p.HasExited) { break }
+            try { $null = Invoke-RestMethod "$base/state" -TimeoutSec 2; $up = $true; break } catch {}
+          }
+          if (-not $up) {
+            if (-not $p.HasExited) { Stop-Process -Id $p.Id -Force }
+            throw "plaintop.exe did not answer on $base (exited: $($p.HasExited), code: $($p.ExitCode))"
+          }
+          try {
+            $m = Invoke-RestMethod "$base/monitor" -TimeoutSec 10
+            if (-not $m.sensors.'os/system/hostname') { throw "/monitor has no os/system/hostname" }
+            Write-Host "/monitor: $($m.sensors.PSObject.Properties.Count) sensors, host $($m.sensors.'os/system/hostname'.value)"
+            $b = (Invoke-WebRequest "$base/bands?bars=8&mono=1" -TimeoutSec 10).Content.Trim()
+            if (($b -split ',').Count -ne 8) { throw "/bands?bars=8 answered '$b'" }
+            Write-Host "/bands: $b"
+            $st = Invoke-RestMethod "$base/state" -TimeoutSec 10
+            Write-Host "/state: source=$($st.source) backend=$($st.backend) frames=$($st.frames)"
+            $s = Invoke-RestMethod "$base/settings/monitor" -TimeoutSec 10
+            if (-not $s.values.frame) { throw "/settings/monitor has no frame (main.xml not found?)" }
+            Write-Host "/settings/monitor: $($s.values.PSObject.Properties.Count) keys"
+            $h = Invoke-RestMethod "$base/holidays?regions=US&year=2026&month=7&lang=en" -TimeoutSec 10
+            if (-not $h.days.PSObject.Properties.Count) { throw "/holidays answered no days for US 2026-07" }
+            Write-Host "/holidays: $($h.days.PSObject.Properties.Name -join ' ')"
+            $t = Invoke-RestMethod "$base/time?zone=Europe/Berlin" -TimeoutSec 10
+            if ($t.city -ne "Berlin") { throw "/time answered $($t | ConvertTo-Json -Compress)" }
+            $hdr = @{ "X-Plaintop-Token" = "smoke"; "Content-Type" = "application/json" }
+            $n = Invoke-RestMethod "$base/notes" -Method Post -Headers $hdr -Body '{"args":["dump","--from","2026-10-01","--to","2026-10-31"]}' -TimeoutSec 30
+            if ($n.'exit code' -ne 0) { throw "/notes dump exited $($n.'exit code'): $($n.stdout)" }
+            Write-Host "/notes dump: exit 0, $($n.stdout.Length) bytes (notes.py found beside the exe)"
+            $pl = Invoke-RestMethod "$base/player" -TimeoutSec 10
+            Write-Host "/player: $($pl | ConvertTo-Json -Compress)"
+            Write-Host "frozen plaintop.exe serves from the zip layout"
+          } finally {
+            Stop-Process -Id $p.Id -Force
+          }
 
       - uses: actions/upload-artifact@v4
         if: always()

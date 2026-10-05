@@ -55,8 +55,8 @@ def sound_path(name):
     service by win/build.py), anything else a file of the user's."""
     name = str(name or "").strip()
     if name.startswith("builtin:"):
-        here = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(here, "sounds", name[len("builtin:"):] + ".wav")
+        import paths
+        return str(paths.sounds_dir() / (name[len("builtin:"):] + ".wav"))
     return name
 
 

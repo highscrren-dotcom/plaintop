@@ -25,8 +25,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 sys.dont_write_bytecode = True
-HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent.parent
+import paths                             # every file the service reads, in both layouts
 WINDOWS = sys.platform == "win32"
 PORT = int(os.environ.get("PLAINTOP_PORT", "8788"))
 BODY_LIMIT = 1 << 20                 # a note travels base64 in a POST; nothing else is large
@@ -35,7 +34,7 @@ BODY_LIMIT = 1 << 20                 # a note travels base64 in a POST; nothing 
 def load_relay():
     """fold_mono and resample from spectrum/relay.py, loaded by path: it is a script, not a
     package, and the two functions are the protocol — copying them would fork it."""
-    spec = importlib.util.spec_from_file_location("relay", ROOT / "spectrum" / "relay.py")
+    spec = importlib.util.spec_from_file_location("relay", paths.relay_py())
     relay = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(relay)
     return relay
@@ -356,7 +355,7 @@ def main():
     # runs the service alone (PLAINTOP_NO_HOSTS).
     try:
         store = svc.instance("settings_store", "Store")
-        manager = svc.instance("ui", "Manager", ROOT / "win" / "host", port, token, store=store)
+        manager = svc.instance("ui", "Manager", paths.host_dir(), port, token, store=store)
         if not os.environ.get("PLAINTOP_NO_HOSTS"):
             manager.start_shown()
     except Missing as e:

@@ -5,6 +5,36 @@
 
 ---
 
+## 2026-10-05 (облако) — первый запуск zip на столе: `FileNotFoundError`, `paths.py`, прогон exe в CI
+
+**Что случилось.** Пользователь скачал артефакт `plaintop-win` и запустил `plaintop.exe` — окно с
+трассировкой: `FileNotFoundError: …\plaintop-win\spectrum\relay.py`, после переноса папки —
+`C:\spectrum\relay.py`. Причина: модули службы находили корень дерева от себя
+(`Path(__file__).parents[2]`), а замороженные PyInstaller они лежат в `_internal/` рядом с exe — путь
+уходил выше корня. У exe с `--noconsole` нет stderr, поэтому исключение — это окно и ничего больше.
+
+**Сделано.** `win/service/paths.py` — единственное место, знающее обе раскладки: корень — `PLAINTOP_ROOT`,
+если задан; папка exe при `sys.frozen`; иначе дерево. `relay_py()`, `notes_py()`, `kcfg(w)`, `sounds_dir()`,
+`host_dir()`, `qt_bin()` перечисляют варианты (`calendar/package/contents/code/notes.py` или
+`calendar/notes.py`, `<w>/package/contents/config/main.xml` или `service/config/<w>.xml`). Через него ходят
+`server.py`, `notes_bridge.py`, `settings_store.py`, `notify_win.py`, `ui.py`; `paths` — скрытый импорт в
+`win/package.py`. `tests/win_media.py` кладёт `win/service` в `sys.path` (модули импортируют друг друга по
+голому имени). В `check.yml` новый шаг: распаковать собранный zip, запустить `plaintop.exe` из чужой рабочей
+папки с `PLAINTOP_NO_HOSTS=1`, спросить `/state`, `/monitor`, `/bands`, `/settings/monitor`, `/holidays`,
+`/time`, `/notes dump`, `/player`, убить по pid (40 с на ответ — иначе окно исключения висело бы до таймаута
+job). Документы: грабля EN/RU, `/notify` в `win/PROTOCOL.md`, абзац о zip в `win/README` паре.
+
+**Проверено исполнением.** Папка, разложенная как zip (`host/`, `service/config`, `service/sounds`,
+`calendar/notes.py`, `spectrum/relay.py`), служба из `/` с `PLAINTOP_ROOT=<папка>`: `/monitor` 200 (датчики
+psutil), `/bands?bars=8&mono=1` → `0,0,0,0,0,0,0,0` при `frames: 5` (реле загружено из папки),
+`/settings/monitor` с `frame` из `service/config/monitor.xml`, `/holidays?regions=RU&year=2026&month=11` →
+«День народного единства», `/notes set local … b64` → `dump` возвращает текст заметки (XDG в scratchpad).
+Стенды: `win_service` 167, `win_media` 94, `win_bands` 51, `notes.py` 145, `win_hosts` 9/9 + настройки 16/16
+(Qt 6.10.1), `--check-notes`, `--check-relay` зелёные. **Не проверено**: сам замороженный exe — только шагом
+CI после push и рукой пользователя на столе.
+
+---
+
 ## 2026-10-05 (облако, Linux-контейнер) — порт на Windows 11: пять виджетов на голом Qt, шимы, служба
 
 **Сделано.** По задаче «те же пять виджетов для Windows 11 в этом репозитории» — решение 17.

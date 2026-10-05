@@ -152,6 +152,7 @@ The ones a session trips over first; each links to its section with the evidence
 - [The qml tool needs --transparent for a transparent window and -a widget for a tray icon](#the-qml-tool-needs---transparent-for-a-transparent-window-and--a-widget-for-a-tray-icon)
 - [A QML-declared enum reads unscoped, like a C++ Q_ENUM](#a-qml-declared-enum-reads-unscoped-like-a-c-q_enum)
 - [pkill by pattern kills the shell that typed it](#pkill-by-pattern-kills-the-shell-that-typed-it)
+- [A frozen module's __file__ is not where it was in the tree: the first zip looked for C:\spectrum\relay.py](#a-frozen-modules-__file__-is-not-where-it-was-in-the-tree-the-first-zip-looked-for-cspectrumrelaypy)
 
 **conky (archive)**
 
@@ -1379,3 +1380,19 @@ touching the shared files. Qt 6.10 and 6.11, 2026-10-05.
 `pkill` itself and killed it (exit 144), the fake service with it. The project's rule
 "never pkill by pattern" stands for one more reason; a process started for a check is stopped
 by the pid written down when it was started. 2026-10-05.
+
+## A frozen module's __file__ is not where it was in the tree: the first zip looked for C:\spectrum\relay.py
+
+The service's modules found the repository from themselves: `Path(__file__).parents[2]`
+in `win/service/server.py` is the tree's root, and `spectrum/relay.py` and the rest were
+relative to it. Frozen by PyInstaller the same modules sit in `_internal/` beside
+`plaintop.exe`, one level up and one level over from where they were, and the first run of
+the zip on the user's desk died in a message box: `FileNotFoundError:
+…\plaintop-win\spectrum\relay.py`, then `C:\spectrum\relay.py` after the folder was moved
+(the path climbed past the root). A `--noconsole` exe has no stderr, so the traceback is
+that box and nothing else. Every path now goes through `win/service/paths.py`: the root is
+`PLAINTOP_ROOT` when set, the exe's own folder when `sys.frozen`, the tree otherwise, and
+each file has its two layouts listed (`calendar/package/contents/code/notes.py` or
+`calendar/notes.py`). A stand runs the service against a folder laid out like the zip with
+`PLAINTOP_ROOT`, and the CI job unzips what it built and runs `plaintop.exe` itself
+(`PLAINTOP_NO_HOSTS=1`) before the artifact is kept. 2026-10-05.

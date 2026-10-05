@@ -82,7 +82,13 @@ PowerShell». **Defender** покажет «Windows protected your PC» для �
 **Zip.** Каждый зелёный прогон CI хранит `plaintop-win.zip` артефактом `plaintop-win`
 (*Actions → checks → прогон → Artifacts*): `plaintop.exe` с замороженной службой, `host/` и `qt/` с
 `qml.exe` и модулями — распаковать куда угодно, запустить `plaintop.exe`; шрифта и необязательных
-пакетов внутри нет. Собирает `win/package.py`; руками ещё никто не запускал.
+пакетов внутри нет. Собирает `win/package.py`; job CI запускает только что упакованный
+`plaintop.exe` (`PLAINTOP_NO_HOSTS=1`, одна служба) и спрашивает у него `/monitor`, `/bands`,
+`/settings`, `/holidays`, `/notes`, прежде чем сохранить артефакт. Замороженная служба находит
+свои файлы рядом с exe (`win/service/paths.py`); `PLAINTOP_ROOT` задаёт другой корень руками,
+`PLAINTOP_PORT` — другой порт. Первый запуск на столе (05.10.2026) умер окном
+`FileNotFoundError: …\spectrum\relay.py` — от этого шаг и страхует; exe с `--noconsole`
+показывает необработанное исключение таким окном и ничем больше.
 
 **Автозапуск:** ярлык в папке автозагрузки (`Win+R`, `shell:startup`) на
 `pythonw.exe C:\путь\к\plaintop\win\plaintop.py`.

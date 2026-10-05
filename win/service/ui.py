@@ -62,7 +62,8 @@ def find_qml(host_dir):
         return found
     here = Path(host_dir).resolve().parent
     # The zip the packager builds: plaintop.exe, host/ and qt/bin/ side by side.
-    for p in (here / "qt" / "bin" / exe, here.parent / "qt" / "bin" / exe, Path(sys.argv[0]).resolve().parent / "qt" / "bin" / exe):
+    import paths
+    for p in (paths.qt_bin() / exe, here / "qt" / "bin" / exe, here.parent / "qt" / "bin" / exe):
         if p.is_file():
             return str(p)
     if os.name == "nt":

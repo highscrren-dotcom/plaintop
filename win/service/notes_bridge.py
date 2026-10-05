@@ -22,15 +22,14 @@ import sys
 import threading
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-DEFAULT = ROOT / "calendar" / "package" / "contents" / "code" / "notes.py"
+import paths
 
 _lock = threading.Lock()
 _notes = None
 
 
 def path():
-    return Path(os.environ.get("PLAINTOP_NOTES") or DEFAULT)
+    return paths.notes_py()
 
 
 def load():

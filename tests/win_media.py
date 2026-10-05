@@ -38,8 +38,14 @@ for stream in (sys.stdout, sys.stderr):
 sys.dont_write_bytecode = True
 
 
+SERVICE = ROOT / "win" / "service"
+# The modules import each other by bare name (paths, settings_store), as the service and
+# the frozen exe see them: that directory has to be on sys.path, loading by file is not enough.
+sys.path.insert(0, str(SERVICE))
+
+
 def load(name):
-    spec = importlib.util.spec_from_file_location(name, ROOT / "win" / "service" / f"{name}.py")
+    spec = importlib.util.spec_from_file_location(name, SERVICE / f"{name}.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

@@ -84,7 +84,13 @@ the highest privileges.
 **The zip.** Every green CI run keeps `plaintop-win.zip` as the artifact `plaintop-win`
 (*Actions → checks → the run → Artifacts*): `plaintop.exe` with the frozen service, `host/`,
 and `qt/` with `qml.exe` and its modules — unpack anywhere, run `plaintop.exe`; the font and
-the optional packages above are not inside. Built by `win/package.py`; not yet run by a person.
+the optional packages above are not inside. Built by `win/package.py`; the CI job runs the
+`plaintop.exe` it just packed (`PLAINTOP_NO_HOSTS=1`, the service alone) and asks it for
+`/monitor`, `/bands`, `/settings`, `/holidays`, `/notes` before the artifact is kept. The
+frozen service finds its files beside the exe (`win/service/paths.py`); `PLAINTOP_ROOT`
+names another root by hand, `PLAINTOP_PORT` another port. The first run on a desk (2026-10-05)
+died in a message box, `FileNotFoundError: …\spectrum\relay.py` — that is what the step
+guards against; a `--noconsole` exe shows an uncaught exception as that box and nothing else.
 
 **Autostart:** a shortcut in the Startup folder (`Win+R`, `shell:startup`) to
 `pythonw.exe C:\path\to\plaintop\win\plaintop.py`.

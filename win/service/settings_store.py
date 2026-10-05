@@ -22,6 +22,8 @@ import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+import paths
+
 WIDGETS = ("monitor", "spectrum", "player", "weather", "calendar")
 KCFG = "{http://www.kde.org/standards/kcfg/1.0}"
 
@@ -66,12 +68,10 @@ def config_dir():
 
 def kcfg_paths(repo_root):
     """Each widget's main.xml: in the repository, or copied beside the service by the
-    packager as config/<widget>.xml."""
-    here = Path(__file__).resolve().parent
+    packager as service/config/<widget>.xml (paths.py knows both layouts)."""
     out = {}
     for w in WIDGETS:
-        for candidate in (Path(repo_root) / w / "package" / "contents" / "config" / "main.xml",
-                          here / "config" / f"{w}.xml"):
+        for candidate in (Path(repo_root) / w / "package" / "contents" / "config" / "main.xml", paths.kcfg(w)):
             if candidate.is_file():
                 out[w] = candidate
                 break
@@ -122,7 +122,7 @@ def to_text(value):
 
 class Store:
     def __init__(self, repo_root=None, directory=None):
-        self.repo_root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[2]
+        self.repo_root = Path(repo_root) if repo_root else paths.root()
         self.dir = Path(directory) if directory else config_dir()
         self.lock = threading.Lock()
         self.schema = {}                  # widget → {key: (type, default)}

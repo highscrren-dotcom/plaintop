@@ -147,6 +147,14 @@ quoted, nothing passes through a shell, and the text of a note travels base64 in
 JSON body as the script expects. The script's paths on Windows: `%APPDATA%\plaincalendar`
 for the accounts and the local notes, `%LOCALAPPDATA%\plaincalendar` for the caches.
 
+### `/notify` · `POST` `{"title": "…", "text": "…", "sound": "path or builtin name"}` → `{"ok": true, "toast": true, "sound": true}`
+
+The calendar's reminder outside its sheet — what `notify-send` and `pw-play` do on Plasma.
+The toast goes through PowerShell's WinRT toast API under PowerShell's own AppUserModelID
+(a desktop app without a Start-menu shortcut may raise none of its own), the sound through
+`winsound`; a builtin name resolves to `service/sounds/` (the calendar's own files). Both
+degrade to `false` where they cannot run. Write-protected like every `POST`.
+
 ### `/holidays?regions=RU,DE-BY&year=2026&month=10&lang=ru` · `GET`
 
 From the `holidays` package: `{"days": {"2026-10-03": [{"title": "…", "public": true}]}}`

@@ -68,12 +68,16 @@ def main(argv):
 
     # The service, frozen. The launcher is win/plaintop.py; the service's modules are
     # imported by name from win/service, so they are hidden imports here.
-    hidden = ["server", "monitor_win", "exec_win", "bands", "player_win", "notes_bridge", "holidays_win",
+    hidden = ["server", "paths", "monitor_win", "exec_win", "bands", "player_win", "notes_bridge", "holidays_win",
               "timezones", "settings_store", "ui", "notify_win"]
     cmd = [sys.executable, "-m", "PyInstaller", "--noconfirm", "--onedir", "--name", "plaintop",
            "--distpath", str(DIST.parent / "_py"), "--workpath", str(DIST.parent / "_work"),
            "--specpath", str(DIST.parent / "_work"), "--paths", str(ROOT / "win" / "service"),
            "--noconsole", str(ROOT / "win" / "plaintop.py")]
+    # notes.py and relay.py are loaded by path at run time, so the analysis never sees
+    # what they import: the standard library modules they need are named here.
+    hidden += ["argparse", "binascii", "configparser", "http.client", "http.server", "secrets", "socket",
+               "ssl", "webbrowser", "xml.etree.ElementTree", "zoneinfo", "urllib.parse"]
     for h in hidden:
         cmd += ["--hidden-import", h]
     # holidays' country modules are imported lazily by the package.
