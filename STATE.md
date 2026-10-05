@@ -21,7 +21,10 @@
   (Cascadia Mono/Consolas), «20c/28t», блок GPU (имя из реестра, загрузка как в диспетчере задач,
   память; температура только у NVIDIA), спектр под музыку (`/state` → `backend: soundcard`,
   `libraries`), плеер с Яндекс Музыкой (SMTC через winsdk/winrt — если Electron её публикует). Если
-  погода остаётся «offline» — спросить про прокси (XHR `qml.exe` и системный прокси). Что увидит
+  погода остаётся «offline» — спросить про прокси (XHR `qml.exe` и системный прокси). **Артефакт
+  для третьего запуска: run 37260698059 → `plaintop-win` (id 11323544852, 72 MiB)**; его exe в CI
+  ответил `/state` → `backend: soundcard`, `libraries: {soundcard: true}`, `/player` → `backend: winrt`
+  (у runner'а нет ни сессий, ни видеокарты: `gpu/*` 0 — считать только на столе). Что увидит
   только стол: окна (прозрачность,
   «под всеми», переключение `WindowTransparentForInput` на ходу, перетаскивание, меню правой
   кнопки), трей (`qml -a widget`), «за значками» (SetParent под WorkerW — в т.ч. 24H2), захват WASAPI

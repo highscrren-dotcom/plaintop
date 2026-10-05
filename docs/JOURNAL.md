@@ -61,8 +61,10 @@ nvidia-smi, слияние под LHM, `CPU(s)`), `win_bands` 52, `win_media` 94
 `monitor.qml` 23 и `weather.qml` 10 через шимы, `--check-relay`; проба DragHandler 5/5 на 6.8.3 и 6.10.1.
 **Не проверено**: pdh.dll и реестр — только на Windows (CI печатает `gpu/*` из exe, у runner'а карты
 может не быть); `soundcard`/`winsdk` внутри exe — CI печатает `libraries` и `/player.backend`; сам стол —
-второй запуск пользователя. Открыто: погода «offline» на столе — корпоративная сеть/прокси? (XHR из
-`qml.exe` и системный прокси Windows).
+второй запуск пользователя. CI (run 37260698059) зелёный, exe из zip: `backend: soundcard`,
+`libraries: {soundcard: true}`, `/player` → `winrt` — обе библиотеки внутри; zip 72 MiB, артефакт
+11323544852. Открыто: погода «offline» на столе — корпоративная сеть/прокси? (XHR из `qml.exe` и
+системный прокси Windows).
 
 ---
 
