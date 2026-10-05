@@ -30,8 +30,12 @@ psutil), `/bands?bars=8&mono=1` → `0,0,0,0,0,0,0,0` при `frames: 5` (рел
 `/settings/monitor` с `frame` из `service/config/monitor.xml`, `/holidays?regions=RU&year=2026&month=11` →
 «День народного единства», `/notes set local … b64` → `dump` возвращает текст заметки (XDG в scratchpad).
 Стенды: `win_service` 167, `win_media` 94, `win_bands` 51, `notes.py` 145, `win_hosts` 9/9 + настройки 16/16
-(Qt 6.10.1), `--check-notes`, `--check-relay` зелёные. **Не проверено**: сам замороженный exe — только шагом
-CI после push и рукой пользователя на столе.
+(Qt 6.10.1), `--check-notes`, `--check-relay` зелёные. **Первый прогон нового шага CI** (run 37258004575):
+`plaintop.exe` из zip поднялся и ответил на `/monitor` (датчики runner'а), `/bands`, `/state`, `/settings/monitor` —
+падение пользователя закрыто; упал `/holidays`: `No translation file found for domain` — каталоги gettext пакета
+`holidays` не попали в exe (`--collect-submodules` не кладёт данные). Добавлены `--collect-data holidays` и
+`tzdata`, в `holidays_win.py` — откат на имена без перевода. **Не проверено**: exe после этого — следующим прогоном
+CI и рукой пользователя на столе.
 
 ---
 

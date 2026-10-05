@@ -134,9 +134,17 @@ def region_month(code, year, month, lang):
         return None
     language = pick_language(base, lang)
     kwargs = {"subdiv": base.subdiv, "years": year, "language": language}
-    public = holidays.country_holidays(cc, **kwargs)
     others = tuple(c for c in base.supported_categories if c != PUBLIC)
-    extra = holidays.country_holidays(cc, categories=others, **kwargs) if others else None
+    try:
+        public = holidays.country_holidays(cc, **kwargs)
+        extra = holidays.country_holidays(cc, categories=others, **kwargs) if others else None
+    except FileNotFoundError:
+        # The package names the days through gettext catalogs; without the catalog for
+        # that language (a frozen copy packed without its data) it raises rather than
+        # falling back, so the names come untranslated instead of no answer at all.
+        kwargs["language"] = None
+        public = holidays.country_holidays(cc, **kwargs)
+        extra = holidays.country_holidays(cc, categories=others, **kwargs) if others else None
     out = []
     day = dt.date(year, month, 1)
     while day.month == month:

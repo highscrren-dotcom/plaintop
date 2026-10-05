@@ -15,6 +15,7 @@ server resolves. Needs: pip install pyinstaller; a Qt with windeployqt. Written 
 Windows machine: the CI job runs it on windows-latest and keeps the result as an artifact —
 that run is its verification.
 """
+import importlib.util
 import os
 import shutil
 import subprocess
@@ -80,8 +81,14 @@ def main(argv):
                "ssl", "webbrowser", "xml.etree.ElementTree", "zoneinfo", "urllib.parse"]
     for h in hidden:
         cmd += ["--hidden-import", h]
-    # holidays' country modules are imported lazily by the package.
-    cmd += ["--collect-submodules", "holidays"]
+    # holidays' country modules are imported lazily by the package, and its names come
+    # from gettext catalogs under holidays/locale/ — data, which --collect-submodules
+    # leaves out: the first frozen /holidays answered "No translation file found for
+    # domain". tzdata's zones are data too, when the package is there (Windows has no
+    # zone database of its own for zoneinfo).
+    cmd += ["--collect-submodules", "holidays", "--collect-data", "holidays"]
+    if importlib.util.find_spec("tzdata") is not None:
+        cmd += ["--collect-data", "tzdata"]
     if subprocess.run(cmd).returncode != 0:
         sys.exit("  ✗ PyInstaller failed")
     frozen = DIST.parent / "_py" / "plaintop"

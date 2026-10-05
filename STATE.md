@@ -28,8 +28,10 @@ v0.5, стенды на настоящем Qt, первый CI.
   агента Qt затирал pip → Qt раньше Python; cp1252 → UTF-8; POSIX-биты в стенде заметок.
   **Новый шаг** (после падения на столе): распаковать zip и запустить сам `plaintop.exe` из чужой
   рабочей папки с `PLAINTOP_NO_HOSTS=1`, спросить `/state /monitor /bands /settings/monitor /holidays
-  /time /notes /player`, убить по pid — он блокирующий, когда zip собрался; первый его прогон — на
-  коммите этой правки, итог смотреть в Actions.
+  /time /notes /player`, убить по pid — он блокирующий, когда zip собрался. Первый прогон (run
+  37258004575): exe поднялся, `/monitor /bands /state /settings` ответили — падение закрыто; `/holidays`
+  упал без каталогов gettext пакета `holidays` → `--collect-data holidays`/`tzdata` в `package.py`,
+  откат без перевода в `holidays_win.py`; второй прогон — на коммите этой правки.
 - **Окно настроек готово**: `win/host/settings.qml` + 22 файла страниц (QtQuick.Controls, Fusion),
   те же поля и строки, что у диалога Plasma; `tests/win_settings.qml` 16/16 на Linux и **на Windows
   в CI** (run 37234851096 зелёный целиком). Каталоги: `extract.py` перечисляет страницы по доменам,

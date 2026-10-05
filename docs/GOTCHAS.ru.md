@@ -1389,4 +1389,8 @@ pid, записанному при запуске. 05.10.2026.
 (`calendar/package/contents/code/notes.py` или `calendar/notes.py`). Стенд гоняет службу
 против папки, разложенной как zip, через `PLAINTOP_ROOT`, а job CI распаковывает собранный
 zip и запускает сам `plaintop.exe` (`PLAINTOP_NO_HOSTS=1`), прежде чем сохранить артефакт.
-05.10.2026.
+Первый же прогон шага нашёл следующую: `/holidays` ответил `FileNotFoundError: No translation
+file found for domain` — пакет `holidays` называет дни через каталоги gettext в
+`holidays/locale/`, это данные, которые `--collect-submodules` не кладёт; кладёт
+`--collect-data holidays` (и `tzdata`), а `holidays_win.py` без каталога отдаёт имена на языке
+страны вместо отказа. 05.10.2026.

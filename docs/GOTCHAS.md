@@ -1395,4 +1395,9 @@ that box and nothing else. Every path now goes through `win/service/paths.py`: t
 each file has its two layouts listed (`calendar/package/contents/code/notes.py` or
 `calendar/notes.py`). A stand runs the service against a folder laid out like the zip with
 `PLAINTOP_ROOT`, and the CI job unzips what it built and runs `plaintop.exe` itself
-(`PLAINTOP_NO_HOSTS=1`) before the artifact is kept. 2026-10-05.
+(`PLAINTOP_NO_HOSTS=1`) before the artifact is kept. That step's first run found the next
+one: `/holidays` answered `FileNotFoundError: No translation file found for domain` — the
+`holidays` package names its days through gettext catalogs under `holidays/locale/`, data
+that `--collect-submodules` does not pack; `--collect-data holidays` (and `tzdata`) does,
+and `holidays_win.py` falls back to the country's own names when a catalog is missing.
+2026-10-05.

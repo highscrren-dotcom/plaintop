@@ -154,7 +154,7 @@ jobs:
           try {
             $m = Invoke-RestMethod "$base/monitor" -TimeoutSec 10
             if (-not $m.sensors.'os/system/hostname') { throw "/monitor has no os/system/hostname" }
-            Write-Host "/monitor: $($m.sensors.PSObject.Properties.Count) sensors, host $($m.sensors.'os/system/hostname'.value)"
+            Write-Host "/monitor: $(@($m.sensors.PSObject.Properties).Count) sensors, host $($m.sensors.'os/system/hostname'.value)"
             $b = (Invoke-WebRequest "$base/bands?bars=8&mono=1" -TimeoutSec 10).Content.Trim()
             if (($b -split ',').Count -ne 8) { throw "/bands?bars=8 answered '$b'" }
             Write-Host "/bands: $b"
@@ -162,9 +162,9 @@ jobs:
             Write-Host "/state: source=$($st.source) backend=$($st.backend) frames=$($st.frames)"
             $s = Invoke-RestMethod "$base/settings/monitor" -TimeoutSec 10
             if (-not $s.values.frame) { throw "/settings/monitor has no frame (main.xml not found?)" }
-            Write-Host "/settings/monitor: $($s.values.PSObject.Properties.Count) keys"
+            Write-Host "/settings/monitor: $(@($s.values.PSObject.Properties).Count) keys"
             $h = Invoke-RestMethod "$base/holidays?regions=US&year=2026&month=7&lang=en" -TimeoutSec 10
-            if (-not $h.days.PSObject.Properties.Count) { throw "/holidays answered no days for US 2026-07" }
+            if (-not @($h.days.PSObject.Properties).Count) { throw "/holidays answered no days for US 2026-07" }
             Write-Host "/holidays: $($h.days.PSObject.Properties.Name -join ' ')"
             $t = Invoke-RestMethod "$base/time?zone=Europe/Berlin" -TimeoutSec 10
             if ($t.city -ne "Berlin") { throw "/time answered $($t | ConvertTo-Json -Compress)" }
