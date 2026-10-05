@@ -46,10 +46,22 @@ ListModel {
         property bool canPause: false
         // Where the position stood when it was last set, to tell a seek from the clock.
         property double positionStamp: 0
+        // A PlayPause shows at once: the status it was given, held against the polls
+        // until the player reports it or `hold` passes — the app's SMTC follows a click
+        // a moment later, and a poll in between would snap the button back (the first
+        // desk: "the buttons lag").
+        property int held: -1
+        property double hold: 0
 
         function command(name) {
             if (sessionId.length === 0) return
             const c = this
+            if (name === "PlayPause") {
+                held = playbackStatus === 3 ? 2 : 3
+                hold = Date.now() + 2500
+                playbackStatus = held
+                positionStamp = Date.now()
+            }
             Service.postJson("/player", { id: sessionId, command: name }, function(d) {
                 // The answer after a command is fetched at once; a position asked for is
                 // forced into the container, so the view hears it even when unchanged.
@@ -94,7 +106,13 @@ ListModel {
         set("album", String(p.album || ""))
         set("length", Number(p.length) || 0)
         set("rate", Number(p.rate) || 1)
-        set("playbackStatus", Number(p.playbackStatus) || 0)
+        const status = Number(p.playbackStatus) || 0
+        if (c.hold > Date.now() && status !== c.held) {
+            // the player has not caught up with the click yet: keep what was pressed
+        } else {
+            c.hold = 0
+            set("playbackStatus", status)
+        }
         set("canGoNext", p.canGoNext === true)
         set("canGoPrevious", p.canGoPrevious === true)
         set("canPlay", p.canPlay === true)

@@ -54,6 +54,11 @@ WidgetWindow {
         id: weatherView
         anchors.fill: parent
 
+        // Through the service: the system proxy and the certificate store are the
+        // service's (Python), not the qml tool's. The first desk, on a corporate network,
+        // stayed "offline".
+        requestPrefix: "http://127.0.0.1:" + Service.port + "/fetch?url="
+
         latitude: root.str("latitude", "")
         longitude: root.str("longitude", "")
         placeName: root.str("placeName", "")

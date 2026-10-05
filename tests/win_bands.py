@@ -252,6 +252,54 @@ def test_capture_sleep():
     print(f"  ✓ sleep on silence: age {st1['age']} → {st2['age']}, {backend.opens} probes")
 
 
+class FollowBackend:
+    """Two outputs, as the soundcard backend sees them: "A" (the default) silent, "B"
+    sounding; next_source() moves to the next, as SoundcardBackend's does."""
+    name = "follow"
+
+    def __init__(self):
+        self.sources = ["A", "B"]
+        self.which = 0
+        self.source = ""
+        self.opened = []
+        self.pos = 0
+
+    def next_source(self):
+        self.which += 1
+
+    def open(self):
+        self.source = self.sources[self.which % len(self.sources)]
+        self.opened.append(self.source)
+        return RATE, 2
+
+    def read(self):
+        n = BLOCK
+        if self.source == "A":
+            return np.zeros((n, 2), np.float32)
+        t = (self.pos + np.arange(n)) / RATE
+        self.pos += n
+        s = (0.5 * np.sin(2 * np.pi * 440 * t)).astype(np.float32)
+        return np.stack([s, s], axis=1)
+
+    def close(self):
+        pass
+
+
+def test_capture_follows_sound():
+    backend = FollowBackend()
+    cap = bands.Capture(backend, sleep=0.3).start()
+    try:
+        time.sleep(3.0)
+        st = cap.state()
+        ok(st["source"] == "B", f"the silent default is left for the output that sounds: {backend.opened}")
+        ok(st["age"] < 0.5 and st["frames"] > 5, f"frames flow from it: {st['frames']} frames, age {st['age']}")
+        ok(max(cap.frame()) > 0, "the frame is not silence")
+        ok(backend.opened[0] == "A" and "B" in backend.opened, "the default first, then the next while silent")
+    finally:
+        cap.stop()
+    print(f"  ✓ follows the sound: {' → '.join(backend.opened[:4])}")
+
+
 def test_capture_restart():
     calls = [0]
     inner = tone(1000.0, 0.3)
@@ -310,6 +358,7 @@ if __name__ == "__main__":
     test_capture_rate()
     test_capture_sleep()
     test_capture_restart()
+    test_capture_follows_sound()
     test_null_backend()
     test_relay_functions()
     print(f"  ✓ bands.py: {passed} checks passed")

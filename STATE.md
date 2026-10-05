@@ -7,7 +7,9 @@
 починено `win/service/paths.py`, CI теперь сам запускает exe из zip. **Второй zip дошёл до окон**:
 монитор живой, календарь и погода на столе; по пяти жалобам пользователя сделаны перетаскивание
 (DragHandler), моноширинный запасной шрифт, `CPU(s)` для гибридных процессоров, GPU без LHM
-(`gpu_win.py`), `soundcard`/`winsdk` внутри exe — всё ждёт третьего запуска. До того ночью на s1dPC:
+(`gpu_win.py`), `soundcard`/`winsdk` внутри exe. **Третий запуск**: всё это работает; по его четырём
+замечаниям — перебор выходов захвата, DXGI для карт, мгновенный PlayPause, погода через `/fetch`
+службы — ждёт четвёртого. До того ночью на s1dPC:
 релиз v0.5, стенды на настоящем Qt, первый CI.
 Файл перезаписывается целиком в конце каждой сессии. История — в `docs/JOURNAL.md`.
 
@@ -16,15 +18,12 @@
 - **Нужен пользователь (машина с Windows 11).** Путь короткий: артефакт `plaintop-win` зелёного
   прогона → распаковать → `plaintop.exe` (Defender: «Подробнее → Выполнить в любом случае»); путь из
   репозитория: `python win\build.py --qt C:\Qt\6.10.3\msvc2022_64`, `python win\plaintop.py` —
-  см. `win/README.ru.md`. Второй запуск (05.10, ~03:30 UTC) показал окна; **третий** должен показать:
-  перетаскивание за любую точку (клик по ячейке/кнопке остаётся им), ровные колонки без Nerd-шрифта
-  (Cascadia Mono/Consolas), «20c/28t», блок GPU (имя из реестра, загрузка как в диспетчере задач,
-  память; температура только у NVIDIA), спектр под музыку (`/state` → `backend: soundcard`,
-  `libraries`), плеер с Яндекс Музыкой (SMTC через winsdk/winrt — если Electron её публикует). Если
-  погода остаётся «offline» — спросить про прокси (XHR `qml.exe` и системный прокси). **Артефакт
-  для третьего запуска: run 37260698059 → `plaintop-win` (id 11323544852, 72 MiB)**; его exe в CI
-  ответил `/state` → `backend: soundcard`, `libraries: {soundcard: true}`, `/player` → `backend: winrt`
-  (у runner'а нет ни сессий, ни видеокарты: `gpu/*` 0 — считать только на столе). Что увидит
+  см. `win/README.ru.md`. Третий запуск (05.10, ~04:50 UTC): окна двигаются за любую точку, колонки
+  ровные, «20c/28t», плеер видит Яндекс Музыку (SMTC через winrt). **Четвёртый** должен показать:
+  спектр под музыку (`/state` → `source` = выход, где играет; если нет — `PLAINTOP_CAPTURE=<часть
+  имени>`), блок GPU из двух карт (NVIDIA T600 с температурой, Intel UHD 770 с общей памятью), кнопки
+  плеера без задержки, погоду с данными (через `/fetch`; если всё ещё offline — прокси по PAC → службе
+  `HTTPS_PROXY`). Артефакт — последний зелёный прогон ветки, Artifacts → `plaintop-win`. Что увидит
   только стол: окна (прозрачность,
   «под всеми», переключение `WindowTransparentForInput` на ходу, перетаскивание, меню правой
   кнопки), трей (`qml -a widget`), «за значками» (SetParent под WorkerW — в т.ч. 24H2), захват WASAPI
@@ -89,6 +88,10 @@ Windows, `webbrowser`). Стенды Plasma: `--check-notes` 145, `--check-relay
   вида (в элементе над видом глотает нажатие — грабля). Спектр при `backend: none` пишет «нет захвата».
 - `exec_win.lscpu` печатает `CPU(s)`; `MonitorData.parseLscpu` (общий файл) берёт его вместо
   произведения — на гибридных Intel произведение врёт и на Plasma (20c/40t).
+- После третьего стола: `SoundcardBackend` перебирает выходы (`_doze` → `next_source`), `gpu_win`
+  соединяет счётчики с картами DXGI по LUID (`dxgi_adapters()`, ctypes/vtable), `Mpris2Model` держит
+  нажатый PlayPause 2,5 с, `WeatherView.requestPrefix` (общий файл) + `/fetch` в службе (https, GET,
+  прокси и сертификаты системы; `tests/win_service.py` подменяет `urlopen`).
 - Стенды: `tests/win_hosts.py`+`.qml` 9/9 (6.8.3, 6.10.1, 6.11.3, настоящая служба на Linux),
   `win_service.py` 167, `win_bands.py` 51, `win_media.py` 94.
 - Документы: решение 17 EN/RU, GOTCHAS часть III (10 записей, EN/RU, оглавление; последняя —
@@ -103,9 +106,10 @@ psutil/winreg/`wevtutil`, `qml.exe` грузит хосты и шимы, zip с�
 `/settings/monitor` (xml из `service/config`), `/holidays`, `/notes set/dump` (notes.py из
 `calendar/`). **Не проверено нигде**: всё, что перечислено в задаче сессии выше (стол), плюс
 `CREATE_NO_WINDOW`, pycaw, PowerShell-зонды батареи и Bluetooth, стоимость
-`psutil.win_service_iter()`; pdh.dll/реестр/`nvidia-smi` (`gpu_win.py`) — только CI, у runner'а
-карты может не быть; `soundcard`/`winsdk` внутри exe — CI печатает `libraries` и `/player`;
-DragHandler и шрифты — на столе.
+`psutil.win_service_iter()`; pdh.dll/DXGI/`nvidia-smi` (`gpu_win.py`) — только CI
+(`--adapters`), у runner'а карты может не быть; перебор выходов — стенд с поддельным бэкендом, на
+столе нет; `/fetch` — CI тянет Open-Meteo через exe. Подтверждено столом: DragHandler, шрифты,
+`20c/28t`, `soundcard` и `winrt` внутри exe, Яндекс Музыка в SMTC.
 
 ⚠️ Qt локально в контейнере: `/opt/qt/{6.8.3,6.10.1,6.11.3}/gcc_64`; стенды — `QT_QPA_PLATFORM=offscreen
 LC_ALL=C.UTF-8 QT_FORCE_STDERR_LOGGING=1`. Заменитель службы для стендов без Python-службы остался в
@@ -141,10 +145,10 @@ scratchpad сессии (не в репозитории). Никогда `pkill 
 - Windows: `QtCore.Settings` против ini у службы — задача называла QSettings; выбран один владелец
   (решение 5), ключи те же; пересмотреть, если пользователь захочет реестр.
 - Windows: имена праздников пакета `holidays` против KHolidays (21 из 29) — показывать как есть?
-- Windows: погода «offline» на столе пользователя — `qml.exe` и системный прокси (корпоративная
-  сеть?); если да — погоду через службу (`urllib` читает прокси из реестра) или `QT_...`-переменная.
-- Windows: GPU — порядок карт у счётчиков (LUID), реестра и `nvidia-smi` свой у каждого; с одной
-  картой совпадает, с двумя может назвать не ту; точнее — DXGI через ctypes (LUID + имя + память).
+- Windows: погода через `/fetch` — если на столе всё ещё offline, прокси задан PAC-скриптом (urllib
+  его не читает) → `HTTPS_PROXY` службе или чтение PAC; не проверено на столе.
+- Windows: две карты NVIDIA с одним именем — строка `nvidia-smi` достанется первой по имени; нужен
+  PCI bus id (DXGI не даёт, `nvidia-smi --query-gpu=pci.bus_id` даёт) — пока не нужно.
 
 ## Окружение
 

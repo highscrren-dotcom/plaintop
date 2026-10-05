@@ -63,8 +63,26 @@ nvidia-smi, слияние под LHM, `CPU(s)`), `win_bands` 52, `win_media` 94
 может не быть); `soundcard`/`winsdk` внутри exe — CI печатает `libraries` и `/player.backend`; сам стол —
 второй запуск пользователя. CI (run 37260698059) зелёный, exe из zip: `backend: soundcard`,
 `libraries: {soundcard: true}`, `/player` → `winrt` — обе библиотеки внутри; zip 72 MiB, артефакт
-11323544852. Открыто: погода «offline» на столе — корпоративная сеть/прокси? (XHR из `qml.exe` и
-системный прокси Windows).
+11323544852.
+
+**Третий стол (~04:50 UTC): окна двигаются за любую точку, колонки ровные, «20c/28t», плеер видит Яндекс
+Музыку.** Четыре новых пункта. (1) «Спектра при музыке нет»: `/state` → `source: Headset Earphone (Jabra
+EVOLVE 20 MS)`, 196 кадров, `age` 360 с — loopback выхода по умолчанию (USB-гарнитура), а музыка шла на
+другой выход; `SoundcardBackend` перебирает выходы (по умолчанию первым), `_doze` просит следующий, пока
+тихо; `PLAINTOP_CAPTURE` закрепляет (грабля). (2) «Непонятки с GP»: три карты при двух — счётчики
+перечисляют и Basic Render Driver, а реестр и nvidia-smi нумеруют по-своему; `dxgi_adapters()` через
+ctypes (`CreateDXGIFactory1` → `EnumAdapters1` → `GetDesc1`): LUID, имя, своя память, лимит общей,
+программный флаг — ключ к счётчикам; nvidia-smi по имени (грабля). (3) «Кнопки плеера тупят»: шим
+`Mpris2Model` переключает `playbackStatus` сразу по PlayPause и держит его 2,5 с против опросов, пока
+SMTC не догонит. (4) «Погода offline»: `WeatherView.requestPrefix` (общий файл, пусто на Plasma), хост
+Windows шлёт запросы в `/fetch` службы — Python с прокси из реестра и хранилищем сертификатов Windows;
+`/fetch` пересылает статус, тело, Content-Type, Last-Modified/ETag, вперёд — User-Agent и If-* (грабля).
+**Проверено исполнением**: `win_service` 199 (+16: карты DXGI, nvidia-smi по имени и правило «одна
+NVIDIA — одна строка», `/fetch` с подменённым urlopen: 200/304/403/502, заголовки, отказ http://),
+`win_bands` 56 (+4: стенд-выход A тихий, B звучит — захват уходит на B за 3 с), `win_media` 94,
+`win_hosts` 9/9 + 16/16, `weather.qml` 10, `monitor.qml` 23. **Не проверено**: DXGI, перебор выходов и
+`/fetch` на настоящей Windows — CI печатает `--adapters` и тянет Open-Meteo через exe; стол — четвёртый
+запуск. Открыто: прокси из PAC-скрипта (`HTTPS_PROXY`); порядок двух карт NVIDIA с одинаковым именем.
 
 ---
 

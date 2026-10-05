@@ -156,6 +156,9 @@ The ones a session trips over first; each links to its section with the evidence
 - [On Windows "monospace" is no font family: Qt draws Segoe UI, and the columns wander](#on-windows-monospace-is-no-font-family-qt-draws-segoe-ui-and-the-columns-wander)
 - [lscpu's threads per core is wrong for a hybrid CPU: CPU(s) is the count](#lscpus-threads-per-core-is-wrong-for-a-hybrid-cpu-cpus-is-the-count)
 - [A DragHandler in an item above a MouseArea swallows the press; on the ancestor it lets the click through and takes the drag](#a-draghandler-in-an-item-above-a-mousearea-swallows-the-press-on-the-ancestor-it-lets-the-click-through-and-takes-the-drag)
+- [The loopback of the default output hears silence while the music plays elsewhere](#the-loopback-of-the-default-output-hears-silence-while-the-music-plays-elsewhere)
+- [The GPU counters list the software adapter too, and three sources have three orders: the LUID is the key](#the-gpu-counters-list-the-software-adapter-too-and-three-sources-have-three-orders-the-luid-is-the-key)
+- [A bare qml window's requests stayed offline on a corporate network; the service fetches for it](#a-bare-qml-windows-requests-stayed-offline-on-a-corporate-network-the-service-fetches-for-it)
 
 **conky (archive)**
 
@@ -1442,3 +1445,42 @@ in a sibling item above the view, it swallows the press and nothing below gets i
 (probed on Qt 6.8 and 6.10 with qmltestrunner: presses 0 vs 1). Declared directly in a
 `Window`, a handler is parented to the content item, the ancestor of everything — that
 is where `WidgetWindow` keeps it. 2026-10-05.
+
+## The loopback of the default output hears silence while the music plays elsewhere
+
+The capture opened the WASAPI loopback of `default_speaker()` and, on the desk, `/state`
+said `source: Headset Earphone (Jabra EVOLVE 20 MS)`, 196 frames, then nothing for six
+minutes while the music played: Windows renders a program's sound where the program, or
+the per-app output in the sound settings, sends it, and a USB headset was the default.
+The loopback of a silent output is a stream of zeros — exactly what a silent desk gives,
+so nothing looked wrong from inside. `SoundcardBackend` now takes the outputs in turn,
+the default first; `Capture._doze`, which reopens the stream once a second while it is
+silent, asks for the next output each time, so the spectrum follows the sound within a
+few seconds and `source` names the output it found. `PLAINTOP_CAPTURE` pins it. 2026-10-05.
+
+## The GPU counters list the software adapter too, and three sources have three orders: the LUID is the key
+
+The first GPU block on the desk showed three cards for two: `GP0` with nvidia-smi's
+temperature and memory, `GP1` named "NVIDIA T600" with 4.0/4.0 GB, `GP2` nameless with
+3.2/15.8 GB — the T600's real figures (3.0 dedicated + 0.2 shared), computed as an
+integrated GPU because the third index had no registry entry. `GPU Adapter Memory` has an
+instance for the Microsoft Basic Render Driver as well, so the counters' LUIDs numbered
+three; the registry's display class and nvidia-smi number their own way, and matching by
+index joined the wrong figures. DXGI is the join: `IDXGIFactory1::EnumAdapters1` gives
+each adapter's LUID — the same one the counters spell as `luid_0x<high>_0x<low>` — with
+its name, dedicated memory, shared limit and a flag for the software adapter; three
+vtable calls through ctypes (`CreateDXGIFactory1`, slot 12, slot 10). nvidia-smi's row is
+matched by the card's name. 2026-10-05.
+
+## A bare qml window's requests stayed offline on a corporate network; the service fetches for it
+
+The weather stayed "offline · no data yet" on the desk, a corporate machine, through two
+runs. The view asks its sources with `XMLHttpRequest` straight from the window, which on
+Plasma is the point (decision 10): a plain `qml.exe` window takes neither the proxy from
+the system's settings nor the corporate root certificate from the system's store, as far
+as the desk showed — the exact cause was not pinned down, and does not need to be: the
+service's Python reads the registry proxy and loads the Windows certificate store, so
+`/fetch` relays the request as it came, headers and status included, and the shared view
+got one property, `requestPrefix`, empty on Plasma, that the Windows host points at it.
+Verified in CI: the frozen exe fetched an Open-Meteo forecast through `/fetch`. Not
+covered: a proxy named only by a PAC script (`HTTPS_PROXY` then). 2026-10-05.

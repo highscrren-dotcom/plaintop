@@ -10,10 +10,15 @@ name and the size of the card's own memory come from the display class in the re
 32-bit figure that stops at 4 GB. Temperature and power the counters do not have:
 nvidia-smi gives them where it is; an Intel or AMD card shows none without LHM.
 
-The counters name a card by its LUID, the registry by its driver key, nvidia-smi by its
-own index: with one card they are the same card; with two, each list is taken in its own
-order and a mismatch names the wrong card. LHM, when it runs, is preferred for every id
-it gives (monitor_win.Sampler merges this under it).
+The counters name a card by its LUID, and so does DXGI: IDXGIFactory1::EnumAdapters1
+(dxgi.dll through ctypes, three vtable calls) lists the adapters with their LUID, name,
+dedicated memory, shared memory limit and a flag for the software adapter — the key
+that joins the counters to a card. The first desk had three "cards": the counters list
+the Microsoft Basic Render Driver too, and the registry's and nvidia-smi's orders are
+their own; matched by index, an NVIDIA T600 came out twice and its memory under a
+nameless third. nvidia-smi's row is matched by the card's name. The registry is the
+fallback where DXGI cannot be asked. LHM, when it runs, is preferred for every id it
+gives (monitor_win.Sampler merges this under it).
 
 An integrated GPU has next to no dedicated memory and lives in the shared half of RAM,
 which is what Task Manager shows for it: below 1 GiB of its own, a card's "VRAM" is the
@@ -71,9 +76,11 @@ def memory_by_card(items):
 
 
 def card_sensors(index, name, usage, dedicated_used, shared_used, dedicated_total, ram_total,
-                 nvidia=None):
+                 nvidia=None, shared_total=0):
     """One card's sensor ids. `nvidia` is a row of nvidia_smi() for the same card, whose
-    temperature and power are the only source of them here."""
+    temperature and power are the only source of them here. An integrated GPU (below a
+    GiB of its own) shows its shared usage against the shared limit DXGI reports, or
+    half of RAM where only the registry was asked."""
     base = f"gpu/gpu{index}/"
     out = {base + "usage": {"value": float(usage)}}
     if name:
@@ -83,7 +90,9 @@ def card_sensors(index, name, usage, dedicated_used, shared_used, dedicated_tota
         out[base + "totalVram"] = {"value": float(dedicated_total)}
     else:
         out[base + "usedVram"] = {"value": float(dedicated_used + shared_used)}
-        if ram_total:
+        if shared_total:
+            out[base + "totalVram"] = {"value": float(shared_total)}
+        elif ram_total:
             out[base + "totalVram"] = {"value": float(ram_total) / 2}
     if nvidia:
         for key, field in (("temperature", "temperature"), ("power", "power")):
@@ -117,7 +126,109 @@ def parse_nvidia_smi(text):
     return rows
 
 
-# ── Windows: pdh.dll, the registry, nvidia-smi ──────────────────────────────────────
+def luid_key(high, low):
+    """A LUID as the counters spell it in an instance name: luid_0x<high>_0x<low>."""
+    return f"0x{high & 0xFFFFFFFF:08x}_0x{low & 0xFFFFFFFF:08x}"
+
+
+def pick_smi(adapter, rows, adapters):
+    """nvidia-smi's row for an adapter: the same name; else the one row for the one
+    NVIDIA adapter (vendor 0x10DE) when there is exactly one of each."""
+    name = str(adapter.get("name", "")).strip().lower()
+    for r in rows:
+        if str(r.get("name", "")).strip().lower() == name:
+            return r
+    nvidia = [a for a in adapters if a.get("vendor") == 0x10DE]
+    if len(rows) == 1 and len(nvidia) == 1 and nvidia[0] is adapter:
+        return rows[0]
+    return None
+
+
+def cards_from(adapters, usage, dedicated, shared, smi=(), ram_total=0):
+    """The cards as sensor ids: DXGI's hardware adapters in its order (the software one
+    left out), each with the counters' figures by its LUID and nvidia-smi's row by name."""
+    hardware = [a for a in adapters if not a.get("software")]
+    out = {}
+    for i, a in enumerate(hardware):
+        luid = a["luid"]
+        out.update(card_sensors(i, a.get("name", ""), usage.get(luid, 0.0), dedicated.get(luid, 0.0),
+                                shared.get(luid, 0.0), int(a.get("dedicated") or 0), ram_total,
+                                pick_smi(a, list(smi or []), hardware), int(a.get("shared") or 0)))
+    return out
+
+
+# ── Windows: dxgi.dll, pdh.dll, the registry, nvidia-smi ────────────────────────────
+
+class _GUID(ctypes.Structure):
+    _fields_ = [("Data1", ctypes.c_uint32), ("Data2", ctypes.c_uint16), ("Data3", ctypes.c_uint16),
+                ("Data4", ctypes.c_ubyte * 8)]
+
+
+class _LUID(ctypes.Structure):
+    _fields_ = [("LowPart", ctypes.c_uint32), ("HighPart", ctypes.c_int32)]
+
+
+class _AdapterDesc1(ctypes.Structure):
+    # DXGI_ADAPTER_DESC1
+    _fields_ = [("Description", ctypes.c_wchar * 128), ("VendorId", ctypes.c_uint32), ("DeviceId", ctypes.c_uint32),
+                ("SubSysId", ctypes.c_uint32), ("Revision", ctypes.c_uint32),
+                ("DedicatedVideoMemory", ctypes.c_size_t), ("DedicatedSystemMemory", ctypes.c_size_t),
+                ("SharedSystemMemory", ctypes.c_size_t), ("AdapterLuid", _LUID), ("Flags", ctypes.c_uint32)]
+
+
+IID_IDXGIFactory1 = _GUID(0x770AAE78, 0xF26F, 0x4DBA, (ctypes.c_ubyte * 8)(0xA8, 0x29, 0x25, 0x3C, 0x83, 0xD1, 0xB3, 0x87))
+DXGI_ADAPTER_FLAG_SOFTWARE = 2
+VTBL_RELEASE, VTBL_ENUM_ADAPTERS1, VTBL_GET_DESC1 = 2, 12, 10
+
+
+def _com_method(obj, index, restype, *argtypes):
+    """A COM interface's method by its slot in the vtable, callable with the object first."""
+    vtable = ctypes.cast(obj, ctypes.POINTER(ctypes.c_void_p))[0]
+    fn = ctypes.cast(ctypes.c_void_p(vtable), ctypes.POINTER(ctypes.c_void_p))[index]
+    return ctypes.WINFUNCTYPE(restype, ctypes.c_void_p, *argtypes)(fn)
+
+
+def dxgi_adapters():
+    """[{"name", "luid", "vendor", "dedicated", "shared", "software"}] in DXGI's order
+    (the primary first); [] off Windows or where DXGI cannot be asked, said on stderr."""
+    if not WINDOWS:
+        return []
+    out = []
+    try:
+        dxgi = ctypes.WinDLL("dxgi")
+        create = dxgi.CreateDXGIFactory1
+        create.restype = ctypes.c_uint32
+        create.argtypes = [ctypes.POINTER(_GUID), ctypes.POINTER(ctypes.c_void_p)]
+        factory = ctypes.c_void_p()
+        hr = create(ctypes.byref(IID_IDXGIFactory1), ctypes.byref(factory))
+        if hr != 0 or not factory:
+            print(f"dxgi: CreateDXGIFactory1 0x{hr:08X}", file=sys.stderr, flush=True)
+            return []
+        try:
+            enum_adapters = _com_method(factory, VTBL_ENUM_ADAPTERS1, ctypes.c_uint32, ctypes.c_uint32,
+                                        ctypes.POINTER(ctypes.c_void_p))
+            i = 0
+            while True:
+                adapter = ctypes.c_void_p()
+                if enum_adapters(factory, i, ctypes.byref(adapter)) != 0 or not adapter:
+                    break
+                try:
+                    desc = _AdapterDesc1()
+                    get_desc = _com_method(adapter, VTBL_GET_DESC1, ctypes.c_uint32, ctypes.POINTER(_AdapterDesc1))
+                    if get_desc(adapter, ctypes.byref(desc)) == 0:
+                        out.append({"name": desc.Description, "luid": luid_key(desc.AdapterLuid.HighPart, desc.AdapterLuid.LowPart),
+                                    "vendor": int(desc.VendorId), "dedicated": int(desc.DedicatedVideoMemory),
+                                    "shared": int(desc.SharedSystemMemory),
+                                    "software": bool(desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)})
+                finally:
+                    _com_method(adapter, VTBL_RELEASE, ctypes.c_uint32)(adapter)
+                i += 1
+        finally:
+            _com_method(factory, VTBL_RELEASE, ctypes.c_uint32)(factory)
+    except Exception as e:
+        print(f"dxgi: {e!r}", file=sys.stderr, flush=True)
+    return out
+
 
 class _CounterValue(ctypes.Structure):
     # PDH_FMT_COUNTERVALUE: a DWORD status, then a union whose widest member is 8 bytes.
@@ -272,7 +383,8 @@ class Reader:
         except Exception as e:
             print(f"gpu counters not available: {e!r}", file=sys.stderr, flush=True)
             return
-        names = registry_cards()
+        adapters = dxgi_adapters()
+        names = registry_cards() if not adapters else []
         if not self.ram_total:
             try:
                 import psutil
@@ -290,15 +402,20 @@ class Reader:
                 usage = usage_by_card(query.values("engine"))
                 dedicated = memory_by_card(query.values("dedicated"))
                 shared = memory_by_card(query.values("shared"))
-                for luid in list(dedicated) + list(shared) + list(usage):
-                    if luid not in self._cards:
-                        self._cards.append(luid)
-                out = {}
-                for i, luid in enumerate(self._cards):
-                    name, total = names[i] if i < len(names) else ("", 0)
-                    out.update(card_sensors(i, name, usage.get(luid, 0.0), dedicated.get(luid, 0.0),
-                                            shared.get(luid, 0.0), total, self.ram_total,
-                                            smi[i] if i < len(smi) else None))
+                if adapters:
+                    out = cards_from(adapters, usage, dedicated, shared, smi, self.ram_total)
+                else:
+                    # No DXGI: the counters' LUIDs in the order first seen, the registry's
+                    # names and sizes in theirs — right with one card, a guess with more.
+                    for luid in list(dedicated) + list(shared) + list(usage):
+                        if luid not in self._cards:
+                            self._cards.append(luid)
+                    out = {}
+                    for i, luid in enumerate(self._cards):
+                        name, total = names[i] if i < len(names) else ("", 0)
+                        out.update(card_sensors(i, name, usage.get(luid, 0.0), dedicated.get(luid, 0.0),
+                                                shared.get(luid, 0.0), total, self.ram_total,
+                                                smi[i] if i < len(smi) else None))
                 with self._lock:
                     self._sensors = out
             except Exception as e:
@@ -307,8 +424,13 @@ class Reader:
 
 
 if __name__ == "__main__":
-    # `python gpu_win.py`: five seconds of readings, as the monitor would get them.
+    # `python gpu_win.py`: five seconds of readings, as the monitor would get them;
+    # `--adapters`: what DXGI says, and nvidia-smi's rows.
     import json
+    if "--adapters" in sys.argv:
+        print(json.dumps({"dxgi": dxgi_adapters(), "registry": registry_cards(), "nvidia-smi": nvidia_smi()},
+                         ensure_ascii=False, indent=1))
+        sys.exit(0)
     r = Reader(interval=1.0).start()
     for _ in range(5):
         time.sleep(1.2)

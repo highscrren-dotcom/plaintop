@@ -100,9 +100,11 @@ has one. The GPU ids (`gpu/gpuN/usage`, `name`, `usedVram`, `totalVram`, and
 `temperature`, `power` where a source has them) come from LibreHardwareMonitor when it
 runs, else from `win/service/gpu_win.py`: the `GPU Engine` and `GPU Adapter Memory`
 performance counters (Task Manager's reading — the busiest engine type, summed over
-processes), the name and the card's memory size from the display class in the registry,
-the temperature and power from `nvidia-smi` where it is. An integrated GPU's "VRAM" is its
-shared usage against half of the RAM, as Task Manager shows it. `processes` are `[name, cpu %, memory bytes, pid]` — the union of the thirty
+processes) joined to the cards DXGI lists by LUID (`IDXGIFactory1::EnumAdapters1`: the
+name, the dedicated memory, the shared limit, the software adapter left out), the
+temperature and power from `nvidia-smi` where it is, matched by the card's name. An
+integrated GPU's "VRAM" is its shared usage against DXGI's shared limit, as Task Manager
+shows it. The registry's display class is the fallback where DXGI cannot be asked. `processes` are `[name, cpu %, memory bytes, pid]` — the union of the thirty
 heaviest by CPU and by memory, unsorted: the `KSortFilterProxyModel` shim sorts.
 
 ### `/exec` · `POST` `{"command": "…"}` → `{"stdout": "…", "stderr": "…", "exit code": 0}`
@@ -176,6 +178,17 @@ Regions are ISO codes with an optional subdivision, not KHolidays' plan names.
 `{"zone": "Europe/Berlin", "offset": 7200, "city": "Berlin"}` — the zone's current UTC
 offset in seconds and the city part of its name, what the weather view asks Plasma's time
 engine for. `zone=Local` is the machine's zone.
+
+### `/fetch?url=https://…` · `GET`
+
+The weather's relay: the URL fetched by the service and answered as it came — the
+status (a 304 and a 403 included), the body, the content type, and `Last-Modified`,
+`ETag`, `Expires`, `Cache-Control`, `Date`. `User-Agent`, `Accept`, `Accept-Language`,
+`If-Modified-Since` and `If-None-Match` from the request go along. `https` only, GET only,
+4 MiB at most; a host that cannot be reached is a 502 with the reason. The weather host
+sets `WeatherView.requestPrefix` to this path, so every request of the shared view goes
+through Python, which reads the system proxy from the registry and trusts the system's
+certificate store — a bare qml window on a corporate network stayed "offline".
 
 ### `/settings/<widget>` · `GET`, `POST`
 

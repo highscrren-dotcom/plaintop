@@ -40,8 +40,17 @@ seen on one yet. Reports welcome.
   *Options → Remote Web Server → Run* (port 8085). Without it those readings are absent and
   the lines that need them say nothing, as on a Linux machine without `lm_sensors`. The GPU
   block does not need it: the load and the memory come from the performance counters Task
-  Manager reads, the name from the registry, and an NVIDIA card's temperature and power from
-  `nvidia-smi`; an Intel or AMD card shows no temperature without LHM.
+  Manager reads, the cards and their memory from DXGI, and an NVIDIA card's temperature and
+  power from `nvidia-smi`; an Intel or AMD card shows no temperature without LHM.
+- **The sound**: the spectrum listens to the output the music is rendered on — the default
+  first, then every other output while the current one is silent (Windows sends a program's
+  sound where the program or the per-app setting says, not always where the default points;
+  the first desk had a USB headset as the default and the music on the speakers). `PLAINTOP_CAPTURE`,
+  a part of an output's name, pins the choice; `/state` names the output in `source`.
+- **The weather** asks its sources through the service (`/fetch`), which reads the proxy
+  from the system's settings and trusts the system's certificate store — the bare window's
+  own requests stayed "offline" on a corporate network. A proxy set by a PAC script is not
+  read; set `HTTPS_PROXY` for the service in that case.
 
 ## Run it from the repository
 

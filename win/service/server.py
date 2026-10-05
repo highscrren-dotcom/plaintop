@@ -20,6 +20,8 @@ import os
 import secrets
 import sys
 import threading
+import urllib.error
+import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -165,6 +167,38 @@ def get_time(svc, query, body, path):
     return json_reply(200, svc.need("timezones").info(query.get("zone", ["Local"])[0]))
 
 
+# The request headers the weather's sources set, forwarded as they are; the answer's
+# headers the view reads (Last-Modified for If-Modified-Since, ETag) come back with it.
+FETCH_REQUEST_HEADERS = ("User-Agent", "Accept", "Accept-Language", "If-Modified-Since", "If-None-Match")
+FETCH_REPLY_HEADERS = ("Last-Modified", "ETag", "Expires", "Cache-Control", "Date")
+FETCH_LIMIT = 4 << 20
+
+
+def get_fetch(svc, query, body, path):
+    """GET /fetch?url=https://… — the URL fetched by the service and answered as it came:
+    the status (a 304 or a 403 included), the body, the content type and the headers
+    above. The weather host sends its requests here, since a bare qml window on a
+    corporate network stayed "offline" where Python, which reads the system proxy from
+    the registry and trusts the system's certificate store, gets through. https only,
+    GET only, 4 MiB at most; whatever fails to connect is a 502 with the reason."""
+    url = (query.get("url") or [""])[0].strip()
+    if not url.lower().startswith("https://"):
+        return error(400, "an https URL expected")
+    incoming = query.get("@headers") or {}
+    headers = {k: v for k, v in incoming.items() if k in FETCH_REQUEST_HEADERS}
+    req = urllib.request.Request(url, headers=headers, method="GET")
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.status, r.read(FETCH_LIMIT), r.headers.get("Content-Type") or "application/octet-stream", \
+                {k: r.headers[k] for k in FETCH_REPLY_HEADERS if r.headers.get(k)}
+    except urllib.error.HTTPError as e:
+        data = e.read(FETCH_LIMIT) if e.code != 304 else b""
+        return e.code, data, e.headers.get("Content-Type") or "application/octet-stream", \
+            {k: e.headers[k] for k in FETCH_REPLY_HEADERS if e.headers.get(k)}
+    except Exception as e:                        # URLError, socket timeout, a bad URL
+        return error(502, f"{type(e).__name__}: {getattr(e, 'reason', e)}")
+
+
 def store(svc):
     return svc.instance("settings_store", "Store")
 
@@ -224,7 +258,7 @@ ROUTES = {
     ("GET", "/player"): get_player, ("POST", "/player"): post_player,
     ("POST", "/notes"): post_notes, ("POST", "/notify"): post_notify,
     ("GET", "/holidays"): get_holidays, ("GET", "/holidays/regions"): get_regions,
-    ("GET", "/time"): get_time,
+    ("GET", "/time"): get_time, ("GET", "/fetch"): get_fetch,
     ("GET", "/ui"): get_ui, ("POST", "/ui"): post_ui,
 }
 
@@ -248,6 +282,9 @@ class Handler(BaseHTTPRequestHandler):
         svc = self.server.service
         url = urlparse(self.path)
         query = parse_qs(url.query)
+        # The request's headers ride along under a key no query string can carry
+        # (/fetch forwards some of them); every other route ignores it.
+        query["@headers"] = {k: v for k, v in self.headers.items()}
         try:
             body = self.read_body()
             # A browser always sends Origin; the hosts never do. Whatever the request asks,
@@ -282,13 +319,15 @@ class Handler(BaseHTTPRequestHandler):
             return b""
         return self.rfile.read(length) if length else b""
 
-    def reply(self, status, body, content_type):
+    def reply(self, status, body, content_type, extra=None):
         # A host aborts a request from its watchdog now and then (a slow /exec): the
         # socket is gone, and there is nobody to tell — on Windows that is WinError 10053.
         try:
             self.send_response(status)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
+            for k, v in (extra or {}).items():
+                self.send_header(k, v)
             self.end_headers()
             if body:
                 self.wfile.write(body)

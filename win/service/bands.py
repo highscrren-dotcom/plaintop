@@ -217,15 +217,48 @@ class Analyzer:
 # stays bound to the device it was opened on.
 
 class SoundcardBackend:
-    """WASAPI loopback through the `soundcard` package (pip install soundcard)."""
+    """WASAPI loopback through the `soundcard` package (pip install soundcard).
+
+    Windows renders a program's sound where the program (or the user, per app) sends it,
+    not always where the default output points: on the first desk the default was a USB
+    headset and the music played on the speakers, so the loopback of the default heard
+    silence for ever. open() takes the outputs in turn — the default first, then every
+    other — and next_source() moves on; the capture calls it while the current output is
+    silent (Capture._doze), so the spectrum follows the sound within a few seconds.
+    PLAINTOP_CAPTURE, a part of an output's name, pins the choice to the outputs that
+    match it."""
     name = "soundcard"
 
-    def __init__(self, rate=48000, block=None):
+    def __init__(self, rate=48000, block=None, prefer=None):
         self.rate = rate
         self.block = block or rate // 50
         self.source = ""
         self._rec = None
         self._channels = 2
+        self.prefer = os.environ.get("PLAINTOP_CAPTURE", "") if prefer is None else prefer
+        self._which = 0
+        self.candidates = 0                   # outputs the last open() could choose from
+
+    @staticmethod
+    def speakers():
+        """The outputs, the default first; the ids are what get_microphone() takes."""
+        import soundcard as sc
+        out = []
+        try:
+            out.append(sc.default_speaker())
+        except Exception:                     # no default: the list may still have some
+            pass
+        try:
+            for s in sc.all_speakers():
+                if all(s.id != o.id for o in out):
+                    out.append(s)
+        except Exception:
+            pass
+        return out
+
+    def next_source(self):
+        """The next output on the next open(): called while the current one is silent."""
+        self._which += 1
 
     @staticmethod
     def probe():
@@ -235,8 +268,15 @@ class SoundcardBackend:
 
     def open(self):
         import soundcard as sc
-        speaker = sc.default_speaker()
-        mic = sc.get_microphone(speaker.name, include_loopback=True)
+        speakers = self.speakers()
+        if self.prefer:
+            named = [s for s in speakers if self.prefer.lower() in str(s.name).lower()]
+            speakers = named or speakers
+        if not speakers:
+            raise RuntimeError("no output device")
+        self.candidates = len(speakers)
+        speaker = speakers[self._which % len(speakers)]
+        mic = sc.get_microphone(speaker.id, include_loopback=True)
         self._channels = 2 if mic.channels >= 2 else 1
         # The engine resamples to the asked rate, so the analyzer sees 48 kHz whatever the
         # device runs at; blocksize is the packet soundcard asks WASAPI for.
@@ -520,6 +560,11 @@ class Capture:
                 self._analyzer.push(block)
                 return
             self.backend.close()
+            # Still silent: the next output next time, where the backend has several —
+            # the sound may be rendered on an output that is not the default.
+            step = getattr(self.backend, "next_source", None)
+            if step is not None:
+                step()
 
 
 # ---------------------------------------------------------------------------------------

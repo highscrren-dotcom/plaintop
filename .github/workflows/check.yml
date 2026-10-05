@@ -113,6 +113,9 @@ jobs:
       - name: the calendar's notes stand, on Windows paths
         run: python tests/notes.py
 
+      - name: what DXGI, the registry and nvidia-smi say about this runner's GPU
+        run: python win/service/gpu_win.py --adapters
+
       - name: the hosts, through the shims, against the real service
         run: python tests/win_hosts.py --qt "$env:QT_ROOT_DIR"
         env:
@@ -188,6 +191,11 @@ jobs:
             Write-Host "/notes dump: exit 0, $($n.stdout.Length) bytes (notes.py found beside the exe)"
             $pl = Invoke-RestMethod "$base/player" -TimeoutSec 10
             Write-Host "/player: $($pl | ConvertTo-Json -Compress)"
+            $wx = Invoke-WebRequest "$base/fetch?url=$([uri]::EscapeDataString('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m'))" -TimeoutSec 40
+            if ($wx.StatusCode -ne 200 -or -not ($wx.Content | ConvertFrom-Json).current) { throw "/fetch did not bring the forecast: $($wx.StatusCode) $($wx.Content)" }
+            Write-Host "/fetch: open-meteo through the service, $($wx.Content.Length) bytes, Content-Type $($wx.Headers['Content-Type'])"
+            $bad = try { Invoke-WebRequest "$base/fetch?url=http://example.com/" -TimeoutSec 10; "accepted" } catch { "refused" }
+            if ($bad -ne "refused") { throw "/fetch took an http:// URL" }
             Write-Host "frozen plaintop.exe serves from the zip layout"
           } finally {
             Stop-Process -Id $p.Id -Force

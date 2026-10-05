@@ -12,6 +12,7 @@ Linux desktop and on a Windows runner.
 """
 import http.client
 import importlib
+import io
 import json
 import os
 import re
@@ -21,6 +22,8 @@ import sys
 import tempfile
 import threading
 import time
+import urllib.error
+import urllib.parse
 from pathlib import Path
 from types import SimpleNamespace as NS
 
@@ -265,8 +268,26 @@ def test_gpu():
     with_smi = gw.card_sensors(0, "", 70.0, 2 * GIB, 0, 10 * GIB, 32 * GIB, smi[0])
     ok(with_smi["gpu/gpu0/temperature"] == {"value": 45.0} and with_smi["gpu/gpu0/power"] == {"value": 120.5} and with_smi["gpu/gpu0/name"]["value"] == "NVIDIA GeForce RTX 3080", "nvidia-smi fills temperature, power and the name")
     ok(with_smi["gpu/gpu0/usedVram"]["value"] == 2048 * 1048576 and with_smi["gpu/gpu0/totalVram"]["value"] == 10240 * 1048576, "nvidia-smi's memory figures win (MiB → bytes)")
+    ok(gw.luid_key(0, 0xF3E7) == "0x00000000_0x0000f3e7" and gw.luid_key(-1, 0xFFFFFFFF) == "0xffffffff_0xffffffff", "luid_key spells a LUID as the counters do")
+    adapters = [{"name": "NVIDIA T600", "luid": "0x00000000_0x0000f3e7", "vendor": 0x10DE, "dedicated": 4 * GIB, "shared": 17 * GIB, "software": False},
+                {"name": "Intel(R) UHD Graphics 770", "luid": "0x00000000_0x0000a001", "vendor": 0x8086, "dedicated": 128 * 1048576, "shared": 17 * GIB, "software": False},
+                {"name": "Microsoft Basic Render Driver", "luid": "0x00000000_0x0000b002", "vendor": 0x1414, "dedicated": 0, "shared": 17 * GIB, "software": True}]
+    usage = {"0x00000000_0x0000f3e7": 2.0, "0x00000000_0x0000a001": 0.0, "0x00000000_0x0000b002": 50.0}
+    dedicated = {"0x00000000_0x0000f3e7": 3 * GIB, "0x00000000_0x0000a001": 64 * 1048576, "0x00000000_0x0000b002": 4 * GIB}
+    shared = {"0x00000000_0x0000f3e7": 200 * 1048576, "0x00000000_0x0000a001": 3 * GIB}
+    rows = gw.parse_nvidia_smi("NVIDIA T600, 2, 61, 3072, 4096, [N/A]\n")
+    cards = gw.cards_from(adapters, usage, dedicated, shared, rows, 32 * GIB)
+    ok(sorted({k.split("/")[1] for k in cards}) == ["gpu0", "gpu1"], "DXGI's hardware adapters are the cards; the software adapter is left out: " + repr(sorted(cards)))
+    ok(cards["gpu/gpu0/name"]["value"] == "NVIDIA T600" and cards["gpu/gpu0/usage"]["value"] == 2.0, "the card's figures by its LUID, not by index")
+    ok(cards["gpu/gpu0/temperature"]["value"] == 61.0 and cards["gpu/gpu0/usedVram"]["value"] == 3072 * 1048576 and cards["gpu/gpu0/totalVram"]["value"] == 4096 * 1048576 and "gpu/gpu0/power" not in cards, "nvidia-smi's row by name: temperature and memory, no power from [N/A]")
+    ok(cards["gpu/gpu1/name"]["value"] == "Intel(R) UHD Graphics 770" and cards["gpu/gpu1/usedVram"]["value"] == (64 * 1048576 + 3 * GIB) and cards["gpu/gpu1/totalVram"]["value"] == 17 * GIB and "gpu/gpu1/temperature" not in cards, "the integrated GPU: shared usage against DXGI's shared limit, nothing from nvidia-smi")
+    renamed = [dict(adapters[0], name="NVIDIA T600 (something)")] + adapters[1:]
+    ok(gw.cards_from(renamed, usage, dedicated, shared, rows)["gpu/gpu0/temperature"]["value"] == 61.0, "one NVIDIA adapter, one row: matched without the name")
+    two = [dict(adapters[0], name="NVIDIA A"), dict(adapters[0], name="NVIDIA B", luid="0x0_0x1")] + adapters[1:]
+    ok("gpu/gpu0/temperature" not in gw.cards_from(two, usage, dedicated, shared, [dict(rows[0], name="NVIDIA C")]), "two NVIDIA adapters and a row naming neither: no guess")
     reader = gw.Reader().start()
     ok(reader.sensors() == {} and reader.enabled == (os.name == "nt"), "the reader is idle off Windows")
+    ok(gw.dxgi_adapters() == [] or os.name == "nt", "no DXGI off Windows")
     ok(gw.registry_cards() == [] or os.name == "nt", "no registry off Windows")
 
     class FakeGpu:
@@ -614,10 +635,59 @@ def test_server():
         svc.sampler = None
         ok(req("GET", "/monitor")[0] == 503, "/monitor without a sampler: 503")
         svc.sampler = sampler
+
+        # /fetch: the weather's relay. urlopen is stood in for, so no network is touched.
+        import email.message
+        import urllib.request as ur
+        calls = []
+
+        class FakeResponse:
+            def __init__(self, status, body, ctype, extra=None):
+                self.status = status
+                self._body = body
+                self.headers = email.message.Message()
+                self.headers["Content-Type"] = ctype
+                for k, v in (extra or {}).items():
+                    self.headers[k] = v
+            def read(self, n=-1): return self._body
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+
+        def fake_urlopen(req, timeout=0):
+            calls.append((req.full_url, dict(req.header_items()), timeout))
+            if "notmodified" in req.full_url:
+                raise urllib.error.HTTPError(req.full_url, 304, "Not Modified", email.message.Message(), io.BytesIO(b""))
+            if "forbidden" in req.full_url:
+                h = email.message.Message(); h["Content-Type"] = "text/plain"
+                raise urllib.error.HTTPError(req.full_url, 403, "Forbidden", h, io.BytesIO(b"no"))
+            if "down" in req.full_url:
+                raise urllib.error.URLError("name or service not known")
+            return FakeResponse(200, b'{"current": {"temperature_2m": 11.5}}', "application/json; charset=utf-8",
+                                {"Last-Modified": "Mon, 05 Oct 2026 03:00:00 GMT", "ETag": "abc", "X-Secret": "no"})
+
+        real_urlopen, ur.urlopen = ur.urlopen, fake_urlopen
+        try:
+            st, ctype, body, r = req("GET", "/fetch?url=" + urllib.parse.quote("https://api.open-meteo.com/v1/forecast?latitude=52.5&longitude=13.4&current=temperature_2m", safe=""),
+                                     None, {"User-Agent": "plainweather/1 test", "If-Modified-Since": "Sun, 04 Oct 2026 00:00:00 GMT", "Cookie": "a=b"})
+            ok(st == 200 and json.loads(body)["current"]["temperature_2m"] == 11.5, "/fetch answers the body as it came")
+            ok(str(ctype).startswith("application/json") and r.getheader("Last-Modified") == "Mon, 05 Oct 2026 03:00:00 GMT" and r.getheader("ETag") == "abc" and r.getheader("X-Secret") is None, "/fetch forwards the content type, Last-Modified and ETag, nothing else")
+            url, sent, timeout = calls[-1]
+            ok(url.startswith("https://api.open-meteo.com/v1/forecast?latitude=52.5&longitude=13.4") and sent.get("User-agent") == "plainweather/1 test" and sent.get("If-modified-since", "").startswith("Sun, 04") and "Cookie" not in sent and timeout == 20, "/fetch sends the URL decoded with User-Agent and If-Modified-Since, not the cookie: " + repr(sent))
+            st, _, body, _ = req("GET", "/fetch?url=https://example.org/notmodified")
+            ok(st == 304 and body == b"", f"a 304 passes through, bodiless: {st} {body[:120]!r}")
+            st, _, body, _ = req("GET", "/fetch?url=https://example.org/forbidden")
+            ok(st == 403 and body == b"no", "a 403 passes through with its body")
+            st, _, body, _ = req("GET", "/fetch?url=https://example.org/down")
+            ok(st == 502 and "URLError" in json.loads(body)["error"], "a host that cannot be reached is a 502 with the reason")
+            ok(req("GET", "/fetch?url=http://example.org/")[0] == 400, "http:// is refused")
+            ok(req("GET", "/fetch")[0] == 400, "no url is refused")
+        finally:
+            ur.urlopen = real_urlopen
     finally:
         conn.close()
         server.shutdown()
         server.server_close()
+
     print("  ✓ server: routing, token, Origin, keep-alive, 304/404/503")
 
 
