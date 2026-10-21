@@ -993,3 +993,59 @@ then a small C++ host (one `QWindow` subclass answering `WM_NCHITTEST`) replaces
 `qml.exe`, and nothing else changes; or Plasma's private modules change their surface
 under the shared files faster than the shims can follow — then the split of the data files
 (the second row of the table) is the next step, on both hosts at once.
+
+## 18. Consumption on Windows: one engine, one native call, and nothing read that nobody sees (2026-10-21)
+
+Five widgets that stand on a desktop all day are only welcome if they are cheap, so the
+Windows port got an explicit budget: **half a core and 250 MiB summed, idle, sound off**,
+with the clock and the CPU bars no staler than two seconds, the top-process list no staler
+than five, and the visualizer at twenty frames a second or better. The budget is argued
+with numbers the port produces itself — `GET /perf` in the service (`win/service/perf.py`)
+and `win/perf.py` over the family — not with a person reading Task Manager.
+
+What the measurement found on a Windows 11 machine (28 threads, 370 processes) was worse
+than the design assumed: **one psutil process walk took 1.5 s** every second — a third of a
+core before a single widget was drawn — because psutil opens every process and a security
+agent sits on `OpenProcess`; and **a single sensor tick's leftover calls** (`net_io_counters`,
+`net_if_stats`, `net_if_addrs`) cost ~30 ms, so keeping them at one second was another 3%.
+
+Thus, in the order the savings are largest:
+
+1. **One QML engine for every widget** (`win/host/shell.qml`, `oneProcess`, the Windows
+   default). Six `qml.exe` processes pay six times for Qt Quick's own stack — scene graph,
+   render thread, font database; the service starts one `qml.exe` that creates the five
+   windows and the tray in a single engine and follows `GET /ui`. The price is paid in
+   coupling: a crash of that engine takes every widget with it. Hence `oneProcess=false`
+   as the way back, a watchdog that starts the engine again, and an automatic fallback to
+   a process per widget after three quick deaths (`win/service/ui.py`). The settings window
+   stays a process of its own, so a broken settings page cannot take the desk down.
+2. **The process list from `NtQuerySystemInformation(SystemProcessInformation)`**
+   (`ctypes`, one call, no handle opened): 10 ms for the same list where psutil took 1.5 s.
+   `nativeProcesses=false` restores psutil. The struct's offsets are asserted by the stand,
+   so a wrong field size fails loudly instead of publishing a wrong number.
+3. **Read only what is drawn.** Every expensive reading has a demand: the process walk every
+   `processInterval` seconds (5) and not at all while no enabled block shows a list or the
+   monitor is off screen; the network lines every 5 s with the adapter facts cached for a
+   minute; `netsh wlan` every 15 s and only where a wireless adapter exists; the battery's
+   WMI every 5 minutes; LibreHardwareMonitor every 5 s; the GPU counters every 5 s;
+   `nvidia-smi` every 15 s; the Bluetooth probe every 5 minutes; the sound capture only
+   while the spectrum is on screen; the whole sensor tick parked while the monitor is not.
+4. **Hosts report their own visibility** (`POST /ui {"visible": …}` on every change), so
+   Win+D or a closed widget is what stops the sampling behind it — the shells' own Timers
+   park too, and the settings poll went from one second to five (a 304 costs a header).
+
+The costs are real and stated: a spent `oneProcess=false`, a spent `nativeProcesses=false`,
+and lower freshness where it was traded — GPU and network lines are five-second figures,
+the Bluetooth battery and the WMI battery five minutes, the Wi-Fi signal fifteen seconds.
+
+**Measured.** The service alone, idle, monitor shown, sound off: **0.62% of one core and
+58 MiB**, down from ~30% of one core; with the monitor off screen **0.31%** and the tick
+parked (zero samples in the window). The five widget windows' own figures are the desk's to
+take (`win\perf.py --seconds 60`); the budget's acceptance is that run.
+
+**Revisit if:** the desk's run shows the 0.5% target still missed — then the daemon-side
+knobs are `processInterval`, the network and GPU intervals and `nativeProcesses`; the next
+real step is a native network counter reader (`GetIfTable2`, `GetAdaptersAddresses`), since
+psutil's network calls are what is left of the tick; and if a widget misbehaves inside one
+engine, `oneProcess=false` is the documented retreat, not a rewrite.
+

@@ -1484,3 +1484,57 @@ service's Python reads the registry proxy and loads the Windows certificate stor
 got one property, `requestPrefix`, empty on Plasma, that the Windows host points at it.
 Verified in CI: the frozen exe fetched an Open-Meteo forecast through `/fetch`. Not
 covered: a proxy named only by a PAC script (`HTTPS_PROXY` then). 2026-10-05.
+
+## psutil's process walk opens every process: 1.5 s for 370 of them behind a security agent
+
+The monitor's process list, `psutil.process_iter([..., "memory_info"])`, costs far more
+than its size suggests. Measured on a corporate Windows 11 machine: **1.5–2.0 s** for 370
+processes, every time, at one call a second — a third of a core before anything is drawn,
+and the single largest cost in the whole service. psutil reads each process with
+`OpenProcess`/`GetProcessTimes`/`GetProcessMemoryInfo`, and a security agent in the path
+turns each of those into real work; the same call takes ~50 ms on an idle runner. The
+replacement is `NtQuerySystemInformation(SystemProcessInformation)`: one call, no handle
+opened, the whole machine's list — **10 ms** for the same 370. The lesson is not "native is
+faster" but "an API whose cost is per-object is poison in a one-second loop on a managed
+machine"; measure it, do not trust its reputation as cheap. 2026-10-21.
+
+## NtQuerySystemInformation's `ImageName.Buffer` points into the buffer you passed
+
+The `SYSTEM_PROCESS_INFORMATION` entries are walked by `NextEntryOffset`, and the usual
+`ctypes.Structure.from_buffer(buf, offset)` works — but `ImageName` is a `UNICODE_STRING`
+whose `Buffer` is an absolute pointer *into the same buffer*, so `ctypes.wstring_at` only
+works because the buffer lives in this process and is writable. Keep the buffer alive for
+the whole walk (`from_buffer` does not own it), give it a `length // 2` character count
+(the `Length` is bytes), and grow it on `STATUS_INFO_LENGTH_MISMATCH` (0xC0000004) rather
+than guessing a size. The struct's x64 offsets are asserted by `tests/win_service.py`
+(`UniqueProcessId` at 80, `WorkingSetSize` at 144, …): a missing field in the middle shifts
+everything after it and would silently publish another process's memory. 2026-10-21.
+
+## psutil's network calls are the priciest thing left in a second
+
+After the process walk was moved off, the tick's cost is dominated by
+`net_io_counters(pernic=True)` (~9 ms), `net_if_stats()` (~13 ms) and `net_if_addrs()`
+(~11 ms) — again per-adapter work behind the same agent, ~30 ms together on a machine with
+six adapters. So the network lines are read every five seconds and the adapter facts (names,
+addresses, up/down) every minute, the lines republished unchanged between reads: the rates
+stay honest because the delta is taken over the real gap, not over one second. The rest of
+the tick (cpu, memory, disk, battery) is ~1 ms and stays at one second. 2026-10-21.
+
+## A QML property bound in a component cannot be set from outside; the one-process shell destroys instead
+
+`WidgetWindow` binds `visible: ready` (settings arrived). A shell that wants to hide a
+widget window cannot `obj.visible = false` and later expect the binding back — the first
+assignment breaks the binding for good, and the window never shows itself again. So
+`win/host/shell.qml` creates a window when `GET /ui` says the widget is shown and
+`destroy()`s it when it is not; there is no hidden state to get out of sync. (The same trap
+sits under any `onXChanged` handler that writes the property it watches.) 2026-10-21.
+
+## The `qml` tool loads one translation file, so one engine needs one catalog
+
+`qml.exe -translation <file>` installs a single translator, and each widget's strings come
+from its own catalog (`plaintop`, `plainspectrum`, … — the `plasma_applet_*.po` domains).
+With every widget in one engine the shell would speak only one domain's language (or none)
+— so `win/build.py` also builds `plaintop-all_<lang>.qm` by handing `lconvert` all five
+`.po` files at once. It is advisory: a language that will not merge leaves the one-process
+shell in English while the per-widget path keeps its own catalog. 2026-10-21.
+

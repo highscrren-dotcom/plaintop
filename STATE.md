@@ -1,159 +1,147 @@
 # Состояние проекта
 
-Обновлено: **2026-10-05**, облако (Linux-контейнер, без Windows): **порт на Windows 11** —
-пять виджетов на голом Qt за QML-шимами модулей Plasma и одна служба на Python (решение 17,
-`win/PROTOCOL.md`). Под конец сессии — **первый запуск zip на столе пользователя**: `plaintop.exe`
-упал окном `FileNotFoundError: …\spectrum\relay.py` (пути от `__file__` замороженного модуля);
-починено `win/service/paths.py`, CI теперь сам запускает exe из zip. **Второй zip дошёл до окон**:
-монитор живой, календарь и погода на столе; по пяти жалобам пользователя сделаны перетаскивание
-(DragHandler), моноширинный запасной шрифт, `CPU(s)` для гибридных процессоров, GPU без LHM
-(`gpu_win.py`), `soundcard`/`winsdk` внутри exe. **Третий запуск**: всё это работает; по его четырём
-замечаниям — перебор выходов захвата, DXGI для карт, мгновенный PlayPause, погода через `/fetch`
-службы — ждёт четвёртого. До того ночью на s1dPC:
-релиз v0.5, стенды на настоящем Qt, первый CI.
+Обновлено: **2026-10-21**, машина сборки с Windows 11 (28 потоков, 370 процессов): **бюджет
+простоя порта** — решение 18. Ветка порта `claude/eloquent-goldberg-6g14t9` **влита в
+`main` слиянием** (`240dbb4`), дальше правки — только в `win/`.
+
+Сделано по плану «Оптимизация под минимальное потребление» (фазы 0–5):
+
+- **Фаза 0.** `win/service/perf.py` + `GET /perf` (CPU своего процесса за 5 с, RSS, потоки,
+  запросы по маршрутам, мс тика/обхода/GPU/LHM, fps захвата, соединения); `win/perf.py` —
+  soak по всему семейству. Базовая линия снята **до** правок (см. таблицу).
+- **Фаза 1.** `processInterval` (умолчание Windows **5 с**), `netsh wlan` 10→15 с,
+  батарея WMI 60→300 с, периферия (Bluetooth) 60→300 с, LHM 2→5 с, `nvidia-smi` 5→15 с,
+  счётчики GPU 2→5 с; таймер опроса настроек в `WidgetWindow.qml` 1000→5000 мс; пол в
+  `SensorStore.qml` — 2000 мс до `/monitor`; умолчания спектра Windows: `dataRate` 20,
+  `idleRate` 2, `hideWhenQuiet=true`, а захват берёт fps/полосы **из настроек**.
+- **Фаза 2.** `win/host/shell.qml` — один движок QML на пять окон и трей, следит за
+  `GET /ui`; `oneProcess` (умолчание **вкл**), `oneProcess=false` — прежний путь «процесс
+  на виджет»; сторож в `ui.py` перезапускает оболочку и после трёх быстрых смертей сам
+  откатывается; `win/build.py` собирает слитый каталог `plaintop-all_<lang>.qm`
+  (совещательно). **Оболочка на столе ещё не проверена — см. открытые вопросы.**
+- **Фаза 3.** Хосты шлют `POST /ui {"visible": …}` при каждой смене видимости; служба
+  гейтит обход процессов, сеть, зонды, захват звука и **сам тик** по спросу и видимости;
+  таймеры хостов засыпают.
+- **Фаза 4.** Обход процессов заменён на `NtQuerySystemInformation` (ctypes, один вызов):
+  **1531 мс → ~10 мс** на 370 процессов; `nativeProcesses=false` возвращает psutil.
+- **Фаза 5.** Стенды: `win_service.py` **210 → 289** (гейты, интервалы, нативная структура,
+  `/perf`), `win_bands.py` **62 → 68** (деманд захвата). Документы: `win/PROTOCOL.md`
+  (`/perf`, `/ui visible`, ключи), `win/README` EN/RU (раздел «Потребление»), решение 18
+  EN/RU, GOTCHAS пять записей EN/RU.
+
 Файл перезаписывается целиком в конце каждой сессии. История — в `docs/JOURNAL.md`.
 
-## Задача следующей сессии — Windows на настоящем столе
+## Потребление на Windows — замер 21.10.2026
 
-- **Сначала пользователь**: «Настроить» → «Праздники» — отметить страны, посмотреть сетку.
-  Страница переделана после его слов (список был высотой 0): проверена вне стола и кликами в
-  `qmltestrunner`, в самой оболочке её откроет он.
-- **Релиз v0.5 выпущен** 05.10 (https://github.com/highscrren-dotcom/plaintop/releases/tag/v0.5):
-  пять пакетов и `SHA256SUMS`, суммы проверены скачиванием. Первый запуск залил все 14
-  пакетов из `dist/` (там лежат и старые версии) — лишние сняты с релиза, `SHA256SUMS` и
-  заметка заменены; `--release` теперь берёт только собранное этим запуском (`PACKED`).
-- **`qml-stands.yml` запущен из облака 05.10**: контейнер Arch собирается за ~40 с; первый
-  прогон — сквозные клики 20/20, монитор не нашёл `plasma5support` (отдельный пакет, не в
-  `plasma-workspace`), погода пропущена за ним; второй, с пакетом и `if: always()` на стендах, —
-  все три зелёные за 80 с. Теперь он идёт и на каждый push в `main`, пока совещательный
-  (`continue-on-error`); через неделю зелёных прогонов снять флаг и считать блокирующим.
-- **Наборы на столе** (`~/Рабочий стол`): `plaintop-0.5` и `plaincalendar-0.3` — пакеты в них
-  = файлы релиза v0.5 байт в байт (у монитора по сравнению с прежним набором — только `.mo`
-  без строк оконного хоста); обновления
-  (пакет, галерея, описание; поля — `docs/STORE.md`). Страницы магазина сверены по API 04.10:
-  у монитора и календаря — старые версии и старые описания (0.4 и 0.1); спектр, плеер и
-  погода совпадают с репозиторием дословно. Теги плееру и погоде — по `STORE.md` (сейчас
-  только лицензия). Галерея спектра показывает зеркальное кольцо — перерисовать, когда
-  будет можно пустить звук в null-sink без сбоя музыки пользователя.
-- **После загрузки**: API магазина (отстаёт ~на час), MD5 = файлы наборов, даты в `STORE.md`.
-- **Нужен пользователь (машина с Windows 11).** Путь короткий: артефакт `plaintop-win` зелёного
-  прогона → распаковать → `plaintop.exe` (Defender: «Подробнее → Выполнить в любом случае»); путь из
-  репозитория: `python win\build.py --qt C:\Qt\6.10.3\msvc2022_64`, `python win\plaintop.py` —
-  см. `win/README.ru.md`. Третий запуск (05.10, ~04:50 UTC): окна двигаются за любую точку, колонки
-  ровные, «20c/28t», плеер видит Яндекс Музыку (SMTC через winrt). **Четвёртый** должен показать:
-  спектр под музыку — разведка показала: захват на нужном выходе (HDMI), сигнал −41 dBFS; сделан
-  быстрый подъём усиления для тихого сигнала; **если полос всё ещё нет — прислать `/state`
-  (`rate`, `input_peak`, `gain_db`) и `/bands?bars=16&mono=1` при музыке**;
-  один клик по кнопке из чужого окна (`noActivate`); блок GPU из двух карт (NVIDIA T600 с температурой, Intel UHD 770 с общей памятью), кнопки
-  плеера без задержки, погоду с данными (через `/fetch`; если всё ещё offline — прокси по PAC → службе
-  `HTTPS_PROXY`). **Артефакт для седьмого запуска (подъём усиления 12 дБ/с, `/state` с `rate`,
-  `input_peak`, `gain_db`; плюс noActivate, /devices, темы): run 37278939042 → `plaintop-win`**; exe в CI: `/fetch`
-  тянет Open-Meteo, `backend: soundcard`, `/player` → `winrt`; `gpu/*` на runner'е 0 (карты нет).
-  Что увидит только стол: окна (прозрачность,
-  «под всеми», переключение `WindowTransparentForInput` на ходу, перетаскивание, меню правой
-  кнопки), трей (`qml -a widget`), «за значками» (SetParent под WorkerW — в т.ч. 24H2), захват WASAPI
-  (`pip install soundcard`), SMTC (`pip install winsdk`, Spotify/браузер), LHM JSON на 8085,
-  `winget`/`wevtutil`/`route print`/`netsh wlan` на живом выводе, уведомление-тост и `winsound`,
-  шрифт JetBrainsMono Nerd Font Mono, DPI. Записать в «Окружение» версию Windows, масштаб, Python, Qt.
-- **CI `windows` зелёный** (run 37232848468 на `1c7bb06`): на настоящей Windows (Qt 6.10.3 msvc2022,
-  Python 3.12) прошли `win_service` 165, `win_bands` 51, `win_media` 94, `notes.py` 145, стенд хостов
-  через шимы против настоящей службы (`qml.exe`!), стенды Plasma `weather`/`monitor` на голом Qt, и
-  шаг zip (windeployqt + PyInstaller) собрал `plaintop-win.zip` 58 MiB — артефакт `plaintop-win`
-  (хранится до 02.01.2027). Четыре прогона до зелёного: aqt без 6.11 для Windows → 6.10; Python
-  агента Qt затирал pip → Qt раньше Python; cp1252 → UTF-8; POSIX-биты в стенде заметок.
-  **Новый шаг** (после падения на столе): распаковать zip и запустить сам `plaintop.exe` из чужой
-  рабочей папки с `PLAINTOP_NO_HOSTS=1`, спросить `/state /monitor /bands /settings/monitor /holidays
-  /time /notes /player`, убить по pid — он блокирующий, когда zip собрался. Первый прогон (run
-  37258004575): exe поднялся, `/monitor /bands /state /settings` ответили — падение закрыто; `/holidays`
-  упал без каталогов gettext пакета `holidays` → `--collect-data holidays`/`tzdata` в `package.py`,
-  откат без перевода в `holidays_win.py`. **Второй прогон 37258346318 зелёный целиком**: exe из zip
-  ответил на все восемь маршрутов (`/holidays` → 2026-07-03, 2026-07-04; `/notes dump` exit 0;
-  `/time` Berlin). Артефакт для стола: run 37258346318 → `plaintop-win` (id 11323242997, 59 MiB).
-- **Окно настроек готово**: `win/host/settings.qml` + 22 файла страниц (QtQuick.Controls, Fusion),
-  те же поля и строки, что у диалога Plasma; `tests/win_settings.qml` 16/16 на Linux и **на Windows
-  в CI** (run 37234851096 зелёный целиком). Каталоги: `extract.py` перечисляет страницы по доменам,
-  +25/15/14/13/20 строк, русские переведены, fuzzy нет, 45 × `msgfmt --check`.
-- **Ресерч (слово пользователя) — `docs/research/windows-widgets.ru.md`**, 64 источника. Выводы:
-  Windows для виджетов на столе не даёт ничего (Widgets — только доска Win+W, MSIX); Rainmeter — не
-  WorkerW, а слоистое окно на `HWND_BOTTOM` + `WS_EX_TRANSPARENT` — ровно наши флаги Qt; не хватает
-  обработки Win+D (нижнее окно скрыто, пока стол показан). Принято: WorkerW — экспериментально
-  (24H2, гибель с Explorer); тост — под AUMID PowerShell (иначе не покажется); **кандидат второго
-  этапа мыши — `QT_QUICK_BACKEND=software`** (слоистое окно, попиксельный hit-test по альфе —
-  клики проходят сквозь прозрачное, текст ловит) — настройка `softwareRender` в ini, измерить на
-  столе первой; запасной — опрос курсора через службу, крайний — C++-хост с `WM_NCHITTEST`.
-  Действия активных строк (`kill`, `systemctl`, `konsole`) — таблица замен в `/exec`.
+Стенд замера: машина сборки (Windows 11 10.0.26200, 28 логических потоков, 370 процессов,
+Python 3.12.15; Qt нет, поэтому измерена **только служба**). Метод: `GET /perf` (CPU
+собственного процесса — прирост CPU-времени за окно измерения, RSS), плюс цифры до правок
+из того же `/perf` и из прямого тайминга `Sampler._processes()`.
+
+| | до (Фаза 0) | после | как |
+|---|---|---|---|
+| Обход процессов | **1531 мс**, каждую секунду (треть ядра) | **~10 мс** раз в 5 с | `NtQuerySystemInformation`, гейт по блокам и видимости |
+| Тик датчиков | **~677 мс** средн. (с обходом) | **~1 мс**; +30 мс раз в 5 с на сеть | сеть раз в 5 с, факты адаптеров раз в 60 с |
+| Сеть (3 вызова psutil) | ~33 мс **каждую секунду** | ~9 мс раз в 5 с + 23 мс раз в 60 с | троттлинг + кэш фактов |
+| `nvidia-smi` / LHM / `netsh` / батарея / Bluetooth | 5 / 2 / 10 / 60 / 60 с | 15 / 5 / 15 / 300 / 300 с | + гейт по блоку и видимости |
+| **Служба в простое** (монитор показан, звук выкл.) | **≈30 % одного ядра** | **0,62 %** одного ядра, RSS 58 МиБ | итог `GET /perf`, окно 65 с |
+| **Служба, монитор скрыт** | (тик продолжался) | **0,31 %**, тик засыпает — **0 сэмплов** за окно | `POST /ui {"visible":"monitor","on":false}` |
+| Опрос настроек хостом | 1000 мс | 5000 мс (304 = заголовок) | `WidgetWindow.qml` |
+| Пол опроса `/monitor` у хоста | 250 мс | 2000 мс | `SensorStore.qml` |
+| Захват спектра | 256 полос × 30 fps → **1,58 %** ядра (под музыку) | 160 полос × 20 fps → **1,01 %**; в тишине засыпает, при невидимом спектре стоп | fps/полосы из настроек, деманд |
+
+⚠️ **Цель ≤0,5 % службой одной не достигнута: 0,62 %.** Что осталось в тике: сетевые вызовы
+psutil (~9 мс раз в 5 с) — следующая цель (`GetIfTable2`/`GetAdaptersAddresses`), плюс
+обход процессов и базовый тик (~1 мс/с). Ручки без правки кода: `processInterval`,
+`nativeProcesses`, интервалы сети и GPU. **Цифры пяти окон виджетов** (и приёмка бюджета)
+требуют стола с Qt: `python win\perf.py --seconds 60` при показанных пяти и выключенной
+музыке.
+
+## Задача следующей сессии — прогон на столе пользователя
+
+- **Нужен пользователь.** Артефакт `plaintop-win` зелёного прогона → распаковать →
+  `plaintop.exe` (Defender: «Подробнее → Выполнить в любом случае»); из репозитория:
+  `python win\build.py --qt C:\Qt\6.10.3\msvc2022_64`, `python win\plaintop.py` — см.
+  `win/README.ru.md`. Что мерить и смотреть:
+  1. **Бюджет.** Пять виджетов показаны, музыка выключена: `python win\perf.py --seconds 60`
+     → суммарные CPU и working set; затем `GET /perf` (служба) и один кадр `/perf` при
+     скрытом мониторе. Числа — в таблицу выше.
+  2. **Оболочка (Фаза 2).** Окна создаются оболочкой? Трей в том же процессе? Меню трея и
+     меню окна показывают/скрывают? Если что-то не так — `oneProcess=false` в
+     `%APPDATA%\plaintop\monitor.ini` и записать симптом.
+  3. **Видимость (Фаза 3).** Win+D: останавливается ли опрос (в `/perf` тик засыпает)?
+  4. Прочее из прежнего списка, что видит только стол: прозрачность окон, «под всеми»,
+     переключение `WindowTransparentForInput` на ходу, перетаскивание, меню правой кнопки,
+     трей (`qml -a widget`), «за значками» (SetParent под WorkerW — в т.ч. 24H2), захват
+     WASAPI (`pip install soundcard`), SMTC (`pip install winsdk`), LHM JSON на 8085,
+     `winget`/`wevtutil`/`route print`/`netsh wlan`, тост и `winsound`, шрифт JetBrainsMono
+     Nerd Font Mono, DPI. Записать в «Окружение» версию Windows, масштаб, Python, Qt.
+- **CI `windows`** — прогнать после слияния: `win_service` 289, `win_bands` 68, `win_media`
+  94, `notes.py`, стенд хостов через шимы против настоящей службы, шаг zip и запуск exe из
+  zip. **Новое и не проверенное CI**: сборка слитого каталога (`lconvert` пяти `.po` сразу)
+  и то, что `build.py` не упал; шаг `py_compile` добавлен для `win/service/perf.py` и
+  `win/perf.py`.
+- **Приёмка (критерий).** Суммарно CPU ≤0,5 % одного ядра и working set ≤250 МиБ в простое
+  без музыки; часы/полосы CPU ≤2 с; топ-процессы ≤5 с; спектр ≥20 fps; визуально и по
+  фичам ничего не потеряно; `oneProcess=false` возвращает прежнее поведение.
 
 ## Где мы
 
 **Plasma — без изменений по поведению**: правки общих файлов — `MonitorData.qml` (+`case "winget"`),
 `CalendarView.qml`/`Sticker.qml` (`h.public` → `h["public"]`, то же по смыслу), `notes.py` (пути на
 Windows, `webbrowser`). Стенды Plasma: `--check-notes` 145, `--check-relay` 21 зелёные; job `no-qt`
-зелёный на `755776f`. **Впервые вне Plasma**: `tests/monitor.qml` (23) и `tests/weather.qml` (10)
-проходят на голом Qt с `-import win/host/imports` — контейнер Arch для них больше не единственный путь.
+зелёный. **Впервые вне Plasma**: `tests/monitor.qml` (23) и `tests/weather.qml` (10) проходят на
+голом Qt с `-import win/host/imports` — контейнер Arch для них больше не единственный путь.
 
-**Windows (ветка `claude/eloquent-goldberg-6g14t9`):**
+**Windows (влито в `main`, `240dbb4`):**
 - `win/host/` — `monitor|spectrum|player|weather|calendar.qml` на `WidgetWindow` (модуль `plaintop`:
   `Service` — XHR с токеном, `I18n.js` — `qsTranslate("", text, ctx, n)` + `%1`), `tray.qml`,
-  `calendar/Holidays.qml` (своя: `/holidays`), `imports/org/kde/*` — шимы. Общие файлы копирует
-  `win/build.py` (gitignored), он же собирает 45 `.qm` (`lconvert -target-language`).
-- `win/service/` — `server.py` (маршруты, токен, Origin → 403), `monitor_win.py` (psutil + LHM →
-  id ksystemstats), `exec_win.py` (эмуляция команд монитора), `bands.py` (WASAPI loopback → FFT,
-  кадр в порядке cava), `player_win.py` (SMTC), `notes_bridge.py`, `holidays_win.py`, `timezones.py`,
-  `settings_store.py` (ini по `main.xml` + `shown/winX/winY/screen/behindIcons/softwareRender`,
-  умолчания Windows: `actions=false`), `ui.py` (qml.exe, `--transparent`, `-a widget` для трея,
-  WorkerW, `QT_QUICK_BACKEND=software` по `softwareRender`), `notify_win.py` (тост под AUMID
-  PowerShell, `winsound`), **`paths.py`** — обе раскладки файлов (дерево / рядом с exe), корень по
-  `PLAINTOP_ROOT` → `sys.frozen` → дерево; через него ходят все модули; **`gpu_win.py`** — GPU без
-  LHM: `GPU Engine`/`GPU Adapter Memory` через pdh.dll (ctypes, `PdhAddEnglishCounter`), имя и
-  qwMemorySize из реестра, `nvidia-smi`; `Sampler(gpu=)` сливает под LHM. `win/plaintop.py` — запуск;
-  `win/package.py` — zip (`paths`, `soundcard` с данными, `winsdk`/`winrt-*` — что установлено при
-  сборке; CI ставит их отдельным необязательным шагом).
-- `WidgetWindow`: `fixedFace(key)` — настроенный шрифт или первый моноширинный из списка Windows
-  («monospace» там не семейство); `DragHandler` в `Window` — протяжка за любую точку поверх MouseArea
-  вида (в элементе над видом глотает нажатие — грабля). Спектр при `backend: none` пишет «нет захвата».
-- `exec_win.lscpu` печатает `CPU(s)`; `MonitorData.parseLscpu` (общий файл) берёт его вместо
-  произведения — на гибридных Intel произведение врёт и на Plasma (20c/40t).
-- После третьего стола: `SoundcardBackend` перебирает выходы (`_doze` → `next_source`), `gpu_win`
-  соединяет счётчики с картами DXGI по LUID (`dxgi_adapters()`, ctypes/vtable), `Mpris2Model` держит
-  нажатый PlayPause 2,5 с, `WeatherView.requestPrefix` (общий файл) + `/fetch` в службе (https, GET,
-  прокси и сертификаты системы; `tests/win_service.py` подменяет `urlopen`).
-- Четвёртый стол: `PlayerView` (общий) пишет «playing»/«paused» после кнопок и вспыхивает акцентом
-  на смену (слово пользователя: «логичная анимация»).
-- Пятый стол: «клик дважды» → `noActivate` (ini, по умолчанию) = `Qt.WindowDoesNotAcceptFocus`;
-  спектр «так и не работает» → разведка: `GET /devices` (пик на каждом выходе), `/state.scan`.
-- **Темы**: 24 палитры в `palettes/` (20 новых, блок `about`), `win/service/themes.py` + `/themes`,
-  трей «Тема», `palettes/` в zip; на Plasma те же файлы через `install.sh --palette`.
-- Стенды: `tests/win_hosts.py`+`.qml` 9/9 (6.8.3, 6.10.1, 6.11.3, настоящая служба на Linux),
-  `win_service.py` 167, `win_bands.py` 51, `win_media.py` 94.
-- Документы: решение 17 EN/RU, GOTCHAS часть III (10 записей, EN/RU, оглавление; последняя —
-  `__file__` замороженного модуля), `win/README` пара, README пара (раздел Windows), CONTRIBUTING
-  пара, `win/PROTOCOL.md` (EN, в т.ч. `/notify`).
+  **`shell.qml`** — один движок на все окна и трей, `calendar/Holidays.qml`, `imports/org/kde/*` —
+  шимы. Общие файлы копирует `win/build.py` (gitignored), он же собирает 45 `.qm` + слитые
+  `plaintop-all_<lang>.qm`.
+- `win/service/` — `server.py` (маршруты, токен, Origin → 403, `/perf`, `/ui visible`,
+  деманд-замыкания), `monitor_win.py` (id ksystemstats; **нативный обход процессов**,
+  гейты, троттлинг сети), `perf.py` (**новое** — счётчики `/perf`), `exec_win.py`, `bands.py`
+  (деманд захвата, fps/полосы из настроек), `player_win.py`, `notes_bridge.py`,
+  `holidays_win.py`, `timezones.py`, `settings_store.py` (умолчания Windows: `actions=false`,
+  `processInterval=5`, `nativeProcesses=true`, `oneProcess=true`, спектр 20/2/hide),
+  `ui.py` (`oneProcess`, сторож оболочки, видимость, `--transparent`, `-a widget`, WorkerW),
+  `notify_win.py`, `paths.py`, `gpu_win.py` (PDH/DXGI/`nvidia-smi`, деманд), `themes.py`.
+  `win/plaintop.py` — запуск; `win/package.py` — zip (+ `perf` в hidden imports);
+  **`win/perf.py`** — soak по семейству.
+- `WidgetWindow`: `fixedFace(key)`; `DragHandler` в `Window` — протяжка за любую точку;
+  `onScreen` + `screenChanged()` — хост сообщает видимость и паркует опрос; таймер настроек 5 с.
+- `exec_win.lscpu` печатает `CPU(s)`; `MonitorData.parseLscpu` (общий) берёт его — на гибридных
+  Intel произведение врёт и на Plasma (20c/40t).
+- После третьего стола: `SoundcardBackend` перебирает выходы, `gpu_win` соединяет счётчики с
+  картами DXGI по LUID, `Mpris2Model` держит PlayPause 2,5 с, `WeatherView.requestPrefix` + `/fetch`.
+- Четвёртый стол: `PlayerView` пишет «playing»/«paused» и вспыхивает акцентом.
+- Пятый стол: «клик дважды» → `noActivate`; спектр → `GET /devices`, `/state.scan`.
+- **Темы**: 24 палитры в `palettes/`, `win/service/themes.py` + `/themes`, трей «Тема», `palettes/` в zip.
+- **Потребление (новое)**: см. таблицу выше; решение 18.
+- Стенды: `tests/win_hosts.py`+`.qml` 9/9, `win_service.py` **289**, `win_bands.py` **68**,
+  `win_media.py` 94. Локально (эта сессия) прогнаны через `uv`-Python 3.12.15.
+- Документы: решение 17 и **18** EN/RU, GOTCHAS часть III (10 записей) + **5 новых** EN/RU,
+  `win/PROTOCOL.md` (`/perf`, `/ui visible`, ключи), `win/README` EN/RU, README пара, CONTRIBUTING пара.
 
-**Проверено на столе пользователя (второй zip)**: окна рисуются, монитор на настоящих данных
-(процессы, winget, службы, журнал), календарь, погода («offline» — см. вопрос), плеер («no player»
-без WinRT). **Проверено на Windows только в CI (offscreen, без стола)**: служба целиком на
-psutil/winreg/`wevtutil`, `qml.exe` грузит хосты и шимы, zip собирается, exe из zip отвечает. **Раскладка zip проверена на Linux**:
-служба с `PLAINTOP_ROOT=<папка как zip>` из `/` отвечает на `/monitor`, `/bands` (реле из папки),
-`/settings/monitor` (xml из `service/config`), `/holidays`, `/notes set/dump` (notes.py из
-`calendar/`). **Не проверено нигде**: всё, что перечислено в задаче сессии выше (стол), плюс
-`CREATE_NO_WINDOW`, pycaw, PowerShell-зонды батареи и Bluetooth, стоимость
-`psutil.win_service_iter()`; pdh.dll/DXGI/`nvidia-smi` (`gpu_win.py`) — только CI
-(`--adapters`), у runner'а карты может не быть; перебор выходов — стенд с поддельным бэкендом, на
-столе нет; `/fetch` — CI тянет Open-Meteo через exe. Подтверждено столом: DragHandler, шрифты,
-`20c/28t`, `soundcard` и `winrt` внутри exe, Яндекс Музыка в SMTC.
-
-⚠️ Qt локально в контейнере: `/opt/qt/{6.8.3,6.10.1,6.11.3}/gcc_64`; стенды — `QT_QPA_PLATFORM=offscreen
-LC_ALL=C.UTF-8 QT_FORCE_STDERR_LOGGING=1`. Заменитель службы для стендов без Python-службы остался в
-scratchpad сессии (не в репозитории). Никогда `pkill -f` — убил собственную оболочку.
+⚠️ **Не проверено нигде**: оболочка `shell.qml` (один движок) — ни на столе, ни в CI
+(стенд хостов гоняет процессы-по-одному); слитый каталог через `lconvert` (только совет);
+всё, что перечислено в задаче сессии. **Проверено локально этой сессией**: служба целиком на
+Windows (реальный запуск, `/perf`, `/monitor` 100 датчиков, 51–60 строк процессов, сетевые
+ключи, нативный обход 8–10 мс, парковка тика при скрытом мониторе). **Проверено в CI
+раньше**: служба на psutil/winreg/`wevtutil`, `qml.exe` грузит хосты и шимы, zip, exe из zip.
+`notes.py` локально на этой машине падает на проверке «пропущенное напоминание» — это
+зависимость стенда от текущего времени суток (фикстура «Стендап» 11:50 против `now−60 мин`),
+к моим правкам отношения не имеет; в CI он зелёный.
 
 ## Потом
 
 - Прежние пункты Plasma: менеджер дизайнов, активные строки дальше (часы → календарь), заметки (todo),
   напоминания (клавиатура у листа), праздники (переносы выходных), погода (`timezone`, строка «сейчас»),
   общий `Sheet.qml`/`Passthrough.qml`, магазин по `docs/STORE.md` (plaintop 0.5, plaincalendar 0.3).
-- Windows дальше: пакеты в zip по релизу; страница «Тема» в окне настроек (сейчас только трей);
-  второй экземпляр виджета; `qml-stands.yml` можно заменить прогоном на голом Qt через шимы для
-  `monitor.qml`/`weather.qml` (`passthrough.qml` требует Plasma).
+- Windows дальше: **нативный читатель сетевых счётчиков** (`GetIfTable2`, `GetAdaptersAddresses`) —
+  то, что осталось от тика; страница «Тема» в окне настроек; второй экземпляр виджета; окно
+  настроек внутри оболочки (сейчас отдельный процесс); замена `qml-stands.yml` прогоном на голом Qt.
 
 ## Что уже решено, не пересматривать без причины
 
@@ -164,31 +152,44 @@ scratchpad сессии (не в репозитории). Никогда `pkill 
   (15). Праздники (16).
 - **Windows (17)**: общие файлы не трогать — шимы `org.kde.*` на чистом QML; одна служба, она же
   владелец настроек и процессов; без C++, пока хит-тест не докажет обратное; Qt 6.8+; службе —
-  токен и отказ по `Origin`; общие строки хостов — во всех пяти каталогах (`po/extract.py`).
+  токен и отказ по `Origin`.
+- **Потребление на Windows (18)**: один движок QML (`oneProcess`, вкл) с откатом; список процессов
+  нативным вызовом (`nativeProcesses`, вкл) с откатом; ничего не читать, что никто не видит;
+  доказательство — `/perf` и `win/perf.py`, а не Task Manager. Свежесть: GPU/сеть — 5 с,
+  Bluetooth/батарея WMI — 5 мин, сигнал Wi-Fi — 15 с.
 - Чужие ветки вливаются слиянием, локальные коммиты не переписываются. Никогда не `pkill -f`.
   Звук для проверок — только через null-sink. Один ключ `install.sh` за вызов. CI без Qt блокирующий;
   `windows` job блокирующий, кроме шага zip; прогон exe из zip блокирующий, когда zip собрался.
 
 ## Открытые вопросы
 
+- **Бюджет ≤0,5 %** службой одной не достигнут (0,62 %) — решает прогон на столе с виджетами;
+  если мимо, ручки: `processInterval`, интервалы сети/GPU, `nativeProcesses`, затем нативные
+  сетевые счётчики.
+- **Оболочка `oneProcess`** — умолчание вкл, но проверена только чтением кода и `py_compile`;
+  на столе может вылезти (тогда автооткат после трёх смертей и `oneProcess=false`). Оставить
+  умолчание вкл или сначала opt-in — решает стол.
 - Google в календаре: свои client id/secret у каждого — приемлемо ли для магазина.
 - Умолчание «Каналы: включено» у спектра для тех, кто обновится.
-- Windows: `QtCore.Settings` против ini у службы — задача называла QSettings; выбран один владелец
-  (решение 5), ключи те же; пересмотреть, если пользователь захочет реестр.
-- Windows: имена праздников пакета `holidays` против KHolidays (21 из 29) — показывать как есть?
-- Windows: погода через `/fetch` — если на столе всё ещё offline, прокси задан PAC-скриптом (urllib
-  его не читает) → `HTTPS_PROXY` службе или чтение PAC; не проверено на столе.
-- Windows: две карты NVIDIA с одним именем — строка `nvidia-smi` достанется первой по имени; нужен
-  PCI bus id (DXGI не даёт, `nvidia-smi --query-gpu=pci.bus_id` даёт) — пока не нужно.
+- Windows: `QtCore.Settings` против ini у службы — выбран один владелец (решение 5), ключи те же.
+- Windows: имена праздников пакета `holidays` против KHolidays (21 из 29).
+- Windows: погода через `/fetch` — если на столе всё ещё offline, прокси задан PAC → `HTTPS_PROXY` службе.
+- Windows: две карты NVIDIA с одним именем — строка `nvidia-smi` достанется первой по имени.
 
 ## Окружение
 
-s1dPC: CachyOS, Plasma 6.7.5, KDE Frameworks 6.30, KWin Wayland, Qt 6.11.2, Python 3.14; два экрана
-(DP-1 3440×1440, HDMI-A-1 1080×1920); `cava` 1.0.0, `lm_sensors`, gettext. Подробности прежних сессий —
-`docs/JOURNAL.md` (04–05.10). Windows-машина пользователя: Windows 11 Enterprise 10.0.22631 (23H2), Dell (плата 0H1DC6, BIOS
-1.18.0), i7-14700 (20c/28t, 2,1 GHz), 31,7 GiB, два сетевых адаптера; LHM нет, Nerd-шрифта нет,
-Яндекс Музыка (десктоп), Firefox, Fusion 360; масштаб DPI и видеокарта — пока неизвестны.
-Облако: Ubuntu 24.04, Python 3.11, Qt через aqtinstall в `/opt/qt`, сеть через прокси (XHR из `qml`
-дошёл до Open-Meteo).
+**Машина замера этой сессии** (Windows): Windows 11 10.0.26200, 28 логических потоков, 370
+процессов, Python 3.12.15 (через `uv`, venv в `%TEMP%\kilo\ptvenv`), numpy 2.5.4, psutil 7.2.2,
+holidays 0.107, tzdata 2026.5, tzlocal 5.4.4; **Qt нет**, звуковой библиотеки нет
+(`capture_backend: none`), LHM нет. Здесь измерена только служба.
+
+**Стол пользователя** (по плану, для приёмки): Windows 11 Enterprise 10.0.22631 (23H2), Dell
+(0H1DC6, BIOS 1.18.0), i7-14700 (20c/28t), 31,7 GiB; LHM нет, Nerd-шрифта нет, Яндекс Музыка,
+Firefox, Fusion 360; масштаб DPI и видеокарта неизвестны.
+
+s1dPC (Plasma): CachyOS, Plasma 6.7.5, KDE Frameworks 6.30, KWin Wayland, Qt 6.11.2, Python 3.14;
+два экрана (DP-1 3440×1440, HDMI-A-1 1080×1920); `cava` 1.0.0, `lm_sensors`, gettext.
+Облако/CI: Ubuntu 24.04 + `windows-latest` (Qt 6.10.3 msvc2022, Python 3.12). Подробности —
+`docs/JOURNAL.md`.
 
 ⚠️ Метод работы — `docs/WORKFLOW.md`, грабли — `docs/GOTCHAS.md` (часть III — Windows).
