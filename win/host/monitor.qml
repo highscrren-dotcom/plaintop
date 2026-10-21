@@ -15,9 +15,12 @@ WidgetWindow {
 
     // Off screen the service parks its probes (its gates read the visibility the host
     // reports), so the /monitor poll is parked with the window rather than reading stale
-    // answers every two seconds.
+    // answers every two seconds. The store is a singleton of the engine, so it outlives
+    // this window: the one-process shell destroys a hidden widget's window, and the
+    // destruction must park the poll too, or the singleton would keep on asking.
     function screenChanged() { Sensors.SensorStore.active = root.onScreen }
     Component.onCompleted: root.screenChanged()
+    Component.onDestruction: Sensors.SensorStore.active = false
 
     width: num("widgetWidth", 500)
     height: num("widgetHeight", 950)
