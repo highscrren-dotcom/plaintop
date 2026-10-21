@@ -497,7 +497,7 @@ class Capture:
     backend as relay.py's pump() supervises cava, and idles on silence."""
 
     def __init__(self, backend=None, bars=BARS, fps=FPS, low_hz=LOW_HZ, high_hz=HIGH_HZ,
-                 noise=NOISE, sleep=SLEEP):
+                 noise=NOISE, sleep=SLEEP, demand=None):
         self.backend = backend if backend is not None else pick_backend()
         self.bars = bars
         self.fps = fps
@@ -505,6 +505,11 @@ class Capture:
         self.high_hz = high_hz
         self.noise = noise
         self.sleep = sleep
+        # demand(): whether anyone is looking at the spectrum at all. False parks the whole
+        # capture — the stream is closed and no block is read or FFT'd (Phase 3 of the
+        # Windows budget); the widget that is off screen costs nothing. None means "always",
+        # which is what the stand and a service built without a manager see.
+        self.demand = demand
         self.scan = []                    # the doze's last probes: [(output, peak)], newest last
         self._stamps = []                 # the last seconds' frame times, for the measured rate
         self.frames = 0
@@ -515,6 +520,12 @@ class Capture:
         self._analyzer = None
         self._stop = threading.Event()
         self._thread = None
+
+    def wanted(self):
+        try:
+            return True if self.demand is None else bool(self.demand())
+        except Exception:
+            return True
 
     def start(self):
         self._thread = threading.Thread(target=self._run, name="bands-capture", daemon=True)
@@ -568,6 +579,13 @@ class Capture:
         rather than every second."""
         delay = 1
         while not self._stop.is_set():
+            if not self.wanted():
+                # Nobody draws the spectrum: hold the stream closed and do nothing until
+                # somebody does. The frame is served as silence meanwhile (Capture.frame).
+                self._close()
+                self._stop.wait(0.5)
+                delay = 1
+                continue
             frames_before = self.frames
             try:
                 self._open()
@@ -607,6 +625,8 @@ class Capture:
         next_frame = time.monotonic() + period
         quiet_since = None
         while not self._stop.is_set():
+            if not self.wanted():           # the window went away mid-stream: park now
+                return
             block = backend.read()
             now = time.monotonic()
             if block is None or len(block) == 0:
@@ -643,6 +663,8 @@ class Capture:
         watcher thread for that.
         """
         while not self._stop.wait(1.0):
+            if not self.wanted():           # the window went away while dozing: keep closed
+                return
             self._open()
             block = self.backend.read()
             peak = float(np.abs(block).max()) if block is not None and len(block) else 0.0

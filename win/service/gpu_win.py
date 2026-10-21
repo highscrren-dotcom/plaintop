@@ -354,12 +354,15 @@ def nvidia_smi(timeout=5):
 
 
 class Reader:
-    """The thread: the counters every `interval` seconds, nvidia-smi every `slow` seconds,
-    the registry once; sensors() is the latest reading. Off Windows, or where the counters
-    are missing, sensors() is {} and the reason is said once on stderr."""
+    """The thread: the counters every `interval` seconds, nvidia-smi every `slow` seconds
+    (15 by default — the counters are cheap, a subprocess is not), the registry once;
+    sensors() is the latest reading. `demand` (the monitor on screen, its GPU block shown)
+    parks the whole loop where nothing reads it. Off Windows, or where the counters are
+    missing, sensors() is {} and the reason is said once on stderr."""
 
-    def __init__(self, interval=2.0, slow=5.0, ram_total=0):
+    def __init__(self, interval=2.0, slow=15.0, ram_total=0, perf=None, demand=None):
         self.interval, self.slow, self.ram_total = interval, slow, ram_total
+        self.perf, self.demand = perf, demand
         self._lock = threading.Lock()
         self._sensors = {}
         self._cards = []                         # LUIDs in the order first seen: a stable index
@@ -393,6 +396,10 @@ class Reader:
                 self.ram_total = 0
         smi, last_smi = [], 0.0
         while True:
+            if self.demand is not None and not self.demand():
+                time.sleep(self.interval)
+                continue
+            t0 = time.monotonic()
             try:
                 query.collect()
                 now = time.monotonic()
@@ -418,6 +425,8 @@ class Reader:
                                                 smi[i] if i < len(smi) else None))
                 with self._lock:
                     self._sensors = out
+                if self.perf is not None:
+                    self.perf.record("gpu", (time.monotonic() - t0) * 1000.0)
             except Exception as e:
                 print(f"gpu sample failed: {e!r}", file=sys.stderr, flush=True)
             time.sleep(self.interval)

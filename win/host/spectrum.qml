@@ -10,6 +10,11 @@ WidgetWindow {
     id: root
     widget: "spectrum"
 
+    // Off screen nothing is drawn and the service parks the capture (win/service/bands.py),
+    // so the /bands poll stops with it and the service is not asked for a frame nobody sees.
+    function screenChanged() { spectrum.pollTimer.running = root.onScreen }
+    Component.onCompleted: root.screenChanged()
+
     readonly property int layout: num("layout", 0)
     readonly property real boardWidth: layout === 0
         ? 2 * (num("radius", 360) + num("minLength", 10) + num("maxLength", 170) + num("thickness", 5))

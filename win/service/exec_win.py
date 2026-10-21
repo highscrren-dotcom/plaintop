@@ -569,7 +569,7 @@ BLUETOOTH_PS = (
     " -KeyName '{104EA319-6EE2-4701-BD47-8DDBF425BBE5} 2' -ErrorAction SilentlyContinue;"
     " if ($p -and $null -ne $p.Data) { '{0}|{1}|unknown' -f ($_.FriendlyName -replace '\\|',' '), $p.Data } }")
 
-bluetooth = Cached(60, lambda: mw.powershell(BLUETOOTH_PS))
+bluetooth = Cached(300, lambda: mw.powershell(BLUETOOTH_PS))
 
 
 def bluetooth_batteries():

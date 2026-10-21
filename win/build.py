@@ -100,6 +100,40 @@ def build_catalogs(lconvert):
     print(f"  ✓ {built} catalogs → {out.relative_to(ROOT)}/")
 
 
+def build_merged_catalogs(lconvert):
+    """One .qm per language holding all five domains, for the one-process shell: a bare
+    `qml` tool loads a single -translation file, and the shell has one translator for the
+    whole engine (win/service/ui.py, `oneProcess`). Advisory — with the file missing the
+    shell simply runs in English, so a language that will not merge is a warning, never a
+    stop: the per-domain catalogs above are what the process-per-widget path uses."""
+    out = HOST / "i18n"
+    built = 0
+    for lang_dir in sorted((ROOT / "po").iterdir()):
+        if not lang_dir.is_dir():
+            continue
+        inputs = []
+        for short in sorted(set(DOMAINS.values())):
+            po = lang_dir / f"plasma_applet_org.s1dd1.{short}.po"
+            if po.is_file():
+                inputs.append(po)
+        if not inputs:
+            continue
+        qm = out / f"plaintop-all_{lang_dir.name}.qm"
+        cmd = [lconvert, "-target-language", lang_dir.name]
+        for po in inputs:
+            cmd += ["-i", str(po)]
+        cmd += ["-o", str(qm)]
+        r = subprocess.run(cmd, capture_output=True, text=True)
+        if r.returncode != 0:
+            print(f"  ! the merged catalog for {lang_dir.name} failed "
+                  f"({r.stderr.strip().splitlines()[-1] if r.stderr.strip() else 'no output'}): "
+                  f"the one-process shell runs untranslated")
+            continue
+        built += 1
+    if built:
+        print(f"  ✓ {built} merged catalogs → {out.relative_to(ROOT)}/ (the one-process shell)")
+
+
 def main(argv):
     qt_dir = ""
     if "--qt" in argv:
@@ -109,6 +143,7 @@ def main(argv):
     lconvert = find_lconvert(qt_dir)
     if lconvert:
         build_catalogs(lconvert)
+        build_merged_catalogs(lconvert)
     else:
         print("  ! lconvert not found (give --qt DIR or set QT_DIR): the hosts run in English")
     return 0

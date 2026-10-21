@@ -28,6 +28,7 @@ from urllib.parse import parse_qs, urlparse
 
 sys.dont_write_bytecode = True
 import paths                             # every file the service reads, in both layouts
+from perf import Perf                    # the /perf counters (win/service/perf.py)
 WINDOWS = sys.platform == "win32"
 PORT = int(os.environ.get("PLAINTOP_PORT", "8788"))
 BODY_LIMIT = 1 << 20                 # a note travels base64 in a POST; nothing else is large
@@ -50,14 +51,30 @@ class Service:
     """What the handlers reach through `server.service`: the token, the sampler, the
     capture and the lazily imported modules. The stand builds one from fakes."""
 
-    def __init__(self, token, sampler=None, capture=None, modules=None):
+    def __init__(self, token, sampler=None, capture=None, modules=None, perf=None):
         self.token, self.sampler, self.capture = token, sampler, capture
         self.modules = dict(modules or {})           # name → module, or None for "missing"
         self.instances = {}
         self.lock = threading.RLock()                # instance() imports under the same lock
         self.notes_lock = threading.Lock()           # notes.py runs one at a time, by contract
         self.relay = None
+        self.perf = perf if perf is not None else Perf()
+        # What each host last said about being on screen (POST /ui {"visible": …}); a
+        # widget that has never said reads as visible, so the gates save nothing before
+        # the first window has reported. Read by the sampler's demand callbacks.
+        self.visible = {}
+        self.visible_lock = threading.Lock()
         self.on_quit = lambda: threading.Timer(0.5, os._exit, [0]).start()
+
+    def set_visible(self, widget, on):
+        with self.visible_lock:
+            self.visible[str(widget)] = bool(on)
+
+    def is_visible(self, widget):
+        """"monitor" is visible unless a host has said otherwise: the first window reports
+        a moment after it appears, and nothing may stop before it has."""
+        with self.visible_lock:
+            return self.visible.get(str(widget), True)
 
     def module(self, name):
         """The module by name; a failed import is remembered and reported once, since the
@@ -132,6 +149,12 @@ def get_monitor(svc, query, body, path):
     if svc.sampler is None:
         raise Missing("monitor_win")
     return json_reply(200, svc.sampler.snapshot())
+
+
+def get_perf(svc, query, body, path):
+    """The service's own consumption and rates (win/service/perf.py): the proof the
+    Windows budget is met, read without a screen share. Read-only, no token."""
+    return json_reply(200, svc.perf.snapshot(svc))
 
 
 def post_exec(svc, query, body, path):
@@ -289,7 +312,7 @@ def post_ui(svc, query, body, path):
 
 ROUTES = {
     ("GET", "/bands"): get_bands, ("GET", "/state"): get_state, ("GET", "/devices"): get_devices,
-    ("GET", "/monitor"): get_monitor,
+    ("GET", "/monitor"): get_monitor, ("GET", "/perf"): get_perf,
     ("POST", "/exec"): post_exec,
     ("GET", "/player"): get_player, ("POST", "/player"): post_player,
     ("POST", "/notes"): post_notes, ("POST", "/notify"): post_notify,
@@ -306,8 +329,28 @@ def route(method, path):
     return ROUTES.get((method, path))
 
 
+def route_label(method, path):
+    """A route's name for the /perf request counters: the settings paths share one bucket
+    per method, since a widget's own name would only split a five into five ones."""
+    if path.startswith("/settings/"):
+        return f"{method} /settings/<widget>"
+    return f"{method} {path}"
+
+
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"   # keep-alive: without it every poll is a new connection
+
+    def setup(self):
+        # Counted here, not in ProcessRequest: a connection refused before the handler is
+        # built never reaches this, so the figure is the handlers now serving.
+        super().setup()
+        self.server.service.perf.opened()
+
+    def finish(self):
+        try:
+            super().finish()
+        finally:
+            self.server.service.perf.closed()
 
     def do_GET(self):
         self.handle_request("GET")
@@ -335,6 +378,7 @@ class Handler(BaseHTTPRequestHandler):
                     body = json.loads(body.decode("utf-8")) if body else {}
                 except (ValueError, UnicodeDecodeError):
                     return self.reply(*error(400, "the body is not JSON"))
+            svc.perf.count(route_label(method, url.path))
             handler = route(method, url.path)
             if handler is None:
                 return self.reply(*error(404, "no such path"))
@@ -415,15 +459,62 @@ def main():
     path = token_path()
     write_token(path, token)
     svc = Service(token)
+    # The settings store first: the sampler's demand callbacks read the monitor's own
+    # description from it (which blocks are on, the process interval), and the manager needs
+    # it too. A missing store is not fatal — nothing is gated, the defaults rule.
+    store = None
+    try:
+        store = svc.instance("settings_store", "Store")
+    except Exception as e:
+        print(f"settings_store: not available ({e!r})", file=sys.stderr, flush=True)
+
+    def monitor_visible():
+        return svc.is_visible("monitor")
+
     mw = svc.module("monitor_win")
     if mw is not None:
+        process_interval = 5.0
+        native = mw.NativeProcesses() if WINDOWS else None
+        if store is not None:
+            try:
+                process_interval = float(store.get("monitor")[1].get("processInterval", 5) or 5)
+            except Exception:
+                process_interval = 5.0
+            try:
+                if store.get("monitor")[1].get("nativeProcesses", True) is False:
+                    native = None                                   # the way back to psutil
+            except Exception:
+                pass
+        want = lambda kind: mw.block_wanted(store, kind)             # noqa: E731
         gw = svc.module("gpu_win")
-        gpu = gw.Reader().start() if gw is not None else None
-        svc.sampler = mw.Sampler(lhm=mw.LHM().start(), gpu=gpu).start()
+        # The counters every 5 s rather than 2: measured ~20 ms a read on the desk's machine
+        # (a wildcard PDH query has an instance per process using the GPU), which is 1% of a
+        # core at 2 s — a fifth of that is enough for a monitor's GPU line.
+        gpu = (gw.Reader(interval=5.0, perf=svc.perf, demand=lambda: monitor_visible() and want("gpu")).start()
+               if gw is not None else None)
+        lhm = mw.LHM(perf=svc.perf, demand=monitor_visible).start()
+        svc.sampler = mw.Sampler(lhm=lhm, gpu=gpu, perf=svc.perf, native=native,
+                                 process_interval=process_interval, net_interval=5.0,
+                                 visible=monitor_visible,
+                                 need_processes=lambda: mw.wants_processes(store),
+                                 want_block=want).start()
     bands = svc.module("bands")
     if bands is not None:
         try:
-            svc.capture = bands.Capture()
+            # The capture's frame rate and band count are the spectrum's own settings
+            # (Phase 1: 20 fps and the widget's bar count, not the relay's fixed 30 × 256),
+            # so the service computes only what the ring draws. The capture runs only while
+            # the spectrum is on screen (Phase 3); a hidden or closed ring costs no stream.
+            spec = {}
+            if store is not None:
+                try:
+                    spec = store.get("spectrum")[1]
+                except Exception:
+                    spec = {}
+            bars = int(spec.get("bars") or bands.BARS)
+            fps = int(spec.get("dataRate") or bands.FPS)
+            svc.capture = bands.Capture(demand=lambda: svc.is_visible("spectrum"),
+                                        bars=max(2, bars), fps=max(1, fps))
             svc.capture.start()
         except Exception as e:                        # no audio device, no loopback: /bands serves zeros
             print(f"capture not started: {e!r}", file=sys.stderr, flush=True)
@@ -432,16 +523,29 @@ def main():
     # the first /ui request, and it starts the widgets whose `shown` is on — unless a stand
     # runs the service alone (PLAINTOP_NO_HOSTS).
     try:
-        store = svc.instance("settings_store", "Store")
-        manager = svc.instance("ui", "Manager", paths.host_dir(), port, token, store=store)
+        manager = svc.instance("ui", "Manager", paths.host_dir(), port, token, store=store, service=svc)
         if not os.environ.get("PLAINTOP_NO_HOSTS"):
             manager.start_shown()
+            # The one-process shell's watchdog: an engine that died is started again, so one
+            # crash costs the widgets a moment, not the desk (Phase 2 of the Windows budget).
+            threading.Thread(target=watch_shell, args=(manager,), daemon=True, name="shell-watch").start()
     except Missing as e:
         print(f"{e}: not available, no hosts started", file=sys.stderr, flush=True)
     except Exception as e:
         print(f"hosts not started: {e!r}", file=sys.stderr, flush=True)
     print(f"plaintop service: http://127.0.0.1:{port}/monitor  (token in {path})", flush=True)
     make_server(port, svc).serve_forever()
+
+
+def watch_shell(manager, every=3.0):
+    """Keep the one engine alive: check every few seconds and start it again when it is gone.
+    The manager itself gives up after three quick deaths and falls back to a host per widget."""
+    while not manager.quitting:
+        try:
+            manager.shell_alive()
+        except Exception as e:
+            print(f"shell watch: {e!r}", file=sys.stderr, flush=True)
+        time.sleep(every)
 
 
 if __name__ == "__main__":

@@ -96,11 +96,28 @@ Window {
     }
 
     Timer {
-        interval: 1000
+        interval: 5000
         running: true
         repeat: true
         triggeredOnStart: true
         onTriggered: win.pollSettings()
+    }
+
+    // ── on screen ─────────────────────────────────────────────────────────────
+    // What the service's gates read: a window hidden by "show the desktop" (Win+D) or
+    // minimized is not drawn, so the sampler, the capture and the probes behind it may rest
+    // until it is back. The host says so on every change (`/ui {"visible": …}`); the setting
+    // poll above is five seconds, so the settings stay cheap too — a 304 costs a header and
+    // no body (win/service/server.py), and a save asks again at once.
+    readonly property bool onScreen: visible
+        && visibility !== Window.Hidden && visibility !== Window.Minimized
+    // A host's own hook: the window came on screen or went off it. The service is told here
+    // always; a host overrides this to park its polling too (the monitor's sensors, the
+    // spectrum's /bands).
+    function screenChanged() {}
+    onOnScreenChanged: {
+        if (win.ready) Service.postJson("/ui", { visible: win.widget, on: win.onScreen })
+        win.screenChanged()
     }
 
     // ── position ──────────────────────────────────────────────────────────────

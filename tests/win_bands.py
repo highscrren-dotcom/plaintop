@@ -358,6 +358,32 @@ def test_null_backend():
     print("  ✓ no backend: silence, backend \"none\"")
 
 
+def test_capture_demand():
+    """The capture rests while nothing is looking (the Windows budget's Phase 3): demand
+    False means the backend is never opened and no frame is computed; the frame served is
+    silence, as on a hidden device."""
+    backend = bands.SyntheticBackend(tone(1000.0, 0.3), rate=RATE)
+    want = [False]
+    cap = bands.Capture(backend, sleep=5, demand=lambda: want[0]).start()
+    try:
+        time.sleep(0.4)
+        ok(backend.opens == 0 and cap.frames == 0,
+           "spectrum hidden: the backend is never opened: " + repr(backend.opens))
+        ok(cap.frame() == [0] * (2 * bands.BARS), "…and the frame served is silence")
+        want[0] = True
+        ok(wait_for(lambda: cap.frames >= 3, 3.0), "spectrum visible: frames come")
+        ok(backend.opens >= 1, "the stream is opened once it is wanted")
+        want[0] = False
+        time.sleep(1.0)
+        frames = cap.frames
+        time.sleep(0.6)
+        ok(cap.frames == frames, "hidden again: no further frames: " + repr(cap.frames))
+        ok(cap.frame() == [0] * (2 * bands.BARS), "…and the frame is silence again")
+    finally:
+        cap.stop()
+    print("  ✓ capture: the stream rests while the spectrum is off screen")
+
+
 def test_relay_functions():
     a = bands.Analyzer(RATE, 2)
     frame = run(a, tone(440.0, 0.3), 10)
@@ -379,6 +405,7 @@ if __name__ == "__main__":
     test_capture_sleep()
     test_capture_restart()
     test_capture_follows_sound()
+    test_capture_demand()
     test_null_backend()
     test_relay_functions()
     print(f"  ✓ bands.py: {passed} checks passed")

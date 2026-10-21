@@ -119,6 +119,54 @@ integrated GPU's "VRAM" is its shared usage against DXGI's shared limit, as Task
 shows it. The registry's display class is the fallback where DXGI cannot be asked. `processes` are `[name, cpu %, memory bytes, pid]` — the union of the thirty
 heaviest by CPU and by memory, unsorted: the `KSortFilterProxyModel` shim sorts.
 
+### The Windows budget: what `/monitor` leaves out, and why
+
+The five widgets on a desktop in idle are held to half a core and a quarter of a gigabyte
+(`docs/DECISIONS.md`, decision 18), so the expensive readings are asked for only when
+something shows them (`win/service/monitor_win.py`):
+
+- **`processes`** is the priciest item — psutil's walk opens every process (measured
+  1.5 s for 370 processes behind a security agent). It is therefore: taken from
+  `NtQuerySystemInformation(SystemProcessInformation)` in one call where
+  `nativeProcesses` is on (10 ms for the same list); run no more often than
+  `processInterval` seconds (default **5**); skipped entirely when no enabled block draws a
+  top list (`blocksJson`, or the packaged default) or the monitor is off screen — then
+  `processes` is `[]`, not stale. With `nativeProcesses=false` the psutil walk comes back.
+- **`network/<iface>/…`** costs ~30 ms a read in psutil's own API calls, so it is read
+  every 5 s and the adapter facts (names, addresses, up/down) every 60 s; the lines are
+  republished unchanged in between and the rates are deltas over the real gap. Where no
+  enabled block draws them, or the monitor is off screen, the lines do not exist at all.
+- **`signal`** (`netsh wlan`) every 15 s and only where a wireless adapter exists;
+  **`power/BAT0/*`** (WMI) every 5 minutes, only with a battery. Both only while the
+  monitor is on screen.
+- The whole tick is parked for two seconds at a time while the monitor is off screen:
+  `/monitor` keeps its last answer. The `stamp` says how old it is.
+- LibreHardwareMonitor is read every 5 s (not 2) and only while the monitor is shown;
+  `nvidia-smi` every 15 s; the GPU counters every 5 s.
+
+### `/perf` · `GET`
+
+The service's own consumption, read without Task Manager — the proof the budget is met.
+Read-only, no token:
+
+```json
+{"uptime_s": 65.1, "cpu_percent": 0.62, "rss": 60817408, "threads": 36, "connections": 1,
+ "requests": {"GET /monitor": 42, "GET /perf": 2},
+ "timings_ms": {"sample": {"count": 65, "avg": 12.3, "max": 516.0},
+                "processes": {"count": 13, "avg": 10.9, "max": 16.0},
+                "gpu": {"count": 13, "avg": 41.7, "max": 141.0}},
+ "capture_fps": 0.0, "capture_frames": 88, "capture_backend": "none"}
+```
+
+`cpu_percent` is this process's share of one core over the last five seconds (its CPU time
+over the wall clock between two reads, so the call never blocks); `rss` the working set in
+bytes; `connections` the handlers now serving; `requests` counted by route (a widget's
+settings paths share one `/settings/<widget>` bucket); `timings_ms` the average and worst
+per item — `sample` is a whole tick, `processes` the walk inside it, `gpu` a counter read,
+`lhm` a LibreHardwareMonitor fetch. `capture_fps` is the measured frame rate. `win/perf.py`
+sums these figures over the whole family (service and every `qml.exe`) the way Task Manager
+does.
+
 ### `/exec` · `POST` `{"command": "…"}` → `{"stdout": "…", "stderr": "…", "exit code": 0}`
 
 The executable engine's protocol. `MonitorData.qml` builds Linux command lines; the
@@ -207,11 +255,15 @@ certificate store — a bare qml window on a corporate network stayed "offline".
 The settings of one widget (`monitor`, `spectrum`, `player`, `weather`, `calendar`): every
 key of that widget's `package/contents/config/main.xml` with the stored value or the
 default, plus the window keys the plasmoid never had — `winX`, `winY`, `screen`,
-`behindIcons`. Stored in `%APPDATA%\plaintop\<widget>.ini` (one `[General]` section, the
-same key names), which a person may edit; the service re-reads it when it changes.
-`GET` answers `{"stamp": 17, "values": {…}}`; `GET …?since=17` answers 304 while nothing
-changed, so a host may ask every second for nothing. `POST {"key": value, …}` merges and
-writes. The types come from `main.xml`.
+`behindIcons` — and, for the monitor, the service's own keys: `processInterval` (seconds
+between process reads, default **5**), `nativeProcesses` (the one-call walk, default
+**true**) and `oneProcess` (one engine for every widget, default **true**; `false` is the
+way back to a process per widget). The spectrum's `dataRate` (default **20**) and
+`idleRate` (**2**) are lowered on Windows. Stored in `%APPDATA%\plaintop\<widget>.ini` (one
+`[General]` section, the same key names), which a person may edit; the service re-reads it
+when it changes. `GET` answers `{"stamp": 17, "values": {…}}`; `GET …?since=17` answers 304
+while nothing changed, so a host may ask every five seconds for nothing. `POST {"key":
+value, …}` merges and writes. The types come from `main.xml`.
 
 ### `/themes` · `GET`, `POST` `{"name": "nord"}`
 
@@ -227,16 +279,25 @@ unknown name a 404.
 ### `/ui` · `POST`
 
 The process manager: `{"show": "monitor", "on": true}` starts (or stops) a widget's
-host, `{"settings": "monitor"}` opens its settings window, `{"quit": true}` stops
-everything. `GET /ui` lists what runs. The tray icon (`win/host/tray.qml`) and the hosts'
-own menus speak this.
+host, `{"visible": "monitor", "on": false}` is a host reporting that its window went off
+screen (Win+D, minimized) — the service's gates read it, so the sampler and the capture
+rest while nothing is drawn; the host sends it on every change. `{"settings": "monitor"}`
+opens its settings window, `{"quit": true}` stops everything. `GET /ui` lists what runs and
+also answers `oneProcess` and the five widgets' `shown` flags, which is how the one-process
+shell (`win/host/shell.qml`) knows which windows to open — it polls `GET /ui` every two
+seconds. The tray icon (`win/host/tray.qml`) and the hosts' own menus speak this.
 
 ## What the hosts are
 
 `qml.exe` from Qt 6 runs `win/host/<widget>.qml`, one process and one window per widget:
 frameless, transparent, `Qt.Tool`, `Qt.WindowStaysOnBottomHint`, and
 `Qt.WindowTransparentForInput` while the *Mouse* setting lets clicks through — the
-archived window hosts of 2026-09-21, on another OS. The shared QML is copied in by
+archived window hosts of 2026-09-21, on another OS. With `oneProcess` on (the Windows
+default) the service starts **one** `qml.exe` running `win/host/shell.qml`, which creates
+the widget windows and the tray in a single QML engine — Qt Quick's own stack paid for
+once instead of six times — and follows `GET /ui`; `oneProcess=false` keeps the path above,
+and the service falls back to it by itself if the shell dies three times running
+(`win/service/ui.py`). The shared QML is copied in by
 `win/build.py` (as `install.sh` copies it into the plasmoid packages) and the Plasma
 modules it imports are QML-only shims under `win/host/imports/`. Translations are the
 `po/` catalogs converted with `lconvert -target-language LANG` and loaded with

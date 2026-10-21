@@ -75,16 +75,95 @@ def find_qml(host_dir):
 
 
 class Manager:
-    def __init__(self, host_dir, port, token, qml=None, store=None):
+    def __init__(self, host_dir, port, token, qml=None, store=None, service=None):
         self.host_dir = Path(host_dir).resolve()
         self.port = port
         self.token = token
         self.store = store
+        # The service, when there is one: the visibility a host reports lands in its
+        # `visible` map, which the sampler's and the capture's gates read. A stand without
+        # a service simply has no visibility to report.
+        self.service = service
         self.qml = qml or find_qml(self.host_dir)
         self.lang = ui_language()
         self.procs = {}                 # name → Popen
         self.lock = threading.Lock()
         self.quitting = False
+        self.shell = None               # the one-process host ("plaintop"), Phase 2
+        self.shell_fails = 0            # quick deaths: after three, the per-widget way
+        self.shell_since = 0.0
+
+    # ── the one-process host ──────────────────────────────────────────────────
+    def one_process(self):
+        """Whether the widgets run inside one QML engine (`oneProcess`, on by default on
+        Windows). Six engines pay six times for the same Qt Quick stack; one engine pays
+        once for the scene and every window rides on it. `oneProcess=false` brings the old
+        process-per-widget back whole, which is the way out of a problem on a desk."""
+        if self.store is None:
+            return True
+        try:
+            return self.store.get("monitor")[1].get("oneProcess", True) is not False
+        except KeyError:
+            return True
+
+    def shell_command(self):
+        """`qml -a widget shell.qml -- --port P --token T`: the shell needs the Widgets
+        application (the tray) and the merged catalog, one engine for every window. The
+        translations are all five domains in one .qm (win/build.py): a bare `qml` tool loads
+        one file, and the shell has one translator for the whole engine.
+        """
+        cmd = [self.qml, "-I", str(self.host_dir / "imports"), "--transparent", "-a", "widget"]
+        merged = self.merged_catalog()
+        if merged:
+            cmd += ["-translation", merged]
+        cmd += [str(self.host_dir / "shell.qml"), "--",
+                "--port", str(self.port), "--token", self.token]
+        return cmd
+
+    def merged_catalog(self):
+        if not self.lang:
+            return None
+        qm = self.host_dir / "i18n" / f"plaintop-all_{self.lang}.qm"
+        return str(qm) if qm.is_file() else None
+
+    def start_shell(self):
+        """Start (or restart) the one engine, or give up on it after three quick deaths and
+        fall back to a process per widget — the plan's promise that a broken shell costs a
+        restart, never the widgets."""
+        if not self.qml:
+            raise RuntimeError("qml.exe not found: set PLAINTOP_QML or put Qt's bin on PATH")
+        now = time.monotonic()
+        if self.shell is not None and self.shell.poll() is None:
+            return
+        if now - self.shell_since < 20.0:
+            self.shell_fails += 1
+        else:
+            self.shell_fails = 1
+        self.shell_since = now
+        self.shell = self.spawn("plaintop", self.shell_command())
+        if self.shell_fails >= 3:
+            print("plaintop: the one-process shell keeps dying; falling back to a host per "
+                  "widget (set oneProcess=false to make this permanent)", file=sys.stderr, flush=True)
+            self.stop("plaintop")
+            self.shell = None
+            for w in WIDGETS:
+                try:
+                    if self.store is None or self.store.get(w)[1].get("shown", True):
+                        self.show(w, True)
+                except KeyError:
+                    self.show(w, True)
+            self.tray()
+
+    def shell_alive(self):
+        """The watchdog the service calls on its own clock: restart the engine when it went
+        away, unless we are quitting or have already given up on it."""
+        if self.quitting or not self.one_process():
+            return
+        if self.shell is None or self.shell.poll() is None:
+            return
+        if self.shell_fails >= 3:
+            return
+        self.start_shell()
 
     # ── command lines ─────────────────────────────────────────────────────────
     def catalog(self, widget):
@@ -140,6 +219,17 @@ class Manager:
     def show(self, widget, on=True):
         if widget not in WIDGETS:
             raise KeyError(widget)
+        if self.store is not None:
+            self.store.update(widget, {"shown": bool(on)})
+        if self.service is not None:
+            self.service.set_visible(widget, bool(on))
+        if self.one_process():
+            # One engine for every widget: `shown` is the whole truth, and the shell — which
+            # polls GET /ui — creates the window or hides it. Starting it here means a
+            # widget turned on before the shell ran still opens it.
+            if on:
+                self.start_shell()
+            return
         if on:
             if not self.running(widget):
                 values = self.store.get(widget)[1] if self.store is not None else {}
@@ -153,12 +243,12 @@ class Manager:
                     threading.Thread(target=self.behind_icons, args=(widget,), daemon=True).start()
         else:
             self.stop(widget)
-        if self.store is not None:
-            self.store.update(widget, {"shown": bool(on)})
 
     def stop(self, name):
         with self.lock:
             p = self.procs.pop(name, None)
+        if self.service is not None and name in WIDGETS:
+            self.service.set_visible(name, False)
         if p is None or p.poll() is not None:
             return
         p.terminate()
@@ -168,17 +258,36 @@ class Manager:
             p.kill()
 
     def settings(self, widget):
+        # A settings window is a process of its own, whatever the widgets do: it opens for a
+        # moment, closes, and keeping it out of the widget engine means a bad settings page
+        # can never take the desk's widgets with it.
         name = f"settings-{widget}"
         if self.running(name):
             return
         self.spawn(name, self.command("settings.qml", widget, transparent=False))
 
     def tray(self):
+        if self.one_process():
+            return                      # the shell carries its own tray in the same engine
         if not self.running("tray"):
             self.spawn("tray", self.command("tray.qml", "tray", transparent=False, widgets=True))
 
     def start_shown(self):
         """At launch: every widget whose `shown` setting is on, and the tray."""
+        if self.one_process():
+            try:
+                self.start_shell()
+            except RuntimeError as e:
+                print(f"plaintop: {e}", file=sys.stderr, flush=True)
+                return
+            for w in WIDGETS:           # the shell reads GET /ui for what to open
+                try:
+                    shown = self.store.get(w)[1].get("shown", True) if self.store is not None else True
+                except KeyError:
+                    shown = True
+                if self.service is not None:
+                    self.service.set_visible(w, bool(shown))
+            return
         for w in WIDGETS:
             try:
                 shown = self.store.get(w)[1].get("shown", True) if self.store is not None else True
@@ -202,12 +311,26 @@ class Manager:
 
     # ── /ui ───────────────────────────────────────────────────────────────────
     def status(self):
+        shown = None
+        if self.store is not None:
+            shown = {}
+            for w in WIDGETS:
+                try:
+                    shown[w] = bool(self.store.get(w)[1].get("shown", True))
+                except KeyError:
+                    shown[w] = True
         return {"qml": self.qml, "language": self.lang,
+                "oneProcess": self.one_process(), "shown": shown,
                 "running": {n: p.pid for n, p in self.procs.items() if p.poll() is None}}
 
     def handle(self, req):
         req = req or {}
-        if "show" in req:
+        if "visible" in req:
+            # A host's own word about being on screen (Win+D hides a window without stopping
+            # its process); the sampler's and the capture's gates read it.
+            if self.service is not None:
+                self.service.set_visible(str(req["visible"]), req.get("on", True) is True)
+        elif "show" in req:
             self.show(str(req["show"]), req.get("on", True) is True)
         elif "settings" in req:
             self.settings(str(req["settings"]))
@@ -220,8 +343,14 @@ class Manager:
             self.quit()
         elif req.get("restart") is not None:
             w = str(req["restart"])
-            self.stop(w)
-            self.show(w, True)
+            if self.one_process():
+                self.stop("plaintop")
+                self.shell = None
+                self.shell_fails = 0
+                self.start_shell()
+            else:
+                self.stop(w)
+                self.show(w, True)
         else:
             return {"error": "unknown request"}
         return {"ok": True, **self.status()}
@@ -238,7 +367,11 @@ class Manager:
     # default, and not the primary mode: the primary one is the tool window kept at the
     # bottom of the stack, Rainmeter's "Bottom" — docs/research/windows-widgets.ru.md.
     # Nothing here is verified on a desktop yet: the user's check — win/README.md.
-    def window_of(self, pid):
+    def window_of(self, pid, title=None):
+        """The first visible window of a process, or the one whose title matches: in the
+        one-process shell every widget is a window of the same pid, and the title (the hosts
+        set "plaintop <widget>") is what tells them apart — Windows lists them in z-order,
+        so without it the wrong one could be parented behind the icons."""
         if os.name != "nt":
             return 0
         user32 = ctypes.windll.user32
@@ -249,10 +382,23 @@ class Manager:
             owner = ctypes.c_ulong()
             user32.GetWindowThreadProcessId(hwnd, ctypes.byref(owner))
             if owner.value == pid and user32.IsWindowVisible(hwnd):
+                if title is not None:
+                    buf = ctypes.create_unicode_buffer(256)
+                    user32.GetWindowTextW(hwnd, buf, 256)
+                    if buf.value != title:
+                        return True
                 found.append(hwnd)
             return True
         user32.EnumWindows(proto(each), 0)
         return found[0] if found else 0
+
+    def widget_pid(self, widget):
+        """The pid whose window is this widget's: the shell's in one-process mode, the
+        widget's own process otherwise."""
+        if self.one_process():
+            return self.shell.pid if (self.shell is not None and self.shell.poll() is None) else None
+        p = self.procs.get(widget)
+        return p.pid if (p is not None and p.poll() is None) else None
 
     def workerw(self):
         if os.name != "nt":
@@ -282,12 +428,13 @@ class Manager:
         return hwnd or 0
 
     def behind_icons(self, widget):
-        p = self.procs.get(widget)
-        if p is None or os.name != "nt":
+        pid = self.widget_pid(widget)
+        if pid is None or os.name != "nt":
             return False
+        title = f"plaintop {widget}"
         hwnd = 0
         for _ in range(50):                 # the window appears a moment after the process
-            hwnd = self.window_of(p.pid)
+            hwnd = self.window_of(pid, title)
             if hwnd:
                 break
             time.sleep(0.1)
@@ -300,10 +447,10 @@ class Manager:
         return True
 
     def unparent(self, widget):
-        p = self.procs.get(widget)
-        if p is None or os.name != "nt":
+        pid = self.widget_pid(widget)
+        if pid is None or os.name != "nt":
             return False
-        hwnd = self.window_of(p.pid)
+        hwnd = self.window_of(pid, f"plaintop {widget}")
         if hwnd:
             ctypes.windll.user32.SetParent(hwnd, None)
         return bool(hwnd)

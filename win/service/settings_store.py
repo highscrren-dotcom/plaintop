@@ -53,8 +53,24 @@ WINDOWS_DEFAULTS = {
         "actions": False,
         "terminal": "wt",
         "editor": "notepad",
+        # The process walk is the most expensive reading the service makes; on Plasma the
+        # equivalent (libksysguard over /proc) is left at two seconds and called the
+        # priciest thing there. Five keeps the top list fresh enough while costing a fifth
+        # of the walks, and the service skips it entirely when no block shows a list.
+        "processInterval": 5,
+        # The list comes from NtQuerySystemInformation in one call rather than psutil's
+        # walk over every process (Phase 4: 1.5 s against 10 ms on the desk's machine).
+        # Off, the psutil walk is used again — the way back if the native call misbehaves.
+        "nativeProcesses": True,
+        # One QML engine for every widget and the tray instead of a process each (Phase 2).
+        # Off, a process per widget comes back whole — the way out of a shell problem.
+        "oneProcess": True,
     },
-    "spectrum": {"winX": 700, "winY": 120},
+    "spectrum": {"winX": 700, "winY": 120,
+                 # Twenty frames a second still reads as smooth on a ring of bars, and the
+                 # poll rate is what the widget's own CPU tracks; two a second while quiet
+                 # (with hideWhenQuiet) makes silence nearly free.
+                 "dataRate": 20, "idleRate": 2, "hideWhenQuiet": True},
     "player": {"winX": 60, "winY": 1040},
     "weather": {"winX": 600, "winY": 60},
     # holidayRegions has no entry in main.xml: on Plasma the regions live in KHolidays'

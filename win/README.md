@@ -17,6 +17,13 @@ zip — all offscreen, no desktop. The things only a desktop can show — the so
 LibreHardwareMonitor, the look of the window flags, the tray, the toast — have not been
 seen on one yet. Reports welcome.
 
+**Consumption (2026-10-21).** The idle budget work below (decision 18) was measured on a
+Windows 11 machine (28 threads, 370 processes): the service alone holds **0.6% of one core
+and 58 MiB** with the monitor shown and the sound off — down from ~30% of one core, since
+the process walk alone cost 1.5 s every second — and **0.3%** with the monitor off screen,
+where the tick parks. The five widget windows' own figures need a Qt desktop, which this
+machine is not: `win\perf.py` is what takes them.
+
 ## What you need
 
 - **Windows 11** (10 should do; not tried).
@@ -119,11 +126,45 @@ guards against; a `--noconsole` exe shows an uncaught exception as that box and 
 **Autostart:** a shortcut in the Startup folder (`Win+R`, `shell:startup`) to
 `pythonw.exe C:\path\to\plaintop\win\plaintop.py`.
 
+## Consumption
+
+Five widgets that sit on a desktop all day have to be cheap: the target is half a core and
+a quarter of a gigabyte in idle, with the sound off (decision 18). What that took, and what
+it left:
+
+- **One QML engine for every widget** (`oneProcess`, on by default). Six `qml.exe`
+  processes pay six times for Qt Quick's own stack; the service now starts a single
+  `qml.exe` running `win/host/shell.qml`, which creates the five windows and the tray in
+  one engine and follows `GET /ui` for what to show. Set `oneProcess=false` in
+  `%APPDATA%\plaintop\monitor.ini` — or in the monitor's own menu — to go back to a process
+  per widget; the service falls back to that by itself if the shell dies three times
+  running.
+- **The process list** is the one expensive reading (psutil's walk opens every process:
+  1.5 s for 370 processes on a corporate machine). It comes from
+  `NtQuerySystemInformation` in one call instead — 10 ms for the same list — no more often
+  than `processInterval` seconds (5), and not at all while no block shows a top list or the
+  monitor is off screen. `nativeProcesses=false` brings psutil back.
+- **Everything else that cost real time** is read when, and only when, something shows it:
+  the network lines every 5 s (their psutil calls are the priciest thing left in a tick;
+  the adapter facts are cached for a minute), `netsh wlan` every 15 s and only where a
+  wireless adapter exists, the battery's WMI every 5 minutes, LibreHardwareMonitor every
+  5 s, the GPU counters every 5 s, `nvidia-smi` every 15 s, the Bluetooth probe every
+  5 minutes. The sound capture runs only while the spectrum is on screen, and the whole
+  sensor tick parks while the monitor is not.
+- **The hosts report whether they are on screen** (`POST /ui {"visible": …}`, sent on every
+  change), so Win+D or a closed widget stops the sampling behind it until it is back.
+- **`GET /perf`** answers the service's own figures — CPU share of this process, working
+  set, thread count, requests by route, the milliseconds a sensor tick, the process walk
+  and a GPU read cost, the capture's frame rate. **`python win\perf.py --seconds 60`** sums
+  those over the whole family — the service and every `qml.exe` — the way Task Manager
+  does, and prints the line to keep. Run it with the five widgets shown and the music off;
+  that is the acceptance run.
+
 ## What is different from Plasma
 
 | | Plasma | Windows |
 |---|---|---|
-| Host | the plasmoid | `qml.exe`, one window per widget |
+| Host | the plasmoid | one `qml.exe` engine for every widget (`shell.qml`), or a process each with `oneProcess=false` |
 | Clicks through | everywhere but the active lines, the player's controls, the calendar's cells (decisions 11, 14) | whole window: on, nothing takes the mouse; off, everything does |
 | Active lines | on by default | off by default: the items are Linux commands |
 | Holidays | KHolidays' 170 regions, chosen by name | the `holidays` package, ISO codes (`DE`, `DE-BY`, `RU`) on the *Holidays* page |
@@ -147,10 +188,13 @@ in `qmltestrunner` offscreen and stops the service. All four run in CI on `windo
 
 ## Layout
 
-- `win/host/` — the five hosts (`monitor.qml`, …), `tray.qml`, `settings.qml`, and under
-  `imports/` the QML-only stand-ins for the Plasma modules the shared files import, plus the
-  `plaintop` module (the service client, the i18n functions, the base window).
+- `win/host/` — the five hosts (`monitor.qml`, …), `tray.qml`, `settings.qml`, `shell.qml`
+  (the one-process host), and under `imports/` the QML-only stand-ins for the Plasma modules
+  the shared files import, plus the `plaintop` module (the service client, the i18n
+  functions, the base window).
 - `win/service/` — the Python service: `server.py` (the router), `monitor_win.py`,
   `exec_win.py`, `bands.py`, `player_win.py`, `notes_bridge.py`, `holidays_win.py`,
-  `timezones.py`, `settings_store.py`, `ui.py`, `notify_win.py`.
+  `timezones.py`, `settings_store.py`, `ui.py`, `notify_win.py`, `perf.py` (the `/perf`
+  meters).
 - `win/build.py`, `win/plaintop.py` — the build and the launcher.
+- `win/perf.py` — the soak meter for the whole family (`/perf` read from the outside).

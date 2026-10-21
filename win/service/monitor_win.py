@@ -25,6 +25,7 @@ import sys
 import threading
 import time
 import urllib.request
+import ctypes
 
 try:
     import psutil
@@ -58,6 +59,11 @@ def powershell(script, timeout=20):
     if not WINDOWS:
         return ""
     return run_hidden(["powershell", "-NoProfile", "-NonInteractive", "-Command", script], timeout)
+
+
+def _rate(old, new, dt):
+    """Bytes a second between two counter readings; 0.0 without a previous one."""
+    return max(0.0, (new - old) / dt) if old is not None else 0.0
 
 
 _processors = None
@@ -265,13 +271,18 @@ BATTERY_PS = (
 # ── LibreHardwareMonitor ────────────────────────────────────────────────────────────
 
 class LHM:
-    """LHM's own web server, polled every 2 s while it answers. When it does not — LHM
+    """LHM's own web server, polled every 5 s while it answers. When it does not — LHM
     not running, its server off — the connection is refused at once, and asking every
-    2 s would log nothing but cost a thread wake-up each time; so the reader backs off
-    to one try every 30 s and the tree is None, meaning "these sensors do not exist"."""
+    5 s would log nothing but cost a thread wake-up each time; so the reader backs off
+    to one try every 30 s and the tree is None, meaning "these sensors do not exist".
 
-    def __init__(self, url="http://localhost:8085/data.json", every=2.0, retry=30.0):
+    `demand` (the monitor visible, its block shown) turns the fetch off where nothing
+    reads it; the last tree is kept, so a monitor that comes back does not blank first."""
+
+    def __init__(self, url="http://localhost:8085/data.json", every=5.0, retry=30.0,
+                 perf=None, demand=None):
         self.url, self.every, self.retry = url, every, retry
+        self.perf, self.demand = perf, demand
         self._tree = None
 
     def tree(self):
@@ -287,8 +298,14 @@ class LHM:
 
     def _loop(self):
         while True:
+            if self.demand is not None and not self.demand():
+                time.sleep(1.0)
+                continue
             try:
+                t0 = time.monotonic()
                 self._tree = self.fetch()
+                if self.perf is not None:
+                    self.perf.record("lhm", (time.monotonic() - t0) * 1000.0)
                 time.sleep(self.every)
             except Exception:
                 self._tree = None
@@ -297,21 +314,258 @@ class LHM:
 
 # ── The sampler ─────────────────────────────────────────────────────────────────────
 
+# ── the native process snapshot (Phase 4 of the Windows budget) ────────────────────────
+# psutil's process_iter opens every process to read its times and working set — measured at
+# 1.5 s for 370 processes on the acceptance machine, where a security agent sits on every
+# OpenProcess. NtQuerySystemInformation(SystemProcessInformation) returns the same fields
+# for the whole machine in one call, opening nothing: ~10 ms for the same list here. The
+# struct is documented (winternl.h) and its offsets are asserted by the stand, so a
+# mis-sized field fails loudly rather than reading the wrong number.
+
+class _UNICODE_STRING(ctypes.Structure):
+    _fields_ = [("Length", ctypes.c_ushort), ("MaximumLength", ctypes.c_ushort),
+                ("Buffer", ctypes.c_wchar_p)]
+
+
+class SYSTEM_PROCESS_INFORMATION(ctypes.Structure):
+    _fields_ = [
+        ("NextEntryOffset", ctypes.c_ulong), ("NumberOfThreads", ctypes.c_ulong),
+        ("WorkingSetPrivateSize", ctypes.c_longlong), ("HardFaultCount", ctypes.c_ulong),
+        ("NumberOfThreadsHighWatermark", ctypes.c_ulong), ("CycleTime", ctypes.c_ulonglong),
+        ("CreateTime", ctypes.c_longlong), ("UserTime", ctypes.c_longlong),
+        ("KernelTime", ctypes.c_longlong), ("ImageName", _UNICODE_STRING),
+        ("BasePriority", ctypes.c_long), ("UniqueProcessId", ctypes.c_void_p),
+        ("InheritedFromUniqueProcessId", ctypes.c_void_p), ("HandleCount", ctypes.c_ulong),
+        ("SessionId", ctypes.c_ulong), ("UniqueProcessKey", ctypes.c_void_p),
+        ("PeakVirtualSize", ctypes.c_size_t), ("VirtualSize", ctypes.c_size_t),
+        ("PageFaultCount", ctypes.c_ulong), ("PeakWorkingSetSize", ctypes.c_size_t),
+        ("WorkingSetSize", ctypes.c_size_t), ("QuotaPeakPagedPoolUsage", ctypes.c_size_t),
+        ("QuotaPagedPoolUsage", ctypes.c_size_t), ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t),
+        ("QuotaNonPagedPoolUsage", ctypes.c_size_t), ("PagefileUsage", ctypes.c_size_t),
+        ("PeakPagefileUsage", ctypes.c_size_t), ("PrivatePageCount", ctypes.c_size_t),
+        ("ReadOperationCount", ctypes.c_longlong), ("WriteOperationCount", ctypes.c_longlong),
+        ("OtherOperationCount", ctypes.c_longlong), ("ReadTransferCount", ctypes.c_longlong),
+        ("WriteTransferCount", ctypes.c_longlong), ("OtherTransferCount", ctypes.c_longlong),
+    ]
+
+
+SYSTEM_PROCESS_INFORMATION_CLASS = 5
+STATUS_INFO_LENGTH_MISMATCH = 0xC0000004
+
+
+def native_process_entries():
+    """[{name, pid, cpu (seconds), rss (bytes)}] for every process in one call; [] off
+    Windows or where the call is refused (a locked-down machine). No process is opened."""
+    if not WINDOWS:
+        return []
+    try:
+        ntdll = ctypes.WinDLL("ntdll")
+    except OSError:
+        return []
+    fn = ntdll.NtQuerySystemInformation
+    fn.restype = ctypes.c_ulong
+    fn.argtypes = [ctypes.c_int, ctypes.c_void_p, ctypes.c_ulong, ctypes.POINTER(ctypes.c_ulong)]
+    size = 1 << 20
+    buf = None
+    for _ in range(6):                                  # grow until the list fits
+        buf = ctypes.create_string_buffer(size)
+        needed = ctypes.c_ulong(0)
+        status = fn(SYSTEM_PROCESS_INFORMATION_CLASS, buf, size, ctypes.byref(needed))
+        if status == STATUS_INFO_LENGTH_MISMATCH:
+            size = needed.value + 65536 if needed.value else size * 2
+            continue
+        if status != 0:
+            return []
+        break
+    else:
+        return []
+    out = []
+    offset = 0
+    while True:
+        entry = SYSTEM_PROCESS_INFORMATION.from_buffer(buf, offset)
+        name = ""
+        if entry.ImageName.Buffer and entry.ImageName.Length:
+            name = ctypes.wstring_at(entry.ImageName.Buffer, entry.ImageName.Length // 2)
+        out.append({"name": name, "pid": int(entry.UniqueProcessId or 0),
+                    "cpu": (entry.UserTime + entry.KernelTime) / 1e7,   # 100-ns units → s
+                    "rss": int(entry.WorkingSetSize)})
+        if entry.NextEntryOffset == 0:
+            break
+        offset += entry.NextEntryOffset
+    return out
+
+
+def native_process_rows(entries, previous, dt, count=30):
+    """[name, cpu %, rss, pid] from a snapshot: the CPU share is the CPU time since the
+    previous snapshot over its wall time (a process seen for the first time reads 0, as
+    psutil's first call does), and the rows are the union of the `count` heaviest by CPU
+    and by memory — the very selection Sampler._processes makes. Pure: the stand feeds it
+    fixtures."""
+    rows = []
+    for e in entries:
+        pid = int(e.get("pid") or 0)
+        if not pid:                                     # pid 0 is the idle process
+            continue
+        cpu_time = float(e.get("cpu") or 0.0)
+        before = previous.get(pid)
+        pct = max(0.0, (cpu_time - before) / dt * 100.0) if before is not None and dt > 0 else 0.0
+        rows.append([str(e.get("name") or ""), pct, int(e.get("rss") or 0), pid])
+    top = {r[3]: r for r in sorted(rows, key=lambda r: r[1], reverse=True)[:count]}
+    top.update({r[3]: r for r in sorted(rows, key=lambda r: r[2], reverse=True)[:count]})
+    return list(top.values())
+
+
+class NativeProcesses:
+    """The native snapshot with the previous CPU times kept for the shares, packaged as the
+    same rows the psutil walk returns. rows() is None where the call is unavailable, so the
+    caller falls back to psutil."""
+
+    def __init__(self, clock=time.monotonic):
+        self.clock = clock
+        self._prev = {}
+        self._at = None
+
+    def rows(self):
+        entries = native_process_entries()
+        if not entries:
+            return None
+        now = self.clock()
+        dt = (now - self._at) if self._at is not None else 0.0
+        out = native_process_rows(entries, self._prev, dt)
+        self._prev = {pid: float(e.get("cpu") or 0.0) for pid, e in
+                      ((int(e.get("pid") or 0), e) for e in entries) if pid}
+        self._at = now
+        return out
+
+
+def enabled_blocks(store):
+    """The monitor's enabled block types from its own description (the settings'
+    `blocksJson`), or None while the packaged default is in use — every block of that
+    default is enabled, so None means "everything the default shows". A description that is
+    absent or does not parse reads the same way: the safe answer is to keep collecting,
+    never to go silent because a setting could not be understood."""
+    if store is None:
+        return None
+    try:
+        raw = store.get("monitor")[1].get("blocksJson")
+    except Exception:
+        return None
+    if not str(raw or "").strip():
+        return None
+    try:
+        blocks = json.loads(raw)
+    except ValueError:
+        return None
+    if not isinstance(blocks, list):
+        return None
+    return {str(b.get("type")) for b in blocks
+            if isinstance(b, dict) and b.get("enabled") is not False}
+
+
+def block_wanted(store, kind):
+    """Whether a block of this type is enabled: True while the packaged default rules."""
+    blocks = enabled_blocks(store)
+    return True if blocks is None else kind in blocks
+
+
+def wants_processes(store):
+    """Whether any enabled cpu/memory block draws a top-processes list — the one thing that
+    makes the service walk every process. With the packaged default (no `blocksJson`) the
+    answer is yes, since that default shows five; only a description with the count taken
+    to zero (or those blocks turned off) lets the walk be skipped."""
+    if store is None:
+        return True
+    try:
+        raw = store.get("monitor")[1].get("blocksJson")
+    except Exception:
+        return True
+    if not str(raw or "").strip():
+        return True
+    try:
+        blocks = json.loads(raw)
+    except ValueError:
+        return True
+    if not isinstance(blocks, list):
+        return True
+    for b in blocks:
+        if not isinstance(b, dict) or b.get("enabled") is False:
+            continue
+        if b.get("type") not in ("cpu", "memory"):
+            continue
+        try:
+            tops = float((b.get("params") or {}).get("top_processes") or 0)
+        except (TypeError, ValueError):
+            tops = 0.0
+        if tops > 0:
+            return True
+    return False
+
+
 class Sampler:
     """One dict in PROTOCOL.md's shape, rebuilt every `interval` seconds by `sample()`.
 
     `ps` and `clock` are parameters so the stand can hand in readings and a clock of its
     own: the rates (bytes/s) are deltas over this clock, and a real one would make them
-    unrepeatable. `windows` gates the probes that only exist there."""
+    unrepeatable. `windows` gates the probes that only exist there.
 
-    def __init__(self, interval=1.0, ps=psutil, lhm=None, clock=time.monotonic, windows=WINDOWS, gpu=None):
+    Three callables decide what is worth collecting, so a hidden or disinterested monitor
+    costs nothing (Phase 1/3 of the Windows budget): `visible()` is the monitor on screen,
+    `need_processes()` whether any enabled block draws a process list, `want_block(kind)` a
+    probe's own block. All three default to True, which is what the stand sees: with no
+    callables the sampler does exactly what it always did. `process_interval` (seconds,
+    0 = every tick) is the new floor for the process walk, the most expensive reading here."""
+
+    def __init__(self, interval=1.0, ps=psutil, lhm=None, clock=time.monotonic, windows=WINDOWS,
+                 gpu=None, perf=None, process_interval=0.0, visible=None, need_processes=None,
+                 want_block=None, native=None, net_interval=0.0):
         self.interval, self.ps, self.lhm, self.clock, self.windows = interval, ps, lhm, clock, windows
         self.gpu = gpu                            # gpu_win.Reader: the counters, under LHM's ids
+        self.perf = perf                          # perf.Perf: the /perf meters, or None
+        self.native = native                      # NativeProcesses: the one-call walk, or None
+        self.process_interval = float(process_interval or 0.0)
+        # The network lines' own floor: their three psutil calls are the priciest thing left
+        # in the tick (~30 ms on the desk's machine, GetAdaptersAddresses and the counters),
+        # so they run every net_interval seconds and the same lines are republished in
+        # between. The adapter facts (names, addresses, up/down) change rarely and are
+        # cached for net_facts_interval — a minute of staleness on an address line costs
+        # nothing, and it takes the two more expensive calls out of every other read.
+        # 0 = every tick, which is what the stand sees.
+        self.net_interval = float(net_interval or 0.0)
+        self.net_facts_interval = 60.0
+        self._net_at = 0.0
+        self._net_sensors = {}
+        self._net_prev = None
+        self._net_facts_at = 0.0
+        self._net_stats = {}
+        self._net_addrs = {}
+        self._visible = visible or (lambda: True)
+        self._need_processes = need_processes or (lambda: True)
+        self._want_block = want_block or (lambda kind: True)
         self._lock = threading.Lock()
         self._data = {"stamp": 0.0, "sensors": {}, "processes": [], "coreCount": 0}
         self._prev = None                         # (clock, net counters, disk counters)
         self._slow = {"gateways": {}, "signal": {}, "battery": {}, "cpuCount": None}
+        self._processes_rows = None               # the last walk, kept for process_interval
+        self._processes_at = 0.0
         self._static = self._static_sensors()
+
+    def visible(self):
+        try:
+            return bool(self._visible())
+        except Exception:
+            return True
+
+    def need_processes(self):
+        try:
+            return bool(self._need_processes())
+        except Exception:
+            return True
+
+    def want_block(self, kind):
+        try:
+            return bool(self._want_block(kind))
+        except Exception:
+            return True
 
     def start(self):
         threading.Thread(target=self._loop, daemon=True, name="sampler").start()
@@ -325,6 +579,15 @@ class Sampler:
 
     def _loop(self):
         while True:
+            if not self.visible():
+                # Nothing draws the monitor (Win+D, or the window is gone): the tick itself
+                # is parked, not just its probes — no psutil call is made at all, and
+                # /monitor keeps its last answer. Two seconds, so a window that comes back
+                # is fresh within the host's own two-second poll. Its probes are skipped
+                # separately in _processes_if_wanted and _network, and the slow loop and the
+                # capture check the same word.
+                time.sleep(max(self.interval, 2.0))
+                continue
             try:
                 self.sample()
             except Exception as e:                # a bad reading must not end the thread
@@ -333,28 +596,43 @@ class Sampler:
 
     def _slow_loop(self):
         """The Windows probes on their own, slower clocks: the gateway and the socket count
-        once, the Wi-Fi signal every 10 s, the battery's WMI figures every 60 s."""
+        once, the Wi-Fi signal every 15 s and the battery's WMI figures every 5 minutes.
+        Each runs only where a monitor is looking and its block is on — a Wi-Fi reading
+        nobody draws is a subprocess nobody needs (`netsh` is started only where a wireless
+        adapter exists at all, so a desktop without one never pays for it)."""
         gateways = parse_route_print(run_hidden(["route", "print", "-4"]))
         count = processor_count()
+        wireless = self._wireless()
         with self._lock:
             self._slow["gateways"], self._slow["cpuCount"] = gateways, count
         last_signal = last_battery = 0.0
         while True:
             now = time.monotonic()
-            if now - last_signal >= 10:
+            if now - last_signal >= 15:
                 last_signal = now
-                signal = parse_netsh_wlan(run_hidden(["netsh", "wlan", "show", "interfaces"]))
-                with self._lock:
-                    self._slow["signal"] = signal
-            if now - last_battery >= 60 and self._has_battery():
+                if wireless and self.visible() and self.want_block("network"):
+                    signal = parse_netsh_wlan(run_hidden(["netsh", "wlan", "show", "interfaces"]))
+                    with self._lock:
+                        self._slow["signal"] = signal
+            if now - last_battery >= 300:
                 last_battery = now
-                try:
-                    battery = battery_extras(json.loads(powershell(BATTERY_PS) or "{}"))
-                except ValueError:
-                    battery = {}
-                with self._lock:
-                    self._slow["battery"] = battery
+                if self.visible() and self.want_block("battery") and self._has_battery():
+                    try:
+                        battery = battery_extras(json.loads(powershell(BATTERY_PS) or "{}"))
+                    except ValueError:
+                        battery = {}
+                    with self._lock:
+                        self._slow["battery"] = battery
             time.sleep(1)
+
+    def _wireless(self):
+        """Whether a wireless adapter exists at all, by name: psutil has no "wireless"
+        flag, the same guess this file makes for the virtual-adapter filter."""
+        try:
+            names = self.ps.net_if_stats() or {}
+        except Exception:
+            return False
+        return any(re.search(r"wi-?fi|wlan|wireless", name, re.IGNORECASE) for name in names)
 
     def _has_battery(self):
         try:
@@ -381,6 +659,15 @@ class Sampler:
                 "os/kernel/version": {"value": kernel}}
 
     def sample(self):
+        """One rebuilt dict, with its cost recorded for /perf (the tick alone and the
+        process walk inside it, separately — that walk is the expensive one)."""
+        t0 = time.monotonic()
+        data = self._sample()
+        if self.perf is not None:
+            self.perf.record("sample", (time.monotonic() - t0) * 1000.0)
+        return data
+
+    def _sample(self):
         ps, now = self.ps, self.clock()
         s = dict(self._static)
         with self._lock:
@@ -409,39 +696,19 @@ class Sampler:
         s["memory/swap/used"] = {"value": sw.used}
         s["os/system/uptime"] = {"value": time.time() - ps.boot_time()}
 
-        net, disk = ps.net_io_counters(pernic=True), ps.disk_io_counters(perdisk=True)
-        prev_t, prev_net, prev_disk = self._prev or (now, {}, {})
+        s.update(self._network(now, ps, slow))
+
+        disk = ps.disk_io_counters(perdisk=True)
+        prev_t, _, prev_disk = self._prev or (now, {}, {})
         dt = max(now - prev_t, 1e-6)
-
-        def rate(old, new):
-            return max(0.0, (new - old) / dt) if old is not None else 0.0
-
-        stats, addrs = ps.net_if_stats(), ps.net_if_addrs()
-        for name, c in net.items():
-            st = stats.get(name)
-            ip4 = next((a.address for a in addrs.get(name, []) if a.family == socket.AF_INET), None)
-            if not st or not st.isup or not ip4 or VIRTUAL.search(name):
-                continue
-            old = prev_net.get(name)
-            base = f"network/{name}/"
-            s[base + "download"] = {"value": rate(old and old.bytes_recv, c.bytes_recv)}
-            s[base + "upload"] = {"value": rate(old and old.bytes_sent, c.bytes_sent)}
-            s[base + "totalDownload"] = {"value": c.bytes_recv}
-            s[base + "totalUpload"] = {"value": c.bytes_sent}
-            s[base + "ipv4address"] = {"value": ip4}
-            if ip4 in slow["gateways"]:
-                s[base + "ipv4gateway"] = {"value": slow["gateways"][ip4]}
-            if name in slow["signal"]:
-                s[base + "signal"] = {"value": slow["signal"][name]}
-
         read = write = 0.0
         for name, c in disk.items():
             old = prev_disk.get(name)
-            r, w = rate(old and old.read_bytes, c.read_bytes), rate(old and old.write_bytes, c.write_bytes)
+            r, w = _rate(old and old.read_bytes, c.read_bytes, dt), _rate(old and old.write_bytes, c.write_bytes, dt)
             s[f"disk/{name}/read"], s[f"disk/{name}/write"] = {"value": r}, {"value": w}
             read, write = read + r, write + w
         s["disk/all/read"], s["disk/all/write"] = {"value": read}, {"value": write}
-        self._prev = (now, net, disk)
+        self._prev = (now, {}, disk)
 
         battery = ps.sensors_battery()
         if battery is not None:
@@ -457,10 +724,28 @@ class Sampler:
             for k, v in self.gpu.sensors().items():
                 s.setdefault(k, v)
 
-        data = {"stamp": time.time(), "sensors": s, "processes": self._processes(), "coreCount": cores}
+        data = {"stamp": time.time(), "sensors": s, "processes": self._processes_if_wanted(now), "coreCount": cores}
         with self._lock:
             self._data = data
         return data
+
+    def _processes_if_wanted(self, now):
+        """The process walk, the one reading that costs: skipped while no enabled block
+        shows a list or the monitor is off screen, and no more often than process_interval
+        seconds otherwise — the rows are re-published unchanged in between, which is what
+        the model reads anyway (it keeps the previous rows when a tick brings none)."""
+        if not (self.need_processes() and self.visible()):
+            self._processes_rows = None
+            return []
+        if (self._processes_rows is not None and self.process_interval > 0
+                and now - self._processes_at < self.process_interval):
+            return self._processes_rows
+        t0 = time.monotonic()
+        rows = self._processes()
+        if self.perf is not None:
+            self.perf.record("processes", (time.monotonic() - t0) * 1000.0)
+        self._processes_rows, self._processes_at = rows, now
+        return rows
 
     def _frequencies(self, cores):
         """One MHz value per core; psutil on Windows knows only one, so it is repeated."""
@@ -473,12 +758,63 @@ class Sampler:
         except Exception:
             return []
 
+    def _network(self, now, ps, slow):
+        """The `network/<iface>/…` lines, at `net_interval` seconds and no oftener.
+        `ps.net_io_counters(pernic)`, `net_if_stats` and `net_if_addrs` are, after the
+        process walk, the priciest part of the tick (the first two walk every adapter
+        through Windows' own APIs: ~30 ms on the desk's machine), which is why the lines are
+        published unchanged between reads — the rates are honest because the delta is taken
+        over the real gap. Nothing is read while the monitor is off screen or its network
+        block is off; then the lines simply do not exist, as `pressure/*` on Windows."""
+        due = (self.net_interval <= 0 or self._net_at == 0.0
+               or now - self._net_at >= self.net_interval)
+        if not due:
+            return self._net_sensors
+        self._net_at = now
+        if not (self.visible() and self.want_block("network")):
+            self._net_sensors = {}
+            return {}
+        counters = ps.net_io_counters(pernic=True)
+        if self._net_facts_at == 0.0 or now - self._net_facts_at >= self.net_facts_interval:
+            self._net_stats, self._net_addrs = ps.net_if_stats(), ps.net_if_addrs()
+            self._net_facts_at = now
+        stats, addrs = self._net_stats, self._net_addrs
+        prev_t, prev_net, _ = self._net_prev or (now, {}, {})
+        dt = max(now - prev_t, 1e-6)
+        out = {}
+        for name, c in counters.items():
+            st = stats.get(name)
+            ip4 = next((a.address for a in addrs.get(name, []) if a.family == socket.AF_INET), None)
+            if not st or not st.isup or not ip4 or VIRTUAL.search(name):
+                continue
+            old = prev_net.get(name)
+            base = f"network/{name}/"
+            out[base + "download"] = {"value": _rate(old and old.bytes_recv, c.bytes_recv, dt)}
+            out[base + "upload"] = {"value": _rate(old and old.bytes_sent, c.bytes_sent, dt)}
+            out[base + "totalDownload"] = {"value": c.bytes_recv}
+            out[base + "totalUpload"] = {"value": c.bytes_sent}
+            out[base + "ipv4address"] = {"value": ip4}
+            if ip4 in slow["gateways"]:
+                out[base + "ipv4gateway"] = {"value": slow["gateways"][ip4]}
+            if name in slow["signal"]:
+                out[base + "signal"] = {"value": slow["signal"][name]}
+        self._net_prev = (now, counters, {})
+        self._net_sensors = out
+        return out
+
     def _processes(self):
         """[name, cpu %, rss, pid] for the union of the thirty heaviest by CPU and by
-        memory. psutil keeps the Process objects between process_iter() calls, so each
-        cpu_percent() is the share since the previous tick — the first tick reads zeros,
-        which is why the sampler never reports from a single pass. The idle process (pid
-        0) would always top the CPU list and is left out."""
+        memory. On Windows the native one-call snapshot answers (Phase 4: psutil opens every
+        process, ~1.5 s for 370 of them behind a security agent; the native call is ~10 ms);
+        where it is unavailable the psutil walk below stands in. psutil keeps the Process
+        objects between process_iter() calls, so each cpu_percent() is the share since the
+        previous tick — the first tick reads zeros, which is why the sampler never reports
+        from a single pass. The idle process (pid 0) would always top the CPU list and is
+        left out."""
+        if self.native is not None:
+            rows = self.native.rows()
+            if rows is not None:
+                return rows
         rows = []
         for p in self.ps.process_iter(["name", "pid", "cpu_percent", "memory_info"]):
             i = p.info

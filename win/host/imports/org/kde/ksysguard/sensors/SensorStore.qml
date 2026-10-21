@@ -15,6 +15,10 @@ QtObject {
     property int rate: 1000                // ms; the smallest updateRateLimit asked for
     property int generation: 0             // grows with every answer that changed anything
     property string lastText: ""
+    // The host parks the poll while the window is not drawn (PipeWire-side saving on the
+    // Windows port, Phase 3): off screen the service's sampler is told to rest too, so
+    // polling would only read the same answer again.
+    property bool active: true
 
     signal updated()
 
@@ -53,8 +57,11 @@ QtObject {
     }
 
     readonly property Timer timer: Timer {
-        interval: Math.max(250, store.rate)
-        running: true
+        // A 2 s floor: the clock and the CPU bars are recomputed by MonitorData's own
+        // 1 s tick from the last answer, so the bars stay within two seconds while the
+        // service is asked half as often (the Windows budget's Phase 1).
+        interval: Math.max(2000, store.rate)
+        running: store.active
         repeat: true
         triggeredOnStart: true
         onTriggered: store.poll()

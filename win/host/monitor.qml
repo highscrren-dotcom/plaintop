@@ -1,5 +1,6 @@
 import QtQuick
 import plaintop
+import org.kde.ksysguard.sensors as Sensors
 
 // The monitor's window host. The data and the drawing are the shared files
 // (monitor/shared/, copied in by win/build.py), the menu of an active line is the
@@ -11,6 +12,12 @@ import "monitor/description.js" as Description
 WidgetWindow {
     id: root
     widget: "monitor"
+
+    // Off screen the service parks its probes (its gates read the visibility the host
+    // reports), so the /monitor poll is parked with the window rather than reading stale
+    // answers every two seconds.
+    function screenChanged() { Sensors.SensorStore.active = root.onScreen }
+    Component.onCompleted: root.screenChanged()
 
     width: num("widgetWidth", 500)
     height: num("widgetHeight", 950)

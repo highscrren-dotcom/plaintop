@@ -102,7 +102,7 @@ jobs:
           python -c "import winrt.windows.media.control; print('winrt imports')"
 
       - name: Python compiles
-        run: python -m py_compile win/build.py win/service/server.py win/service/monitor_win.py win/service/exec_win.py win/service/bands.py win/service/player_win.py win/service/notes_bridge.py win/service/holidays_win.py win/service/timezones.py win/service/settings_store.py win/service/ui.py win/service/notify_win.py tests/win_service.py tests/win_bands.py tests/win_media.py tests/win_hosts.py
+        run: python -m py_compile win/build.py win/perf.py win/service/server.py win/service/perf.py win/service/monitor_win.py win/service/exec_win.py win/service/bands.py win/service/player_win.py win/service/notes_bridge.py win/service/holidays_win.py win/service/timezones.py win/service/settings_store.py win/service/ui.py win/service/notify_win.py tests/win_service.py tests/win_bands.py tests/win_media.py tests/win_hosts.py
 
       - name: the service's stands
         run: |
