@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Matrix",
+    "note": "Phosphor green on black, nothing else."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#33FF66",
+    "colorAccent": "#CCFFCC",
+    "colorDim": "#1F7A3A",
+    "colorValue": "#66FF99",
+    "colorPaper": "#041A0A"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#33FF66",
+    "colorAccent": "#CCFFCC",
+    "colorDim": "#1F7A3A"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#33FF66",
+    "colorAccent": "#CCFFCC",
+    "colorDim": "#1F7A3A"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#33FF66",
+    "colorHigh": "#CCFFCC",
+    "opacityPercent": 70,
+    "playerColorFg": "#33FF66",
+    "playerColorAccent": "#CCFFCC",
+    "playerColorDim": "#1F7A3A"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#33FF66",
+    "colorAccent": "#CCFFCC",
+    "colorDim": "#1F7A3A",
+    "colorToday": "#CCFFCC",
+    "colorNote": "#99FF99",
+    "colorPaper": "#041A0A",
+    "colorHoliday": "#FF5555"
+  }
+}

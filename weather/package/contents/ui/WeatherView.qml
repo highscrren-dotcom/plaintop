@@ -95,6 +95,9 @@ Item {
     property var lastBody: null
     property string fetchedAt: ""       // when it came, ISO
     property bool offline: false        // the last request failed
+    // Empty on Plasma; a host's relay URL otherwise — the request's URL goes after it,
+    // percent-encoded (see begin()).
+    property string requestPrefix: ""
     property bool badKey: false         // the source refused the key
     property int failures: 0
     property var xhr: null              // the request in flight, if any
@@ -262,7 +265,10 @@ Item {
             }
             handler(data, req.status, req.responseText, req)
         }
-        req.open("GET", url)
+        // A host may route the request through a relay of its own (requestPrefix): the
+        // bare window on Windows sends it to the service, which honours the system proxy
+        // and the system's certificates — XMLHttpRequest in a plain qml host does neither.
+        req.open("GET", requestPrefix.length > 0 ? requestPrefix + encodeURIComponent(url) : url)
         for (const name in headers)
             req.setRequestHeader(name, headers[name])
         req.send()

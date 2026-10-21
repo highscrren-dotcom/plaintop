@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Kanagawa",
+    "note": "Hokusai's wave: ink, wave blue, sun orange."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#DCD7BA",
+    "colorAccent": "#FF9E3B",
+    "colorDim": "#727169",
+    "colorValue": "#7E9CD8",
+    "colorPaper": "#1F1F28"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#DCD7BA",
+    "colorAccent": "#FF9E3B",
+    "colorDim": "#727169"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#DCD7BA",
+    "colorAccent": "#FF9E3B",
+    "colorDim": "#727169"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#7FB4CA",
+    "colorHigh": "#957FB8",
+    "opacityPercent": 90,
+    "playerColorFg": "#DCD7BA",
+    "playerColorAccent": "#FF9E3B",
+    "playerColorDim": "#727169"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#DCD7BA",
+    "colorAccent": "#FF9E3B",
+    "colorDim": "#727169",
+    "colorToday": "#98BB6C",
+    "colorNote": "#E6C384",
+    "colorPaper": "#1F1F28",
+    "colorHoliday": "#E82424"
+  }
+}

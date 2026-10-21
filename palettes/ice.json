@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Ice",
+    "note": "Cold white and sky blue on deep navy."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#E6F1FF",
+    "colorAccent": "#7FD1FF",
+    "colorDim": "#5C7A99",
+    "colorValue": "#B8E3FF",
+    "colorPaper": "#0D1B2A"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#E6F1FF",
+    "colorAccent": "#7FD1FF",
+    "colorDim": "#5C7A99"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#E6F1FF",
+    "colorAccent": "#7FD1FF",
+    "colorDim": "#5C7A99"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#7FD1FF",
+    "colorHigh": "#FFFFFF",
+    "opacityPercent": 90,
+    "playerColorFg": "#E6F1FF",
+    "playerColorAccent": "#7FD1FF",
+    "playerColorDim": "#5C7A99"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#E6F1FF",
+    "colorAccent": "#7FD1FF",
+    "colorDim": "#5C7A99",
+    "colorToday": "#7FD1FF",
+    "colorNote": "#FFFFFF",
+    "colorPaper": "#0D1B2A",
+    "colorHoliday": "#FF8FA3"
+  }
+}

@@ -93,6 +93,9 @@ Item {
     readonly property int status: player?.playbackStatus ?? Mpris.PlaybackStatus.Unknown
     readonly property bool playing: status === Mpris.PlaybackStatus.Playing
     readonly property bool paused: status === Mpris.PlaybackStatus.Paused
+    // The status word after the controls lights up while this runs (see controlsRow).
+    Timer { id: statusFlash; interval: 1200 }
+    onPlayingChanged: if (player !== null) statusFlash.restart()
     readonly property bool canGoNext: player?.canGoNext ?? false
     readonly property bool canGoPrevious: player?.canGoPrevious ?? false
     readonly property bool canPlay: player?.canPlay ?? false
@@ -326,10 +329,17 @@ Item {
                 can: view.canGoNext
                 onPressed: view.player?.Next()
             }
+            // The state in a word after the controls — "playing" as well as "paused", so
+            // the row reads the same either way — lit in the accent colour for a moment
+            // when it changes: the press is answered where the eye is, before the bar
+            // visibly moves, and a player that takes a second to follow (the SMTC of an
+            // Electron app) still shows what was asked.
             Line {
-                visible: view.paused
-                text: "  " + i18nc("playback status", "paused")
-                color: view.colorDim
+                visible: view.playing || view.paused
+                text: "  " + (view.playing ? i18nc("playback status", "playing")
+                                            : i18nc("playback status", "paused"))
+                color: statusFlash.running ? view.colorAccent : view.colorDim
+                Behavior on color { ColorAnimation { duration: 350 } }
             }
         }
     }

@@ -141,6 +141,25 @@ The ones a session trips over first; each links to its section with the evidence
 - [The holiday regions are one file for the whole shell](#the-holiday-regions-are-one-file-for-the-whole-shell)
 - [KHolidays' plans are Qt resources, readable only where file reads are allowed](#kholidays-plans-are-qt-resources-readable-only-where-file-reads-are-allowed)
 
+**The Windows port**
+
+- [QML refuses a method or a property named with a capital letter — Object.prototype resolves it on a QObject wrapper](#qml-refuses-a-method-or-a-property-named-with-a-capital-letter--objectprototype-resolves-it-on-a-qobject-wrapper)
+- [A QObject wrapper's extra JavaScript properties: refused on QML-made objects, lost from a ListModel's rows at the next collection](#a-qobject-wrappers-extra-javascript-properties-refused-on-qml-made-objects-lost-from-a-listmodels-rows-at-the-next-collection)
+- [A ListModel takes no child objects](#a-listmodel-takes-no-child-objects)
+- [lconvert puts msgctxt into Qt's disambiguation, and drops the plural forms unless told the language](#lconvert-puts-msgctxt-into-qts-disambiguation-and-drops-the-plural-forms-unless-told-the-language)
+- [Qt 6.10's QML parser refuses a reserved word after a dot; 6.11 takes it](#qt-610s-qml-parser-refuses-a-reserved-word-after-a-dot-611-takes-it)
+- [qmltestrunner passes no arguments to the QML it runs](#qmltestrunner-passes-no-arguments-to-the-qml-it-runs)
+- [The qml tool needs --transparent for a transparent window and -a widget for a tray icon](#the-qml-tool-needs---transparent-for-a-transparent-window-and--a-widget-for-a-tray-icon)
+- [A QML-declared enum reads unscoped, like a C++ Q_ENUM](#a-qml-declared-enum-reads-unscoped-like-a-c-q_enum)
+- [pkill by pattern kills the shell that typed it](#pkill-by-pattern-kills-the-shell-that-typed-it)
+- [A frozen module's __file__ is not where it was in the tree: the first zip looked for C:\spectrum\relay.py](#a-frozen-modules-__file__-is-not-where-it-was-in-the-tree-the-first-zip-looked-for-cspectrumrelaypy)
+- [On Windows "monospace" is no font family: Qt draws Segoe UI, and the columns wander](#on-windows-monospace-is-no-font-family-qt-draws-segoe-ui-and-the-columns-wander)
+- [lscpu's threads per core is wrong for a hybrid CPU: CPU(s) is the count](#lscpus-threads-per-core-is-wrong-for-a-hybrid-cpu-cpus-is-the-count)
+- [A DragHandler in an item above a MouseArea swallows the press; on the ancestor it lets the click through and takes the drag](#a-draghandler-in-an-item-above-a-mousearea-swallows-the-press-on-the-ancestor-it-lets-the-click-through-and-takes-the-drag)
+- [The loopback of the default output hears silence while the music plays elsewhere](#the-loopback-of-the-default-output-hears-silence-while-the-music-plays-elsewhere)
+- [The GPU counters list the software adapter too, and three sources have three orders: the LUID is the key](#the-gpu-counters-list-the-software-adapter-too-and-three-sources-have-three-orders-the-luid-is-the-key)
+- [A bare qml window's requests stayed offline on a corporate network; the service fetches for it](#a-bare-qml-windows-requests-stayed-offline-on-a-corporate-network-the-service-fetches-for-it)
+
 **conky (archive)**
 
 - [Conky works under Wayland](#conky-works-under-wayland)
@@ -1270,3 +1289,198 @@ is `roleForName()` on a `KSortFilterProxyModel` over it, KF 6.30. `data(index, 2
 but the number is the model's private business. An `Instantiator` over the model with a
 `QtObject` delegate of `required property` roles reads every row by name; collect after
 `objectAdded` (with `Qt.callLater`, once). 2026-10-04.
+
+# Part III. the Windows port
+
+The same shared QML on a bare Qt 6 under Windows 11, behind QML-only shims and one local
+service (decision 17, `win/PROTOCOL.md`). Written in a Linux container with Qt 6.10 and 6.11
+offscreen; what each entry says was run there.
+
+## QML refuses a method or a property named with a capital letter — Object.prototype resolves it on a QObject wrapper
+
+`player/shared/PlayerView.qml` calls the D-Bus-named methods of kmpris's player container —
+`player.Previous()`, `PlayPause()`, `Next()` — and a QML-only stand-in cannot declare them:
+"Method names cannot begin with an upper case letter", and the same for properties and
+signals. What does work: a QObject wrapper looks an unknown name up along the JavaScript
+prototype chain, so `Object.defineProperty(Object.prototype, "PlayPause", { value: function()
+{ return this.playPause() } })` makes `qtobject.PlayPause()` call the lowercase method of the
+object it was called on, and it survives `gc()`. The mpris shim installs the three names
+once (`win/host/imports/org/kde/plasma/private/mpris/Mpris2Model.qml`). Qt 6.10 and 6.11,
+2026-10-05.
+
+## A QObject wrapper's extra JavaScript properties: refused on QML-made objects, lost from a ListModel's rows at the next collection
+
+Two ways around the capital-letter rule that fail. `c.PlayPause = fn` on an object created
+by QML throws "Cannot assign to non-existent property": the engine makes those wrappers
+non-extensible. On an object the engine did not create — a `ListModel` row from `get(i)` —
+the assignment is taken, the property reads back, and after `gc()` it is `undefined`: the
+wrapper is weak, the row object outlives it, and the next wrapper is a fresh one. Verified
+with `typeof` before and after three `gc()` calls, Qt 6.10, 2026-10-05.
+
+## A ListModel takes no child objects
+
+A `Timer` or a `QtObject` declared inside a `ListModel` fails the component: "ListElement:
+cannot contain nested elements" — the default property is the list of elements. Declare them
+as properties (`property Timer t: Timer { … }`); an inline `component` and a `Component`
+property are fine. The `Mpris2Model` shim is a `ListModel` with everything else hung off
+properties. Qt 6.10, 2026-10-05.
+
+## lconvert puts msgctxt into Qt's disambiguation, and drops the plural forms unless told the language
+
+`lconvert -i x.po -o x.qm` turns a gettext catalog into Qt's: the `msgctxt` lands in the
+message's *comment* (the disambiguation), and the Qt context is empty. So a string with a
+ki18n context is found by `qsTranslate("", text, context)`, never by `qsTranslate(context,
+text)`; a bare `i18n()` string by `qsTranslate("", text)`. And without `-target-language ru`
+lconvert prints "Removed plural forms as the target language has less forms" and every
+plural reads as the singular — the PO header's `Language: ru` is not enough. With it,
+`qsTranslate("", "%1 update", "pacman: pending updates", n)` gives «обновление,
+обновления, обновлений» for 1, 2, 5 and «aktualizacja, aktualizacje, aktualizacji» for
+Polish. `%1` is not substituted by Qt; `win/host/imports/plaintop/I18n.js` does it. Qt 6.10,
+2026-10-05.
+
+## Qt 6.10's QML parser refuses a reserved word after a dot; 6.11 takes it
+
+`hol.some(h => h.public)` in `CalendarView.qml` and `h.public ? …` in `Sticker.qml` fail to
+load on Qt 6.10.1 with "Expected token `identifier'" at that line, and load on 6.11.3 (and on
+the desktop's 6.11.2, where they were written). JavaScript allows a reserved word as a
+property name after a dot; Qt's parser only learned it in 6.11. The two reads became
+`h["public"]`, and an object literal's key `public:` is quoted the same way in the Windows
+host's `Holidays.qml` — the plasmoid's `Holidays.qml` still writes `public: pub`, which only
+a Plasma on 6.11 loads. With that the hosts' stand passes on 6.8.3, 6.10.1 and 6.11.3.
+And aqtinstall 3.3 (what `jurplel/install-qt-action` runs) finds no Windows archives for
+6.11 at all — "Failed to locate XML data for Qt version '6.11.3'" — while Linux 6.11.3
+installs; the CI job takes `6.10.*`. 2026-10-05.
+
+## qmltestrunner passes no arguments to the QML it runs
+
+`qmltestrunner -input stand.qml -- --port 1234` stops with "Unknown option: '--'", and a bare
+positional argument is taken for another input file; `Qt.application.arguments` in the stand
+holds only what the runner itself was given. A stand that needs a port and a token gets them
+through a generated module instead: `tests/win_hosts.py` writes `standargs/qmldir` and a
+`StandArgs` singleton into a temporary directory and adds it with `-import`. The `qml` tool
+does pass everything after `--`. Qt 6.11, 2026-10-05.
+
+## The qml tool needs --transparent for a transparent window and -a widget for a tray icon
+
+`Window { color: "transparent" }` gets an alpha channel only when the tool was started with
+`--transparent` (it sets `QQuickWindow::setDefaultAlphaBuffer`); without it the window is
+opaque where the platform needs the format up front. And `Qt.labs.platform`'s
+`SystemTrayIcon` and `Menu` print "No native SystemTrayIcon implementation available. Qt
+Labs Platform requires Qt Widgets" under the default `QGuiApplication`: `qml -a widget` runs
+a `QApplication` and the native tray appears. `win/service/ui.py` builds both command lines.
+Offscreen on Linux the error is what was seen; the tray itself is the desktop's check.
+Qt 6.11, 2026-10-05.
+
+## A QML-declared enum reads unscoped, like a C++ Q_ENUM
+
+`enum Roles { SensorId = 256, Value }` in `SensorDataModel.qml` is readable as
+`Sensors.SensorDataModel.SensorId` — without the enum's name — exactly as the C++ model's
+`Q_ENUM` is read in `MonitorData.qml`, and as `Sensors.SensorDataModel.Roles.SensorId` too.
+That is what lets a QML-only module stand in for `org.kde.ksysguard.sensors` and
+`org.kde.plasma.core` (`PlasmaCore.Dialog.PopupMenu`, `PlasmaCore.Types.TopEdge`) without
+touching the shared files. Qt 6.10 and 6.11, 2026-10-05.
+
+## pkill by pattern kills the shell that typed it
+
+`pkill -f "fake_service.py 18788"` matched the command line of the shell running the
+`pkill` itself and killed it (exit 144), the fake service with it. The project's rule
+"never pkill by pattern" stands for one more reason; a process started for a check is stopped
+by the pid written down when it was started. 2026-10-05.
+
+## A frozen module's __file__ is not where it was in the tree: the first zip looked for C:\spectrum\relay.py
+
+The service's modules found the repository from themselves: `Path(__file__).parents[2]`
+in `win/service/server.py` is the tree's root, and `spectrum/relay.py` and the rest were
+relative to it. Frozen by PyInstaller the same modules sit in `_internal/` beside
+`plaintop.exe`, one level up and one level over from where they were, and the first run of
+the zip on the user's desk died in a message box: `FileNotFoundError:
+…\plaintop-win\spectrum\relay.py`, then `C:\spectrum\relay.py` after the folder was moved
+(the path climbed past the root). A `--noconsole` exe has no stderr, so the traceback is
+that box and nothing else. Every path now goes through `win/service/paths.py`: the root is
+`PLAINTOP_ROOT` when set, the exe's own folder when `sys.frozen`, the tree otherwise, and
+each file has its two layouts listed (`calendar/package/contents/code/notes.py` or
+`calendar/notes.py`). A stand runs the service against a folder laid out like the zip with
+`PLAINTOP_ROOT`, and the CI job unzips what it built and runs `plaintop.exe` itself
+(`PLAINTOP_NO_HOSTS=1`) before the artifact is kept. That step's first run found the next
+one: `/holidays` answered `FileNotFoundError: No translation file found for domain` — the
+`holidays` package names its days through gettext catalogs under `holidays/locale/`, data
+that `--collect-submodules` does not pack; `--collect-data holidays` (and `tzdata`) does,
+and `holidays_win.py` falls back to the country's own names when a catalog is missing.
+2026-10-05.
+
+## On Windows "monospace" is no font family: Qt draws Segoe UI, and the columns wander
+
+The hosts fell back to `font.family: "monospace"` when the setting's family was not
+installed — a fontconfig alias that every Linux resolves to a fixed-pitch face. Windows
+has no such alias: Qt finds no family of that name and substitutes the default UI font,
+Segoe UI. The views lay their columns out in characters (a name padded to N, a bar of M
+cells, a week of 3-character days), so on the first desk, without the Nerd font, the
+monitor's percentages wandered line by line and the calendar's row with the bracketed
+day shifted. `WidgetWindow.fixedFace(key)` now takes the setting's family when it is
+installed and else the first installed of a list (JetBrainsMono Nerd Font Mono, Cascadia
+Mono, Consolas, Lucida Console, Courier New, the Linux faces, "monospace" last);
+`Qt.fontFamilies()` is the test. The Nerd font still has to be installed for the icons.
+2026-10-05.
+
+## lscpu's threads per core is wrong for a hybrid CPU: CPU(s) is the count
+
+`parseLscpu` multiplied *Socket(s) × Core(s) per socket × Thread(s) per core* for the
+thread count. A hybrid Intel CPU has no whole number of threads per core: an i7-14700
+has 8 P-cores with two threads and 12 E-cores with one — 20 cores, 28 threads — and
+Linux `lscpu` prints *Thread(s) per core: 2* for it, so the Plasma widget would have
+said 20c/40t; the Windows emulation divided the other way (28 // 20 = 1) and the desk
+read 20c/20t. `lscpu` also prints *CPU(s): 28*, the count itself: the parser takes that
+line when it is there and the product only without it, and `exec_win.lscpu` prints it.
+2026-10-05.
+
+## A DragHandler in an item above a MouseArea swallows the press; on the ancestor it lets the click through and takes the drag
+
+The window's drag was a MouseArea under the view, so only the bare pixels dragged and a
+calendar or a monitor full of mouse areas "barely moved". The right tool is a
+`DragHandler` with `target: null` and `onActiveChanged: if (active) startSystemMove()` —
+a handler takes the press passively, lets a click reach the view's own areas, and takes
+the grab over from them once the drag threshold is crossed (its default
+`grabPermissions` allow that). But it has to belong to an *ancestor* of those areas: put
+in a sibling item above the view, it swallows the press and nothing below gets it
+(probed on Qt 6.8 and 6.10 with qmltestrunner: presses 0 vs 1). Declared directly in a
+`Window`, a handler is parented to the content item, the ancestor of everything — that
+is where `WidgetWindow` keeps it. 2026-10-05.
+
+## The loopback of the default output hears silence while the music plays elsewhere
+
+The capture opened the WASAPI loopback of `default_speaker()` and, on the desk, `/state`
+said `source: Headset Earphone (Jabra EVOLVE 20 MS)`, 196 frames, then nothing for six
+minutes while the music played: Windows renders a program's sound where the program, or
+the per-app output in the sound settings, sends it, and a USB headset was the default.
+The loopback of a silent output is a stream of zeros — exactly what a silent desk gives,
+so nothing looked wrong from inside. `SoundcardBackend` now takes the outputs in turn,
+the default first; `Capture._doze`, which reopens the stream once a second while it is
+silent, asks for the next output each time, so the spectrum follows the sound within a
+few seconds and `source` names the output it found. `PLAINTOP_CAPTURE` pins it. 2026-10-05.
+
+## The GPU counters list the software adapter too, and three sources have three orders: the LUID is the key
+
+The first GPU block on the desk showed three cards for two: `GP0` with nvidia-smi's
+temperature and memory, `GP1` named "NVIDIA T600" with 4.0/4.0 GB, `GP2` nameless with
+3.2/15.8 GB — the T600's real figures (3.0 dedicated + 0.2 shared), computed as an
+integrated GPU because the third index had no registry entry. `GPU Adapter Memory` has an
+instance for the Microsoft Basic Render Driver as well, so the counters' LUIDs numbered
+three; the registry's display class and nvidia-smi number their own way, and matching by
+index joined the wrong figures. DXGI is the join: `IDXGIFactory1::EnumAdapters1` gives
+each adapter's LUID — the same one the counters spell as `luid_0x<high>_0x<low>` — with
+its name, dedicated memory, shared limit and a flag for the software adapter; three
+vtable calls through ctypes (`CreateDXGIFactory1`, slot 12, slot 10). nvidia-smi's row is
+matched by the card's name. 2026-10-05.
+
+## A bare qml window's requests stayed offline on a corporate network; the service fetches for it
+
+The weather stayed "offline · no data yet" on the desk, a corporate machine, through two
+runs. The view asks its sources with `XMLHttpRequest` straight from the window, which on
+Plasma is the point (decision 10): a plain `qml.exe` window takes neither the proxy from
+the system's settings nor the corporate root certificate from the system's store, as far
+as the desk showed — the exact cause was not pinned down, and does not need to be: the
+service's Python reads the registry proxy and loads the Windows certificate store, so
+`/fetch` relays the request as it came, headers and status included, and the shared view
+got one property, `requestPrefix`, empty on Plasma, that the Windows host points at it.
+Verified in CI: the frozen exe fetched an Open-Meteo forecast through `/fetch`. Not
+covered: a proxy named only by a PAC script (`HTTPS_PROXY` then). 2026-10-05.

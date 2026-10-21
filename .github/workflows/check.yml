@@ -2,6 +2,11 @@
 # (the calendar's notes script, the relay), the monitor's description generator, the
 # palette keys, the shell scripts' syntax, every translation catalog. The QML stands need
 # Qt and Plasma and run in qml-stands.yml on request.
+#
+# The Windows port (win/) is checked on a Windows runner: the service's Python stands, then
+# the real service started against a bare Qt 6 and the five window hosts loaded through the
+# QML-only shims (tests/win_hosts.py). That is the one place the port meets Windows before
+# a person's desktop does — win/README.md.
 name: checks
 
 on:
@@ -57,3 +62,149 @@ jobs:
           python3 po/extract.py
           git diff --stat -- po
           git diff --exit-code -- po
+
+  windows:
+    runs-on: windows-latest
+    env:
+      # The runner's console is cp1252; the stands print check marks.
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      # Qt first: install-qt-action leaves its own Python (3.14, for aqt) on PATH, so a
+      # pip install made before it was invisible to the steps after it (run 8, 2026-10-04).
+      # 6.10: aqtinstall 3.3 finds no Windows archives for 6.11 — "Failed to locate XML
+      # data for Qt version '6.11.3'" — and the files load from 6.8 up since the
+      # reserved-word property names were quoted (docs/GOTCHAS.md).
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: "6.10.*"
+          modules: ""
+          cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: the service's dependencies
+        run: python -m pip install --quiet numpy psutil holidays tzdata tzlocal
+
+      # The capture and the media session go into the zip when they install here; each
+      # on its own line, since one wheel missing for this Python must not take the rest.
+      - name: the capture and the media session (optional, into the zip)
+        continue-on-error: true
+        run: |
+          python -m pip install --quiet soundcard
+          python -m pip install --quiet winsdk
+          python -m pip install --quiet winrt-runtime winrt-Windows.Media.Control winrt-Windows.Foundation winrt-Windows.Foundation.Collections winrt-Windows.Storage.Streams
+          python -c "import soundcard; print('soundcard imports')"
+          python -c "import winsdk.windows.media.control; print('winsdk imports')"
+          python -c "import winrt.windows.media.control; print('winrt imports')"
+
+      - name: Python compiles
+        run: python -m py_compile win/build.py win/service/server.py win/service/monitor_win.py win/service/exec_win.py win/service/bands.py win/service/player_win.py win/service/notes_bridge.py win/service/holidays_win.py win/service/timezones.py win/service/settings_store.py win/service/ui.py win/service/notify_win.py tests/win_service.py tests/win_bands.py tests/win_media.py tests/win_hosts.py
+
+      - name: the service's stands
+        run: |
+          python tests/win_service.py
+          python tests/win_bands.py
+          python tests/win_media.py
+
+      - name: the calendar's notes stand, on Windows paths
+        run: python tests/notes.py
+
+      - name: what DXGI, the registry and nvidia-smi say about this runner's GPU
+        run: python win/service/gpu_win.py --adapters
+
+      - name: the hosts, through the shims, against the real service
+        run: python tests/win_hosts.py --qt "$env:QT_ROOT_DIR"
+        env:
+          QT_QPA_PLATFORM: offscreen
+
+      # The Plasma widgets' own stands, on a bare Qt: the weather's needs nothing but
+      # QtQuick, the monitor's line stand runs MonitorData through the same shims.
+      - name: the Plasma stands on a bare Qt (weather, monitor lines)
+        run: |
+          & "$env:QT_ROOT_DIR/bin/qmltestrunner.exe" -input tests/weather.qml
+          & "$env:QT_ROOT_DIR/bin/qmltestrunner.exe" -import win/host/imports -input tests/monitor.qml
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QT_FORCE_STDERR_LOGGING: "1"
+
+      # Advisory until it has proved itself: the zip with qml.exe, its modules and the
+      # frozen service, kept as an artifact so a person can try it on a desktop.
+      - name: the zip (advisory)
+        id: zip
+        continue-on-error: true
+        run: |
+          python -m pip install --quiet pyinstaller
+          python win/package.py --qt "$env:QT_ROOT_DIR"
+
+      # The frozen exe from the zip it just built, run the way a person runs it (another
+      # folder as the working directory, no hosts) and asked for every kind of file the
+      # service reads beside itself: the first run on a desk died looking for
+      # C:\spectrum\relay.py (docs/GOTCHAS.md). A --noconsole exe shows an uncaught
+      # exception as a message box and waits, so the step kills it by pid after 40 s.
+      - name: the frozen plaintop.exe from the zip
+        if: steps.zip.outcome == 'success'
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP "plaintop-smoke"
+          Expand-Archive dist/plaintop-win.zip -DestinationPath $dir -Force
+          $exe = Join-Path $dir "plaintop-win/plaintop.exe"
+          if (-not (Test-Path $exe)) { throw "no plaintop.exe in the zip" }
+          $env:PLAINTOP_NO_HOSTS = "1"; $env:PLAINTOP_PORT = "28788"; $env:PLAINTOP_TOKEN = "smoke"
+          $p = Start-Process -FilePath $exe -WorkingDirectory $env:RUNNER_TEMP -PassThru
+          $base = "http://127.0.0.1:28788"
+          $up = $false
+          for ($i = 0; $i -lt 80; $i++) {
+            Start-Sleep -Milliseconds 500
+            if ($p.HasExited) { break }
+            try { $null = Invoke-RestMethod "$base/state" -TimeoutSec 2; $up = $true; break } catch {}
+          }
+          if (-not $up) {
+            if (-not $p.HasExited) { Stop-Process -Id $p.Id -Force }
+            throw "plaintop.exe did not answer on $base (exited: $($p.HasExited), code: $($p.ExitCode))"
+          }
+          try {
+            $m = Invoke-RestMethod "$base/monitor" -TimeoutSec 10
+            if (-not $m.sensors.'os/system/hostname') { throw "/monitor has no os/system/hostname" }
+            Write-Host "/monitor: $(@($m.sensors.PSObject.Properties).Count) sensors, host $($m.sensors.'os/system/hostname'.value)"
+            $b = (Invoke-WebRequest "$base/bands?bars=8&mono=1" -TimeoutSec 10).Content.Trim()
+            if (($b -split ',').Count -ne 8) { throw "/bands?bars=8 answered '$b'" }
+            Write-Host "/bands: $b"
+            $st = Invoke-RestMethod "$base/state" -TimeoutSec 10
+            Write-Host "/state: source=$($st.source) backend=$($st.backend) frames=$($st.frames) libraries=$($st.libraries | ConvertTo-Json -Compress)"
+            $gpu = @($m.sensors.PSObject.Properties | Where-Object { $_.Name -like 'gpu/*' })
+            Write-Host "/monitor gpu/*: $($gpu.Count) ids $(($gpu | ForEach-Object { $_.Name + '=' + $_.Value.value }) -join ' ')"
+            $s = Invoke-RestMethod "$base/settings/monitor" -TimeoutSec 10
+            if (-not $s.values.frame) { throw "/settings/monitor has no frame (main.xml not found?)" }
+            Write-Host "/settings/monitor: $(@($s.values.PSObject.Properties).Count) keys"
+            $h = Invoke-RestMethod "$base/holidays?regions=US&year=2026&month=7&lang=en" -TimeoutSec 10
+            if (-not @($h.days.PSObject.Properties).Count) { throw "/holidays answered no days for US 2026-07" }
+            Write-Host "/holidays: $($h.days.PSObject.Properties.Name -join ' ')"
+            $t = Invoke-RestMethod "$base/time?zone=Europe/Berlin" -TimeoutSec 10
+            if ($t.city -ne "Berlin") { throw "/time answered $($t | ConvertTo-Json -Compress)" }
+            $hdr = @{ "X-Plaintop-Token" = "smoke"; "Content-Type" = "application/json" }
+            $n = Invoke-RestMethod "$base/notes" -Method Post -Headers $hdr -Body '{"args":["dump","--from","2026-10-01","--to","2026-10-31"]}' -TimeoutSec 30
+            if ($n.'exit code' -ne 0) { throw "/notes dump exited $($n.'exit code'): $($n.stdout)" }
+            Write-Host "/notes dump: exit 0, $($n.stdout.Length) bytes (notes.py found beside the exe)"
+            $pl = Invoke-RestMethod "$base/player" -TimeoutSec 10
+            Write-Host "/player: $($pl | ConvertTo-Json -Compress)"
+            $wx = Invoke-WebRequest "$base/fetch?url=$([uri]::EscapeDataString('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m'))" -TimeoutSec 40
+            if ($wx.StatusCode -ne 200 -or -not ($wx.Content | ConvertFrom-Json).current) { throw "/fetch did not bring the forecast: $($wx.StatusCode) $($wx.Content)" }
+            Write-Host "/fetch: open-meteo through the service, $($wx.Content.Length) bytes, Content-Type $($wx.Headers['Content-Type'])"
+            $bad = try { Invoke-WebRequest "$base/fetch?url=http://example.com/" -TimeoutSec 10; "accepted" } catch { "refused" }
+            if ($bad -ne "refused") { throw "/fetch took an http:// URL" }
+            Write-Host "frozen plaintop.exe serves from the zip layout"
+          } finally {
+            Stop-Process -Id $p.Id -Force
+          }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        continue-on-error: true
+        with:
+          name: plaintop-win
+          path: dist/plaintop-win.zip
+          if-no-files-found: ignore

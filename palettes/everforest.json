@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Everforest",
+    "note": "Forest greens and warm sand, easy on the eyes."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#D3C6AA",
+    "colorAccent": "#E67E80",
+    "colorDim": "#7A8478",
+    "colorValue": "#7FBBB3",
+    "colorPaper": "#2D353B"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#D3C6AA",
+    "colorAccent": "#E67E80",
+    "colorDim": "#7A8478"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#D3C6AA",
+    "colorAccent": "#E67E80",
+    "colorDim": "#7A8478"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#83C092",
+    "colorHigh": "#A7C080",
+    "opacityPercent": 90,
+    "playerColorFg": "#D3C6AA",
+    "playerColorAccent": "#E67E80",
+    "playerColorDim": "#7A8478"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#D3C6AA",
+    "colorAccent": "#E67E80",
+    "colorDim": "#7A8478",
+    "colorToday": "#A7C080",
+    "colorNote": "#DBBC7F",
+    "colorPaper": "#2D353B",
+    "colorHoliday": "#E69875"
+  }
+}

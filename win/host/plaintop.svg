@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- The tray icon: a bar of slashes, as the monitor draws its load bars. -->
+  <rect width="16" height="16" fill="none"/>
+  <g stroke="#C8CCD4" stroke-width="1.6" stroke-linecap="round">
+    <line x1="3" y1="12" x2="6" y2="4"/>
+    <line x1="7" y1="12" x2="10" y2="4"/>
+    <line x1="11" y1="12" x2="14" y2="4"/>
+  </g>
+</svg>

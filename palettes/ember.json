@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Ember",
+    "note": "Embers: warm cream, orange flame, deep brown paper."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#F2D5B8",
+    "colorAccent": "#FF6B35",
+    "colorDim": "#8A6A58",
+    "colorValue": "#FFB562",
+    "colorPaper": "#1C1210"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#F2D5B8",
+    "colorAccent": "#FF6B35",
+    "colorDim": "#8A6A58"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#F2D5B8",
+    "colorAccent": "#FF6B35",
+    "colorDim": "#8A6A58"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#FF6B35",
+    "colorHigh": "#FFD79A",
+    "opacityPercent": 90,
+    "playerColorFg": "#F2D5B8",
+    "playerColorAccent": "#FF6B35",
+    "playerColorDim": "#8A6A58"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#F2D5B8",
+    "colorAccent": "#FF6B35",
+    "colorDim": "#8A6A58",
+    "colorToday": "#FFB562",
+    "colorNote": "#FFD79A",
+    "colorPaper": "#1C1210",
+    "colorHoliday": "#FF6B35"
+  }
+}

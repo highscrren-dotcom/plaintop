@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Catppuccin mocha",
+    "note": "Pastels on a soft dark base."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#CDD6F4",
+    "colorAccent": "#F5C2E7",
+    "colorDim": "#6C7086",
+    "colorValue": "#89B4FA",
+    "colorPaper": "#1E1E2E"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#CDD6F4",
+    "colorAccent": "#F5C2E7",
+    "colorDim": "#6C7086"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#CDD6F4",
+    "colorAccent": "#F5C2E7",
+    "colorDim": "#6C7086"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#CBA6F7",
+    "colorHigh": "#F5C2E7",
+    "opacityPercent": 90,
+    "playerColorFg": "#CDD6F4",
+    "playerColorAccent": "#F5C2E7",
+    "playerColorDim": "#6C7086"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#CDD6F4",
+    "colorAccent": "#F5C2E7",
+    "colorDim": "#6C7086",
+    "colorToday": "#A6E3A1",
+    "colorNote": "#F9E2AF",
+    "colorPaper": "#1E1E2E",
+    "colorHoliday": "#F38BA8"
+  }
+}

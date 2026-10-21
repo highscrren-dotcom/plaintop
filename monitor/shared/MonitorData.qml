@@ -567,13 +567,14 @@ Item {
         }
 
         function parseLscpu(out) {
-            let model = "", sockets = 0, perSocket = 0, perCore = 0
+            let model = "", sockets = 0, perSocket = 0, perCore = 0, cpus = 0
             for (const line of out.split("\n")) {
                 const i = line.indexOf(":")
                 if (i < 0) continue
                 const key = line.slice(0, i).trim()
                 const val = line.slice(i + 1).trim()
                 if (key === "Model name") model = val
+                else if (key === "CPU(s)") cpus = Number(val)
                 else if (key === "Socket(s)") sockets = Number(val)
                 else if (key === "Core(s) per socket") perSocket = Number(val)
                 else if (key === "Thread(s) per core") perCore = Number(val)
@@ -583,7 +584,10 @@ Item {
                                  .replace(/ @.*$/, "").replace(/\s+/g, " ").trim()
             monitor.cpuSockets = sockets
             monitor.cpuCores = sockets * perSocket
-            monitor.cpuThreads = sockets * perSocket * perCore
+            // "CPU(s)" is the thread count itself; the product is wrong on a hybrid CPU,
+            // where only the performance cores have two threads ("Thread(s) per core: 2"
+            // × 20 cores → 40 for a part with 28 threads).
+            monitor.cpuThreads = cpus > 0 ? cpus : sockets * perSocket * perCore
         }
     }
 
@@ -1048,6 +1052,7 @@ Item {
         case "dnf": return [updateItem("sudo dnf upgrade")]
         case "zypper": return [updateItem("sudo zypper update")]
         case "flatpak": return [updateItem("flatpak update")]
+        case "winget": return [updateItem("winget upgrade --all")]
         }
         return []
     }
@@ -1120,6 +1125,7 @@ Item {
         case "dnf":
         case "zypper":
         case "flatpak":
+        case "winget":          // the Windows host's package manager (win/PROTOCOL.md)
             return tr.i18ncp("pacman: pending updates", "%1 update", "%1 updates",
                              Number(f[0]) || 0)
         }

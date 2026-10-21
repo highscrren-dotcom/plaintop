@@ -1,0 +1,3 @@
+module org.kde.plasma.core
+Dialog 1.0 Dialog.qml
+Types 1.0 Types.qml

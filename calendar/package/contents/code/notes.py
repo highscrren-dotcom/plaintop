@@ -62,6 +62,7 @@ import ssl
 import subprocess
 import sys
 import urllib.parse
+import webbrowser
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -70,9 +71,17 @@ try:
 except ImportError:          # Python < 3.9: times in named zones are taken as local
     ZoneInfo = None
 
-CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "plaincalendar"
-CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "plaincalendar"
-LOCAL_DIR = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")) / "plaincalendar" / "notes"
+# On Windows (the win/ service runs this script inside its own process) the profile folders
+# stand in for the XDG ones: %APPDATA% for what the user keeps, %LOCALAPPDATA% for the
+# caches. An XDG_* variable set in the environment still wins — the stand relies on that.
+if os.name == "nt":
+    _CONFIG = _DATA = Path(os.environ.get("APPDATA") or Path.home())
+    _CACHE = Path(os.environ.get("LOCALAPPDATA") or Path.home())
+else:
+    _CONFIG, _CACHE, _DATA = Path.home() / ".config", Path.home() / ".cache", Path.home() / ".local" / "share"
+CONFIG_DIR = Path(os.environ.get("XDG_CONFIG_HOME", _CONFIG)) / "plaincalendar"
+CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", _CACHE)) / "plaincalendar"
+LOCAL_DIR = Path(os.environ.get("XDG_DATA_HOME", _DATA)) / "plaincalendar" / "notes"
 ACCOUNTS = CONFIG_DIR / "accounts.json"
 # The settings page cannot hand a secret over on a command line — anyone on the machine
 # reads /proc/*/cmdline — so it writes it here (QtCore.Settings, hex), in a folder kept
@@ -840,7 +849,10 @@ def google_auth(account):
 
     print("Open this page in a browser and allow the access:\n" + url, flush=True)
     try:
-        subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if os.name == "nt":
+            webbrowser.open(url)    # no xdg-open there; the browser Windows calls default
+        else:
+            subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except OSError:
         pass
     with http.server.HTTPServer(("127.0.0.1", port), Catch) as srv:
@@ -1253,7 +1265,8 @@ def main(argv):
     p = sub.add_parser("check"); p.add_argument("id")
     p = sub.add_parser("google-auth"); p.add_argument("id")
     args = ap.parse_args(argv)
-    # The folder holds the passwords and the page's inbox: 700, whoever created it.
+    # The folder holds the passwords and the page's inbox: 700, whoever created it. (On
+    # Windows chmod knows only the read-only bit and raises nothing; %APPDATA% is private anyway.)
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     os.chmod(CONFIG_DIR, 0o700)
     accounts = load_accounts()

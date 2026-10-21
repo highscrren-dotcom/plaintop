@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Sepia",
+    "note": "An old photograph: tan, copper, dark umber paper."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#D9C7A5",
+    "colorAccent": "#C97B4A",
+    "colorDim": "#7D6B50",
+    "colorValue": "#E8D5A8",
+    "colorPaper": "#2B2116"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#D9C7A5",
+    "colorAccent": "#C97B4A",
+    "colorDim": "#7D6B50"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#D9C7A5",
+    "colorAccent": "#C97B4A",
+    "colorDim": "#7D6B50"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#B38B5C",
+    "colorHigh": "#E8D5A8",
+    "opacityPercent": 85,
+    "playerColorFg": "#D9C7A5",
+    "playerColorAccent": "#C97B4A",
+    "playerColorDim": "#7D6B50"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#D9C7A5",
+    "colorAccent": "#C97B4A",
+    "colorDim": "#7D6B50",
+    "colorToday": "#C97B4A",
+    "colorNote": "#E8D5A8",
+    "colorPaper": "#2B2116",
+    "colorHoliday": "#B5473A"
+  }
+}

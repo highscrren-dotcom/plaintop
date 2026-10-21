@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Cyberpunk",
+    "note": "Neon pink and cyan on a violet night."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#E0E0FF",
+    "colorAccent": "#FF2A6D",
+    "colorDim": "#6B5B95",
+    "colorValue": "#05D9E8",
+    "colorPaper": "#0B0C1E"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#E0E0FF",
+    "colorAccent": "#FF2A6D",
+    "colorDim": "#6B5B95"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#E0E0FF",
+    "colorAccent": "#FF2A6D",
+    "colorDim": "#6B5B95"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#05D9E8",
+    "colorHigh": "#FF2A6D",
+    "opacityPercent": 90,
+    "playerColorFg": "#E0E0FF",
+    "playerColorAccent": "#FF2A6D",
+    "playerColorDim": "#6B5B95"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#E0E0FF",
+    "colorAccent": "#FF2A6D",
+    "colorDim": "#6B5B95",
+    "colorToday": "#05D9E8",
+    "colorNote": "#F5F749",
+    "colorPaper": "#0B0C1E",
+    "colorHoliday": "#FF2A6D"
+  }
+}

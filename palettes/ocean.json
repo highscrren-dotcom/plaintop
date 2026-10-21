@@ -1,0 +1,40 @@
+{
+  "about": {
+    "title": "Ocean",
+    "note": "Teal and aqua on deep sea green, a yellow note."
+  },
+  "org.s1dd1.plaintop": {
+    "colorFg": "#CFE9E5",
+    "colorAccent": "#2EC4B6",
+    "colorDim": "#4F7C78",
+    "colorValue": "#9BE7DD",
+    "colorPaper": "#0F2A2E"
+  },
+  "org.s1dd1.plainplayer": {
+    "colorFg": "#CFE9E5",
+    "colorAccent": "#2EC4B6",
+    "colorDim": "#4F7C78"
+  },
+  "org.s1dd1.plainweather": {
+    "colorFg": "#CFE9E5",
+    "colorAccent": "#2EC4B6",
+    "colorDim": "#4F7C78"
+  },
+  "org.s1dd1.plainspectrum": {
+    "color": "#2EC4B6",
+    "colorHigh": "#9BE7DD",
+    "opacityPercent": 90,
+    "playerColorFg": "#CFE9E5",
+    "playerColorAccent": "#2EC4B6",
+    "playerColorDim": "#4F7C78"
+  },
+  "org.s1dd1.plaincalendar": {
+    "colorFg": "#CFE9E5",
+    "colorAccent": "#2EC4B6",
+    "colorDim": "#4F7C78",
+    "colorToday": "#2EC4B6",
+    "colorNote": "#FFE08A",
+    "colorPaper": "#0F2A2E",
+    "colorHoliday": "#FF6B6B"
+  }
+}

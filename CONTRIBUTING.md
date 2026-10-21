@@ -52,8 +52,8 @@ Neither needs a code change — just a row in the description.
 | `calendar/package/` | the calendar widget: a Plasma 6 widget that draws the month grid from the locale and the clock — no shared files, no service, nothing fetched |
 | `po/` | translation catalogs, one domain per widget, five in all; `extract.py` refreshes them and starts a missing one, `build.py` compiles |
 | `install.sh` | install, status, the stands, `.plasmoid` builds, a GitHub release, clicks on/off, palettes — all operations idempotent |
-| `tests/` | the stands: `passthrough.qml`, `monitor.qml`, `weather.qml` under QtTest; `notes.py`, `relay.py` in plain Python |
-| `.github/workflows/` | `check.yml` runs everything that needs no Qt on every push; `qml-stands.yml` runs the QtTest stands in an Arch container on request |
+| `tests/` | the stands: `passthrough.qml`, `monitor.qml`, `weather.qml` under QtTest; `notes.py`, `relay.py` in plain Python; the Windows port's `win_service.py`, `win_bands.py`, `win_media.py`, `win_hosts.py` (+ `win_hosts.qml`) |
+| `.github/workflows/` | `check.yml` runs everything that needs no Qt on every push, and the Windows port's stands with a bare Qt on `windows-latest`; `qml-stands.yml` runs the Plasma QtTest stands in an Arch container on request |
 | `docs/` | traps, decisions, the working method, the session journal, the KDE Store texts |
 
 Generated and not in git: `monitor/package/contents/code/description.js` (edit
@@ -77,6 +77,8 @@ journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors
 ./install.sh --check-notes                                          # the calendar's notes script: iCalendar, recurrence, alarms, the vdir, CalDAV against a fake server
 ./install.sh --check-relay                                          # the relay's fold, resampling and cava configuration — Python, no cava
 ./install.sh --check-weather                                        # the weather sources: four APIs' answers into the one shape the view draws
+python3 tests/win_service.py; python3 tests/win_bands.py; python3 tests/win_media.py   # the Windows service, no Windows needed
+python3 tests/win_hosts.py --qt /path/to/Qt/6.11                    # the Windows hosts through the shims, against the real service, offscreen
 ./install.sh --release 0.5                                          # tag v0.5, push it, GitHub release with the five packages and SHA256SUMS
 ```
 

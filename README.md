@@ -47,6 +47,7 @@ What is in the repository:
 | **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module; its view lives in `shared/`, since the visualizer draws it too | works |
 | **`weather/`** | the weather widget: now and the next days as text, from one of four sources over https — Open-Meteo by default — no service of its own | works |
 | **`calendar/`** | the calendar widget: a wall calendar's page as text — one month or three, week numbers, the weekends and today marked — everything from the locale, no service | works |
+| **`win/`** | the same five widgets on Windows 11: bare-Qt window hosts behind QML-only shims of the Plasma modules, and one Python service for the readings — [win/README.md](win/README.md) | written, not yet seen on a Windows desktop |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
 plasmoid disables the wrapper the shell puts around it, so clicks land on the icons and the
@@ -254,6 +255,17 @@ own colour, "every holiday, name days too" the name days as well (Greece, Sweden
 *World days* adds the UN's and UNESCO's best known international days. Which holidays
 are days off comes from KHolidays' own plans, read by `calendar/holidays.py`.
 
+## Windows
+
+The same five widgets run on Windows 11 from this repository, drawn by the same shared QML
+files: `qml.exe` from Qt 6 (6.8 or newer) hosts each one in a frameless transparent window, QML-only
+stand-ins under `win/host/imports/` play the Plasma modules those files import, and one
+Python service on `127.0.0.1:8788` serves the readings in ksystemstats' vocabulary, the
+spectrum from a WASAPI loopback, the media session, `notes.py`, the holidays and the
+settings. Decision 17 explains why it is built that way; **[win/README.md](win/README.md)**
+says what to install and how to run it, and what has not yet been seen on a real desktop —
+the port was written and checked without one.
+
 ## Three layers
 
 ```
@@ -320,11 +332,16 @@ failed, the line that let the button go, and the mask.
 
 **Palettes.** `./install.sh --palette NAME` writes a palette into every instance of the
 five widgets at once, and `--palette-save NAME` keeps the desktop's current colours as
-`palettes/NAME.json`. `stock` is the defaults, read from each widget's `main.xml`; the
-repo also has `amber` and `warm-ash`, both amber on a dark wallpaper, and `tachikoma` and
-`tachikoma-rooftops`, orange and cyan on blue-grey, the second with an orange ring. A palette is plain
-JSON — each widget's id mapped to the colour keys its settings dialog writes — and the
-keys are checked before anything is written.
+`palettes/NAME.json`. `stock` is the defaults, read from each widget's `main.xml`. The repo
+carries twenty-four: the house ones — `amber` and `warm-ash` (amber on a dark wallpaper),
+`tachikoma` and `tachikoma-rooftops` (orange and cyan on blue-grey, the second with an orange
+ring) — and twenty more: the editor and terminal classics `nord`, `gruvbox-dark`, `dracula`,
+`solarized-dark`, `solarized-light`, `monokai`, `catppuccin-mocha`, `tokyo-night`, `one-dark`,
+`everforest`, `rose-pine`, `kanagawa`, and the moods `matrix` (phosphor green), `ember`,
+`ice`, `paper-light` (dark ink for a light wallpaper), `monochrome`, `cyberpunk`, `sepia`,
+`ocean`. A palette is plain JSON — each widget's id mapped to the colour keys its settings
+dialog writes, plus an `about` block with a title and a note — and the keys are checked
+before anything is written. On Windows the same files are the tray's *Theme* menu.
 
 Two block types are deliberately open-ended:
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plaintop\n"
 "Report-Msgid-Bugs-To: https://github.com/highscrren-dotcom/plaintop/issues\n"
-"POT-Creation-Date: 2026-09-23 23:35+0500\n"
+"POT-Creation-Date: 2026-10-05 06:36+0000\n"
 "PO-Revision-Date: 2026-09-23 18:13+0500\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,237 +17,239 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: weather/package/contents/config/config.qml:7
+#: weather/package/contents/config/config.qml:7 win/host/settings.qml:45
+#: win/host/settings.qml:53 win/host/settings.qml:57 win/host/settings.qml:62
 msgctxt "settings page"
 msgid "General"
 msgstr "General"
 
-#: weather/package/contents/config/config.qml:13
+#: weather/package/contents/config/config.qml:13 win/host/settings.qml:58
 msgctxt "settings page"
 msgid "Location"
 msgstr "Ubicación"
 
-#: weather/package/contents/config/config.qml:19
+#: weather/package/contents/config/config.qml:19 win/host/settings.qml:54
+#: win/host/settings.qml:59 win/host/settings.qml:66
 msgctxt "settings page"
 msgid "Mouse"
 msgstr "Ratón"
 
-#: weather/package/contents/ui/WeatherView.qml:422
+#: weather/package/contents/ui/WeatherView.qml:428
 msgctxt "wind speed unit"
 msgid "m/s"
 msgstr "m/s"
 
-#: weather/package/contents/ui/WeatherView.qml:424
+#: weather/package/contents/ui/WeatherView.qml:430
 msgctxt "wind speed unit"
 msgid "mph"
 msgstr "mph"
 
-#: weather/package/contents/ui/WeatherView.qml:425
+#: weather/package/contents/ui/WeatherView.qml:431
 msgctxt "wind speed unit"
 msgid "km/h"
 msgstr "km/h"
 
-#: weather/package/contents/ui/WeatherView.qml:429
+#: weather/package/contents/ui/WeatherView.qml:435
 msgctxt "compass point"
 msgid "N"
 msgstr "N"
 
-#: weather/package/contents/ui/WeatherView.qml:429
+#: weather/package/contents/ui/WeatherView.qml:435
 msgctxt "compass point"
 msgid "NE"
 msgstr "NE"
 
-#: weather/package/contents/ui/WeatherView.qml:430
+#: weather/package/contents/ui/WeatherView.qml:436
 msgctxt "compass point"
 msgid "E"
 msgstr "E"
 
-#: weather/package/contents/ui/WeatherView.qml:430
+#: weather/package/contents/ui/WeatherView.qml:436
 msgctxt "compass point"
 msgid "SE"
 msgstr "SE"
 
-#: weather/package/contents/ui/WeatherView.qml:431
+#: weather/package/contents/ui/WeatherView.qml:437
 msgctxt "compass point"
 msgid "S"
 msgstr "S"
 
-#: weather/package/contents/ui/WeatherView.qml:431
+#: weather/package/contents/ui/WeatherView.qml:437
 msgctxt "compass point"
 msgid "SW"
 msgstr "SO"
 
-#: weather/package/contents/ui/WeatherView.qml:432
+#: weather/package/contents/ui/WeatherView.qml:438
 msgctxt "compass point"
 msgid "W"
 msgstr "O"
 
-#: weather/package/contents/ui/WeatherView.qml:432
+#: weather/package/contents/ui/WeatherView.qml:438
 msgctxt "compass point"
 msgid "NW"
 msgstr "NO"
 
-#: weather/package/contents/ui/WeatherView.qml:442
+#: weather/package/contents/ui/WeatherView.qml:448
 msgctxt "weather condition"
 msgid "clear"
 msgstr "despejado"
 
-#: weather/package/contents/ui/WeatherView.qml:443
+#: weather/package/contents/ui/WeatherView.qml:449
 msgctxt "weather condition"
 msgid "mostly clear"
 msgstr "poco nuboso"
 
-#: weather/package/contents/ui/WeatherView.qml:444
+#: weather/package/contents/ui/WeatherView.qml:450
 msgctxt "weather condition"
 msgid "partly cloudy"
 msgstr "nuboso"
 
-#: weather/package/contents/ui/WeatherView.qml:445
+#: weather/package/contents/ui/WeatherView.qml:451
 msgctxt "weather condition"
 msgid "overcast"
 msgstr "cubierto"
 
-#: weather/package/contents/ui/WeatherView.qml:446
+#: weather/package/contents/ui/WeatherView.qml:452
 msgctxt "weather condition"
 msgid "fog"
 msgstr "niebla"
 
-#: weather/package/contents/ui/WeatherView.qml:447
+#: weather/package/contents/ui/WeatherView.qml:453
 msgctxt "weather condition"
 msgid "rime fog"
 msgstr "niebla helada"
 
-#: weather/package/contents/ui/WeatherView.qml:448
+#: weather/package/contents/ui/WeatherView.qml:454
 msgctxt "weather condition"
 msgid "light drizzle"
 msgstr "llovizna ligera"
 
-#: weather/package/contents/ui/WeatherView.qml:449
+#: weather/package/contents/ui/WeatherView.qml:455
 msgctxt "weather condition"
 msgid "drizzle"
 msgstr "llovizna"
 
-#: weather/package/contents/ui/WeatherView.qml:450
+#: weather/package/contents/ui/WeatherView.qml:456
 msgctxt "weather condition"
 msgid "heavy drizzle"
 msgstr "llovizna intensa"
 
-#: weather/package/contents/ui/WeatherView.qml:451
+#: weather/package/contents/ui/WeatherView.qml:457
 msgctxt "weather condition"
 msgid "freezing drizzle"
 msgstr "llovizna helada"
 
-#: weather/package/contents/ui/WeatherView.qml:452
+#: weather/package/contents/ui/WeatherView.qml:458
 msgctxt "weather condition"
 msgid "heavy freezing drizzle"
 msgstr "llovizna helada intensa"
 
-#: weather/package/contents/ui/WeatherView.qml:453
+#: weather/package/contents/ui/WeatherView.qml:459
 msgctxt "weather condition"
 msgid "light rain"
 msgstr "lluvia ligera"
 
-#: weather/package/contents/ui/WeatherView.qml:454
+#: weather/package/contents/ui/WeatherView.qml:460
 msgctxt "weather condition"
 msgid "rain"
 msgstr "lluvia"
 
-#: weather/package/contents/ui/WeatherView.qml:455
+#: weather/package/contents/ui/WeatherView.qml:461
 msgctxt "weather condition"
 msgid "heavy rain"
 msgstr "lluvia intensa"
 
-#: weather/package/contents/ui/WeatherView.qml:456
+#: weather/package/contents/ui/WeatherView.qml:462
 msgctxt "weather condition"
 msgid "freezing rain"
 msgstr "lluvia helada"
 
-#: weather/package/contents/ui/WeatherView.qml:457
+#: weather/package/contents/ui/WeatherView.qml:463
 msgctxt "weather condition"
 msgid "heavy freezing rain"
 msgstr "lluvia helada intensa"
 
-#: weather/package/contents/ui/WeatherView.qml:458
+#: weather/package/contents/ui/WeatherView.qml:464
 msgctxt "weather condition"
 msgid "light snow"
 msgstr "nieve ligera"
 
-#: weather/package/contents/ui/WeatherView.qml:459
+#: weather/package/contents/ui/WeatherView.qml:465
 msgctxt "weather condition"
 msgid "snow"
 msgstr "nieve"
 
-#: weather/package/contents/ui/WeatherView.qml:460
+#: weather/package/contents/ui/WeatherView.qml:466
 msgctxt "weather condition"
 msgid "heavy snow"
 msgstr "nieve intensa"
 
-#: weather/package/contents/ui/WeatherView.qml:461
+#: weather/package/contents/ui/WeatherView.qml:467
 msgctxt "weather condition"
 msgid "snow grains"
 msgstr "nieve granulada"
 
-#: weather/package/contents/ui/WeatherView.qml:462
+#: weather/package/contents/ui/WeatherView.qml:468
 msgctxt "weather condition"
 msgid "light showers"
 msgstr "chubascos ligeros"
 
-#: weather/package/contents/ui/WeatherView.qml:463
+#: weather/package/contents/ui/WeatherView.qml:469
 msgctxt "weather condition"
 msgid "showers"
 msgstr "chubascos"
 
-#: weather/package/contents/ui/WeatherView.qml:464
+#: weather/package/contents/ui/WeatherView.qml:470
 msgctxt "weather condition"
 msgid "heavy showers"
 msgstr "chubascos intensos"
 
-#: weather/package/contents/ui/WeatherView.qml:465
+#: weather/package/contents/ui/WeatherView.qml:471
 msgctxt "weather condition"
 msgid "snow showers"
 msgstr "chubascos de nieve"
 
-#: weather/package/contents/ui/WeatherView.qml:466
+#: weather/package/contents/ui/WeatherView.qml:472
 msgctxt "weather condition"
 msgid "heavy snow showers"
 msgstr "chubascos de nieve intensos"
 
-#: weather/package/contents/ui/WeatherView.qml:467
+#: weather/package/contents/ui/WeatherView.qml:473
 msgctxt "weather condition"
 msgid "thunderstorm"
 msgstr "tormenta"
 
-#: weather/package/contents/ui/WeatherView.qml:468
+#: weather/package/contents/ui/WeatherView.qml:474
 msgctxt "weather condition"
 msgid "thunderstorm with hail"
 msgstr "tormenta con granizo"
 
-#: weather/package/contents/ui/WeatherView.qml:469
+#: weather/package/contents/ui/WeatherView.qml:475
 msgctxt "weather condition"
 msgid "thunderstorm with heavy hail"
 msgstr "tormenta con granizo fuerte"
 
-#: weather/package/contents/ui/WeatherView.qml:477
+#: weather/package/contents/ui/WeatherView.qml:483
 msgctxt "MET Norway's licence (CC BY 4.0) asks for this line"
 msgid "Weather data from MET Norway"
 msgstr "Datos meteorológicos de MET Norway"
 
-#: weather/package/contents/ui/WeatherView.qml:478
+#: weather/package/contents/ui/WeatherView.qml:484
 msgctxt "WeatherAPI.com's terms ask for this line"
 msgid "Powered by WeatherAPI.com"
 msgstr "Powered by WeatherAPI.com"
 
-#: weather/package/contents/ui/WeatherView.qml:479
+#: weather/package/contents/ui/WeatherView.qml:485
 msgctxt "Visual Crossing's terms ask for this line"
 msgid "Weather data provided by Visual Crossing"
 msgstr "Weather data provided by Visual Crossing"
 
-#: weather/package/contents/ui/WeatherView.qml:480
+#: weather/package/contents/ui/WeatherView.qml:486
 msgctxt "Open-Meteo's terms ask for this line"
 msgid "Weather data by Open-Meteo.com"
 msgstr "Datos meteorológicos de Open-Meteo.com"
 
-#: weather/package/contents/ui/WeatherView.qml:487
+#: weather/package/contents/ui/WeatherView.qml:493
 #, kde-format
 msgctxt "how old the shown weather is"
 msgid "%1 min ago"
@@ -255,7 +257,7 @@ msgid_plural "%1 min ago"
 msgstr[0] "hace %1 min"
 msgstr[1] "hace %1 min"
 
-#: weather/package/contents/ui/WeatherView.qml:488
+#: weather/package/contents/ui/WeatherView.qml:494
 #, kde-format
 msgctxt "how old the shown weather is"
 msgid "%1 h ago"
@@ -263,72 +265,77 @@ msgid_plural "%1 h ago"
 msgstr[0] "hace %1 h"
 msgstr[1] "hace %1 h"
 
-#: weather/package/contents/ui/WeatherView.qml:526
+#: weather/package/contents/ui/WeatherView.qml:532
 msgctxt "no location, no guess"
 msgid "set a location in the widget settings"
 msgstr "fije un lugar en la configuración del widget"
 
-#: weather/package/contents/ui/WeatherView.qml:530
+#: weather/package/contents/ui/WeatherView.qml:536
 msgctxt "the source needs a key and none is set"
 msgid "set the API key in the widget settings"
 msgstr "fije la clave API en la configuración del widget"
 
-#: weather/package/contents/ui/WeatherView.qml:535
+#: weather/package/contents/ui/WeatherView.qml:541
 msgctxt "header: the place was guessed from the time zone"
 msgid "time zone"
 msgstr "zona horaria"
 
-#: weather/package/contents/ui/WeatherView.qml:539
+#: weather/package/contents/ui/WeatherView.qml:545
 msgctxt "header: the last request failed"
 msgid "offline"
 msgstr "sin conexión"
 
-#: weather/package/contents/ui/WeatherView.qml:541
+#: weather/package/contents/ui/WeatherView.qml:547
 msgctxt "header: the source refused the API key"
 msgid "bad key"
 msgstr "clave incorrecta"
 
-#: weather/package/contents/ui/WeatherView.qml:542
+#: weather/package/contents/ui/WeatherView.qml:548
 msgctxt "the widget's header line"
 msgid "WEATHER"
 msgstr "EL TIEMPO"
 
-#: weather/package/contents/ui/WeatherView.qml:545
+#: weather/package/contents/ui/WeatherView.qml:551
 msgctxt "nothing fetched yet"
 msgid "no data yet"
 msgstr "aún sin datos"
 
-#: weather/package/contents/ui/WeatherView.qml:555
+#: weather/package/contents/ui/WeatherView.qml:561
 #, kde-format
 msgctxt "apparent temperature"
 msgid "feels %1"
 msgstr "sensación %1"
 
-#: weather/package/contents/ui/WeatherView.qml:557
+#: weather/package/contents/ui/WeatherView.qml:563
 #, kde-format
 msgctxt "wind: speed, its unit, compass direction"
 msgid "wind %1 %2 %3"
 msgstr "viento %1 %2 %3"
 
 #: weather/package/contents/ui/configGeneral.qml:28
+#: win/host/settings/WeatherGeneral.qml:8
 msgctxt "settings section"
 msgid "Text"
 msgstr "Texto"
 
 #: weather/package/contents/ui/configGeneral.qml:32
+#: win/host/settings/WeatherGeneral.qml:11
 msgid "Font:"
 msgstr "Tipo de letra:"
 
 #: weather/package/contents/ui/configGeneral.qml:38
+#: win/host/settings/WeatherGeneral.qml:15
 msgctxt "font size"
 msgid "Size:"
 msgstr "Tamaño:"
 
 #: weather/package/contents/ui/configGeneral.qml:45
+#: win/host/settings/WeatherGeneral.qml:19
 msgid "Width, characters:"
 msgstr "Ancho, caracteres:"
 
 #: weather/package/contents/ui/configGeneral.qml:51
+#: win/host/settings/WeatherGeneral.qml:23
 msgid ""
 "The widget is this many characters wide; its height follows the number of\n"
 "forecast days and the attribution line. A longer line is cut with an "
@@ -339,29 +346,35 @@ msgstr ""
 "corta con puntos suspensivos."
 
 #: weather/package/contents/ui/configGeneral.qml:56
+#: win/host/settings/WeatherGeneral.qml:26
 msgctxt "settings section"
 msgid "Icon"
 msgstr "Icono"
 
 #: weather/package/contents/ui/configGeneral.qml:60
+#: win/host/settings/WeatherGeneral.qml:29
 msgid "Icon:"
 msgstr "Icono:"
 
 #: weather/package/contents/ui/configGeneral.qml:61
+#: win/host/settings/WeatherGeneral.qml:30
 msgctxt "icon placement"
 msgid "none"
 msgstr "ninguno"
 
 #: weather/package/contents/ui/configGeneral.qml:61
+#: win/host/settings/WeatherGeneral.qml:30
 msgctxt "icon placement"
 msgid "on the left"
 msgstr "a la izquierda"
 
 #: weather/package/contents/ui/configGeneral.qml:66
+#: win/host/settings/WeatherGeneral.qml:33
 msgid "Icon size, px:"
 msgstr "Tamaño del icono, px:"
 
 #: weather/package/contents/ui/configGeneral.qml:72
+#: win/host/settings/WeatherGeneral.qml:36
 msgid ""
 "A picture made of characters in the widget's font, left of the current "
 "conditions."
@@ -370,46 +383,55 @@ msgstr ""
 "las condiciones actuales."
 
 #: weather/package/contents/ui/configGeneral.qml:77
+#: win/host/settings/WeatherGeneral.qml:38
 msgctxt "settings section"
 msgid "Palette"
 msgstr "Paleta"
 
 #: weather/package/contents/ui/configGeneral.qml:80
+#: win/host/settings/WeatherGeneral.qml:41
 msgctxt "palette: colour of"
 msgid "Main text:"
 msgstr "Texto principal:"
 
 #: weather/package/contents/ui/configGeneral.qml:86
+#: win/host/settings/WeatherGeneral.qml:45
 msgctxt "palette: colour of"
 msgid "Temperature:"
 msgstr "Temperatura:"
 
 #: weather/package/contents/ui/configGeneral.qml:92
+#: win/host/settings/WeatherGeneral.qml:49
 msgctxt "palette: colour of"
 msgid "Secondary:"
 msgstr "Secundario:"
 
 #: weather/package/contents/ui/configLocation.qml:57
+#: win/host/settings/WeatherLocation.qml:42
 msgctxt "typed coordinates out of range"
 msgid "latitude is −90…90, longitude −180…180"
 msgstr "latitud −90…90, longitud −180…180"
 
 #: weather/package/contents/ui/configLocation.qml:73
+#: win/host/settings/WeatherLocation.qml:58
 msgctxt "geocoding in progress"
 msgid "searching…"
 msgstr "buscando…"
 
 #: weather/package/contents/ui/configLocation.qml:92
+#: win/host/settings/WeatherLocation.qml:77
 msgctxt "geocoding: no match"
 msgid "nothing found"
 msgstr "sin resultados"
 
 #: weather/package/contents/ui/configLocation.qml:94
+#: win/host/settings/WeatherLocation.qml:79
 msgctxt "geocoding: the request failed"
 msgid "the lookup failed — no network?"
 msgstr "la búsqueda falló — ¿sin red?"
 
 #: weather/package/contents/ui/configLocation.qml:129
+#: win/host/settings/WeatherLocation.qml:111
 msgid ""
 "The data is MET Norway's, under CC BY 4.0;\n"
 "its terms ask for the attribution line."
@@ -418,6 +440,7 @@ msgstr ""
 "sus condiciones piden la línea de atribución."
 
 #: weather/package/contents/ui/configLocation.qml:131
+#: win/host/settings/WeatherLocation.qml:113
 msgid ""
 "The data is WeatherAPI.com's; the free plan gives three forecast days\n"
 "and asks for the attribution line."
@@ -426,6 +449,7 @@ msgstr ""
 "y pide la línea de atribución."
 
 #: weather/package/contents/ui/configLocation.qml:133
+#: win/host/settings/WeatherLocation.qml:115
 msgid ""
 "The data is Visual Crossing's; the free plan is a thousand records a day,\n"
 "one per forecast day, and its terms ask for the attribution line."
@@ -435,6 +459,7 @@ msgstr ""
 "uno por día de previsión, y sus condiciones piden la línea de atribución."
 
 #: weather/package/contents/ui/configLocation.qml:135
+#: win/host/settings/WeatherLocation.qml:117
 msgid ""
 "The data is Open-Meteo's, free for non-commercial use;\n"
 "its terms ask for the attribution line."
@@ -443,123 +468,149 @@ msgstr ""
 "sus condiciones piden la línea de atribución."
 
 #: weather/package/contents/ui/configLocation.qml:149
+#: win/host/settings/WeatherLocation.qml:121
 msgctxt "settings section"
 msgid "Source"
 msgstr "Fuente"
 
 #: weather/package/contents/ui/configLocation.qml:153
+#: win/host/settings/WeatherLocation.qml:124
 msgid "Source:"
 msgstr "Fuente:"
 
 #: weather/package/contents/ui/configLocation.qml:154
+#: win/host/settings/WeatherLocation.qml:128
 msgctxt "weather source"
 msgid "Open-Meteo"
 msgstr "Open-Meteo"
 
 #: weather/package/contents/ui/configLocation.qml:154
+#: win/host/settings/WeatherLocation.qml:128
 msgctxt "weather source"
 msgid "MET Norway"
 msgstr "MET Norway"
 
 #: weather/package/contents/ui/configLocation.qml:155
+#: win/host/settings/WeatherLocation.qml:129
 msgctxt "weather source"
 msgid "WeatherAPI.com"
 msgstr "WeatherAPI.com"
 
 #: weather/package/contents/ui/configLocation.qml:155
+#: win/host/settings/WeatherLocation.qml:129
 msgctxt "weather source"
 msgid "Visual Crossing"
 msgstr "Visual Crossing"
 
 #: weather/package/contents/ui/configLocation.qml:162
+#: win/host/settings/WeatherLocation.qml:133
 msgid "API key:"
 msgstr "Clave de API:"
 
 #: weather/package/contents/ui/configLocation.qml:165
+#: win/host/settings/WeatherLocation.qml:138
 msgctxt "API key field placeholder"
 msgid "paste the key here"
 msgstr "pegue la clave aquí"
 
 #: weather/package/contents/ui/configLocation.qml:171
+#: win/host/settings/WeatherLocation.qml:144
 msgctxt "where the key comes from"
 msgid "A free key: weatherapi.com/signup"
 msgstr "Una clave gratuita: weatherapi.com/signup"
 
 #: weather/package/contents/ui/configLocation.qml:172
+#: win/host/settings/WeatherLocation.qml:145
 msgctxt "where the key comes from"
 msgid "A free key: visualcrossing.com/sign-up"
 msgstr "Una clave gratuita: visualcrossing.com/sign-up"
 
 #: weather/package/contents/ui/configLocation.qml:183
+#: win/host/settings/WeatherLocation.qml:148
 msgctxt "settings section"
 msgid "Location"
 msgstr "Ubicación"
 
 #: weather/package/contents/ui/configLocation.qml:186
+#: win/host/settings/WeatherLocation.qml:151
 msgid "Place:"
 msgstr "Lugar:"
 
 #: weather/package/contents/ui/configLocation.qml:192
+#: win/host/settings/WeatherLocation.qml:155
 msgctxt "search field placeholder"
 msgid "a city, or latitude, longitude"
 msgstr "una ciudad, o latitud, longitud"
 
 #: weather/package/contents/ui/configLocation.qml:198
+#: win/host/settings/WeatherLocation.qml:159
 msgctxt "look the place up"
 msgid "Search"
 msgstr "Buscar"
 
 #: weather/package/contents/ui/configLocation.qml:205
+#: win/host/settings/WeatherLocation.qml:165
 msgid "Current:"
 msgstr "Actual:"
 
 #: weather/package/contents/ui/configLocation.qml:208
+#: win/host/settings/WeatherLocation.qml:172
 #, kde-format
 msgctxt "stored place: name (latitude, longitude)"
 msgid "%1 (%2, %3)"
 msgstr "%1 (%2, %3)"
 
 #: weather/package/contents/ui/configLocation.qml:210
+#: win/host/settings/WeatherLocation.qml:174
 msgctxt "no place stored"
 msgid "not set — guessed from the time zone"
 msgstr "sin fijar — deducido de la zona horaria"
 
 #: weather/package/contents/ui/configLocation.qml:215
+#: win/host/settings/WeatherLocation.qml:179
 msgctxt "forget the stored place"
 msgid "Clear"
 msgstr "Borrar"
 
 #: weather/package/contents/ui/configLocation.qml:256
+#: win/host/settings/WeatherLocation.qml:208
 msgctxt "settings section"
 msgid "Forecast"
 msgstr "Previsión"
 
 #: weather/package/contents/ui/configLocation.qml:260
+#: win/host/settings/WeatherLocation.qml:211
 msgid "Units:"
 msgstr "Unidades:"
 
 #: weather/package/contents/ui/configLocation.qml:261
+#: win/host/settings/WeatherLocation.qml:214
 msgctxt "units: follow the locale's measurement system"
 msgid "by locale"
 msgstr "según la región"
 
 #: weather/package/contents/ui/configLocation.qml:266
+#: win/host/settings/WeatherLocation.qml:218
 msgid "Days:"
 msgstr "Días:"
 
 #: weather/package/contents/ui/configLocation.qml:273
+#: win/host/settings/WeatherLocation.qml:222
 msgid "Attribution:"
 msgstr "Atribución:"
 
 #: weather/package/contents/ui/configLocation.qml:274
+#: win/host/settings/WeatherLocation.qml:223
 msgid "show the source's line"
 msgstr "mostrar la línea de la fuente"
 
 #: weather/package/contents/ui/configMouse.qml:19
+#: win/host/settings/MousePage.qml:15
 msgid "Mouse:"
 msgstr "Ratón:"
 
 #: weather/package/contents/ui/configMouse.qml:20
+#: win/host/settings/MousePage.qml:16
 msgid "let clicks through to the desktop"
 msgstr "dejar pasar los clics al escritorio"
 
@@ -568,6 +619,90 @@ msgid ""
 "While clicks go through, both mouse buttons land on the desktop.\n"
 "The widget takes the mouse only in the desktop's edit mode:\n"
 "that is where its settings are, or ./install.sh with the clicks off switch."
+msgstr ""
+"Mientras los clics pasan de largo, ambos botones del ratón llegan al "
+"escritorio.\n"
+"El widget solo toma el ratón en el modo de edición del escritorio:\n"
+"ahí está su configuración, o ./install.sh con la opción clicks off."
+
+#: win/host/imports/plaintop/WidgetWindow.qml:161
+msgctxt "the widget's window menu"
+msgid "Settings…"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:165
+#, fuzzy
+msgctxt "the widget's window menu"
+msgid "Let clicks through"
+msgstr "dejar pasar los clics al escritorio"
+
+#: win/host/imports/plaintop/WidgetWindow.qml:171
+msgctxt "the widget's window menu"
+msgid "Behind the desktop icons"
+msgstr ""
+
+#: win/host/imports/plaintop/WidgetWindow.qml:178
+msgctxt "the widget's window menu"
+msgid "Close"
+msgstr ""
+
+#: win/host/settings.qml:46
+msgctxt "settings page"
+msgid "Blocks"
+msgstr ""
+
+#: win/host/settings.qml:49
+msgctxt "settings page"
+msgid "Ring"
+msgstr ""
+
+#: win/host/settings.qml:50
+msgctxt "settings page"
+msgid "Player"
+msgstr ""
+
+#: win/host/settings.qml:63
+msgctxt "settings page"
+msgid "Notes"
+msgstr ""
+
+#: win/host/settings.qml:64
+msgctxt "settings page"
+msgid "Holidays"
+msgstr ""
+
+#: win/host/settings.qml:65
+msgctxt "settings page"
+msgid "Accounts"
+msgstr ""
+
+#: win/host/settings.qml:190
+msgctxt "the settings window: the service does not answer"
+msgid "The plaintop service does not answer — nothing changed here is saved."
+msgstr ""
+
+#: win/host/settings/MousePage.qml:21
+#, fuzzy
+msgctxt "Windows: the player's mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop, the "
+"controls' too.\n"
+"The way back is the tray icon's menu, or the widget's own menu: the right "
+"button\n"
+"on it while clicks are not passing — the controls work then as well."
+msgstr ""
+"Mientras los clics pasan de largo, ambos botones del ratón llegan al "
+"escritorio.\n"
+"El widget solo toma el ratón en el modo de edición del escritorio:\n"
+"ahí está su configuración, o ./install.sh con la opción clicks off."
+
+#: win/host/settings/MousePage.qml:22
+#, fuzzy
+msgctxt "Windows: the mouse hint"
+msgid ""
+"While clicks go through, both mouse buttons land on the desktop.\n"
+"The way back is the tray icon's menu, or the widget's own menu:\n"
+"the right button on it while clicks are not passing."
 msgstr ""
 "Mientras los clics pasan de largo, ambos botones del ratón llegan al "
 "escritorio.\n"
