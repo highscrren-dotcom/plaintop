@@ -23,6 +23,10 @@ QtObject {
     // widget → the created window, kept so a widget turned off is destroyed, not hidden.
     property var windows: ({})
     property bool trayMade: false
+    property bool trayTried: false
+    // A window that would not load is not tried again on every poll (which would fill the
+    // log with the same warning twice a second); it is only reported once.
+    property var failed: ({})
 
     function sync() {
         Service.getJson("/ui", function(d) {
@@ -32,7 +36,7 @@ QtObject {
                 const w = shell.widgets[i]
                 const want = shown[w] !== false
                 const have = shell.windows[w] !== undefined
-                if (want && !have) shell.create(w)
+                if (want && !have && !shell.failed[w]) shell.create(w)
                 else if (!want && have) shell.drop(w)
             }
             if (!shell.trayMade) shell.makeTray()
@@ -43,11 +47,17 @@ QtObject {
         const comp = Qt.createComponent(Qt.resolvedUrl(w + ".qml"))
         if (comp.status === Component.Error) {
             console.warn("plaintop shell: " + w + " did not load: " + comp.errorString())
+            const bad = Object.assign({}, shell.failed)
+            bad[w] = true
+            shell.failed = bad
             return
         }
         const obj = comp.createObject(null)
         if (obj === null) {
             console.warn("plaintop shell: " + w + " did not create")
+            const bad = Object.assign({}, shell.failed)
+            bad[w] = true
+            shell.failed = bad
             return
         }
         const next = Object.assign({}, shell.windows)
@@ -65,6 +75,8 @@ QtObject {
     }
 
     function makeTray() {
+        if (shell.trayMade || shell.trayTried) return
+        shell.trayTried = true            // not tried twice a second if it cannot be made
         const comp = Qt.createComponent(Qt.resolvedUrl("tray.qml"))
         if (comp.status === Component.Error) {
             console.warn("plaintop shell: the tray did not load: " + comp.errorString())
