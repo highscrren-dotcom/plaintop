@@ -79,6 +79,7 @@ journalctl --user -b --since "-1min" | grep -i plaintop             # QML errors
 ./install.sh --check-weather                                        # the weather sources: four APIs' answers into the one shape the view draws
 python3 tests/win_service.py; python3 tests/win_bands.py; python3 tests/win_media.py   # the Windows service, no Windows needed
 python3 tests/win_hosts.py --qt /path/to/Qt/6.11                    # the Windows hosts through the shims, against the real service, offscreen
+python3 win/perf.py --seconds 60                                    # the Windows family's own CPU and working set, as Task Manager shows them
 ./install.sh --release 0.5                                          # tag v0.5, push it, GitHub release with the five packages and SHA256SUMS
 ```
 

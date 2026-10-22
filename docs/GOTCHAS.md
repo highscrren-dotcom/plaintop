@@ -159,6 +159,17 @@ The ones a session trips over first; each links to its section with the evidence
 - [The loopback of the default output hears silence while the music plays elsewhere](#the-loopback-of-the-default-output-hears-silence-while-the-music-plays-elsewhere)
 - [The GPU counters list the software adapter too, and three sources have three orders: the LUID is the key](#the-gpu-counters-list-the-software-adapter-too-and-three-sources-have-three-orders-the-luid-is-the-key)
 - [A bare qml window's requests stayed offline on a corporate network; the service fetches for it](#a-bare-qml-windows-requests-stayed-offline-on-a-corporate-network-the-service-fetches-for-it)
+- [psutil's process walk opens every process: 1.5 s for 370 of them behind a security agent](#psutils-process-walk-opens-every-process-15-s-for-370-of-them-behind-a-security-agent)
+- [NtQuerySystemInformation's `ImageName.Buffer` points into the buffer you passed](#ntquerysysteminformations-imagenamebuffer-points-into-the-buffer-you-passed)
+- [psutil's network calls are the priciest thing left in a second](#psutils-network-calls-are-the-priciest-thing-left-in-a-second)
+- [A QML property bound in a component cannot be set from outside; the one-process shell destroys instead](#a-qml-property-bound-in-a-component-cannot-be-set-from-outside-the-one-process-shell-destroys-instead)
+- [The `qml` tool loads one translation file, so one engine needs one catalog](#the-qml-tool-loads-one-translation-file-so-one-engine-needs-one-catalog)
+- [The monitor's seconds come out of step because the lines are rebuilt on a timer, not on the second](#the-monitors-seconds-come-out-of-step-because-the-lines-are-rebuilt-on-a-timer-not-on-the-second)
+- [A rate read once at startup makes its own setting a lie](#a-rate-read-once-at-startup-makes-its-own-setting-a-lie)
+- [The visualizer's smoothing animation is the whole cost of the ring](#the-visualizers-smoothing-animation-is-the-whole-cost-of-the-ring)
+- [A missing loopback library is what a silent spectrum is](#a-missing-loopback-library-is-what-a-silent-spectrum-is)
+- [On a managed network a proxy may answer 503 to 127.0.0.1 — for Python and curl, not for Qt](#on-a-managed-network-a-proxy-may-answer-503-to-127001--for-python-and-curl-not-for-qt)
+- [polib rewrites a whole catalog, and re-encodes what was in it](#polib-rewrites-a-whole-catalog-and-re-encodes-what-was-in-it)
 
 **conky (archive)**
 
@@ -1538,3 +1549,75 @@ With every widget in one engine the shell would speak only one domain's language
 `.po` files at once. It is advisory: a language that will not merge leaves the one-process
 shell in English while the per-widget path keeps its own catalog. 2026-10-21.
 
+## The monitor's seconds come out of step because the lines are rebuilt on a timer, not on the second
+
+The clock is `new Date()` at the moment `MonitorData` rebuilds its lines, and that moment is
+the monitor's own *Interval* setting (`monitor.rate`): a 1000 ms timer fires every second but
+at whatever phase it was started, so the second shown can lag by almost a whole one and
+occasionally skip one — "the seconds don't land", as the desk put it. The cure is the knob
+the page already has: 500 ms or less puts the seconds on the second, and the 200 ms floor is
+visibly exact. Measured on the desk's machine, 2026-10-22.
+
+## A rate read once at startup makes its own setting a lie
+
+`processInterval` and the capture's frames a second were read once, when the service was
+built (`server.main`), while the settings page offered both — so turning the top-process
+list down to a second, or the spectrum down to six frames, changed nothing until the service
+was restarted: measured, 1 s in the settings still gave two walks in ten ticks. What the port
+does now is `settings_store.LiveSettings`: a reader asks the store at most once a second (the
+store re-reads the ini only when its modification time moved), and the sampler, the capture,
+the GPU reader and the LHM reader take their numbers from it. Verified after the change:
+`processInterval` 1 → ten walks in ten ticks; `dataRate` 6 → `/state`'s `fps` 20.0 → 6.0,
+with nothing restarted. A knob the user can turn has to be a knob the running code reads.
+2026-10-22.
+
+## The visualizer's smoothing animation is the whole cost of the ring
+
+With `smoothMs` 70 and twenty data frames a second, every one of the 160 bars restarts a
+70 ms height animation twenty times a second, so the scene is repainted at the display's
+rate instead of the data's — and the ring alone, in its own process with the music playing,
+measured **26% of one core**. `smoothMs` 40 / 30 / 15 / 0 gave 20.7 / 23.0 / 12.5 / 13.7%
+(the middle numbers are noisy; the cliff is at zero). The data rate is *not* the cost: the
+monitor's `Interval` 1000 → 5000 ms moved its CPU by nothing at all (3.99 → 3.67%). Hence the
+spectrum page's *Performance* preset — frames a second, bars, smoothing and the idle rate
+written at once — and the Windows default `smoothMs: 0`. The service's own capture is the
+other half: 20 frames a second inside it measured ~7% of a core, which is why the preset is
+what it follows. 2026-10-22.
+
+## A missing loopback library is what a silent spectrum is
+
+With neither `soundcard` nor `pyaudiowpatch` installed, the service has no capture at all:
+`/state` says `backend: "none"`, `source: "(no capture)"`, the frames are zeros, and the ring
+shows its own notice about it. One `pip install soundcard` later the same machine gave
+`backend: "soundcard"`, the default output as its source, the auto-gain climbing to +45 dB
+and `/bands` twenty times a second with real values (the widget polls it that often, so the
+ring is alive). A CI-built zip already carries the library, because `check.yml` installs it
+before `win/package.py` looks at what is installed. If the music plays on another output, the
+service finds it by itself — `GET /devices` lists every output's peak, and
+`PLAINTOP_CAPTURE=<part of a name>` pins one. 2026-10-22.
+
+## On a managed network a proxy may answer 503 to 127.0.0.1 — for Python and curl, not for Qt
+
+On the desk's machine `HTTP_PROXY`/`HTTPS_PROXY` point at `http://192.168.5.100:10808`, and
+`urllib.request.proxy_bypass('127.0.0.1')` answers **False** there: every `urllib` and
+`curl.exe` request to the local service came back *503 with an empty body*, which reads
+exactly like a broken service. `Invoke-WebRequest` (WinHTTP) answered 200 on the same URL,
+and the QML hosts — which ask through Qt's own stack — were never affected: one session's
+`/settings/<widget>` count was 906 and `/bands` 1669. So when a client says 503 and
+Task Manager says the service is alive, look at the proxy before the code: use a client that
+bypasses it, or `http.client.HTTPConnection` on the socket, which consults no environment at
+all. 2026-10-22.
+
+## polib rewrites a whole catalog, and re-encodes what was in it
+
+The machine had no gettext, so adding nine window strings to `po/*.po` looked like a job for
+`pip install polib` and `POFile.save()`. It writes valid syntax — and it also **re-encoded
+the file's existing non-ASCII**: the catalogs are UTF-8 with CRLF, polib read them with the
+locale's encoding, and every «…», «—» and «“”» came back double-encoded
+(`E2 80 A6` → `C3 A2 E2 82 AC C2 A6`), so no such entry matched its source string any more.
+Four catalogs, ~90 lines, reverted with `git checkout`. What is safe without xgettext:
+**append** the entries as bytes with the file's own endings and encoding
+(`io.open(path, "ab")`), and check them by reading the file back with
+`polib.pofile(path, encoding="utf-8")` and compiling it in memory (`to_binary()` — what
+`msgfmt` does), then run `po/extract.py` where gettext exists so the file comes back
+canonical. 2026-10-22.

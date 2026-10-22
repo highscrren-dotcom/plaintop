@@ -80,6 +80,7 @@ journalctl --user -b --since "-1min" | grep -i plaintop             # ошибк
 ./install.sh --check-weather                                        # источники погоды: ответы четырёх API в одну форму для вида
 python3 tests/win_service.py; python3 tests/win_bands.py; python3 tests/win_media.py   # служба Windows, сама Windows не нужна
 python3 tests/win_hosts.py --qt /путь/к/Qt/6.11                     # хосты Windows через шимы против настоящей службы, offscreen
+python3 win/perf.py --seconds 60                                    # CPU и рабочий набор всего семейства Windows, как у Task Manager
 ./install.sh --release 0.5                                          # тег v0.5, push, GitHub-релиз с пятью пакетами и SHA256SUMS
 ```
 

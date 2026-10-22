@@ -47,7 +47,7 @@ What is in the repository:
 | **`player/`** | the "now playing" widget: track, position bar and controls as text, read from MPRIS through Plasma's media controller module; its view lives in `shared/`, since the visualizer draws it too | works |
 | **`weather/`** | the weather widget: now and the next days as text, from one of four sources over https — Open-Meteo by default — no service of its own | works |
 | **`calendar/`** | the calendar widget: a wall calendar's page as text — one month or three, week numbers, the weekends and today marked — everything from the locale, no service | works |
-| **`win/`** | the same five widgets on Windows 11: bare-Qt window hosts behind QML-only shims of the Plasma modules, and one Python service for the readings — [win/README.md](win/README.md) | written, not yet seen on a Windows desktop |
+| **`win/`** | the same five widgets on Windows 11: bare-Qt window hosts behind QML-only shims of the Plasma modules, and one Python service for the readings — [win/README.md](win/README.md) | works — first run with windows on a real machine (the five windows and the tray in one QML engine; the idle budget and the settings measured there) |
 
 ⚠️ **About the mouse.** The *Mouse* setting lets both buttons through to the desktop: the
 plasmoid disables the wrapper the shell puts around it, so clicks land on the icons and the
@@ -263,8 +263,16 @@ stand-ins under `win/host/imports/` play the Plasma modules those files import, 
 Python service on `127.0.0.1:8788` serves the readings in ksystemstats' vocabulary, the
 spectrum from a WASAPI loopback, the media session, `notes.py`, the holidays and the
 settings. Decision 17 explains why it is built that way; **[win/README.md](win/README.md)**
-says what to install and how to run it, and what has not yet been seen on a real desktop —
-the port was written and checked without one.
+says what to install and how to run it, and which of it has been seen on a real desktop (the
+five windows and the tray now live in **one** QML engine — 166 MiB against 532 across five
+processes — and the service was measured at 0.6% of a core in idle; the Status note says what
+is still unseen).
+
+**Every rate is a setting.** The sensor tick, the top-process list, the network and GPU
+counters, the temperatures and the spectrum's frames a second are all in the settings window,
+and the service reads them *while it runs*: the monitor's clock can be brought onto the second,
+the process list made a second-fresh, the visualizer made cheap, each with no restart
+(decision 18, `win/README.md`).
 
 ## Three layers
 
