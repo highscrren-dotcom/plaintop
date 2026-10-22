@@ -671,8 +671,7 @@ class Capture:
                 self.stamp = now
                 self.frames += 1
                 self._stamps.append(now)
-                if len(self._stamps) > 10 * fps:
-                    del self._stamps[:len(self._stamps) - 6 * fps]
+                self._trim_stamps(fps)
                 next_frame += period
                 if next_frame < now:        # a long read: no burst of catch-up frames
                     next_frame = now + period
@@ -680,6 +679,15 @@ class Capture:
                 if new_fps != fps:          # the preset changed: take up the new period
                     fps = new_fps
                     period = 1.0 / fps
+
+    def _trim_stamps(self, fps):
+        """Keep the last seconds' frame times only, the window state() measures over: ten
+        seconds of stamps before trimming, six kept after. The counts are whole numbers —
+        the rate is a float since it follows the settings, and `del stamps[:float]` is a
+        TypeError, which is exactly how this cost a capture that restarted every second on
+        the desk (`slice indices must be integers…`, 2026-10-22)."""
+        if len(self._stamps) > 10 * fps:
+            del self._stamps[:len(self._stamps) - int(6 * fps)]
 
     def _doze(self):
         """Asleep on silence: the stream closed, one block a second to see whether sound is

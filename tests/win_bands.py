@@ -412,6 +412,26 @@ def test_capture_fps_source():
     print("  ✓ capture: the frame rate follows the settings while it runs")
 
 
+def test_capture_stamp_window():
+    """The frame-time window state() measures over is trimmed with whole numbers: with the
+    rate following the settings it is a float, and `del stamps[:len - 6 * fps]` raised
+    "slice indices must be integers" — which cost a capture that restarted every second on
+    the desk while the music played (2026-10-22)."""
+    backend = bands.SyntheticBackend(tone(1000.0, 0.3), rate=RATE)
+    cap = bands.Capture(backend, sleep=5, fps_source=lambda: 20.0).start()
+    try:
+        cap._stamps = [0.0] * 900          # ten seconds' worth, already past the trim point
+        ok(wait_for(lambda: cap.frames >= 3, 3.0), "frames come with a full stamp window")
+        ok(cap.restarts == 0, "no restart: trimming a float rate is no TypeError: " + repr(cap.restarts))
+        ok(len(cap._stamps) <= 10 * 20 + 5, "the window was trimmed: " + repr(len(cap._stamps)))
+        ok(cap._trim_stamps(20.0) is None, "…and the helper takes a float rate")
+        ok(bands.Capture(backend, fps_source=lambda: 60.0)._trim_stamps(60.0) is None,
+           "and the highest rate too")
+    finally:
+        cap.stop()
+    print("  ✓ capture: the frame-time window trims with a float rate")
+
+
 def test_relay_functions():
     a = bands.Analyzer(RATE, 2)
     frame = run(a, tone(440.0, 0.3), 10)
@@ -435,6 +455,7 @@ if __name__ == "__main__":
     test_capture_follows_sound()
     test_capture_demand()
     test_capture_fps_source()
+    test_capture_stamp_window()
     test_null_backend()
     test_relay_functions()
     print(f"  ✓ bands.py: {passed} checks passed")

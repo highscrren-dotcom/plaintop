@@ -1620,4 +1620,8 @@ Four catalogs, ~90 lines, reverted with `git checkout`. What is safe without xge
 (`io.open(path, "ab")`), and check them by reading the file back with
 `polib.pofile(path, encoding="utf-8")` and compiling it in memory (`to_binary()` — what
 `msgfmt` does), then run `po/extract.py` where gettext exists so the file comes back
-canonical. 2026-10-22.
+canonical. The same mistake is one keystroke away with anything that rewrites a file whose
+encoding it does not know: PowerShell's `Get-Content -Raw | Set-Content -Encoding UTF8` did
+it to a test file the same day (every `✓` became `âœ“`, a 21-line change became 104), so check
+for mojibake after any such edit and prefer a tool that appends or writes UTF-8 explicitly.
+2026-10-22.
