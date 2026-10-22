@@ -1049,3 +1049,18 @@ real step is a native network counter reader (`GetIfTable2`, `GetAdaptersAddress
 psutil's network calls are what is left of the tick; and if a widget misbehaves inside one
 engine, `oneProcess=false` is the documented retreat, not a rewrite.
 
+**The rates are the user's, not the code's (2026-10-22).** A number the budget rests on must
+not be a constant, or the settings window lies: the monitor's page now carries the widget's
+own interval, the top-process list's and the service's own four (sensors, network, GPU,
+temperatures), the spectrum's a *Performance* preset that writes frames a second, bars,
+smoothing and the idle rate at once — and the service reads every one of them **while it
+runs** (`settings_store.LiveSettings`, at most once a second), so turning one down is felt on
+the next tick: no restart, no re-launch. Measured on the desk's machine (five widgets, music
+playing): the ring alone, smoothed at 20 frames a second, cost ~25% of one core, ~12% with
+the smoothing off, ~5% at 10 frames a second with 96 bars — and the capture inside the
+service a further ~7% at 20 a second. That is why *balanced* (20 frames, no smoothing) is
+the Windows default, and why the tiers are one click apart with the costs written beside
+them. The watched clock is the same story from the other side: its seconds land on the
+second only once the monitor's own interval is short enough, which is exactly the knob the
+page now offers.
+
