@@ -280,9 +280,9 @@ class LHM:
     reads it; the last tree is kept, so a monitor that comes back does not blank first."""
 
     def __init__(self, url="http://localhost:8085/data.json", every=5.0, retry=30.0,
-                 perf=None, demand=None):
+                 perf=None, demand=None, every_source=None):
         self.url, self.every, self.retry = url, every, retry
-        self.perf, self.demand = perf, demand
+        self.perf, self.demand, self.every_source = perf, demand, every_source
         self._tree = None
 
     def tree(self):
@@ -296,6 +296,16 @@ class LHM:
         threading.Thread(target=self._loop, daemon=True, name="lhm").start()
         return self
 
+    def _every(self):
+        """The interval the settings ask for now (the page offers it), the constructor's
+        value where there is no source; a floor keeps a zero from spinning the thread."""
+        if self.every_source is None:
+            return float(self.every)
+        try:
+            return max(0.5, float(self.every_source()))
+        except Exception:
+            return float(self.every)
+
     def _loop(self):
         while True:
             if self.demand is not None and not self.demand():
@@ -306,7 +316,7 @@ class LHM:
                 self._tree = self.fetch()
                 if self.perf is not None:
                     self.perf.record("lhm", (time.monotonic() - t0) * 1000.0)
-                time.sleep(self.every)
+                time.sleep(self._every())
             except Exception:
                 self._tree = None
                 time.sleep(self.retry)
@@ -517,12 +527,20 @@ class Sampler:
 
     def __init__(self, interval=1.0, ps=psutil, lhm=None, clock=time.monotonic, windows=WINDOWS,
                  gpu=None, perf=None, process_interval=0.0, visible=None, need_processes=None,
-                 want_block=None, native=None, net_interval=0.0):
+                 want_block=None, native=None, net_interval=0.0,
+                 interval_source=None, process_interval_source=None, net_interval_source=None):
         self.interval, self.ps, self.lhm, self.clock, self.windows = interval, ps, lhm, clock, windows
         self.gpu = gpu                            # gpu_win.Reader: the counters, under LHM's ids
         self.perf = perf                          # perf.Perf: the /perf meters, or None
         self.native = native                      # NativeProcesses: the one-call walk, or None
         self.process_interval = float(process_interval or 0.0)
+        # The same three numbers read again while the service runs (settings_store.LiveSettings
+        # through server.main): the settings window offers them, so turning one down has to be
+        # felt on the next tick rather than at the next restart. None keeps the constructor's
+        # value, which is what the stand passes, so a Sampler with no sources behaves as before.
+        self._interval_source = interval_source
+        self._process_interval_source = process_interval_source
+        self._net_interval_source = net_interval_source
         # The network lines' own floor: their three psutil calls are the priciest thing left
         # in the tick (~30 ms on the desk's machine, GetAdaptersAddresses and the counters),
         # so they run every net_interval seconds and the same lines are republished in
@@ -567,6 +585,19 @@ class Sampler:
         except Exception:
             return True
 
+    def live(self, source, fallback):
+        """One of the three rates, read again from the settings while the service runs; the
+        constructor's value stands where no source was given or the store answers junk."""
+        if source is None:
+            return float(fallback)
+        try:
+            return float(source())
+        except Exception:
+            return float(fallback)
+
+    def live_interval(self):
+        return max(0.1, self.live(self._interval_source, self.interval))
+
     def start(self):
         threading.Thread(target=self._loop, daemon=True, name="sampler").start()
         if self.windows:
@@ -579,6 +610,7 @@ class Sampler:
 
     def _loop(self):
         while True:
+            interval = self.live_interval()
             if not self.visible():
                 # Nothing draws the monitor (Win+D, or the window is gone): the tick itself
                 # is parked, not just its probes — no psutil call is made at all, and
@@ -586,13 +618,13 @@ class Sampler:
                 # is fresh within the host's own two-second poll. Its probes are skipped
                 # separately in _processes_if_wanted and _network, and the slow loop and the
                 # capture check the same word.
-                time.sleep(max(self.interval, 2.0))
+                time.sleep(max(interval, 2.0))
                 continue
             try:
                 self.sample()
             except Exception as e:                # a bad reading must not end the thread
                 print(f"monitor sample failed: {e!r}", file=sys.stderr, flush=True)
-            time.sleep(self.interval)
+            time.sleep(interval)
 
     def _slow_loop(self):
         """The Windows probes on their own, slower clocks: the gateway and the socket count
@@ -737,8 +769,9 @@ class Sampler:
         if not (self.need_processes() and self.visible()):
             self._processes_rows = None
             return []
-        if (self._processes_rows is not None and self.process_interval > 0
-                and now - self._processes_at < self.process_interval):
+        every = self.live(self._process_interval_source, self.process_interval)
+        if (self._processes_rows is not None and every > 0
+                and now - self._processes_at < every):
             return self._processes_rows
         t0 = time.monotonic()
         rows = self._processes()
@@ -768,6 +801,9 @@ class Sampler:
         block is off; then the lines simply do not exist, as `pressure/*` on Windows."""
         due = (self.net_interval <= 0 or self._net_at == 0.0
                or now - self._net_at >= self.net_interval)
+        if self._net_interval_source is not None:
+            every = self.live(self._net_interval_source, self.net_interval)
+            due = every <= 0 or self._net_at == 0.0 or now - self._net_at >= every
         if not due:
             return self._net_sensors
         self._net_at = now

@@ -384,6 +384,34 @@ def test_capture_demand():
     print("  ✓ capture: the stream rests while the spectrum is off screen")
 
 
+def test_capture_fps_source():
+    """The capture's frame rate follows the settings while it runs — the spectrum page's
+    performance preset is meant to be felt with the music playing, not at the next restart —
+    and state() reports the rate actually in force."""
+    backend = bands.SyntheticBackend(tone(1000.0, 0.3), rate=RATE)
+    want = [20.0]
+    cap = bands.Capture(backend, sleep=5, fps=20, fps_source=lambda: want[0]).start()
+    try:
+        ok(wait_for(lambda: cap.frames >= 5, 3.0), "frames come")
+        f0 = cap.frames
+        time.sleep(1.6)
+        fast = (cap.frames - f0) / 1.6
+        ok(12 <= fast <= 26, "about 20 frames a second: %.1f" % fast)
+        want[0] = 6.0
+        time.sleep(1.2)                    # the source is re-read at most once a second
+        f1 = cap.frames
+        time.sleep(2.0)
+        slow = (cap.frames - f1) / 2.0
+        ok(3 <= slow <= 9, "after the change, about 6: %.1f" % slow)
+        ok(4.0 <= cap.state()["fps"] <= 8.0, "state() reports the rate in force: %r" % cap.state()["fps"])
+    finally:
+        cap.stop()
+    ok(bands.Capture(backend, fps_source=lambda: 1000.0).fps_now() == 60.0, "the rate is capped at 60")
+    ok(bands.Capture(backend, fps_source=lambda: 0.0).fps_now() == 1.0, "and floored at 1")
+    ok(bands.Capture(backend, fps=30).fps_now() == 30.0, "no source: the constructor's value")
+    print("  ✓ capture: the frame rate follows the settings while it runs")
+
+
 def test_relay_functions():
     a = bands.Analyzer(RATE, 2)
     frame = run(a, tone(440.0, 0.3), 10)
@@ -406,6 +434,7 @@ if __name__ == "__main__":
     test_capture_restart()
     test_capture_follows_sound()
     test_capture_demand()
+    test_capture_fps_source()
     test_null_backend()
     test_relay_functions()
     print(f"  ✓ bands.py: {passed} checks passed")

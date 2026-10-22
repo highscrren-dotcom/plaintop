@@ -30,8 +30,9 @@ machine is not: `win\perf.py` is what takes them.
 - **Python 3.12** from python.org or the Store, with
   `pip install numpy psutil holidays tzdata tzlocal`. Optional, each bringing one
   thing: `winsdk` — the player (the System Media Transport Controls); `soundcard` or
-  `pyaudiowpatch` — the visualizer's sound capture (WASAPI loopback of the default output);
-  `pycaw` — the monitor's sound line.
+  `pyaudiowpatch` — the visualizer's sound capture (WASAPI loopback of the default output;
+  without one of them the service has no capture at all and the ring says so and stays
+  dark); `pycaw` — the monitor's sound line.
 - **Qt 6.8 or newer** — only `qml.exe` and its QML modules are used. The Qt online
   installer (`C:\Qt\6.10.3\msvc2022_64`, say), or `pip install aqtinstall` and
   `aqt install-qt windows desktop 6.10.3 win64_msvc2022_64`. The hosts pass their stand on
@@ -153,6 +154,13 @@ it left:
   sensor tick parks while the monitor is not.
 - **The hosts report whether they are on screen** (`POST /ui {"visible": …}`, sent on every
   change), so Win+D or a closed widget stops the sampling behind it until it is back.
+- **The rates are yours to turn.** The monitor's *Updates* group carries the widget's own
+  interval, the top-process list's, and the service's own four (sensors, network, GPU,
+  temperatures); the spectrum's *Performance* preset writes frames a second, bars, smoothing
+  and the idle rate at once (quiet / balanced / smooth, or *Custom* for the numbers below
+  it). All of them are read while the service runs — a change is felt within a second, with
+  no restart — and each group's hint says what turning it up costs. The defaults are the
+  values the budget was measured with.
 - **`GET /perf`** answers the service's own figures — CPU share of this process, working
   set, thread count, requests by route, the milliseconds a sensor tick, the process walk
   and a GPU read cost, the capture's frame rate. **`python win\perf.py --seconds 60`** sums

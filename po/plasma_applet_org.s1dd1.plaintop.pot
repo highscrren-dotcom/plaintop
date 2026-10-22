@@ -1461,3 +1461,47 @@ msgstr ""
 msgctxt "schema: parameter name"
 msgid "Alert from (0 — never)"
 msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgid ""
+"How often the lines are drawn and the sensors are asked for: 1000 ms is\n"
+"one reading a second, and the clock's seconds land on the second from about 500 ms\n"
+"down. Lower means a fresher monitor and more work for the service."
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgid ""
+"The process list is the dearest reading: about 1% of a core every second\n"
+"on a machine of some 370 processes, a fifth of that every five. Nothing at all is read\n"
+"while no block shows a list or the monitor is off screen."
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "Sensors, every … s:"
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "Network, every … s:"
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "GPU, every … s:"
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "Temperatures and fans, every … s:"
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgid ""
+"What the plaintop service itself reads at, and how fresh the values\n"
+"under “Interval” can be at all: reading faster than the service does shows the\n"
+"same numbers again. The network counters and the GPU counters are the two most\n"
+"expensive of the four; the temperatures need LibreHardwareMonitor. A change is\n"
+"felt within a second, without restarting anything."
+msgstr ""
+
+#: win/host/settings/MonitorGeneral.qml
+msgctxt "settings section"
+msgid "The service's rates"
+msgstr ""

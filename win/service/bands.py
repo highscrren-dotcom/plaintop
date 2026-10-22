@@ -497,7 +497,7 @@ class Capture:
     backend as relay.py's pump() supervises cava, and idles on silence."""
 
     def __init__(self, backend=None, bars=BARS, fps=FPS, low_hz=LOW_HZ, high_hz=HIGH_HZ,
-                 noise=NOISE, sleep=SLEEP, demand=None):
+                 noise=NOISE, sleep=SLEEP, demand=None, fps_source=None):
         self.backend = backend if backend is not None else pick_backend()
         self.bars = bars
         self.fps = fps
@@ -510,6 +510,11 @@ class Capture:
         # Windows budget); the widget that is off screen costs nothing. None means "always",
         # which is what the stand and a service built without a manager see.
         self.demand = demand
+        # fps_source(): the frames a second the settings ask for now, so the spectrum
+        # page's preset is real without a restart. Called at most once a second.
+        self.fps_source = fps_source
+        self._fps_at = -1e9
+        self._fps_now = float(fps)
         self.scan = []                    # the doze's last probes: [(output, peak)], newest last
         self._stamps = []                 # the last seconds' frame times, for the measured rate
         self.frames = 0
@@ -526,6 +531,22 @@ class Capture:
             return True if self.demand is None else bool(self.demand())
         except Exception:
             return True
+
+    def fps_now(self):
+        """The frames a second the settings ask for now (the spectrum page's performance
+        preset): read at most once a second, so the constant is not re-read per frame and a
+        change is still felt within a second. Below one the ring would freeze, so the floor
+        is 1; above 60 the relay's own rate is the limit anyway."""
+        if self.fps_source is None:
+            return float(self.fps)
+        now = time.monotonic()
+        if now - self._fps_at >= 1.0:
+            self._fps_at = now
+            try:
+                self._fps_now = min(60.0, max(1.0, float(self.fps_source())))
+            except Exception:
+                self._fps_now = float(self.fps)
+        return self._fps_now
 
     def start(self):
         self._thread = threading.Thread(target=self._run, name="bands-capture", daemon=True)
@@ -564,7 +585,7 @@ class Capture:
                 "gain_db": round(20 * math.log10(a.gain), 1) if a is not None and a.gain > 0 else 0.0,
                 "gain_max_db": GAIN_MAX_DB,
                 "source": self.source or "(default)", "age": round(age, 2),
-                "bars": self.bars, "fps": self.fps, "backend": self.backend.name,
+                "bars": self.bars, "fps": round(self.fps_now(), 1), "backend": self.backend.name,
                 "libraries": dict(LIBRARIES),
                 # The outputs the backend can choose from, the one pinned by PLAINTOP_CAPTURE,
                 # and what the doze heard on each it tried — the reconnaissance of a dark ring.
@@ -607,7 +628,7 @@ class Capture:
         a = self._analyzer
         if a is None or a.rate != rate or a.in_channels != channels:
             self._analyzer = Analyzer(rate, channels, self.bars, self.low_hz, self.high_hz,
-                                      self.fps, self.noise)
+                                      self.fps_now(), self.noise)
             if a is not None:               # a new device keeps the loudness the ring settled on
                 self._analyzer.gain, self._analyzer.gain_init = a.gain, a.gain_init
 
@@ -619,9 +640,12 @@ class Capture:
 
     def _pump(self):
         """Blocks in, a frame every 1/fps out — on a timer, not per block, so the frame
-        rate is the same whatever packet size a backend delivers."""
+        rate is the same whatever packet size a backend delivers. The rate is looked up
+        again each frame (at most once a second, `fps_now`): the spectrum page's preset is
+        meant to be felt while the music plays, not at the next restart."""
         backend = self.backend
-        period = 1.0 / self.fps
+        fps = self.fps_now()
+        period = 1.0 / fps
         next_frame = time.monotonic() + period
         quiet_since = None
         while not self._stop.is_set():
@@ -647,11 +671,15 @@ class Capture:
                 self.stamp = now
                 self.frames += 1
                 self._stamps.append(now)
-                if len(self._stamps) > 10 * self.fps:
-                    del self._stamps[:len(self._stamps) - 6 * self.fps]
+                if len(self._stamps) > 10 * fps:
+                    del self._stamps[:len(self._stamps) - 6 * fps]
                 next_frame += period
                 if next_frame < now:        # a long read: no burst of catch-up frames
                     next_frame = now + period
+                new_fps = self.fps_now()
+                if new_fps != fps:          # the preset changed: take up the new period
+                    fps = new_fps
+                    period = 1.0 / fps
 
     def _doze(self):
         """Asleep on silence: the stream closed, one block a second to see whether sound is

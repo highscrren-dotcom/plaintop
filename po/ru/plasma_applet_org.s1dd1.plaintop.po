@@ -1516,3 +1516,57 @@ msgstr "Знаков после запятой"
 msgctxt "schema: parameter name"
 msgid "Alert from (0 — never)"
 msgstr "Тревога от (0 — никогда)"
+
+#: win/host/settings/MonitorGeneral.qml
+msgid ""
+"How often the lines are drawn and the sensors are asked for: 1000 ms is\n"
+"one reading a second, and the clock's seconds land on the second from about 500 ms\n"
+"down. Lower means a fresher monitor and more work for the service."
+msgstr ""
+"Как часто перерисовываются строки и запрашиваются датчики: 1000 мс — одно\n"
+"чтение в секунду; примерно с 500 мс секунды на часах попадают в секунду. Меньше —\n"
+"свежее монитор и больше работы службе."
+
+#: win/host/settings/MonitorGeneral.qml
+msgid ""
+"The process list is the dearest reading: about 1% of a core every second\n"
+"on a machine of some 370 processes, a fifth of that every five. Nothing at all is read\n"
+"while no block shows a list or the monitor is off screen."
+msgstr ""
+"Список процессов — самое дорогое чтение: около 1 % ядра раз в секунду на машине\n"
+"примерно с 370 процессами, пятая часть от этого — раз в пять секунд. Ничего не\n"
+"читается вовсе, когда ни один блок не рисует список или монитор скрыт."
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "Sensors, every … s:"
+msgstr "Датчики, раз в … с:"
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "Network, every … s:"
+msgstr "Сеть, раз в … с:"
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "GPU, every … s:"
+msgstr "GPU, раз в … с:"
+
+#: win/host/settings/MonitorGeneral.qml
+msgid "Temperatures and fans, every … s:"
+msgstr "Температуры и вентиляторы, раз в … с:"
+
+#: win/host/settings/MonitorGeneral.qml
+msgid ""
+"What the plaintop service itself reads at, and how fresh the values\n"
+"under “Interval” can be at all: reading faster than the service does shows the\n"
+"same numbers again. The network counters and the GPU counters are the two most\n"
+"expensive of the four; the temperatures need LibreHardwareMonitor. A change is\n"
+"felt within a second, without restarting anything."
+msgstr ""
+"То, с какой частотой читает сама служба plaintop, и насколько вообще свежими\n"
+"могут быть значения «Интервала»: читать чаще службы — видеть те же числа. Сетевые\n"
+"счётчики и счётчики GPU — два самых дорогих из четырёх; температурам нужен\n"
+"LibreHardwareMonitor. Изменение заметно в течение секунды, без перезапуска."
+
+#: win/host/settings/MonitorGeneral.qml
+msgctxt "settings section"
+msgid "The service's rates"
+msgstr "Частоты службы"

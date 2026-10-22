@@ -471,15 +471,27 @@ def main():
     def monitor_visible():
         return svc.is_visible("monitor")
 
+    # The rates the settings window offers are read again while the service runs, so a change
+    # is felt on the next tick and no restart is needed (settings_store.LiveSettings; the
+    # store re-reads the ini only when its modification time moved).
+    ss = svc.module("settings_store")
+    mon_live = spec_live = None
+    if store is not None and ss is not None:
+        mon_live = ss.LiveSettings(store, "monitor",
+                                   ("sampleInterval", "processInterval", "netInterval",
+                                    "gpuInterval", "lhmInterval"))
+        spec_live = ss.LiveSettings(store, "spectrum", ("dataRate",))
+
+    def mon_number(key, fallback):
+        return mon_live.number(key, fallback) if mon_live is not None else float(fallback)
+
+    def spec_number(key, fallback):
+        return spec_live.number(key, fallback) if spec_live is not None else float(fallback)
+
     mw = svc.module("monitor_win")
     if mw is not None:
-        process_interval = 5.0
         native = mw.NativeProcesses() if WINDOWS else None
         if store is not None:
-            try:
-                process_interval = float(store.get("monitor")[1].get("processInterval", 5) or 5)
-            except Exception:
-                process_interval = 5.0
             try:
                 if store.get("monitor")[1].get("nativeProcesses", True) is False:
                     native = None                                   # the way back to psutil
@@ -489,22 +501,33 @@ def main():
         gw = svc.module("gpu_win")
         # The counters every 5 s rather than 2: measured ~20 ms a read on the desk's machine
         # (a wildcard PDH query has an instance per process using the GPU), which is 1% of a
-        # core at 2 s — a fifth of that is enough for a monitor's GPU line.
-        gpu = (gw.Reader(interval=5.0, perf=svc.perf, demand=lambda: monitor_visible() and want("gpu")).start()
+        # core at 2 s — a fifth of that is enough for a monitor's GPU line. The settings'
+        # own value wins, and follows it while the service runs.
+        gpu = (gw.Reader(interval=mon_number("gpuInterval", 5.0), perf=svc.perf,
+                         demand=lambda: monitor_visible() and want("gpu"),
+                         interval_source=lambda: mon_number("gpuInterval", 5.0)).start()
                if gw is not None else None)
-        lhm = mw.LHM(perf=svc.perf, demand=monitor_visible).start()
+        lhm = mw.LHM(every=mon_number("lhmInterval", 5.0), perf=svc.perf, demand=monitor_visible,
+                     every_source=lambda: mon_number("lhmInterval", 5.0)).start()
         svc.sampler = mw.Sampler(lhm=lhm, gpu=gpu, perf=svc.perf, native=native,
-                                 process_interval=process_interval, net_interval=5.0,
+                                 process_interval=mon_number("processInterval", 5.0),
+                                 net_interval=mon_number("netInterval", 5.0),
+                                 interval=mon_number("sampleInterval", 1.0),
                                  visible=monitor_visible,
                                  need_processes=lambda: mw.wants_processes(store),
-                                 want_block=want).start()
+                                 want_block=want,
+                                 interval_source=lambda: mon_number("sampleInterval", 1.0),
+                                 process_interval_source=lambda: mon_number("processInterval", 5.0),
+                                 net_interval_source=lambda: mon_number("netInterval", 5.0)).start()
     bands = svc.module("bands")
     if bands is not None:
         try:
             # The capture's frame rate and band count are the spectrum's own settings
-            # (Phase 1: 20 fps and the widget's bar count, not the relay's fixed 30 × 256),
-            # so the service computes only what the ring draws. The capture runs only while
-            # the spectrum is on screen (Phase 3); a hidden or closed ring costs no stream.
+            # (Phase 1: the widget's own rate, not the relay's fixed 30 × 256), so the service
+            # computes only what the ring draws; the rate follows the settings while it runs
+            # (the page's performance preset). The capture runs only while the spectrum is on
+            # screen (Phase 3); a hidden or closed ring costs no stream. The band count is
+            # start-time only: the ring resamples to its own.
             spec = {}
             if store is not None:
                 try:
@@ -512,9 +535,10 @@ def main():
                 except Exception:
                     spec = {}
             bars = int(spec.get("bars") or bands.BARS)
-            fps = int(spec.get("dataRate") or bands.FPS)
             svc.capture = bands.Capture(demand=lambda: svc.is_visible("spectrum"),
-                                        bars=max(2, bars), fps=max(1, fps))
+                                        bars=max(2, bars),
+                                        fps=max(1, int(spec_number("dataRate", bands.FPS))),
+                                        fps_source=lambda: spec_number("dataRate", bands.FPS))
             svc.capture.start()
         except Exception as e:                        # no audio device, no loopback: /bands serves zeros
             print(f"capture not started: {e!r}", file=sys.stderr, flush=True)

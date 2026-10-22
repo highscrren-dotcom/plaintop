@@ -129,9 +129,16 @@ something shows them (`win/service/monitor_win.py`):
   1.5 s for 370 processes behind a security agent). It is therefore: taken from
   `NtQuerySystemInformation(SystemProcessInformation)` in one call where
   `nativeProcesses` is on (10 ms for the same list); run no more often than
-  `processInterval` seconds (default **5**); skipped entirely when no enabled block draws a
-  top list (`blocksJson`, or the packaged default) or the monitor is off screen — then
-  `processes` is `[]`, not stale. With `nativeProcesses=false` the psutil walk comes back.
+  `processInterval` seconds (default **5**, the page offers **1** to 60 — about 1% of a core
+  a second at the low end and a fifth of that at the default); skipped entirely when no
+  enabled block draws a top list (`blocksJson`, or the packaged default) or the monitor is
+  off screen — then `processes` is `[]`, not stale. With `nativeProcesses=false` the psutil
+  walk comes back.
+- **Every rate is a setting** (`sampleInterval`, `processInterval`, `netInterval`,
+  `gpuInterval`, `lhmInterval`, and the spectrum's `dataRate`), read again while the service
+  runs: the monitor page's *Updates* and *The service's rates* groups and the spectrum page's
+  *Performance* preset are the knobs, and the faster they are turned the more the service
+  costs. The values written above are the ones the idle budget was measured with.
 - **`network/<iface>/…`** costs ~30 ms a read in psutil's own API calls, so it is read
   every 5 s and the adapter facts (names, addresses, up/down) every 60 s; the lines are
   republished unchanged in between and the rates are deltas over the real gap. Where no
@@ -256,10 +263,23 @@ The settings of one widget (`monitor`, `spectrum`, `player`, `weather`, `calenda
 key of that widget's `package/contents/config/main.xml` with the stored value or the
 default, plus the window keys the plasmoid never had — `winX`, `winY`, `screen`,
 `behindIcons` — and, for the monitor, the service's own keys: `processInterval` (seconds
-between process reads, default **5**), `nativeProcesses` (the one-call walk, default
-**true**) and `oneProcess` (one engine for every widget, default **true**; `false` is the
-way back to a process per widget). The spectrum's `dataRate` (default **20**) and
-`idleRate` (**2**) are lowered on Windows. Stored in `%APPDATA%\plaintop\<widget>.ini` (one
+between process reads, default **5**), `sampleInterval` (the whole sensor tick, **1**),
+`netInterval` (**5**), `gpuInterval` (**5**), `lhmInterval` (**5**), `nativeProcesses` (the
+one-call walk, default **true**) and `oneProcess` (one engine for every widget, default
+**true**; `false` is the way back to a process per widget). The spectrum's `dataRate`
+(default **20**), `idleRate` (**2**), `smoothMs` (**0**) and `renderProfile`
+(`quiet`/`balanced`/`smooth`/`custom`, **balanced**) are lowered on Windows; the page's
+*Performance* combo writes the first three and `bars` at once, and `renderProfile` is only
+the label of the tier those numbers add up to.
+
+**These rates are read while the service runs** (`settings_store.LiveSettings`, at most once
+a second), so turning one down — a faster process list, a fresher tick, a slower capture —
+is felt on the next tick: no restart, no re-launch of the widget. `bands.py`'s capture
+follows `dataRate`, the sampler follows `sampleInterval`/`processInterval`/`netInterval`,
+`gpu_win.py`'s reader follows `gpuInterval`, and the LibreHardwareMonitor reader
+`lhmInterval`; the spectrum's band count is the one value taken at start (the ring resamples
+to its own `bars` anyway). A zero or junk value falls back to the reader's own default
+rather than stopping it. Stored in `%APPDATA%\plaintop\<widget>.ini` (one
 `[General]` section, the same key names), which a person may edit; the service re-reads it
 when it changes. `GET` answers `{"stamp": 17, "values": {…}}`; `GET …?since=17` answers 304
 while nothing changed, so a host may ask every five seconds for nothing. `POST {"key":

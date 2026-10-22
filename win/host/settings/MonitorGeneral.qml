@@ -131,11 +131,36 @@ SettingsPage {
         label: page.i18n("Interval, ms:")
         SettingSpin { key: "updateInterval"; from: 200; to: 10000; stepSize: 100 }
     }
+    Hint {
+        text: page.i18n("How often the lines are drawn and the sensors are asked for: 1000 ms is\none reading a second, and the clock's seconds land on the second from about 500 ms\ndown. Lower means a fresher monitor and more work for the service.")
+    }
     FormRow {
         label: page.i18n("Top processes, every … s:")
-        SettingSpin { key: "processInterval"; from: 2; to: 60 }
+        SettingSpin { key: "processInterval"; from: 1; to: 60 }
     }
     Hint {
-        text: page.i18n("The process list is the most expensive thing collected: every 2 s\nabout 3% of a core, every 10 s about 1.3%")
+        text: page.i18n("The process list is the dearest reading: about 1% of a core every second\non a machine of some 370 processes, a fifth of that every five. Nothing at all is read\nwhile no block shows a list or the monitor is off screen.")
+    }
+
+    Section { title: page.i18nc("settings section", "The service's rates") }
+
+    FormRow {
+        label: page.i18n("Sensors, every … s:")
+        SettingSpin { key: "sampleInterval"; from: 1; to: 10 }
+    }
+    FormRow {
+        label: page.i18n("Network, every … s:")
+        SettingSpin { key: "netInterval"; from: 1; to: 60 }
+    }
+    FormRow {
+        label: page.i18n("GPU, every … s:")
+        SettingSpin { key: "gpuInterval"; from: 1; to: 60 }
+    }
+    FormRow {
+        label: page.i18n("Temperatures and fans, every … s:")
+        SettingSpin { key: "lhmInterval"; from: 1; to: 60 }
+    }
+    Hint {
+        text: page.i18n("What the plaintop service itself reads at, and how fresh the values\nunder “Interval” can be at all: reading faster than the service does shows the\nsame numbers again. The network counters and the GPU counters are the two most\nexpensive of the four; the temperatures need LibreHardwareMonitor. A change is\nfelt within a second, without restarting anything.")
     }
 }

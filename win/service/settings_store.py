@@ -65,12 +65,26 @@ WINDOWS_DEFAULTS = {
         # One QML engine for every widget and the tray instead of a process each (Phase 2).
         # Off, a process per widget comes back whole — the way out of a shell problem.
         "oneProcess": True,
+        # The service's own reading rates, in seconds: what the settings window's Updates
+        # group offers. They are read while the service runs (LiveSettings below), so a
+        # change applies within a tick and no restart is needed. The values here are the
+        # ones the budget was measured with; every one of them may be lowered for a fresher
+        # monitor at a higher cost, and the page's hint says what each costs.
+        "sampleInterval": 1,           # the whole sensor tick (cpu, memory, disks, battery)
+        "netInterval": 5,              # the network counters
+        "gpuInterval": 5,              # the GPU performance counters
+        "lhmInterval": 5,              # LibreHardwareMonitor's tree
     },
     "spectrum": {"winX": 700, "winY": 120,
+                 # Presets: the page's "Performance" combo writes these four at once, and
+                 # the numbers below are the ones the preset names say (the "balanced" tier,
+                 # the Windows default: 20 frames a second without the per-bar smoothing
+                 # animation, which alone cost ~25% of a core on the measured machine).
+                 "renderProfile": "balanced",
                  # Twenty frames a second still reads as smooth on a ring of bars, and the
                  # poll rate is what the widget's own CPU tracks; two a second while quiet
                  # (with hideWhenQuiet) makes silence nearly free.
-                 "dataRate": 20, "idleRate": 2, "hideWhenQuiet": True},
+                 "dataRate": 20, "idleRate": 2, "smoothMs": 0, "hideWhenQuiet": True},
     "player": {"winX": 60, "winY": 1040},
     "weather": {"winX": 600, "winY": 60},
     # holidayRegions has no entry in main.xml: on Plasma the regions live in KHolidays'
@@ -238,6 +252,47 @@ class Store:
 
     def types(self, widget):
         return {k: kind for k, (kind, _) in self.schema[widget].items()}
+
+
+class LiveSettings:
+    """The few numbers the service itself reads at (settings_store.WINDOWS_DEFAULTS): the
+    sample, process, network, GPU and LHM intervals, and the spectrum's frames a second.
+
+    Why it exists: a rate read once at startup makes the setting a lie — the page offers
+    "Top processes, every … s" from 1 to 60, and turning it down must be felt without
+    restarting the service. This reads the widget's values at most once a second (the store
+    itself re-reads the ini only when its modification time moved), so a change in the
+    settings window reaches the sampler, the capture and the GPU reader on their next tick.
+
+    Not thread-safe on purpose: one instance per reader, each used from that reader's own
+    thread, so there is nothing to guard."""
+
+    def __init__(self, store, widget, keys, clock=time.monotonic, every=1.0):
+        self.store, self.widget, self.keys = store, widget, tuple(keys)
+        self.clock, self.every = clock, float(every)
+        self._values, self._at = {}, -1e9
+
+    def values(self):
+        if self.store is None:
+            return {}
+        now = self.clock()
+        if now - self._at < self.every:
+            return self._values
+        self._at = now
+        try:
+            got = self.store.get(self.widget)[1]
+        except Exception:                 # no store, or a widget the store does not know
+            return self._values
+        self._values = {k: got[k] for k in self.keys if k in got}
+        return self._values
+
+    def number(self, key, fallback):
+        """The current value as a number, or `fallback` while the setting is absent or is
+        not a number; a floor keeps a hand-edited zero from stopping a reader outright."""
+        try:
+            return float(self.values().get(key))
+        except (TypeError, ValueError):
+            return float(fallback)
 
 
 if __name__ == "__main__":

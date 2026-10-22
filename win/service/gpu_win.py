@@ -360,13 +360,25 @@ class Reader:
     parks the whole loop where nothing reads it. Off Windows, or where the counters are
     missing, sensors() is {} and the reason is said once on stderr."""
 
-    def __init__(self, interval=2.0, slow=15.0, ram_total=0, perf=None, demand=None):
+    def __init__(self, interval=2.0, slow=15.0, ram_total=0, perf=None, demand=None,
+                 interval_source=None):
         self.interval, self.slow, self.ram_total = interval, slow, ram_total
         self.perf, self.demand = perf, demand
+        # The counter interval as the settings have it now (the monitor page offers it), so a
+        # change is felt without a restart; the constructor's value where there is no source.
+        self.interval_source = interval_source
         self._lock = threading.Lock()
         self._sensors = {}
         self._cards = []                         # LUIDs in the order first seen: a stable index
         self.enabled = WINDOWS
+
+    def interval_now(self):
+        if self.interval_source is None:
+            return float(self.interval)
+        try:
+            return max(0.25, float(self.interval_source()))
+        except Exception:
+            return float(self.interval)
 
     def start(self):
         if self.enabled:
@@ -396,8 +408,9 @@ class Reader:
                 self.ram_total = 0
         smi, last_smi = [], 0.0
         while True:
+            interval = self.interval_now()
             if self.demand is not None and not self.demand():
-                time.sleep(self.interval)
+                time.sleep(interval)
                 continue
             t0 = time.monotonic()
             try:
@@ -429,7 +442,7 @@ class Reader:
                     self.perf.record("gpu", (time.monotonic() - t0) * 1000.0)
             except Exception as e:
                 print(f"gpu sample failed: {e!r}", file=sys.stderr, flush=True)
-            time.sleep(self.interval)
+            time.sleep(interval)
 
 
 if __name__ == "__main__":

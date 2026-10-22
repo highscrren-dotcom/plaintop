@@ -57,10 +57,11 @@ QtObject {
     }
 
     readonly property Timer timer: Timer {
-        // A 2 s floor: the clock and the CPU bars are recomputed by MonitorData's own
-        // 1 s tick from the last answer, so the bars stay within two seconds while the
-        // service is asked half as often (the Windows budget's Phase 1).
-        interval: Math.max(2000, store.rate)
+        // The floor is only a floor: the poll follows the smallest updateRateLimit the views
+        // ask for (MonitorData's own rate, i.e. the monitor's "Interval" setting), so turning
+        // that down — the clock's seconds landing on the second, the process list coming
+        // faster — is felt here too. 250 ms is the plasmoid's own floor.
+        interval: Math.max(250, store.rate)
         running: store.active
         repeat: true
         triggeredOnStart: true

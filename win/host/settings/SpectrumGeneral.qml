@@ -13,6 +13,39 @@ SettingsPage {
     readonly property bool blocks: num("element", 0) === 1
     readonly property bool quiet: flag("hideWhenQuiet", true)
 
+    // ── the performance tiers ─────────────────────────────────────────────────
+    // What one click writes into the four knobs below. Measured on the machine the budget
+    // was taken on (this desk, 370 processes): the ring alone costs about 25% of a core on
+    // the smooth tier, 12% on the balanced one and 5% on the quiet one, and the service's
+    // capture follows "Data frames per second" — so a lower tier is cheaper end to end than
+    // the ring's own figure alone. The numbers are free to be edited afterwards: that is
+    // what "Custom" is, and the combo says so by itself.
+    readonly property var presets: ({
+        "quiet": {"dataRate": 10, "idleRate": 1, "smoothMs": 0, "bars": 96},
+        "balanced": {"dataRate": 20, "idleRate": 2, "smoothMs": 0, "bars": 160},
+        "smooth": {"dataRate": 30, "idleRate": 4, "smoothMs": 70, "bars": 160}
+    })
+    readonly property var presetText: ({
+        "quiet": page.i18n("Quiet — 10 frames a second, 96 bars, no smoothing"),
+        "balanced": page.i18n("Balanced — 20 frames a second, 160 bars, no smoothing"),
+        "smooth": page.i18n("Smooth — 30 frames a second, 160 bars, smoothed"),
+        "custom": page.i18n("Custom — the numbers below")
+    })
+    // Which tier the numbers add up to now: a hand-edited number makes it "Custom" by
+    // itself, so the combo never claims a tier the settings do not hold.
+    readonly property string profile: {
+        const id = page.str("renderProfile", "balanced")
+        const p = presets[id]
+        if (p === undefined) return "custom"
+        return (num("dataRate", 20) === p.dataRate && num("idleRate", 2) === p.idleRate
+                && num("smoothMs", 0) === p.smoothMs && num("bars", 160) === p.bars) ? id : "custom"
+    }
+    function applyPreset(id) {
+        page.set("renderProfile", id)
+        const p = presets[id]
+        if (p !== undefined) page.save(p)
+    }
+
     Section { title: page.i18nc("settings section", "Shape") }
 
     FormRow {
@@ -129,6 +162,34 @@ SettingsPage {
     }
 
     Section { title: page.i18nc("settings section", "Behaviour") }
+
+    FormRow {
+        label: page.i18n("Performance:")
+        ComboBox {
+            id: presetBox
+            Layout.fillWidth: true
+            textRole: "text"
+            valueRole: "id"
+            model: {
+                const out = []
+                for (const k of ["quiet", "balanced", "smooth", "custom"])
+                    out.push({ "id": k, "text": page.presetText[k] })
+                return out
+            }
+            currentIndex: {
+                for (let i = 0; i < model.length; i++)
+                    if (model[i].id === page.profile) return i
+                return 0
+            }
+            onActivated: index => page.applyPreset(model[index].id)
+            // Registered under the key it writes first, so the stand can drive it as it drives
+            // every other control.
+            Component.onCompleted: page.register("renderProfile", presetBox)
+        }
+    }
+    Hint {
+        text: page.i18n("One click writes the four numbers below. The smoothing animation is what the\nring costs most — about a quarter of one core on the machine the idle budget was\ntaken on, half that without it — and “Data frames a second” is what the service's own\ncapture follows. The bars' count is the other lever. Pick by how it looks and by the\nfan.")
+    }
 
     FormRow {
         label: page.i18n("Data frames per second:")

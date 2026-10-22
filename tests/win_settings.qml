@@ -123,11 +123,13 @@ TestCase {
         // The form pages mirror the plasmoid pages' keys, one control each.
         const keys = page("monitor", 0).registry
         for (const k of ["fontFamily", "fontSize", "padLeft", "colorFg", "clickThrough", "actions", "terminal",
-                         "barFill", "barEmpty", "separatorWidth", "sparkGlyphs", "secondColumn", "updateInterval", "processInterval"])
+                         "barFill", "barEmpty", "separatorWidth", "sparkGlyphs", "secondColumn", "updateInterval",
+                         "processInterval", "sampleInterval", "netInterval", "gpuInterval", "lhmInterval"])
             verify(keys[k] !== undefined, "monitor General has " + k)
         const spectrum = page("spectrum", 0).registry
         for (const k of ["layout", "bars", "radius", "growth", "mirror", "monoSpectrum", "element", "color", "colorHigh",
-                         "hideWhenQuiet", "quietThreshold", "relayPort", "clickThrough"])
+                         "hideWhenQuiet", "quietThreshold", "relayPort", "clickThrough", "dataRate", "smoothMs",
+                         "idleRate", "renderProfile"])
             verify(spectrum[k] !== undefined, "spectrum Ring has " + k)
         const notes = page("calendar", 1).registry
         for (const k of ["notes", "noteAccount", "upcoming", "syncMinutes", "reminders", "remindLead", "remindHour",
@@ -210,6 +212,20 @@ TestCase {
         waitStored("calendar", "firstDay", 1)
         keyClick(Qt.Key_Down)
         waitStored("calendar", "firstDay", 7)
+    }
+
+    function test_06b_a_spectrum_preset_is_recognised() {
+        // The Performance combo: it names the tier its four numbers add up to, and a
+        // hand-edited number makes it "Custom" by itself — a pick writes all four at once
+        // (page.applyPreset), which the service applies to the ring and to its own capture.
+        reset("spectrum", { renderProfile: "custom", dataRate: 20, idleRate: 2, smoothMs: 30, bars: 160 })
+        const box = page("spectrum", 0).control("renderProfile")
+        verify(box !== null, "the performance combo is registered")
+        tryCompare(box, "currentIndex", 3, 3000)
+        post("spectrum", { renderProfile: "quiet", dataRate: 10, idleRate: 1, smoothMs: 0, bars: 96 })
+        tryCompare(box, "currentIndex", 0, 3000)
+        post("spectrum", { dataRate: 12 })
+        tryCompare(box, "currentIndex", 3, 3000)
     }
 
     function test_07_the_blocks_page() {

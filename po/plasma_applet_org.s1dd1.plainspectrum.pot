@@ -568,3 +568,32 @@ msgid ""
 "no sound capture: the service has no WASAPI loopback\n"
 "(the soundcard package is not inside)"
 msgstr ""
+
+#: win/host/settings/SpectrumGeneral.qml
+msgid "Performance:"
+msgstr ""
+
+#: win/host/settings/SpectrumGeneral.qml
+msgid "Quiet — 10 frames a second, 96 bars, no smoothing"
+msgstr ""
+
+#: win/host/settings/SpectrumGeneral.qml
+msgid "Balanced — 20 frames a second, 160 bars, no smoothing"
+msgstr ""
+
+#: win/host/settings/SpectrumGeneral.qml
+msgid "Smooth — 30 frames a second, 160 bars, smoothed"
+msgstr ""
+
+#: win/host/settings/SpectrumGeneral.qml
+msgid "Custom — the numbers below"
+msgstr ""
+
+#: win/host/settings/SpectrumGeneral.qml
+msgid ""
+"One click writes the four numbers below. The smoothing animation is what the\n"
+"ring costs most — about a quarter of one core on the machine the idle budget was\n"
+"taken on, half that without it — and “Data frames a second” is what the service's own\n"
+"capture follows. The bars' count is the other lever. Pick by how it looks and by the\n"
+"fan."
+msgstr ""

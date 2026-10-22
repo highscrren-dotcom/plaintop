@@ -445,11 +445,84 @@ def test_settings_defaults():
     ok(mon["processInterval"] == 5, "the process walk every 5 s: " + repr(mon["processInterval"]))
     ok(mon["nativeProcesses"] is True, "the native one-call walk on")
     ok(mon["oneProcess"] is True, "one engine for every widget on")
+    ok(mon["sampleInterval"] == 1 and mon["netInterval"] == 5 and mon["gpuInterval"] == 5
+       and mon["lhmInterval"] == 5,
+       "the service's own rates are settings, at the values the budget was measured with: "
+       + repr([mon["sampleInterval"], mon["netInterval"], mon["gpuInterval"], mon["lhmInterval"]]))
     spec = store.get("spectrum")[1]
-    ok(spec["dataRate"] == 20 and spec["idleRate"] == 2 and spec["hideWhenQuiet"] is True,
-       "the spectrum at 20 fps, 2 while quiet, hiding when quiet: " + repr([spec["dataRate"], spec["idleRate"], spec["hideWhenQuiet"]]))
+    ok(spec["dataRate"] == 20 and spec["idleRate"] == 2 and spec["smoothMs"] == 0,
+       "the spectrum: 20 frames a second, 2 while quiet, no smoothing by default: "
+       + repr([spec["dataRate"], spec["idleRate"], spec["smoothMs"]]))
+    ok(spec["renderProfile"] == "balanced", "and the preset the numbers belong to")
+    ok(spec["hideWhenQuiet"] is True, "hiding when quiet")
     ok(store.get("monitor")[1]["actions"] is False, "the Linux line actions stay off")
     print("  ✓ settings: the Windows defaults")
+
+
+def test_live_rates():
+    """The rates the settings window offers are read while the service runs, so a change is
+    felt without a restart (settings_store.LiveSettings)."""
+    ss = importlib.import_module("settings_store")
+
+    class FakeStore:
+        def __init__(self, values):
+            self.values = dict(values)
+            self.reads = 0
+
+        def get(self, widget):
+            self.reads += 1
+            return 1, dict(self.values)
+
+    clock = [100.0]
+    store = FakeStore({"processInterval": 5, "sampleInterval": 1})
+    live = ss.LiveSettings(store, "monitor", ("processInterval", "sampleInterval"),
+                           clock=lambda: clock[0])
+    ok(live.number("processInterval", 9) == 5.0, "the live value comes from the store")
+    clock[0] += 0.2
+    live.number("processInterval", 9)
+    ok(store.reads == 1, "…read at most once a second, however often it is asked: " + repr(store.reads))
+    clock[0] += 1.0
+    store.values["processInterval"] = 1
+    ok(live.number("processInterval", 9) == 1.0, "a change is picked up within a second")
+    clock[0] += 1.0
+    store.values["processInterval"] = "junk"
+    ok(live.number("processInterval", 4) == 4.0, "junk in the file falls back to the caller's default")
+    ok(ss.LiveSettings(None, "monitor", ("x",)).number("x", 7) == 7.0, "no store: the default")
+    print("  ✓ live rates: the service's own numbers follow the settings")
+
+    # …and the readers take them: the process walk, the tick, the GPU and the LHM threads.
+    state, clock = {"step": 0}, [100.0]
+    calls = []
+    every = [5.0]
+    sampler = mw.Sampler(interval=1, ps=counting_psutil(state, calls), clock=lambda: clock[0],
+                         windows=False, process_interval_source=lambda: every[0])
+    sampler.sample()
+    ok(len(calls) == 1, "the first tick walks")
+    clock[0] += 1.0
+    sampler.sample()
+    ok(len(calls) == 1, "inside the live interval it does not")
+    every[0] = 0.0
+    clock[0] += 0.5
+    sampler.sample()
+    ok(len(calls) == 2, "a lowered interval is felt on the next tick, with no restart")
+
+    tick = [1.0]
+    s = mw.Sampler(interval=1, ps=fake_psutil(state), clock=lambda: clock[0], windows=False,
+                   interval_source=lambda: tick[0])
+    ok(s.live_interval() == 1.0, "the tick's own interval from the source")
+    tick[0] = 0.25
+    ok(s.live_interval() == 0.25, "…and it follows a change: the monitor's Interval setting reaches it")
+    ok(mw.Sampler(interval=1, ps=fake_psutil(state), interval_source=lambda: 0.0).live_interval() == 0.1,
+       "a zero is floored: a spinning thread would be worse than an honest value")
+
+    gw = importlib.import_module("gpu_win")
+    ok(gw.Reader(interval=5.0, interval_source=lambda: 0.5).interval_now() == 0.5,
+       "the GPU reader's interval from the source")
+    ok(gw.Reader(interval=5.0, interval_source=lambda: 0.0).interval_now() == 0.25, "floored")
+    ok(gw.Reader(interval=5.0).interval_now() == 5.0, "no source: the constructor's value")
+    ok(mw.LHM(every=5.0, every_source=lambda: 2.0)._every() == 2.0, "the LHM reader's interval too")
+    ok(mw.LHM(every=5.0, every_source=lambda: 0.0)._every() == 0.5, "floored")
+    print("  ✓ live rates: the sampler, the tick, the GPU and the LHM readers take them")
 
 
 def test_probe_gates():
@@ -1088,6 +1161,7 @@ if __name__ == "__main__":
     test_gpu()
     test_gates()
     test_settings_defaults()
+    test_live_rates()
     test_probe_gates()
     test_native_processes()
     test_dispatch()
